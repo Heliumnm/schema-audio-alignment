@@ -34,11 +34,16 @@ say() { echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 want() { [[ -z "$ONLY" || "$ONLY" == "$1" ]]; }
 done_marker() { echo "$DEST/$1/.done"; }
 
+# Timeouts matter: without them a stalled host (Zenodo rate-limits) hangs the whole
+# run with no output instead of failing loudly. --speed-limit/-time aborts a
+# connection that opens but then delivers nothing.
 fetch() {  # fetch <url> <output-path>
   if command -v curl >/dev/null 2>&1; then
-    curl -fL -C - --retry 5 --retry-delay 10 -o "$2" "$1"
+    curl -fL -C - --retry 5 --retry-delay 10 \
+         --connect-timeout 30 --speed-limit 1024 --speed-time 120 \
+         -o "$2" "$1"
   else
-    wget -c -t 5 -O "$2" "$1"
+    wget -c -t 5 --timeout=30 --read-timeout=120 -O "$2" "$1"
   fi
 }
 
