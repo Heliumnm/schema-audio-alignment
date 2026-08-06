@@ -75,6 +75,9 @@ class StethoLM:
         n = inputs["input_ids"].shape[1]
         return self.processor.decode(out[0][n:], skip_special_tokens=True).strip()
 
+    def describe_batch(self, ys, max_new_tokens=128):
+        return [self.describe(y, max_new_tokens) for y in ys]
+
 
 class Qwen2Audio:
     """Fallback so W1 never blocks on a third-party checkpoint."""
@@ -94,18 +97,24 @@ class Qwen2Audio:
                 load_in_4bit=True, bnb_4bit_quant_type="nf4",
                 bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
         self.model = Qwen2AudioForConditionalGeneration.from_pretrained(model_id, **kw).eval()
+        # left padding: with mixed prompt lengths, right padding makes generate()
+        # continue from pad tokens and truncates short items
+        self.processor.tokenizer.padding_side = "left"
 
-    def describe(self, y, max_new_tokens=160):
+    def describe_batch(self, ys, max_new_tokens=128):
         conv = [{"role": "user", "content": [
             {"type": "audio", "audio_url": "x.wav"}, {"type": "text", "text": PROMPT}]}]
         text = self.processor.apply_chat_template(conv, add_generation_prompt=True,
                                                   tokenize=False)
-        inputs = self.processor(text=text, audio=[y], sampling_rate=SR,
+        inputs = self.processor(text=[text] * len(ys), audio=list(ys), sampling_rate=SR,
                                 return_tensors="pt", padding=True).to(self.model.device)
         with self.torch.no_grad():
             out = self.model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
         n = inputs["input_ids"].shape[1]
-        return self.processor.decode(out[0][n:], skip_special_tokens=True).strip()
+        return [self.processor.decode(o[n:], skip_special_tokens=True).strip() for o in out]
+
+    def describe(self, y, max_new_tokens=128):
+        return self.describe_batch([y], max_new_tokens)[0]
 
 
 BACKENDS = {"stetholm": StethoLM, "qwen2": Qwen2Audio}
@@ -121,7 +130,10 @@ def main():
     ap.add_argument("--audio_root", default="",
                     help="prefix for relative manifest paths")
     ap.add_argument("--limit", type=int, default=0, help="stop after N (0 = all)")
-    ap.add_argument("--max_new_tokens", type=int, default=160)
+    ap.add_argument("--max_new_tokens", type=int, default=128)
+    ap.add_argument("--batch", type=int, default=8,
+                    help="batch size; sequential decoding is the bottleneck so this "
+                         "is the main speed lever on a contended GPU")
     ap.add_argument("--load_4bit", action="store_true",
                     help="NF4 quantisation; needed when the shared GPUs are busy")
     args = ap.parse_args()
@@ -150,30 +162,35 @@ def main():
     print(f"loading backend={args.backend} ...", flush=True)
     model = BACKENDS[args.backend](**kw)
 
-    t0, n_err = time.time(), 0
+    def resolve(e):
+        p = e.get(args.key, e["path"])
+        return p if (os.path.isabs(p) or not args.audio_root) else os.path.join(args.audio_root, p)
+
+    t0, n_err, n_done = time.time(), 0, 0
     with open(args.out, "a") as f:
-        for i, e in enumerate(todo):
-            path = e.get(args.key, e["path"])
-            if args.audio_root and not os.path.isabs(path):
-                path = os.path.join(args.audio_root, path)
-            sid = os.path.basename(path)
+        for s0 in range(0, len(todo), args.batch):
+            chunk = todo[s0:s0 + args.batch]
+            paths = [resolve(e) for e in chunk]
             try:
-                desc = model.describe(load_audio(path), args.max_new_tokens)
+                ys = [load_audio(p) for p in paths]
+                descs = model.describe_batch(ys, args.max_new_tokens)
             except Exception as ex:
-                n_err += 1
-                print(f"  !! {sid}: {type(ex).__name__}: {ex}", file=sys.stderr, flush=True)
-                if n_err <= 3 and i < 5:
-                    # failing on the very first items means a broken interface, not
-                    # bad audio — stop rather than burn hours writing nothing
+                n_err += len(chunk)
+                print(f"  !! batch @{s0}: {type(ex).__name__}: {ex}", file=sys.stderr, flush=True)
+                if s0 == 0:
+                    # the first batch failing means a broken interface, not bad audio
                     raise
                 continue
-            f.write(json.dumps({"id": sid, "split": e.get("split"), "label": e.get("label"),
-                                "backend": model.name, "text": desc}, ensure_ascii=False) + "\n")
+            for e, p, d in zip(chunk, paths, descs):
+                f.write(json.dumps({"id": os.path.basename(p), "split": e.get("split"),
+                                    "label": e.get("label"), "backend": model.name,
+                                    "text": d}, ensure_ascii=False) + "\n")
             f.flush()
-            if (i + 1) % 25 == 0:
-                rate = (i + 1) / (time.time() - t0)
-                print(f"  {i+1}/{len(todo)}  {rate:.2f}/s  eta {(len(todo)-i-1)/rate/60:.1f} min",
-                      flush=True)
+            n_done += len(chunk)
+            if (s0 // args.batch) % 5 == 0:
+                rate = n_done / (time.time() - t0)
+                print(f"  {n_done}/{len(todo)}  {rate:.2f}/s  "
+                      f"eta {(len(todo)-n_done)/max(rate,1e-6)/60:.1f} min", flush=True)
 
     print(f"\nwrote {len(todo) - n_err} descriptions -> {args.out} ({n_err} errors)")
     with open(args.out) as f:
