@@ -26,21 +26,63 @@ So the question becomes: **can we align to descriptions of the acoustic evidence
 itself — generated automatically — and does the *structure* of those descriptions
 matter?**
 
-## 2. Contributions (honest ranking)
+## 2. Contributions (revised after the W1 measurements in §2.5)
 
 1. **A text-source taxonomy** for respiratory audio–text alignment: metadata /
    free-form LLM narration / structured schema, held under one fixed architecture
    and one fixed hyper-parameter set.
-2. **Structure beats fluency.** Schema text with explicit clinical dimensions
-   provides a finer information mapping to the spectrogram than free-form
-   description of the same audio. *(This is the headline claim.)*
-3. **The circularity control.** When text is generated *from* the audio, part of
-   the alignment signal is self-recovery, not clinical grounding. We separate the
-   two with a provenance ablation and an audio-tower ablation, and show that the
-   **expert-grounded** portion of the schema is what carries transferable signal.
+2. **Resolution, not fluency, is what contrastive alignment needs.** Metadata text
+   collapses 6,898 recordings onto **27 distinct strings**; schema text yields
+   **3,552**. Below some resolution the InfoNCE objective has no usable negatives —
+   most in-batch "negatives" carry identical text. This turns 师兄's hypothesis
+   ("schema gives a finer information mapping than natural description") from an
+   intuition into a **measurable quantity: distinguishable text states per corpus**,
+   and connects it directly to the false-negative literature the project already
+   builds on (Chuang et al. 2020; Huynh et al. 2020). *(Headline claim.)*
+3. **Two confound controls that reviewers would otherwise demand.**
+   - *Circularity*: how much of the gain is self-recovery when the text is a
+     function of the audio (provenance ablation E2, audio-tower ablation E3).
+   - *Recording confound*: on ICBHI, chest location + device alone predict crackle
+     as well as every acoustic cue combined (§2.5). Any crackle result that does not
+     report this baseline is uninterpretable.
 
-Contribution 3 is what makes this more than an ablation row. It also pre-empts the
-reviewer question that would otherwise sink the paper.
+## 2.5 W1 measurements (real, on all 6,898 ICBHI cycles)
+
+`schema_text.py` ran clean: 6,898/6,898 read, 0 failures, 3,450 train, leak check
+passed. Then a text-only probe (TF-IDF + logistic regression, patient-independent
+official split) measured what each condition actually contains.
+
+**Text resolution — the finding that reframes the paper:**
+
+| condition | distinct texts / 6,898 | mean words |
+|---|---:|---:|
+| dataset | **27** | 10.0 |
+| model | 193 | 24.0 |
+| signal | 1,786 | 27.7 |
+| all | **3,552** | 39.3 |
+
+**Label information carried by the text alone (AUROC):**
+
+| condition | crackle | wheeze |
+|---|---:|---:|
+| dataset | 0.637 | 0.390 |
+| signal | 0.637 | 0.514 |
+| model | 0.626 | 0.505 |
+| all | 0.633 | **0.579** |
+
+Three consequences:
+
+1. **Circularity is mild, not fatal.** The most an audio-derived condition leaks is
+   AUROC 0.637. Alignment gains cannot be explained away as label leakage through
+   text — which is what made this design risky in the first place.
+2. **A recording confound dominates crackle.** `dataset` (chest location + device
+   only, no acoustics at all) reaches 0.637 — *identical* to `signal` and `all`. On
+   ICBHI, the acoustic cues add **nothing** over knowing where and with what the
+   recording was made. This is the known ICBHI device/site confound, quantified.
+   **Report it as a baseline on every crackle result.**
+3. **Wheeze behaves differently and is the cleaner target.** `dataset` alone is
+   *below* chance (0.390) and the cues genuinely add signal (→ 0.579). Where crackle
+   is confounded, wheeze is not — consider leading with wheeze.
 
 ---
 
@@ -91,11 +133,16 @@ already in the schema (`opera-ct` / `judge_d` / `signal-proxy` / `ICBHI_expert`)
 
 | | Experiment | Question |
 |---|---|---|
-| **E1** | T0 vs T1 vs T2 | **Main result.** Is structured schema best? |
-| **E2** | T2a vs T2b vs T2 | **How much is circular?** T2b high alignment + low transfer = caught. |
+| **E0** | **Recording-confound baseline**: `dataset` text (location + device only) | **Mandatory on every crackle number.** It already reaches text-only AUROC 0.637 — any gain not measured against it is uninterpretable. |
+| **E1** | T0 vs T1 vs T2 | **Main result.** Is structured schema best, and does the ranking track distinguishable-state count? |
+| **E2** | provenance sweep: dataset / signal / model / all | **How much is circular?** High retrieval + flat downstream = caught. |
 | **E3** | Audio tower: AST vs OPERA-CT | Architecture-level confirmation of E2. |
-| **E4** | Zero-shot transfer to held-out corpora | Deployment argument: what to do when metadata is missing. |
+| **E4** | Zero-shot transfer to KAUH | Deployment argument: what to do when metadata is missing. |
 | **E5** *(if time)* | Training-data fraction curve | Mirrors RespiraMFM Fig. 3. |
+
+**Run wheeze first.** §2.5 shows crackle is confounded by device/site on ICBHI while
+wheeze is not, so wheeze gives the cleaner read on whether the text condition matters
+at all. Crackle still runs, always beside E0.
 
 ### Evaluation — the one rule
 

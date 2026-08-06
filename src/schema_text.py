@@ -168,16 +168,19 @@ def parse_loc(code):
 
 
 def build_schema(e, cues, thr):
+    # The ICBHI manifest carries chest_location/device as explicit fields; prefer
+    # them over re-parsing the filename, which is how the 'Meditron.wav stethoscope'
+    # bug got in. Filename parsing stays only as a fallback.
     parts = e["filename"].split("_")
-    # ICBHI names are 101_1b1_Al_sc_Meditron.wav -> field 4 carries the extension
-    dev = os.path.splitext(parts[4])[0] if len(parts) > 4 else "unknown"
+    dev = e.get("device") or (os.path.splitext(parts[4])[0] if len(parts) > 4 else "unknown")
+    loc_code = e.get("chest_location") or (parts[2] if len(parts) > 2 else "")
     crackle_char = "fine" if lvl(cues["transient_pitch"], thr["transient_pitch"]) == "high" else "coarse"
     wheeze_type = ("polyphonic" if cues["wheeze_n_peaks"] >= 2
                    else ("monophonic" if cues["wheeze_n_peaks"] == 1 else "none"))
     return {
         "segment_id": e["filename"],
         "recording": {
-            "chest_location": {"value": parse_loc(parts[2]), "source": "dataset"},
+            "chest_location": {"value": parse_loc(loc_code), "source": "dataset"},
             "device": {"value": dev, "source": "dataset"},
             "duration_s": {"value": round(e.get("duration", 0), 2), "source": "dataset"},
             "signal_quality": {"value": e.get("condition", "clean"), "source": "dataset"},
@@ -316,6 +319,8 @@ def main():
     ap.add_argument("--feats", required=True); ap.add_argument("--index", required=True)
     ap.add_argument("--crackle_probe", required=True); ap.add_argument("--wheeze_probe", required=True)
     ap.add_argument("--out", required=True); ap.add_argument("--key", default="path")
+    ap.add_argument("--audio_root", default="",
+                    help="prefix for relative manifest paths (the ICBHI project root)")
     ap.add_argument("--conditions", nargs="+", default=CONDITIONS, choices=CONDITIONS)
     ap.add_argument("--explain", action="store_true")
     ap.add_argument("--show", type=int, default=2)
@@ -329,14 +334,26 @@ def main():
     pw = LinearProbe(768).to(device)
     pw.load_state_dict(torch.load(args.wheeze_probe, map_location=device, weights_only=True)); pw.eval()
 
-    recs = {}
+    recs, n_read_err, first_err = {}, 0, None
     for i, e in enumerate(seg):
         path = e.get(args.key, e["path"])
+        if args.audio_root and not os.path.isabs(path):
+            path = os.path.join(args.audio_root, path)
         k = os.path.basename(path)
         try:
             y, sr = sf.read(path, dtype="float32")
             if y.ndim > 1: y = y.mean(axis=1)
-        except Exception:
+        except Exception as ex:
+            n_read_err += 1
+            if first_err is None:
+                first_err = f"{type(ex).__name__}: {ex}  (path={path})"
+            # a wrong --audio_root fails on EVERY file; stop now rather than
+            # surfacing later as an unrelated error in the tertile computation
+            if i >= 19 and n_read_err == i + 1:
+                raise SystemExit(
+                    f"\nAborting: first {i+1} audio reads all failed.\n"
+                    f"  {first_err}\n"
+                    f"  Manifest paths are relative -- pass --audio_root <ICBHI project root>.")
             continue
         cues = extract_cues(y, sr)
         row = idx.get(k)
@@ -351,6 +368,12 @@ def main():
         if (i + 1) % 500 == 0: print(f"  {i+1}/{len(seg)}", flush=True)
 
     # tertiles from TRAIN only — no test information enters the descriptors
+    n_train = sum(1 for r in recs.values() if r["entry"]["split"] == "train")
+    print(f"\nread {len(recs)}/{len(seg)} segments ({n_read_err} failed); train = {n_train}")
+    if n_train == 0:
+        raise SystemExit(f"No TRAIN segments were read, so descriptor tertiles cannot be "
+                         f"computed. First read error was:\n  {first_err}")
+
     thr = {c: tertiles([r["cues"][c] for r in recs.values() if r["entry"]["split"] == "train"])
            for c in ["crackle_conf", "wheeze_conf", "wheeze_pitch",
                      "hf_kurtosis", "transient_pitch", "wheeze_band", "breath_intensity"]}
