@@ -54,7 +54,8 @@ class StethoLM:
     """askyishan/StethoLM — custom COLA + MedGemma architecture."""
     name = "stetholm"
 
-    def __init__(self, model_id="askyishan/StethoLM", device="cuda", dtype="bfloat16"):
+    def __init__(self, model_id="askyishan/StethoLM", device="cuda",
+                 dtype="bfloat16", load_4bit=False):
         import torch
         from transformers import AutoProcessor, AutoModelForCausalLM
         self.torch = torch
@@ -63,6 +64,7 @@ class StethoLM:
             model_id, trust_remote_code=True, device_map="auto",
             torch_dtype=getattr(torch, dtype),
         ).eval()
+        self.load_4bit = load_4bit
 
     def describe(self, y, max_new_tokens=160):
         inputs = self.processor(text=PROMPT, audio=y, sampling_rate=SR,
@@ -78,13 +80,20 @@ class Qwen2Audio:
     """Fallback so W1 never blocks on a third-party checkpoint."""
     name = "qwen2"
 
-    def __init__(self, model_id="Qwen/Qwen2-Audio-7B-Instruct", device="cuda", dtype="bfloat16"):
+    def __init__(self, model_id="Qwen/Qwen2-Audio-7B-Instruct", device="cuda",
+                 dtype="bfloat16", load_4bit=False):
         import torch
         from transformers import AutoProcessor, Qwen2AudioForConditionalGeneration
         self.torch = torch
         self.processor = AutoProcessor.from_pretrained(model_id)
-        self.model = Qwen2AudioForConditionalGeneration.from_pretrained(
-            model_id, device_map="auto", torch_dtype=getattr(torch, dtype)).eval()
+        kw = {"device_map": "auto", "torch_dtype": getattr(torch, dtype)}
+        if load_4bit:
+            # the lab GPUs are shared and often have <16 GB free; NF4 fits a 7B in ~6 GB
+            from transformers import BitsAndBytesConfig
+            kw["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
+        self.model = Qwen2AudioForConditionalGeneration.from_pretrained(model_id, **kw).eval()
 
     def describe(self, y, max_new_tokens=160):
         conv = [{"role": "user", "content": [
@@ -109,8 +118,12 @@ def main():
     ap.add_argument("--backend", default="stetholm", choices=list(BACKENDS))
     ap.add_argument("--model_id", default=None)
     ap.add_argument("--key", default="path")
+    ap.add_argument("--audio_root", default="",
+                    help="prefix for relative manifest paths")
     ap.add_argument("--limit", type=int, default=0, help="stop after N (0 = all)")
     ap.add_argument("--max_new_tokens", type=int, default=160)
+    ap.add_argument("--load_4bit", action="store_true",
+                    help="NF4 quantisation; needed when the shared GPUs are busy")
     args = ap.parse_args()
 
     seg = json.load(open(args.manifest))
@@ -131,7 +144,9 @@ def main():
     if not todo:
         print("nothing to do"); return
 
-    kw = {"model_id": args.model_id} if args.model_id else {}
+    kw = {"load_4bit": args.load_4bit}
+    if args.model_id:
+        kw["model_id"] = args.model_id
     print(f"loading backend={args.backend} ...", flush=True)
     model = BACKENDS[args.backend](**kw)
 
@@ -139,6 +154,8 @@ def main():
     with open(args.out, "a") as f:
         for i, e in enumerate(todo):
             path = e.get(args.key, e["path"])
+            if args.audio_root and not os.path.isabs(path):
+                path = os.path.join(args.audio_root, path)
             sid = os.path.basename(path)
             try:
                 desc = model.describe(load_audio(path), args.max_new_tokens)
