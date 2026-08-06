@@ -80,7 +80,9 @@ if want kauh && [[ ! -f "$(done_marker KAUH)" ]]; then
       push_and_clean KAUH
     else say "KAUH: UNZIP FAILED — archive may be truncated, delete and rerun"; fi
   else say "KAUH: DOWNLOAD FAILED"; fi
-else want kauh && say "KAUH: already done, skipping"; fi
+elif want kauh; then
+  say "KAUH: already downloaded"; push_and_clean KAUH
+fi
 
 # ------------------------------------------------------------ COUGHVID
 # Resolve real file URLs through the Zenodo API rather than guessing filenames.
@@ -109,7 +111,9 @@ PY
     done
     [[ $n -gt 0 ]] && touch "$(done_marker COUGHVID)" && say "COUGHVID: done ($n files)" && push_and_clean COUGHVID
   else say "COUGHVID: ZENODO API FAILED"; fi
-else want coughvid && say "COUGHVID: already done, skipping"; fi
+elif want coughvid; then
+  say "COUGHVID: already downloaded"; push_and_clean COUGHVID
+fi
 
 # ------------------------------------------------------------- Coswara
 # Split tar archives per recording date; the repo ships extract_data.py to join them.
@@ -129,7 +133,9 @@ if want coswara && [[ ! -f "$(done_marker Coswara)" ]]; then
     fi
     touch "$(done_marker Coswara)"; say "Coswara: done"; push_and_clean Coswara
   else say "Coswara: CLONE FAILED"; fi
-else want coswara && say "Coswara: already done, skipping"; fi
+elif want coswara; then
+  say "Coswara: already downloaded"; push_and_clean Coswara
+fi
 
 # ---------------------------------------------------------------- report
 say "----- summary -----"
