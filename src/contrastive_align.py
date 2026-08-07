@@ -114,6 +114,47 @@ def metrics(y, score, pred=None):
     return out
 
 
+
+# ------------------------------------------------------------- zero-shot
+# CLIP's actual selling point is not "better features" but classification from text
+# prompts with no labelled test data. The linear probe above does not test that, so
+# both variants are reported:
+#   prompt     true zero-shot — hand-written pos/neg sentences in the training text's
+#              own style (out-of-style prompts would test the text tower, not the
+#              alignment)
+#   prototype  mean TRAIN text embedding per class. Uses train labels, so it is an
+#              upper bound on what this text space can express, not zero-shot.
+CLASS_PROMPTS = {
+    "wheeze": (
+        "There is a high likelihood of wheeze, polyphonic, high-pitched, with high "
+        "musical-band energy.",
+        "There is a low likelihood of wheeze, with low musical-band energy.",
+    ),
+    "crackle": (
+        "There is a high likelihood of crackles, with high transient sharpness "
+        "suggesting coarse crackles.",
+        "There is a low likelihood of crackles; transient sharpness is low.",
+    ),
+}
+
+
+def zero_shot(Pa_te, Xt, y_tr, tr_mask, prompt_emb, np_):
+    """Return (prompt_auroc, prototype_auroc); nan when a variant is unavailable."""
+    from sklearn.metrics import roc_auc_score
+    def unit(x):
+        return x / np_.linalg.norm(x, axis=-1, keepdims=True).clip(1e-8)
+    out = {}
+    U = unit(Pa_te)
+    if prompt_emb is not None:
+        P = unit(prompt_emb)                       # (2, D): [positive, negative]
+        out["prompt"] = U @ P[0] - U @ P[1]
+    proto_pos = Xt[tr_mask][y_tr == 1].mean(0)
+    proto_neg = Xt[tr_mask][y_tr == 0].mean(0)
+    P2 = unit(np_.stack([proto_pos, proto_neg]))
+    out["prototype"] = U @ P2[0] - U @ P2[1]
+    return out
+
+
 def cmd_run(args):
     import torch, torch.nn as nn
     from sklearn.linear_model import LogisticRegression
@@ -133,6 +174,14 @@ def cmd_run(args):
     print(f"paired: {len(ids)} / audio {len(aidx)} / text {len(tids)}")
     Xa = np.stack([A[aidx[i]] for i in ids]).astype(np.float32)
     Xt = np.stack([T[tpos[i]] for i in ids]).astype(np.float32)
+
+    prompt_emb = None
+    if args.prompt_emb and os.path.exists(args.prompt_emb):
+        pz = np.load(args.prompt_emb, allow_pickle=True)
+        pt = {str(k): v for k, v in zip(pz["targets"], pz["emb"])}
+        if args.target in pt:
+            prompt_emb = pt[args.target].astype(np.float32)
+            print(f"class prompts loaded for {args.target}")
 
     lab = {"crackle": lambda e: int(e["label"] in ("crackle", "both")),
            "wheeze":  lambda e: int(e["label"] in ("wheeze", "both"))}[args.target]
@@ -183,14 +232,29 @@ def cmd_run(args):
         sc = clf.predict_proba(Pa[te])[:, 1]
         m = metrics(y[te], sc, clf.predict(Pa[te]))
 
-        runs.append({"seed": seed, "retrieval_r1": r1, **m})
+        # --- zero-shot from text (what contrastive alignment is actually for)
+        from sklearn.metrics import roc_auc_score
+        zs = zero_shot(Pa[te], Xt, y[tr], tr, prompt_emb, np)
+        zsr = {}
+        for k, score in zs.items():
+            try:
+                zsr[f"zs_{k}_auroc"] = float(roc_auc_score(y[te], score))
+            except ValueError:
+                zsr[f"zs_{k}_auroc"] = float("nan")
+
+        if args.save_head:
+            torch.save(head.state_dict(), f"{args.save_head}_seed{seed}.pt")
+
+        runs.append({"seed": seed, "retrieval_r1": r1, **m, **zsr})
         print(f"  seed {seed}: MCC {m['mcc']:.3f}  AUROC {m['auroc']:.3f}  "
-              f"pred+ {m['pred_pos_rate']:.3f}  R@1 {r1:.3f}"
-              f"{'  [DEGENERATE]' if m['degenerate'] else ''}")
+              f"zs_prompt {zsr.get('zs_prompt_auroc', float('nan')):.3f}  "
+              f"zs_proto {zsr.get('zs_prototype_auroc', float('nan')):.3f}  "
+              f"R@1 {r1:.3f}{'  [DEGENERATE]' if m['degenerate'] else ''}")
 
     agg = {k: {"mean": float(np.mean([r[k] for r in runs])),
                "sd": float(np.std([r[k] for r in runs]))}
-           for k in ["mcc", "auroc", "macro_f1", "pred_pos_rate", "retrieval_r1"]}
+           for k in ["mcc", "auroc", "macro_f1", "pred_pos_rate", "retrieval_r1",
+                     "zs_prompt_auroc", "zs_prototype_auroc"] if k in runs[0]}
     out = {"text_emb": os.path.basename(args.text_emb), "target": args.target,
            "n_train": int(tr.sum()), "n_test": int(te.sum()),
            "seeds": args.seeds, "runs": runs, "aggregate": agg}
@@ -200,7 +264,8 @@ def cmd_run(args):
 
     print(f"\n=== {os.path.basename(args.text_emb)} / {args.target} "
           f"({len(args.seeds)} seeds) ===")
-    for k in ["mcc", "auroc", "retrieval_r1"]:
+    for k in ["mcc", "auroc", "zs_prompt_auroc", "zs_prototype_auroc", "retrieval_r1"]:
+        if k not in agg: continue
         print(f"  {k:<14} {agg[k]['mean']:.3f} ± {agg[k]['sd']:.3f}")
     print("\nReport downstream MCC/AUROC as the result; retrieval only as context.")
     return out
@@ -228,6 +293,8 @@ def main():
     r.add_argument("--batch", type=int, default=256)
     r.add_argument("--out", default="")
     r.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
+    r.add_argument("--prompt_emb", default="", help="npz of encoded class prompts")
+    r.add_argument("--save_head", default="", help="prefix to save trained heads")
 
     args = ap.parse_args()
     warnings.filterwarnings("ignore", category=UserWarning)

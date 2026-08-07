@@ -226,6 +226,49 @@ That is a *second* crackle confound alongside the device/site one in §2.5. Crac
 ICBHI is confounded from at least two directions; treat every crackle number here as
 provisional.
 
+## 2.75 Zero-shot from text closes the last frozen-tower escape route
+
+The sweeps above evaluated the alignment with a linear probe on the projected audio.
+That is not what contrastive alignment is *for* — CLIP's selling point is
+classification from text prompts with no labelled test data. Two variants were added
+(AST + Bio_ClinicalBERT, 3 seeds):
+
+- **prompt** — true zero-shot, hand-written positive/negative sentences written in
+  the training text's own style (an out-of-style prompt would test the text tower
+  rather than the alignment);
+- **prototype** — mean *train* text embedding per class. It uses train labels, so it
+  is an upper bound on what this text space can express, not zero-shot.
+
+| | probe | zs_prompt | zs_prototype | RAW probe |
+|---|---:|---:|---:|---:|
+| **wheeze** best | 0.629 (t1) | 0.613 (model) | 0.568 (t1) | **0.857** |
+| **crackle** best | 0.617 (dataset) | 0.567 (all) | 0.631 (all) | **0.689** |
+
+Zero-shot does not rescue the method. The best figure anywhere — crackle prototype
+at 0.631 — is still below simply probing the raw features (0.689), and on wheeze the
+gap is far larger (0.613 vs 0.857).
+
+Prompt-based zero-shot beat the probe in only 2 of 10 condition×target cells
+(wheeze/dataset, wheeze/model), so there is no general "zero-shot works where
+probing fails" effect. An earlier read of three partial seed-0 rows suggested one;
+the full sweep does not support it.
+
+**With probing and both zero-shot variants exhausted, the frozen-tower design has no
+remaining escape route.** That is precisely why the trainable-encoder variant (§2.9)
+is the experiment that matters: a frozen encoder's features are fixed, so the
+projector can only remap them, never reorganise them the way CLIP's image tower does.
+
+## 2.9 Trainable encoder (CLIP-style) — the variant under test
+
+`src/clip_finetune.py` fine-tunes AST itself from AudioSet weights against frozen
+text embeddings. The text tower stays frozen: at 3,061 training cycles, training both
+would add overfitting without adding capacity where it matters.
+
+Guards, because overfitting is the obvious failure mode at this scale:
+patient-level train/val carve-out (asserted, never segment-level), early stopping on
+validation InfoNCE with best-weight restore, three seeds, and the frozen-encoder
+number printed alongside as the bar to clear.
+
 ## 2.8 Where this leaves the paper
 
 The originally planned contribution ("structured schema is the best text to align
