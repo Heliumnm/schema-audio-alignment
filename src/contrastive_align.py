@@ -57,8 +57,9 @@ def cmd_encode(args):
 
     tok = AutoTokenizer.from_pretrained(args.text_model)
     mdl = AutoModel.from_pretrained(args.text_model, torch_dtype=torch.float32).eval()
-    dev = "cuda" if torch.cuda.is_available() else "cpu"
+    dev = ("cuda" if torch.cuda.is_available() else "cpu") if args.device == "auto" else args.device
     mdl = mdl.to(dev)
+    print(f"text tower: {args.text_model} on {dev}")
 
     os.makedirs(args.out, exist_ok=True)
     ids = list(data.keys())
@@ -117,7 +118,7 @@ def cmd_run(args):
     import torch, torch.nn as nn
     from sklearn.linear_model import LogisticRegression
 
-    dev = "cuda" if torch.cuda.is_available() else "cpu"
+    dev = args.device if args.device != "auto" else ("cuda" if torch.cuda.is_available() else "cpu")
     man = json.load(open(args.manifest))
     meta = {os.path.basename(e.get("path", e["filename"])): e for e in man}
 
@@ -212,7 +213,10 @@ def main():
     e = sub.add_parser("encode", help="cache frozen text embeddings per condition")
     e.add_argument("--schema_text", required=True)
     e.add_argument("--out", required=True)
-    e.add_argument("--text_model", default="google/medgemma-4b-it")
+    e.add_argument("--text_model", default="bert-base-uncased",
+                   help="frozen text tower; bert-base is cached on the server "
+                        "and runs fine on CPU, avoiding the busy GPUs")
+    e.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
     e.add_argument("--batch", type=int, default=32)
     e.add_argument("--max_len", type=int, default=256)
 
@@ -223,6 +227,7 @@ def main():
     r.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     r.add_argument("--batch", type=int, default=256)
     r.add_argument("--out", default="")
+    r.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
 
     args = ap.parse_args()
     warnings.filterwarnings("ignore", category=UserWarning)

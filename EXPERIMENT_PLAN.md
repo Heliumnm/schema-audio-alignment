@@ -86,6 +86,52 @@ Three consequences:
 
 ---
 
+## 2.6 First alignment sweep — a negative result (wheeze, 2026-08-07)
+
+Ran E1/E2 on wheeze: 4 provenance conditions × 3 seeds, patient-independent ICBHI
+split (3,450 train / 3,448 test, zero patient overlap asserted). The frozen-feature
+baseline is a linear probe on the raw OPERA-CT embeddings, **same split, same seeds**
+— not the 600-sample balanced subset used in the fidelity-oracle work, which would
+not have been comparable.
+
+| condition | distinct texts | MCC | AUROC | ΔAUROC |
+|---|---:|---|---|---:|
+| **RAW features (no alignment)** | — | **0.183** | **0.640** | — |
+| align / dataset | 27 | 0.005 ± 0.025 | 0.515 ± 0.012 | −0.125 |
+| align / signal | 1,786 | 0.041 ± 0.012 | 0.524 ± 0.006 | −0.116 |
+| align / model | 193 | 0.137 ± 0.015 | 0.586 ± 0.002 | −0.054 |
+| align / all | 3,552 | 0.078 ± 0.013 | 0.542 ± 0.006 | −0.098 |
+
+**Every condition is below the baseline.** Contrastive alignment on frozen features
+is discarding task information, not adding it. Training loss barely moved across 500
+epochs (59.49 → 59.34), consistent with the objective learning very little.
+
+**The resolution hypothesis of §2.2 is falsified.** Ranking does not track distinct
+text count (27 → 0.515; 193 → **0.586**; 1,786 → 0.524; 3,552 → 0.542). It tracks
+**circularity**: `model` wins because its text *is* OPERA-CT's own wheeze estimate
+while the audio tower *is* OPERA-CT, so the projection head only has to recover that
+probe. The failure mode flagged in §2.5 as a risk is the effect actually driving the
+results.
+
+### Boundary of this claim — three untested substitutions
+
+1. **Audio tower is OPERA-CT, not AST.** §3 specifies AST for main runs precisely to
+   avoid the COLA-family circularity; OPERA-CT was used because it is on the server
+   and AST is not. Strictly, this run *is* the E3 circular arm, not the main arm.
+2. **Text tower is `bert-base-uncased`**, the only English encoder cached on the
+   offline server. RespiraMFM used Phi-2. A weak text tower is a live alternative
+   explanation.
+3. **This probes the projection directly.** RespiraMFM uses the aligned projector as
+   *initialisation for instruction tuning* and measures end-to-end. Probing tests
+   their Fig. 5 clustering claim, which is fair, but it is not their pipeline.
+
+So the defensible statement is narrow: *with an OPERA-CT audio tower and a
+general-purpose text tower, none of the four text conditions yields a representation
+better than the raw features, and the apparent ranking is explained by circular
+dependence between text and audio towers.* Whether an AST tower plus a medical text
+encoder changes this is **untested**, and both weights need downloading onto a server
+with no outbound network.
+
 ## 3. Architecture (fixed — do not tune)
 
 ```
