@@ -113,6 +113,28 @@ while the audio tower *is* OPERA-CT, so the projection head only has to recover 
 probe. The failure mode flagged in §2.5 as a risk is the effect actually driving the
 results.
 
+### T1 (free-form Qwen2-Audio narration), measured the same way
+
+All 6,898 descriptions generated (~3.4 h, batch 8, NF4 on a shared GPU).
+
+| | distinct texts | mean words | text-only AUROC (wheeze) |
+|---|---:|---:|---:|
+| dataset | 27 | 10.0 | 0.390 |
+| model | 193 | 24.0 | 0.505 |
+| signal | 1,786 | 27.7 | 0.514 |
+| all | 3,552 | 39.3 | 0.579 |
+| **T1 free-form** | **2,448** | 54.1 | **0.590** |
+
+Two things worth keeping:
+
+- **T1 carries the most label information of any condition** — despite hallucinating
+  badly. A crude negation check found adventitious sounds asserted in 68.9% of
+  descriptions of `normal` cycles (upper bound; the rule is rough). An unreliable
+  detector still carries signal, which is why T1 must be in E1 rather than dismissed.
+- **T1 is not the maximally diverse condition.** Qwen2-Audio repeats itself: 2,448
+  distinct texts, between `signal` and `all`. The predicted "6,898 unique" did not
+  happen, which further undercuts resolution as the operative variable.
+
 ### Boundary of this claim — three untested substitutions
 
 1. **Audio tower is OPERA-CT, not AST.** §3 specifies AST for main runs precisely to
