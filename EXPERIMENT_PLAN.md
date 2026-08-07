@@ -154,6 +154,104 @@ dependence between text and audio towers.* Whether an AST tower plus a medical t
 encoder changes this is **untested**, and both weights need downloading onto a server
 with no outbound network.
 
+## 2.7 Full matrix — 15/15 alignment runs below baseline (2026-08-07)
+
+Re-ran everything in the configuration §3 actually specifies: **AST audio tower**
+(ImageNet/AudioSet, no lineage with any text-generating model) and
+**Bio_ClinicalBERT text tower**, five text conditions, both targets, three seeds,
+official patient-independent ICBHI split.
+
+### Frozen-feature baselines (linear probe, identical split and seeds)
+
+| audio tower | wheeze MCC | wheeze AUROC | crackle MCC | crackle AUROC |
+|---|---:|---:|---:|---:|
+| OPERA-CT (respiratory FM) | 0.184 | 0.640 | 0.159 | 0.610 |
+| **AST (general AudioSet)** | **0.516** | **0.857** | **0.254** | **0.689** |
+
+### Alignment results, AST + Bio_ClinicalBERT
+
+| condition | wheeze AUROC | Δ | crackle AUROC | Δ |
+|---|---:|---:|---:|---:|
+| **RAW (no alignment)** | **0.857** | — | **0.689** | — |
+| t1_qwen2 | 0.629 | −0.228 | 0.606 | −0.083 |
+| all | 0.613 | −0.244 | 0.615 | −0.074 |
+| model | 0.579 | −0.278 | 0.599 | −0.090 |
+| signal | 0.521 | −0.336 | 0.608 | −0.081 |
+| dataset | 0.455 | −0.402 | 0.617 | −0.072 |
+
+**Across both audio towers, both targets and five text conditions — 15 alignment
+runs — not one beats simply probing the frozen features.** The better the audio
+tower, the more alignment destroys (−0.054 worst case on OPERA-CT/wheeze, −0.402 on
+AST/wheeze).
+
+### The circularity mechanism, confirmed by a stated-in-advance prediction
+
+Before running the AST arm we predicted: *if circularity is the mechanism, `model`
+should lose its advantage once the audio tower is no longer OPERA-CT, because
+`model` text is OPERA-CT's own likelihood output.*
+
+| condition | OPERA-CT tower | AST tower |
+|---|---:|---:|
+| model | **0.586 (best)** | 0.579 (3rd) |
+| all | 0.542 | 0.613 |
+| t1_qwen2 | 0.533 | **0.629 (best)** |
+
+`model` lost the top position exactly as predicted. Its apparent advantage was
+dependence between the text and that specific audio representation, not clinical
+grounding. A pre-stated prediction that held is much stronger evidence than a
+post-hoc reading of the first sweep.
+
+### A separate and arguably bigger finding: AST ≫ OPERA-CT
+
+**AST beats the OPERA-CT respiratory foundation model by +0.217 AUROC on ICBHI
+wheeze (0.857 vs 0.640) and +0.079 on crackle**, on OPERA's own benchmark corpus,
+while OPERA reports beating general-audio models on 16 of 19 tasks.
+
+Verified before believing it — this number is surprising enough to deserve controls:
+
+| control | wheeze AUROC | expected |
+|---|---:|---|
+| real | **0.857** | — |
+| shuffled train labels | 0.451 | ≈0.5 ✅ |
+| shuffled feature↔id pairing | 0.488 | ≈0.5 ✅ |
+| train/test patient overlap | 0 patients | 0 ✅ |
+
+Also ruled out a duration artefact: AST pads to a fixed 1024 frames, and its
+features do encode duration (max |r| = 0.72 over sampled dims), but **duration alone
+gives wheeze AUROC 0.534** — nowhere near 0.857. The wheeze result is not a padding
+artefact.
+
+**But duration alone gives crackle AUROC 0.644 — above the OPERA-CT probe (0.610).**
+That is a *second* crackle confound alongside the device/site one in §2.5. Crackle on
+ICBHI is confounded from at least two directions; treat every crackle number here as
+provisional.
+
+## 2.8 Where this leaves the paper
+
+The originally planned contribution ("structured schema is the best text to align
+to") is dead: no text condition helps, so their ranking is not a result worth
+reporting on its own. What survives is stronger and honestly obtained:
+
+1. **Contrastive audio–text alignment on frozen respiratory encoders does not
+   produce a usable representation.** 15/15 runs below baseline, two audio towers,
+   two text towers, five text sources. The failure is systematic, not a bad-condition
+   accident.
+2. **Apparent gains come from circular dependence between the text source and the
+   audio tower** — established by a prediction made before the confirming run.
+3. **A general AudioSet model substantially outperforms the domain-specific
+   respiratory foundation model on ICBHI adventitious-sound detection**, with shuffle
+   and duration controls.
+
+Finding 3 does not depend on contrastive learning working at all, which makes it the
+most robust asset here.
+
+### Still-open caveat
+
+This probes the projection directly. RespiraMFM uses the aligned projector to
+*initialise instruction tuning* and measures end-to-end. Our result refutes the
+claim that alignment yields a better representation (their Fig. 5), but does not
+test their full pipeline. Say so explicitly in any writeup.
+
 ## 3. Architecture (fixed — do not tune)
 
 ```
