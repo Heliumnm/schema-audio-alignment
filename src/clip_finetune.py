@@ -168,6 +168,38 @@ def cmd_train(args):
             return 0.5 * (nn.functional.cross_entropy(lg, t) +
                           nn.functional.cross_entropy(lg.T, t))
 
+        # ---- extra negatives ------------------------------------------------
+        # InfoNCE sees batch_size - 1 negatives. CLIP gets 32,767; fine-tuning AST
+        # caps the batch at ~24, leaving 23. Since the TEXT tower is frozen, extra
+        # text negatives are free — they are already computed. Audio negatives come
+        # from a FIFO queue of recent detached embeddings (MoCo-style, without a
+        # momentum encoder: the queue is short relative to how fast the encoder
+        # moves at lr 1e-5).
+        #
+        # False negatives matter here: `all` has 3,552 distinct texts over 4,142
+        # training cycles, so a sampled "negative" is often the positive's exact
+        # text. Those logits are masked out — otherwise the objective is punished
+        # for matching text it should match, which is precisely the failure mode
+        # the debiased-contrastive literature describes.
+        def nce_big(za, zt, neg_t, neg_a):
+            u = lambda x: x / x.norm(dim=-1, keepdim=True).clamp(min=1e-8)
+            za, zt, neg_t, neg_a = u(za), u(zt), u(neg_t), u(neg_a)
+            t = torch.arange(len(za), device=za.device)
+
+            a2t_extra = za @ neg_t.T
+            dup = (zt @ neg_t.T) > 0.999          # negative carries the positive's text
+            a2t_extra = a2t_extra.masked_fill(dup, float("-inf"))
+            lg_a = torch.cat([za @ zt.T, a2t_extra], 1) / TAU
+
+            if len(neg_a):
+                lg_t = torch.cat([zt @ za.T, zt @ neg_a.T], 1) / TAU
+            else:
+                lg_t = (zt @ za.T) / TAU
+            return 0.5 * (nn.functional.cross_entropy(lg_a, t) +
+                          nn.functional.cross_entropy(lg_t, t))
+
+        queue = torch.zeros(0, PROJ_DIM, device=dev)
+
         tr_idx = np.where(tr)[0]
         best, bad, best_state = float("inf"), 0, None
         for ep in range(args.epochs):
@@ -180,7 +212,13 @@ def cmd_train(args):
                     continue
                 xb = torch.tensor(np.array(X[rows[b]]), device=dev)
                 h = enc(input_values=xb).last_hidden_state.mean(1)
-                loss = nce(proj(h), Tt[b])
+                za = proj(h)
+                if args.queue_size > 0:
+                    nt = rng.choice(tr_idx, min(args.queue_size, len(tr_idx)), replace=False)
+                    loss = nce_big(za, Tt[b], Tt[nt], queue)
+                    queue = torch.cat([queue, za.detach()])[-args.queue_size:]
+                else:
+                    loss = nce(za, Tt[b])
                 opt.zero_grad(); loss.backward(); opt.step()
                 tot += float(loss) * len(b)
             enc.eval(); proj.eval()
@@ -259,6 +297,9 @@ def main():
     t.add_argument("--target", default="wheeze", choices=["wheeze", "crackle"])
     t.add_argument("--split_map", default="", help="json {segment_id: train|test} overriding the manifest split; use for the OFFICIAL ICBHI partition")
     t.add_argument("--prompt_emb", default="", help="npz of encoded class prompts -> true zero-shot")
+    t.add_argument("--queue_size", type=int, default=0,
+                   help="extra negatives beyond the batch (0 = in-batch only, "
+                        "reproducing the earlier runs exactly)")
     t.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     t.add_argument("--epochs", type=int, default=15)
     t.add_argument("--patience", type=int, default=3)
