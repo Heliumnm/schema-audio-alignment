@@ -269,6 +269,55 @@ patient-level train/val carve-out (asserted, never segment-level), early stoppin
 validation InfoNCE with best-weight restore, three seeds, and the frozen-encoder
 number printed alongside as the bar to clear.
 
+## 2.95 The split was not the official one (found 2026-08-07)
+
+Everything above ran on a split the fidelity-oracle pipeline created in
+`step1_parse_and_segment.py:77`:
+
+```python
+def get_split(patient_id: int) -> str:
+    """ICBHI official 60/40 patient-independent split."""
+    train_patients = set(range(101, 161))
+```
+
+**The docstring is wrong.** ICBHI ships an explicit per-recording partition
+(`ICBHI_challenge_train_test.txt`) and the id threshold is not it. Checked directly:
+
+| | official file | id-threshold split |
+|---|---|---|
+| ratio | 540 / 381 recordings (**58.6 / 41.4 ≈ 60/40** ✓) | 3,450 / 3,448 cycles (**50/50**) |
+| train patients | 79 | 60 |
+| test patients | 49 | 66 |
+| **agreement** | — | **53.5%** of recordings (492/920) |
+
+428 recordings sit on the opposite side from the official assignment.
+
+**The official partition is also not strictly patient-independent**: patients **156**
+and **218** appear on both sides. `src/official_split.py --strict` drops their test
+segments, giving 4,142 train / 2,636 test (61/39) over 79 + 47 patients with zero
+overlap.
+
+The two splits trade off: ours was non-standard but strictly clean, the official one
+is standard but slightly leaky. Report both.
+
+### What this invalidates, and what survives
+
+Internal comparisons are unaffected — every condition ran on the same split, so the
+relative findings stand. **Absolute numbers are not comparable to any published
+ICBHI result** and must never be quoted against RespiraMFM's or OPERA's tables.
+
+The headline finding was re-checked under the official split and holds:
+
+| audio tower | wheeze (old → official) | crackle (old → official) |
+|---|---|---|
+| OPERA-CT | 0.640 → 0.606 | 0.610 → 0.621 |
+| **AST** | 0.857 → **0.796** | 0.689 → **0.729** |
+| **AST − OPERA-CT** | +0.217 → **+0.190** | +0.079 → **+0.108** |
+
+AST still beats the respiratory foundation model by a wide margin on both targets;
+on crackle the gap widens. Absolute values move (wheeze down, crackle up), which is
+exactly why the split had to be pinned down before any number went into a paper.
+
 ## 2.8 Where this leaves the paper
 
 The originally planned contribution ("structured schema is the best text to align

@@ -106,11 +106,14 @@ def cmd_train(args):
     meta = {os.path.basename(e.get("path", e["filename"])): e
             for e in json.load(open(args.manifest))}
 
-    ids = [i for i in xidx if i in tpos and i in meta]
+    smap = json.load(open(args.split_map)) if args.split_map else None
+    ids = [i for i in xidx if i in tpos and i in meta and (smap is None or i in smap)]
+    if smap is not None:
+        print(f"split_map: {os.path.basename(args.split_map)} -> {len(ids)} segments")
     rows = np.array([xidx[i] for i in ids])
     Xt = np.stack([T[tpos[i]] for i in ids]).astype(np.float32)
     y = np.array([int(meta[i]["label"] in (args.target, "both")) for i in ids])
-    split = np.array([meta[i]["split"] for i in ids])
+    split = np.array([(smap[i] if smap else meta[i]["split"]) for i in ids])
     pid = np.array([patient_of(i) for i in ids])
 
     trall, te = split == "train", split == "test"

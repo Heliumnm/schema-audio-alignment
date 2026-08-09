@@ -186,7 +186,14 @@ def cmd_run(args):
     lab = {"crackle": lambda e: int(e["label"] in ("crackle", "both")),
            "wheeze":  lambda e: int(e["label"] in ("wheeze", "both"))}[args.target]
     y = np.array([lab(meta[i]) for i in ids])
-    split = np.array([meta[i]["split"] for i in ids])
+    smap = json.load(open(args.split_map)) if args.split_map else None
+    if smap is not None:
+        ids = [i for i in ids if i in smap]
+        Xa = np.stack([A[aidx[i]] for i in ids]).astype(np.float32)
+        Xt = np.stack([T[tpos[i]] for i in ids]).astype(np.float32)
+        y = np.array([lab(meta[i]) for i in ids])
+        print(f"split_map: {os.path.basename(args.split_map)} -> {len(ids)} segments")
+    split = np.array([(smap[i] if smap else meta[i]["split"]) for i in ids])
     pid = np.array([patient_of(i) for i in ids])
 
     tr, te = split == "train", split == "test"
