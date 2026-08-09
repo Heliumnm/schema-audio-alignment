@@ -437,6 +437,65 @@ So the only defensible positive claim from this line is not accuracy but capabil
 *contrastive alignment trades ~0.12 AUROC for a label-free inference path.* Whether
 that trade is worth making is a deployment argument, not a benchmark one.
 
+## 2.97 师兄's actual proposal, finally tested — the encoder cannot hear the pathology
+
+The schema-vs-narration comparison above used **Qwen2-Audio**, not the **StethoLM**
+he specified, because the server is offline and StethoLM was unobtainable. That made
+the comparison unfair, and §2.96's "8/8 against his hypothesis" was an overstatement:
+the narration arm carried no label information (AUROC 0.509), so it was a broken
+control, not a weaker text source.
+
+StethoLM turned out to be testable without the 8.6 GB gated MedGemma backbone. Its
+adapter ships the **audio encoder complete** (4.05 M params), and if the encoder
+cannot separate wheeze/crackle, no description built on it can either — a necessary
+condition, testable in an hour instead of fourteen.
+
+Architecture read off the checkpoint, matching OPERA's `Encoder`
+(`models_cola.py:10`) exactly: `mel(1ch) → Conv2d(1,3,k=3) → EfficientNet-B0 → 1280`.
+Mel settings taken from OPERA's `pre_process_audio_mel_t` (`util.py:406`) rather than
+guessed, since wrong settings yield a *false* negative.
+
+| encoder | architecture | dim | wheeze | crackle |
+|---|---|---:|---:|---:|
+| **AST** | ViT, AudioSet | 768 | **0.796** | **0.729** |
+| OPERA-CT | HTS-AT transformer | 768 | 0.606 | 0.621 |
+| OPERA-CE | EfficientNet-B0 | 1280 | 0.531 | 0.594 |
+| **StethoLM** | EfficientNet-B0 | 1280 | **0.512** | 0.562 |
+
+Same preprocessing, same probe, same official split, 3 seeds. Checked that this is
+not a scaling artefact: StethoLM's features have an unusual range (|x| mean 7.3, per-
+dim means to 70.7), but standardising changes nothing (0.511 / 0.545).
+
+**StethoLM's encoder is at chance on wheeze.** And OPERA-CE, the line it inherits
+from, is barely better (0.531) — so this is not domain adaptation damaging a good
+encoder; that lineage was already weak. Two axes fall out cleanly:
+
+```
+architecture:  transformer (0.796, 0.606)  >>  EfficientNet CNN (0.531, 0.512)
+pretraining:   general AudioSet (0.796)    >>  respiratory-specific (0.606–0.512)
+```
+
+**Caveat on crackle:** the COLA line preprocesses with `f_max = 2000 Hz`, discarding
+everything above 2 kHz — exactly where crackle's defining transients live. Part of
+the crackle gap is bandwidth, not architecture. Wheeze (400–1600 Hz) sits inside that
+passband, so the wheeze comparison is clean, and that is where the gap is largest.
+
+### Verdict on the proposal
+
+*"用 stethoLM 做的 LLM 听取音频后生成的病例描述,和 spectrogram,做对比学习"*
+fails its necessary condition:
+
+1. StethoLM's encoder is at chance on ICBHI wheeze (0.512);
+2. it inherits that from OPERA-CE (0.531), so the weakness predates StethoLM;
+3. an encoder that cannot resolve the pathology cannot describe it;
+4. this independently corroborates the Qwen2-Audio result (descriptions at 0.509).
+
+Two different audio-LLMs, two different failure points, same conclusion.
+
+**The constructive part:** on the identical data and split, general-purpose AST
+reaches 0.796 — far above every respiratory-specific encoder tested. Anything built
+in this direction should start from AST, not the COLA line.
+
 ## 2.8 Where this leaves the paper
 
 The originally planned contribution ("structured schema is the best text to align
