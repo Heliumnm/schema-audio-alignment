@@ -8,3 +8,6 @@ __pycache__/
 .DS_Store
 results/*.npy
 wandb/
+results/schema_text.json
+results/*_index.json
+results/t1_qwen2.jsonl

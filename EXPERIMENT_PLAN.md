@@ -2,11 +2,12 @@
 
 **Target:** ICASSP (deadline ~early September 2026) · **First author:** Liu He · **Advisor:** Yuanchao Li
 
-> **What text should respiratory audio be aligned to?**
-> We show that structured, provenance-tagged schema text outperforms both patient
-> metadata and free-form LLM narration for audio–text contrastive alignment — and we
-> quantify how much of the apparent gain from audio-derived text is circular rather
-> than transferable.
+> **Superseded framing, kept for the record.** The question was "what text should
+> respiratory audio be aligned to?", expecting structured schema text to win. It does
+> not, and no alignment variant beat leaving the features alone — see
+> [`README.md`](README.md) for the outcome and §2.5 onward for how each hypothesis
+> fell. Sections below are in the order they were written, so early claims are
+> contradicted by later ones; that trail is deliberate.
 
 ---
 
@@ -268,6 +269,103 @@ Guards, because overfitting is the obvious failure mode at this scale:
 patient-level train/val carve-out (asserted, never segment-level), early stopping on
 validation InfoNCE with best-weight restore, three seeds, and the frozen-encoder
 number printed alongside as the bar to clear.
+
+## 2.91 Trainable encoder — results (the design in §2.9)
+
+Letting the audio encoder train instead of freezing it is the single largest effect
+in this project. wheeze, official split, 3 seeds:
+
+| text condition | frozen projector | **trainable AST** | gain |
+|---|---:|---:|---:|
+| t1_qwen2 | 0.657 | **0.771** | +0.114 |
+| all | 0.636 | 0.739 | +0.103 |
+
+and on the id-threshold split, +0.199 (0.629 → 0.828). A frozen encoder's features
+are fixed, so the projector can only remap them; training lets the encoder
+reorganise. **RespiraMFM's frozen-tower design is leaving 0.10–0.20 AUROC on the
+table.**
+
+It still does not beat leaving the features alone (RAW AST 0.796), and the text
+condition barely matters even here — `dataset`, with 27 distinct strings, reaches
+0.766 against `all`'s 0.771 on the id-threshold split. Whatever the encoder gains, it
+is not from the text's clinical content.
+
+## 2.92 Hypothesis 6: were there simply too few negatives? No — more made it worse
+
+InfoNCE sees `batch − 1` negatives. CLIP gets 32,767; fine-tuning AST caps the batch
+at 24, leaving 23. That is the one structural difference from "doing it the CLIP way"
+that had not been tested, so it got a MoCo-style queue: extra text negatives (free,
+the text tower is frozen) plus a FIFO queue of recent audio embeddings.
+
+False negatives were masked explicitly — `all` has 3,552 distinct texts over 4,142
+training cycles, so a sampled "negative" is often the positive's exact text, and
+penalising the model for matching text it should match is exactly the failure mode
+the debiased-contrastive literature describes (Chuang et al. 2020; Huynh et al. 2020).
+
+| condition | negatives | probe AUROC | Δ vs RAW 0.796 |
+|---|---:|---:|---:|
+| all | 23 | **0.739** | −0.057 |
+| all | 1,024 | 0.698 | −0.098 |
+| all | 4,096 | 0.698 | −0.098 |
+| t1 | 23 | **0.771** | −0.025 |
+| t1 | 4,096 | 0.734 | −0.062 |
+
+**More negatives made it consistently worse**, and 1,024 and 4,096 give identical
+numbers — saturated, so "just scale further" is not an available argument. Initial
+InfoNCE loss did rise with queue size (2.85 → 6.47 → 7.16 ≈ ln N), confirming the
+queue was actually in effect and not silently ignored.
+
+## 2.98 Controls on the AST result — it survives all three
+
+The AST-beats-respiratory-encoders gap was confounded three ways: AST is 17× larger
+than OPERA-CE (86.2 M vs 5.0 M), sees 128 mel bins to 8 kHz rather than 64 to 2 kHz,
+and had been compared on one task of one corpus. All three were tested.
+
+**Bandwidth — explains little.** Re-extracting OPERA-CE with AST's mel settings:
+
+| OPERA-CE preprocessing | wheeze | crackle |
+|---|---:|---:|
+| 64 mel / 2 kHz (COLA default) | 0.532 | 0.593 |
+| 128 mel / 8 kHz (AST-like) | 0.569 | 0.607 |
+| *AST for reference* | *0.796* | *0.729* |
+
++0.037 of a 0.265 gap. Bandwidth is not the mechanism.
+
+**Scale — the opposite of the expected direction.** Truncating AST to its first 6 of
+12 layers:
+
+| AST | params | wheeze | crackle |
+|---|---:|---:|---:|
+| full, 12 layers | 86.2 M | 0.796 | 0.729 |
+| **first 6 layers** | **43.7 M** | **0.807** | **0.750** |
+
+**Halving the model improves it.** Size cannot explain the advantage, and AST's final
+layers appear specialised to AudioSet classification at the expense of this task. At
+43.7 M vs OPERA-CT's 32.4 M the two are now within 1.35×, and AST still wins
+0.807 vs 0.606.
+
+**Cross-corpus and cross-task — replicates.** KAUH is patient-level *disease*, not
+cycle-level adventitious sound, which is closer to what OPERA's own benchmark scores.
+Patient-level 70/30, 5 repeats:
+
+| task | AST | AST-6L | OPERA-CE | StethoLM | n |
+|---|---:|---:|---:|---:|---:|
+| asthma | 0.826 | **0.832** | 0.567 | 0.519 | 201 |
+| COPD | 0.631 | 0.635 | 0.566 | **0.667** | 132 |
+| heart failure | 0.933 | **0.960** | 0.813 | 0.733 | 159 |
+| pneumonia | **0.908** | 0.845 | 0.744 | 0.553 | 120 |
+
+AST wins 3 of 4 by wide margins. **StethoLM wins COPD** — the one counterexample, on
+the task with the lowest positive rate (0.20) and so the noisiest. This is not a clean
+sweep and should not be described as one.
+
+**Two honest limits.** KAUH splits are ours, not a standard benchmark partition, over
+40–67 patients. And only four encoders were compared — HeAR, CLAP and AudioMAE were
+never tested.
+
+**Practical upshot:** use **AST's first 6 layers** as the default respiratory encoder.
+Equal or better than the full model on 3 of 4 tasks at half the parameters and half
+the compute, and far above every respiratory-specific encoder tested.
 
 ## 2.95 The split was not the official one (found 2026-08-07)
 
