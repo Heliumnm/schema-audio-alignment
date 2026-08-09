@@ -302,6 +302,7 @@ def main():
     r.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
     r.add_argument("--prompt_emb", default="", help="npz of encoded class prompts")
     r.add_argument("--save_head", default="", help="prefix to save trained heads")
+    r.add_argument("--split_map", default="", help="json {segment_id: train|test} overriding the manifest split; use for the OFFICIAL ICBHI partition")
 
     args = ap.parse_args()
     warnings.filterwarnings("ignore", category=UserWarning)

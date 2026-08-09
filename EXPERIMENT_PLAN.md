@@ -318,6 +318,48 @@ AST still beats the respiratory foundation model by a wide margin on both target
 on crackle the gap widens. Absolute values move (wheeze down, crackle up), which is
 exactly why the split had to be pinned down before any number went into a paper.
 
+## 2.96 Both splits, side by side — every conclusion is split-invariant
+
+wheeze, AST audio tower, Bio_ClinicalBERT text tower, 3 seeds:
+
+| setting | id-threshold AUROC | official AUROC | official zs_proto |
+|---|---:|---:|---:|
+| **RAW (no alignment)** | **0.857** | **0.796** | — |
+| trainable enc / t1_qwen2 | 0.828 | **0.771** | 0.650 |
+| trainable enc / all | 0.771 | 0.739 | 0.586 |
+| frozen proj / t1_qwen2 | 0.629 | 0.657 | 0.582 |
+| frozen proj / all | 0.613 | 0.636 | 0.602 |
+
+All four conclusions reproduce under both splits:
+
+1. **Trainable encoder ≫ frozen projector** — +0.199 (id-threshold), +0.114 (official).
+2. **Free-form LLM narration beats the structured schema** — t1 > all in **4 of 4**
+   split × training-mode cells. 师兄's hypothesis that a designed schema gives a
+   finer information mapping than natural description is contradicted every time.
+3. **Alignment never beats not aligning** — best 0.771 vs RAW 0.796.
+4. **AST ≫ OPERA-CT** — +0.190 (official), +0.217 (id-threshold).
+
+That the conclusions survive a split disagreeing on 46.5% of recordings matters more
+than any individual number.
+
+### The zero-shot jump was sample size, not an easier split
+
+Official-split zero-shot (0.58–0.65) sits far above the id-threshold trainable runs
+(0.48–0.59), which raised the question of whether the official partition simply makes
+the task easier. It does not: the *frozen* official runs reach the same 0.58–0.60 band
+as the *trainable* id-threshold runs, so the driver is the larger training set
+(4,142 vs 3,450) giving a steadier prototype estimate. No extra control run needed.
+
+### The one thing alignment actually buys
+
+`trainable / t1_qwen2` on the official split: probe 0.771, **zero-shot prototype
+0.650**. Zero-shot gives up 0.121 while requiring **no labelled test data at all**,
+and the raw features cannot do it — they have no text space to query.
+
+So the only defensible positive claim from this line is not accuracy but capability:
+*contrastive alignment trades ~0.12 AUROC for a label-free inference path.* Whether
+that trade is worth making is a deployment argument, not a benchmark one.
+
 ## 2.8 Where this leaves the paper
 
 The originally planned contribution ("structured schema is the best text to align

@@ -106,6 +106,14 @@ def cmd_train(args):
     meta = {os.path.basename(e.get("path", e["filename"])): e
             for e in json.load(open(args.manifest))}
 
+    prompt_emb = None
+    if args.prompt_emb and os.path.exists(args.prompt_emb):
+        pz = np.load(args.prompt_emb, allow_pickle=True)
+        pt = {str(k): v for k, v in zip(pz["targets"], pz["emb"])}
+        if args.target in pt:
+            prompt_emb = pt[args.target].astype(np.float32)
+            print(f"class prompts loaded for {args.target}")
+
     smap = json.load(open(args.split_map)) if args.split_map else None
     ids = [i for i in xidx if i in tpos and i in meta and (smap is None or i in smap)]
     if smap is not None:
@@ -203,25 +211,36 @@ def cmd_train(args):
         mcc = matthews_corrcoef(y[ite], clf.predict(Zte))
 
         def unit(a): return a / np.linalg.norm(a, axis=-1, keepdims=True).clip(1e-8)
+        # prototype: mean TRAIN text embedding per class. Uses train labels, so it
+        # bounds what this text space can express — not zero-shot.
         pp = unit(Xt[itr][y[itr] == 1].mean(0)); pn = unit(Xt[itr][y[itr] == 0].mean(0))
         zs = roc_auc_score(y[ite], unit(Zte) @ pp - unit(Zte) @ pn)
 
-        print(f"  seed {seed}: probe AUROC {probe:.3f}  MCC {mcc:.3f}  zs_proto {zs:.3f}")
+        # prompt: TRUE zero-shot — no labels touched at any point. This is the only
+        # honest measure of the one capability alignment buys over a plain probe.
+        zsp = float("nan")
+        if prompt_emb is not None:
+            P = unit(prompt_emb)
+            zsp = roc_auc_score(y[ite], unit(Zte) @ P[0] - unit(Zte) @ P[1])
+
+        print(f"  seed {seed}: probe AUROC {probe:.3f}  MCC {mcc:.3f}  "
+              f"zs_proto {zs:.3f}  zs_prompt {zsp:.3f}")
         results.append({"seed": seed, "auroc": float(probe), "mcc": float(mcc),
-                        "zs_prototype_auroc": float(zs), "best_val_nce": best})
+                        "zs_prototype_auroc": float(zs),
+                        "zs_prompt_auroc": float(zsp), "best_val_nce": best})
         del enc, proj, opt
         if dev == "cuda":
             torch.cuda.empty_cache()
 
     agg = {k: {"mean": float(np.mean([r[k] for r in results])),
                "sd": float(np.std([r[k] for r in results]))}
-           for k in ["auroc", "mcc", "zs_prototype_auroc"]}
+           for k in ["auroc", "mcc", "zs_prototype_auroc", "zs_prompt_auroc"]}
     out = {"text_emb": os.path.basename(args.text_emb), "target": args.target,
            "trainable_encoder": True, "runs": results, "aggregate": agg}
     if args.out:
         json.dump(out, open(args.out, "w"), indent=1)
     print(f"\n=== trainable AST / {os.path.basename(args.text_emb)} / {args.target} ===")
-    for k in ["auroc", "mcc", "zs_prototype_auroc"]:
+    for k in ["auroc", "mcc", "zs_prototype_auroc", "zs_prompt_auroc"]:
         print(f"  {k:<20} {agg[k]['mean']:.3f} ± {agg[k]['sd']:.3f}")
     print(f"  frozen-encoder reference (raw AST probe): "
           f"{'0.857' if args.target == 'wheeze' else '0.689'}")
@@ -238,6 +257,8 @@ def main():
     t.add_argument("--inputs", required=True); t.add_argument("--text_emb", required=True)
     t.add_argument("--manifest", required=True); t.add_argument("--model", required=True)
     t.add_argument("--target", default="wheeze", choices=["wheeze", "crackle"])
+    t.add_argument("--split_map", default="", help="json {segment_id: train|test} overriding the manifest split; use for the OFFICIAL ICBHI partition")
+    t.add_argument("--prompt_emb", default="", help="npz of encoded class prompts -> true zero-shot")
     t.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     t.add_argument("--epochs", type=int, default=15)
     t.add_argument("--patience", type=int, default=3)
