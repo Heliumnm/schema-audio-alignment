@@ -388,11 +388,44 @@ advantage for structured text — and it is the version of 师兄's hypothesis t
 evidence actually supports: schema helps **promptability**, not representation
 quality.
 
-**⚠️ Confounded as measured.** `CLASS_PROMPTS` was written in the schema's style
-("There is a high likelihood of wheeze, polyphonic, high-pitched, with high
-musical-band energy"), which favours `all` by construction. A fair test needs prompts
-written in each condition's own idiom, including a narration-style prompt for t1.
-Until that control runs, treat the reversal as suggestive, not established.
+**RETRACTED — the control ran and it was a prompt-style artifact.** `CLASS_PROMPTS`
+was written in the schema's frame, which favours `all` by construction. Re-running
+with prompts in t1's own idiom (copied from the two most frequent openings in the
+generated corpus) flips the ranking completely:
+
+| prompt idiom | wheeze/all | wheeze/t1 | crackle/all | crackle/t1 |
+|---|---:|---:|---:|---:|
+| schema frame | **0.591** | 0.425 | **0.609** | 0.549 |
+| t1 narration | 0.473 | **0.526** | 0.375 | **0.581** |
+
+Every condition wins under the prompt matching its own training distribution and
+loses under the other. `crackle/all` falls to 0.375 — far below chance — purely by
+changing the prompt wording. **`zs_prompt` measures prompt–training-distribution
+match, not any property of the text source.** Structure does not help promptability;
+there was never an effect to explain.
+
+### Why t1 cannot be prompted at all: its text carries no label information
+
+Checked directly on all 6,778 official-split segments, asking whether a description
+*asserts* the finding (negation-aware clause parsing):
+
+| target | asserts when present | asserts when absent | AUROC |
+|---|---:|---:|---:|
+| wheeze | 0.344 | 0.327 | **0.509** |
+| crackle | 0.306 | 0.290 | **0.508** |
+
+Qwen2-Audio claims a wheeze about a third of the time regardless of whether one is
+there. (An initial read of two hand-picked samples suggested the descriptions were
+*anti*-correlated with the labels; quantified over the full corpus they are simply
+uncorrelated.)
+
+This resolves the whole picture:
+
+* **t1 cannot support zero-shot** — there is no label signal in the text to prompt for.
+* **t1 still wins the linear probe (0.771)** — so that gain cannot come from clinical
+  content. It comes from the encoder training against a *diverse per-sample target*.
+  Contrastive alignment's probe benefit here is **content-independent**: functionally
+  self-supervised training with a text-shaped objective.
 
 ### The one thing alignment actually buys
 
