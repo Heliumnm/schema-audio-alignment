@@ -350,6 +350,50 @@ the task easier. It does not: the *frozen* official runs reach the same 0.58–0
 as the *trainable* id-threshold runs, so the driver is the larger training set
 (4,142 vs 3,450) giving a steadier prototype estimate. No extra control run needed.
 
+### RETRACTED: the capability claim below does not survive true zero-shot
+
+The paragraph that follows was written when only the **prototype** variant existed.
+The prototype averages *train* text embeddings per class, so it consumes labels and
+cannot support a zero-shot claim. With `zs_prompt` — hand-written class prompts, no
+labels touched — the claim collapses:
+
+| official split | probe | zs_proto | **zs_prompt (true)** |
+|---|---:|---:|---:|
+| wheeze trainable / t1 | 0.771 | 0.650 | **0.425** |
+| wheeze frozen / t1 | 0.657 | 0.582 | **0.469** |
+| wheeze frozen / all | 0.636 | 0.602 | 0.591 |
+| crackle trainable / all | 0.698 | 0.680 | 0.614 |
+| crackle trainable / t1 | 0.716 | 0.556 | 0.549 |
+| crackle frozen / all | 0.689 | 0.680 | 0.609 |
+
+**True zero-shot peaks at 0.614, and on wheeze/t1 it is 0.425 — below chance.** The
+0.12 "cost" quoted below was really 0.12 against a label-using upper bound; against
+honest zero-shot the cost is 0.35 on wheeze. Alignment does not buy a usable
+label-free inference path here.
+
+### But the ranking reverses for zero-shot, and that is interesting
+
+For the linear probe, free-form narration wins (t1 > all). **For true zero-shot,
+the structured schema wins, on both targets:**
+
+| | probe | zs_prompt |
+|---|---|---|
+| wheeze | t1 0.771 > all 0.739 | all 0.591 > t1 0.425 |
+| crackle | t1 0.716 > all 0.698 | all 0.614 > t1 0.549 |
+
+A plausible mechanism: the schema has a fixed vocabulary and sentence frame, so a
+class prompt can be written *in the training distribution*. Free-form LLM narration
+has no such frame, so any prompt is out-of-distribution for it. That would be a real
+advantage for structured text — and it is the version of 师兄's hypothesis that the
+evidence actually supports: schema helps **promptability**, not representation
+quality.
+
+**⚠️ Confounded as measured.** `CLASS_PROMPTS` was written in the schema's style
+("There is a high likelihood of wheeze, polyphonic, high-pitched, with high
+musical-band energy"), which favours `all` by construction. A fair test needs prompts
+written in each condition's own idiom, including a narration-style prompt for t1.
+Until that control runs, treat the reversal as suggestive, not established.
+
 ### The one thing alignment actually buys
 
 `trainable / t1_qwen2` on the official split: probe 0.771, **zero-shot prototype
