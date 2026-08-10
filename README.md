@@ -22,9 +22,13 @@ Full detail in [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md); this is the summary.
 | 4 | Alignment buys a label-free (zero-shot) inference path | ❌ true zero-shot peaks at 0.614, and 0.425 on wheeze |
 | 5 | Schema helps *promptability* | ❌ prompt-style artefact; rewording flips the ranking |
 | 6 | Too few in-batch negatives (23 vs CLIP's 32,767) | ❌ more negatives made it **worse**, saturating by 1,024 |
+| 7 | Global mean-pooling destroys crackle transients; local alignment would fix it | ❌ premise false — global mean is the *best* readout, headroom 0.000 |
 
 **21 alignment runs across 2 splits, 2 audio towers, 2 text towers, 5 text sources,
-2 targets. Not one beat the frozen-feature baseline.**
+2 targets. Not one beat the frozen-feature baseline.** The last direction with a
+mechanism behind it — patch-level alignment — was closed by measuring its premise
+rather than building it: time-resolved readouts are no better than the global mean,
+so there was no headroom to compete for.
 
 ## Why it fails
 

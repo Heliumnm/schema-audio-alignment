@@ -594,6 +594,48 @@ Two different audio-LLMs, two different failure points, same conclusion.
 reaches 0.796 — far above every respiratory-specific encoder tested. Anything built
 in this direction should start from AST, not the COLA line.
 
+## 2.99 The last direction with a mechanism, closed pre-emptively
+
+Every alignment run compared one mean-pooled vector per cycle against one text
+embedding. That looked like the wrong operation for crackles — 5–20 ms transients
+inside a 2–3 s cycle, averaged away by a global mean — which made local (patch-level)
+alignment, the GLoRIA/BioViL fix for chest X-ray, the one remaining variant with a
+mechanism rather than a "scale it up" argument.
+
+Before spending 3–4 weeks on it, the premise was measured: does the label information
+live in the time axis at all? Four readouts on the same frozen AST features (first 6
+layers), official split, 3 seeds:
+
+| readout | dim | wheeze | crackle |
+|---|---:|---:|---:|
+| **mean (global)** | 768 | **0.807** | **0.750** |
+| max (transient-sensitive) | 768 | 0.724 | 0.712 |
+| mean+max | 1,536 | 0.747 | 0.725 |
+| segments (4 blocks) | 3,072 | 0.803 | 0.734 |
+
+**Headroom over the global mean: 0.000 on both targets.** The transient-sensitive
+readout is *worse*, and quadrupling the temporal resolution buys nothing.
+
+The premise was wrong. AST's self-attention already aggregates globally — every token
+attends over the whole clip — so mean-pooling is not a bottleneck, and the task is
+cycle-level presence rather than localisation, for which global evidence is the right
+granularity. **Local alignment has no headroom to compete for; that direction closes
+without needing to be built.**
+
+### The line is finished
+
+| # | direction | verdict |
+|---|---|---|
+| 1 | frozen towers + projector (RespiraMFM design) | ❌ 15 runs below baseline |
+| 2 | trainable encoder | ⚠️ +0.10–0.20, still below no-alignment |
+| 3 | five text sources | ❌ text content barely matters |
+| 4 | zero-shot, prototype and prompt | ❌ ≤0.614, prompt-sensitive |
+| 5 | large negative queues | ❌ worse, saturates by 1,024 |
+| 6 | local / time-resolved alignment | ❌ no headroom to begin with |
+
+Six directions, each with controls and a diagnosis. This is not an unfinished
+investigation — it is a finished one with a negative answer.
+
 ## 2.8 Where this leaves the paper
 
 The originally planned contribution ("structured schema is the best text to align
