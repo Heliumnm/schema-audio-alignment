@@ -12,6 +12,11 @@ model tested.**
 
 Full detail in [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md); this is the summary.
 
+**Phase 2 is under way** under a reframing that survives the above — *can an explicit
+structured acoustic representation learn a field → spectrogram-patch correspondence*,
+where the payoff is grounding rather than classification. It also corrects two
+Phase-1 overstatements. See [`docs/PHASE2_MULTIPOSITIVE.md`](docs/PHASE2_MULTIPOSITIVE.md).
+
 ## What was tested and what happened
 
 | # | Hypothesis | Verdict |
