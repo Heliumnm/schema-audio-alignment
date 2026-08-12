@@ -208,3 +208,106 @@ only per-cycle presence flags. So:
   reporting onset tolerance / frequency overlap / box IoU agreement. With a single
   annotator this is **"human-annotated exploratory grounding"**, not clinical
   validation.
+
+
+---
+
+# Day 2–3 — the loss is not the bottleneck; the representation may be
+
+## Multi-positive: no effect on either target
+
+`soft-sharp` (S ≥ 0.75, then S⁴) was added because the plain soft target was
+degenerate. All three variants, both targets, same criterion:
+
+| target | single | exact | soft | soft-sharp |
+|---|---:|---:|---:|---:|
+| wheeze | 0.636 | 0.654 | 0.651 *(degenerate)* | 0.626 |
+| crackle | 0.689 | 0.693 | 0.676 | 0.681 |
+
+Every Δ fails: CI crosses zero, or seeds disagree, or both. **soft-sharp is *worse*
+than soft** (0.626 vs 0.651 on wheeze) — sharpening removes the near-neighbour
+positives and lands back near `single`, which means soft's apparent +0.024 came from
+target flattening, not from near-neighbour correction. Running only `single` vs
+`soft` would have supported the opposite reading; the third condition is what
+separates them.
+
+**Go/no-go criterion 1 fires: pause local alignment.** False negatives do not explain
+the Phase-1 negative result.
+
+## Content-matched string arms: format does nothing, and the apparent gain was a confound
+
+Schema v2 emits one field dict three ways, asserted content-matched down to the value
+strings. An early version silently failed this: `str.capitalize()` lowercased every
+value in the template arm ("Meditron" → "meditron") while the other arms kept case,
+so the arms differed at exactly the level the tokeniser sees. The assertion checked
+serialized-vs-typed only and passed anyway; it now covers the template arm too.
+
+| arm | wheeze AUROC |
+|---|---:|
+| RAW AST (no alignment) | **0.796** |
+| matched_serialized | 0.696 |
+| matched_template | 0.675 |
+
++0.021 looked like the first evidence for structure. It is not — **the sign flips
+when the recording block is removed**:
+
+| condition | template | serialized | Δ | verdict |
+|---|---:|---:|---:|---|
+| with recording (has `duration_s`) | 0.675 | 0.696 | +0.026, CI [−0.017, +0.073] | no effect |
+| acoustic only | 0.659 | 0.651 | **−0.021**, seeds disagree | no effect |
+
+v2's text carries continuous `duration_s`, and duration alone reaches AUROC 0.644 on
+crackle. It also drives the diversity: 6,812 distinct strings with the recording
+block, 1,430 without. **Serialisation format does nothing at matched content; the
+apparent effect was the duration confound arriving through the text.**
+
+## Typed set encoder: the first result to pass the criterion
+
+| arm | wheeze AUROC | MCC |
+|---|---:|---:|
+| string_frozen | 0.664 ± 0.016 | 0.206 |
+| string_trainable *(capacity-matched)* | 0.660 ± 0.007 | 0.202 |
+| **typed** | **0.706 ± 0.015** | **0.249** |
+
+```
+string_trainable vs string_frozen   Δ +0.0013  CI [−0.083, +0.075]  seeds disagree  -> no effect
+typed vs string_trainable           Δ +0.0495  CI [+0.0047, +0.0954]  3/3 same sign -> IMPROVES
+typed vs string_frozen              Δ +0.0511  CI [−0.024, +0.129]    3/3 same sign -> no effect
+```
+
+Two things this establishes:
+
+**Capacity is not the explanation.** Giving the string arm a trainable text MLP of
+the same shape moves nothing (+0.0013, seeds disagree). The confound that would have
+made this uninterpretable is ruled out by the arm built to rule it out.
+
+**typed beats the capacity-matched string arm, and it is the first comparison in this
+project to clear the pre-registered bar.** Go/no-go criterion 2 — *typed must beat
+matched template at identical content for "structure" to mean anything* — is met.
+
+### Stated precisely, because the margin is thin
+
+The lower CI bound is +0.0047. The comparison against `string_frozen` has a slightly
+*larger* point estimate (+0.0511) but a wider CI that crosses zero, because
+`string_frozen` has higher seed variance (±0.016 vs ±0.007) and its scores correlate
+less with typed's. So: **the comparison designed to isolate structure passes; the
+comparison against the original baseline does not.** Real, but marginal, and on one
+target.
+
+**And it still loses to doing nothing.** typed 0.706 vs RAW AST 0.796. Structure
+helps *within* alignment; alignment still costs 0.09 against not aligning.
+
+## Tension between the two go/no-go criteria
+
+Criterion 1 (multi-positive fails → pause local alignment) fired. Criterion 2 (typed
+must beat matched template) passed, and it establishes the premise local alignment
+needs — that the schema carries usable structure. They point opposite ways, so
+resuming local alignment is a judgement call rather than something the rules settle.
+
+Two cheap things run first, because a marginal single-target result should not be
+built on:
+
+- **crackle replication** — does it hold on the other target;
+- **shuffle controls** — permute whole schema records, permute each field's values
+  independently, and strip field identity. A gain that survives shuffling is not
+  coming from schema content.
