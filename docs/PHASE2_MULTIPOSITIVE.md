@@ -311,3 +311,70 @@ built on:
 - **shuffle controls** — permute whole schema records, permute each field's values
   independently, and strip field identity. A gain that survives shuffling is not
   coming from schema content.
+
+
+---
+
+# Day 3 controls — the typed result does not survive them
+
+Both pre-registered controls came back against it.
+
+## Shuffling the schema barely dents the gain
+
+| schema | typed AUROC | Δ vs string_trainable | verdict |
+|---|---:|---:|---|
+| **intact** | **0.706 ± 0.015** | **+0.0495** CI [+0.005, +0.095] | IMPROVES |
+| records permuted across segments | 0.651 ± 0.039 | +0.0323 | no effect |
+| each field's values permuted | 0.650 ± 0.043 | +0.0376 | no effect |
+| field identity stripped | 0.689 ± 0.011 | +0.0347 | no effect |
+
+The shuffled arms fail the criterion because seed variance rises, **not because the
+effect disappears** — the point estimates fall only from +0.0495 to +0.032…+0.038.
+Destroying the audio↔schema correspondence entirely leaves roughly three quarters of
+the advantage in place.
+
+So at most ~+0.012–0.018 of the +0.0495 is attributable to schema *content*; the rest
+comes from the set encoder's architecture or optimisation behaviour. That residual is
+inside the noise band of effects already rejected.
+
+## Crackle does not replicate — it reverses
+
+| arm | crackle AUROC | MCC |
+|---|---:|---:|
+| **string_frozen** | **0.703 ± 0.009** | 0.293 |
+| string_trainable | 0.694 ± 0.009 | 0.265 |
+| typed | 0.666 ± 0.008 | 0.224 |
+
+`typed vs string_trainable` is **−0.0292**, 3/3 seeds agreeing on the negative sign.
+On the second target the typed encoder is *worse* than the strings it beat on the
+first.
+
+## Retraction
+
+The previous entry recorded criterion 2 (*typed must beat matched template at
+identical content*) as met. **It is not.** That reading rested on a single target
+with the controls still running. With them in:
+
+- not replicable — the sign reverses on crackle;
+- not schema content — most of the gain survives shuffling the schema.
+
+Both go/no-go criteria now point the same way, and the tension between them
+disappears.
+
+**This is what the pre-registered controls were for.** Acting on the Day-2 reading
+would have meant 3–4 weeks of local alignment built on an effect that reverses on the
+other target and persists when its supposed cause is destroyed. The two controls cost
+under an hour.
+
+## Phase 2 outcome
+
+| # | hypothesis | verdict |
+|---|---|---|
+| 8 | False negatives explain the Phase-1 negative result | ❌ no effect, both targets, 3 loss variants |
+| 9 | Serialisation format matters at matched content | ❌ sign flips with the duration confound |
+| 10 | A typed set encoder beats strings at matched content | ❌ reverses on crackle; survives schema shuffling |
+
+Three more hypotheses, controlled, on top of Phase 1's seven. The grounding reframing
+remains untested — but it now rests on no evidence that the schema representation
+carries usable structure at all, and the annotation needed to evaluate it has not been
+collected.

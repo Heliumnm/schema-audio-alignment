@@ -5,8 +5,8 @@
 The project set out to test whether structured clinical schema text is a better
 alignment target than free-form LLM narration for respiratory audio, CLIP-style. It
 is not, and neither is anything else tried: **no form of contrastive audio–text
-alignment beat simply probing the frozen audio features.** Six hypotheses were
-falsified with controls. Along the way a separate result held up: **a general-purpose
+alignment beat simply probing the frozen audio features.** Ten hypotheses were
+falsified with controls, across two phases. Along the way a separate result held up: **a general-purpose
 AudioSet encoder substantially outperforms every respiratory-specific foundation
 model tested.**
 
@@ -28,6 +28,9 @@ Phase-1 overstatements. See [`docs/PHASE2_MULTIPOSITIVE.md`](docs/PHASE2_MULTIPO
 | 5 | Schema helps *promptability* | ❌ prompt-style artefact; rewording flips the ranking |
 | 6 | Too few in-batch negatives (23 vs CLIP's 32,767) | ❌ more negatives made it **worse**, saturating by 1,024 |
 | 7 | Global mean-pooling destroys crackle transients; local alignment would fix it | ❌ premise false — global mean is the *best* readout, headroom 0.000 |
+| 8 | False negatives explain it (multi-positive loss) | ❌ no effect on either target, across 3 loss variants |
+| 9 | Serialisation format matters at matched content | ❌ sign flips once the duration confound is removed |
+| 10 | A typed set encoder beats strings at matched content | ❌ reverses on crackle; ~¾ of the gain survives shuffling the schema |
 
 **21 alignment runs across 2 splits, 2 audio towers, 2 text towers, 5 text sources,
 2 targets. Not one beat the frozen-feature baseline.** The last direction with a
