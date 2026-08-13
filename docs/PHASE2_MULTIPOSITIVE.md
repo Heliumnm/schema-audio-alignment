@@ -378,3 +378,80 @@ Three more hypotheses, controlled, on top of Phase 1's seven. The grounding refr
 remains untested — but it now rests on no evidence that the schema representation
 carries usable structure at all, and the annotation needed to evaluate it has not been
 collected.
+
+
+---
+
+# Day 4 — the Day-3 rejection was itself wrong
+
+The Day-3 entry rejected hypothesis 10 on the strength of "shuffling keeps ~3/4 of
+the gain". **That reading is withdrawn.** It compared each shuffled arm against
+`string_trainable`; the question is `typed_intact` vs `typed_shuffled`, and on that
+axis:
+
+```
+intact 0.706  ->  record-shuffled 0.651     a drop of 0.055
+```
+
+which points the *opposite* way — toward correspondence mattering. Four defects made
+the number unusable regardless:
+
+| defect | why it invalidates |
+|---|---|
+| permutation applied to train **and** test | the test schema was scrambled too, so the arm was never "trained on noise, evaluated honestly" |
+| one fixed permutation | the shuffled score carries no sampling variance |
+| `fields` control zeroed the id channel only | value keys are `field#value`, so field identity leaked straight back |
+| bootstrap on seed-averaged predictions | the table reported seed-averaged AUROC — different estimands |
+
+## Two loss bugs, fixed
+
+- `S[i,i]` is already 1.0 (a record matches itself on every field), and the code then
+  added an identity — **the anchor's own positive was double-weighted**. Now clamped
+  with `maximum` instead.
+- The bidirectional loss reused the row-normalised `Q` against `lg.T`. `P/rowsum` is
+  not symmetric even when `S` is, so the reverse direction was targeting the wrong
+  distribution. It now normalises `S.T` separately.
+
+Neither is likely to close a 0.14 gap, but the multi-positive conclusion needs one
+clean re-run before it is stated as final.
+
+## Two conclusions narrowed
+
+**"The +0.021 serialisation gap was the duration confound."** Overstated — both arms
+contain duration in the with-recording condition, and *both* CIs cross zero. The
+defensible statement is only: **no reproducible serialisation-format effect was
+found.** The sign flip is as consistent with small-sample noise as with a mechanism.
+
+**"Schema carries no usable structure."** Out of scope. What was tested is a *coarse
+categorical* schema — low/medium/high tiers, wheeze type, crackle character,
+cycle-level likelihood. The fine-grained schema actually proposed — event start/end,
+frequency interval, raw pitch in Hz, duration, harmonicity, periodicity, confidence,
+phase, evidence mask — was never built. The result covers coarse typed encoding for
+global classification, nothing more.
+
+**Crackle is not a strict replication of wheeze.** The typed encoder is trained by a
+target-agnostic contrastive loss; the target enters only at the linear probe
+afterwards. Wheeze up and crackle down means one representation serves two downstream
+labels differently — not that the effect failed to replicate. Real replication needs
+another patient split, group cross-validation, or another wheeze-labelled corpus.
+Crackle also carries the device, location, duration and time-resolution problems
+already documented.
+
+## The audit now running
+
+Pre-registered before launch, unchanged by any result:
+
+> `typed_intact` beats record-shuffled, **and** all 5 seeds agree in sign, **and** the
+> paired patient-cluster bootstrap CI on (intact − shuffled) excludes zero.
+
+- shuffle applied to **train only**, test schema untouched;
+- **10 permutations**, so the shuffled arm has sampling variance;
+- **constant-schema** arm — every segment gets identical schema, removing all
+  per-sample signal;
+- **nofield** arm strips field identity from the value keys as well as the id channel;
+- paired bootstrap computed **within each seed**, then aggregated;
+- per-test-id predictions saved, not just AUROC.
+
+This answers whether the coarse schema carries global-representation signal. It does
+not touch grounding, which stays a separate question that global AUROC cannot stand
+in for.

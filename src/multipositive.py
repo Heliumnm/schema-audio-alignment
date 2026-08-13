@@ -85,7 +85,9 @@ def make_target(S_b, mode, torch):
         # at all. Thresholding at 0.75 (>=3 of 4 fields agreeing) and sharpening the
         # remainder keeps near-neighbours as positives without flattening the target.
         P = torch.where(S_b >= 0.75, S_b ** 4, torch.zeros_like(S_b))
-    P = P + torch.eye(n, device=S_b.device)  # the anchor is always its own positive
+    # S_b[i,i] is already 1.0 — a record matches itself on every field — so adding an
+    # identity here double-weighted the anchor's own positive. Clamp instead.
+    P = torch.maximum(P, torch.eye(n, device=S_b.device))
     return P / P.sum(1, keepdim=True).clamp(min=1e-8)
 
 
@@ -164,10 +166,14 @@ def main():
                     za = za / za.norm(dim=-1, keepdim=True).clamp(min=1e-8)
                     zt = zt / zt.norm(dim=-1, keepdim=True).clamp(min=1e-8)
                     lg = za @ zt.T / TAU
-                    Q = make_target(Sall[b][:, b], mode, torch)
-                    # symmetric cross-entropy against the target distribution
+                    Sb = Sall[b][:, b]
+                    Q = make_target(Sb, mode, torch)
+                    # the reverse direction needs its own normalisation: Q is
+                    # row-normalised, and P/rowsum is not symmetric even when S is,
+                    # so reusing Q against lg.T targets the wrong distribution
+                    Qt = make_target(Sb.T, mode, torch)
                     loss = 0.5 * (-(Q * lg.log_softmax(1)).sum(1).mean()
-                                  - (Q * lg.T.log_softmax(1)).sum(1).mean())
+                                  - (Qt * lg.T.log_softmax(1)).sum(1).mean())
                     opt.zero_grad(); loss.backward(); opt.step()
             head.eval()
             with torch.no_grad():
