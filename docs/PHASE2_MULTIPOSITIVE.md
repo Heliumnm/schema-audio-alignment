@@ -764,64 +764,86 @@ are inadmissible: outside the admissible set the manipulation is not representab
 all. This is the same resolution wall that limits crackle localisation to coarse
 Hit@±1.
 
-## The grounding result: hypothesis 11, rejected — and this time interpretable
+## Grounding, hypothesis 11: weak query-conditioned localisation, below the gate
 
 One attempt, criteria fixed before the run, official TRAIN split only (695 clips, 67
-patients, patient-disjoint train/dev). Query = one bit. Primary metric = within-clip
-2AFC between the two candidate regions, chance exactly 0.5.
+patients, patient-disjoint train/dev, seeds 0/1/2). Query = one bit. Primary metric =
+within-clip 2AFC between the two candidate regions, chance exactly 0.5. Per-example,
+per-seed predictions are saved under the frozen configuration in
+`results/grounding_v21_preds.npz`, and every number below is computed from them.
 
-| arm | 2AFC | 95% CI (patient bootstrap) |
-|---|---:|---|
-| **crop-probe oracle** (the gate's own classifier) | **1.000** | [1.000, 1.000] |
-| **learned per-patch head** | **0.569** | [0.538, 0.605] |
-| query-conditioned DSP | 0.549 | [0.481, 0.607] |
-| query_flip (forced within-clip flip) | 0.431 | — |
-| query_only | 0.500 | — |
-| query_constant | 0.500 | — |
-| position_only | 0.510 | — |
-| query_shuffled | 0.493 | — |
-| audio_shuffled | 0.521 | — |
-| audio_zeroed | 0.507 | — |
-| target_permuted | 0.503 | — |
+| arm | 2AFC | 95% CI | paired Δ vs intact | Δ 95% CI |
+|---|---:|---|---:|---|
+| **oracle-location crop classifier** | **1.000** | [1.000, 1.000] | −0.431 | [−0.462, −0.396] |
+| **learned per-patch bilinear head** | **0.569** | [0.538, 0.605] | — | — |
+| query-conditioned DSP | 0.549 | [0.481, 0.607] | +0.021 | [−0.043, +0.088] |
+| query_shuffled | 0.493 | — | +0.077 | [+0.035, +0.122] |
+| query_only | 0.500 | — | +0.069 | [+0.010, +0.138] |
+| query_constant | 0.500 | — | +0.069 | [+0.038, +0.105] |
+| target_permuted | 0.503 | — | +0.066 | [+0.036, +0.100] |
+| audio_zeroed | 0.507 | — | +0.062 | [−0.005, +0.136] |
+| position_only | 0.510 | — | +0.060 | [+0.031, +0.096] |
+| audio_shuffled | 0.521 | — | +0.049 | [+0.013, +0.084] |
+| *chance* | 0.500 | — | +0.069 | [+0.038, +0.105] |
 
-**Verdict: below the pre-registered 0.60 bar. Grounding is sealed, unmodified.**
+Deltas are paired on the same dev examples and bootstrapped by patient cluster.
+`audio_zeroed` produces a coin flip per example, so its delta CI is inflated by that
+arm's own variance rather than by any ambiguity about the model.
 
-Three things make this negative worth more than the three that preceded it.
+### What the numbers support
 
-**The signal that exists is real.** Every shortcut control sits at chance, and
-`query_flip` lands at 0.431 — precisely `1 − 0.569`. A model that ignored the query
-would have stayed at 0.569 when handed the wrong one. So the head does read the query
-and does route it in the right direction; it just barely does so.
+**The effect is real but small.** The model beats chance by +0.069 [+0.038, +0.105], and
+the paired deltas separate it from `query_shuffled`, `query_constant`, `target_permuted`,
+`position_only` and `audio_shuffled` — the arms that break the query correspondence, the
+target, or the acoustic content. So the head does condition on the query and does use the
+audio.
 
-**The information was fully available.** The crop-probe oracle — the *same* linear
-classifier the feasibility gate used, applied to the two candidate crops and asked to
-pick the one matching the query — scores **1.000**. This is not a tuned model and not a
-second attempt; it is the upper bound the learned head was being measured against. The
-correspondence is present in the patches and perfectly readable. What failed is the
-query-conditioned per-patch scoring head, not AST.
+**It did not reach the development gate.** 0.569 against the 0.60 criterion chosen before
+the run. Consequently the official test set was not touched and no real annotation was
+commissioned. Both were gated on this number and both remain unspent.
+
+**The distinction is fully present in the patches.** The *oracle-location crop
+classifier* — the feasibility gate's own linear classifier, handed both ground-truth
+event locations and asked only which crop matches the query — scores 1.000. It is not a
+competing method and not a tuned model; it isolates how much of the correspondence
+survives in AST's patches once localisation is free. The gap of −0.431 is the part the
+simple head does not extract.
 
 **Detection and selection come apart.** `hit@argmax` chance is about 0.033 (roughly 32
 mask patches among ~960 valid ones). The intact model reaches 0.546 and even
 `query_constant` reaches 0.442. Finding *an* event is nearly free; identifying *which*
-event the query names is nearly absent.
+event the query names is where almost all of the difficulty sits.
 
-That decomposition is the finding. Under the most favourable conditions obtainable —
-synthetic events, matched on every nuisance variable, a one-bit query, a target
-correspondence that a linear crop classifier reads at 1.000 — a contrastive
-query-to-patch objective still fails to learn the correspondence. The premise behind
-"a well-designed schema will provide a more detailed information mapping to the
-spectrogram" is not that the mapping is too coarse to specify. It is that this family of
-objectives does not learn the mapping even when it is handed one that is exact.
+### On `query_flip`
 
-### Limits of the claim
+Reported earlier as corroboration that the head reads the query. It is not, and it has
+been demoted to an algebraic sanity check. A clip contributes two examples with the same
+two regions and swapped labels, so evaluating one with the flipped query reproduces the
+other's scores; the win vector is the complement of intact's **by construction**, and
+0.431 = 1 − 0.569 is an identity rather than a measurement. It confirms the evaluation
+plumbing is consistent and nothing more. `query_shuffled`, `query_constant` and their
+paired deltas carry that evidence instead, and `query_flip` is excluded from the delta
+table.
 
-* One scoring architecture (rank-1 bilinear: linear patch projection, dot product with a
-  query embedding). A stronger head might close the gap to the oracle. Testing that would
-  have violated the pre-registration, so it was not tried, and this result does not rule
-  it out.
-* The DSP arm's CI covers 0.5, so it is not a working detector — its mel peak-picking is
-  defeated by the background breath sound. It therefore provides no ceiling, and the
-  "loses to DSP" branch of the plan never applied.
-* Synthetic events only. This is a mechanism probe; nothing here is a clinical result.
-* Harmonic vs inharmonic partial structure, not monophonic vs polyphonic wheeze — see
-  the v2.1 design note above for why the clinical framing had to be given up.
+### What is and is not claimed
+
+Claimed: a simple query-to-patch bilinear head learns weak, genuinely query-conditioned
+localisation of a synthetic acoustic distinction that AST's patches encode completely.
+
+Not claimed: that the correspondence is unlearnable. One rank-1 scoring architecture was
+tested — a linear patch projection dotted with a query embedding. **Region-aware or
+cross-attention heads are untested and are not ruled out.** The pre-registration allowed
+one attempt, so trying a second here would have converted a clean result into a search;
+that remains available as new, separately pre-registered work.
+
+Also not claimed: anything clinical. The events are synthetic, and the manipulation is
+harmonic vs inharmonic partial structure rather than monophonic vs polyphonic wheeze —
+component count was the variable that had to be equalised to close the geometry leak.
+The DSP arm's CI covers 0.5, so it never functioned as a ceiling and the "loses to DSP"
+branch of the plan did not apply.
+
+### One line
+
+AST patches encode the synthetic acoustic distinction, but a simple query-to-patch
+bilinear head extracts only weak query-conditioned localisation — enough to exceed
+chance, not enough to justify held-out testing or real annotation.

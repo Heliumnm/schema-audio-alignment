@@ -30,12 +30,22 @@ all of them fail:
                       content destroyed.
   query_shuffled      query bit permuted across clips: correspondence broken, marginals
                       preserved.
-  query_flip          no retraining. The trained model is evaluated with the opposite
-                      query while the target stays put. A model that reads the query
-                      must land near 1 - intact; a model that ignores it stays put.
+  query_flip          an algebraic sanity check, not evidence. A clip's two examples
+                      carry the same regions with the labels swapped, so evaluating with
+                      the opposite query reproduces the other example's scores and the
+                      win vector is the complement of intact's by construction. It
+                      confirms the evaluation plumbing is consistent; it cannot
+                      corroborate that the head reads the query, and it is excluded from
+                      the paired-delta table for that reason.
   audio_shuffled      each sample sees another clip's patch grid.
   audio_zeroed        patch grid zeroed (ties broken at random).
   target_permuted     which region counts as the answer is randomised during training.
+  oracle_location_crop  not a control and not a competitor: the feasibility gate's own
+                      crop classifier, handed BOTH ground-truth event locations and asked
+                      only to say which crop matches the query. It measures how much of
+                      the correspondence survives in the patches when localisation is
+                      given away for free, so it upper-bounds what any head could
+                      extract at these locations.
   dsp_query_cond      no learning. Inside each candidate region, find the middle partial
                       in the log-mel filterbank and measure its normalised
                       log-frequency position p between the endpoints: harmonic sits at
@@ -142,6 +152,7 @@ def main():
     ap.add_argument("--hidden", type=int, default=256); ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     ap.add_argument("--out", default="results/grounding_v21_train.json")
+    ap.add_argument("--preds_out", default="results/grounding_v21_preds.npz")
     args = ap.parse_args()
 
     dev = "cuda" if torch.cuda.is_available() else "cpu"
@@ -269,15 +280,19 @@ def main():
                 qt[:] = qt_save
             out["query_flip"] = evaluate(Sf, M[dvi], MD[dvi], OC[dvi],
                                          np.random.RandomState(7))
+            out["query_flip_wins"] = wins_vector(Sf, M[dvi], MD[dvi],
+                                                 np.random.RandomState(7))
         return out
 
-    res = {}
+    res, W = {}, {}
     for c in CONTROLS:
         runs = [run(c, s) for s in args.seeds]
+        W[c] = np.stack([r["wins"] for r in runs])
         res[c] = {k: [float(np.mean([r["intact_eval"][k] for r in runs])),
                       float(np.std([r["intact_eval"][k] for r in runs]))]
                   for k in runs[0]["intact_eval"]}
         if "query_flip" in runs[0]:
+            W["query_flip"] = np.stack([r["query_flip_wins"] for r in runs])
             res["query_flip"] = {k: [float(np.mean([r["query_flip"][k] for r in runs])),
                                      float(np.std([r["query_flip"][k] for r in runs]))]
                                  for k in runs[0]["query_flip"]}
@@ -300,6 +315,7 @@ def main():
         sd = -abs(pd - 0.5) if q == 0 else abs(pd - 0.5)
         wins.append(sq > sd)
     wins = np.array(wins, float)
+    W["dsp_query_cond"] = wins[None]
     res["dsp_query_cond"] = {"choice_2afc": [float(wins.mean()), 0.0],
                              "hit_argmax": [float("nan"), 0.0],
                              "ci": boot_ci(wins, pid[dvi])}
@@ -329,13 +345,15 @@ def main():
         pr = oc.predict_proba(np.stack([crop_at(c, CHARS[q]), crop_at(c, CHARS[1 - q])]))[:, 1]
         ow.append((pr[0] > pr[1]) if q == 1 else (pr[0] < pr[1]))
     ow = np.array(ow, float)
-    res["crop_probe_oracle"] = {"choice_2afc": [float(ow.mean()), 0.0],
-                                "hit_argmax": [float("nan"), 0.0],
-                                "ci": boot_ci(ow, pid[dvi])}
-    print(f"  {'crop_probe_oracle':<16s} 2AFC {ow.mean():.3f}  (gate classifier, upper bound)")
+    W["oracle_location_crop"] = ow[None]
+    res["oracle_location_crop"] = {"choice_2afc": [float(ow.mean()), 0.0],
+                                   "hit_argmax": [float("nan"), 0.0],
+                                   "ci": boot_ci(ow, pid[dvi])}
+    print(f"  {'oracle_location_crop':<20s} 2AFC {ow.mean():.3f}  "
+          f"(crop classifier given both event locations)")
 
     print(f"\n{'arm':<18s}{'2AFC':>9s}{'sd':>8s}{'hit@argmax':>13s}")
-    order = (["intact", "query_flip", "dsp_query_cond", "crop_probe_oracle"] +
+    order = (["intact", "query_flip", "dsp_query_cond", "oracle_location_crop"] +
              [c for c in CONTROLS if c != "intact"])
     for k in order:
         v = res[k]
@@ -344,7 +362,7 @@ def main():
               f"{v['hit_argmax'][0]:13.3f}{ci_s}")
 
     it, dsp = res["intact"]["choice_2afc"][0], res["dsp_query_cond"]["choice_2afc"][0]
-    orc = res["crop_probe_oracle"]["choice_2afc"][0]
+    orc = res["oracle_location_crop"]["choice_2afc"][0]
     bad = {k: res[k]["choice_2afc"][0] for k in CONTROLS + ["query_flip"] if k != "intact"}
     worst = max(bad, key=bad.get)
     print()
@@ -353,22 +371,49 @@ def main():
               f"The intact number ({it:.3f}) cannot be interpreted as grounding.")
     elif it < 0.60:
         lo, hi = res["intact"]["ci"]
-        above = "above chance" if lo > 0.5 else "not distinguishable from chance"
-        print(f"NO GROUNDING at the pre-registered bar: {it:.3f}, 95% CI [{lo:.3f}, "
-              f"{hi:.3f}] — {above}, but below the 0.60 criterion. Every shortcut "
-              f"control is at chance and query_flip mirrors the result, so what signal "
-              f"there is, is real and query-driven.")
-        print(f"  The crop-probe oracle reaches {orc:.3f} on the same 2AFC, so the "
-              f"information IS localisable from these patches; the per-patch bilinear "
-              f"head is what fails to extract it.")
+        print(f"BELOW THE DEVELOPMENT GATE: {it:.3f}, 95% CI [{lo:.3f}, {hi:.3f}] — "
+              f"weak but significantly above chance, and short of the 0.60 gate chosen "
+              f"in advance. Every shortcut control is at chance, and the paired deltas "
+              f"separate the model from query_shuffled, query_constant, target_permuted "
+              f"and position_only.")
+        print(f"  The oracle-location crop classifier reaches {orc:.3f}, so the "
+              f"distinction is fully present in these patches. What the simple "
+              f"query-to-patch bilinear head extracts is only a fraction of it.")
+        print("  Consequence: do not proceed to the official test set and do not "
+              "commission real annotation. Region-aware or cross-attention heads are "
+              "untested and are not ruled out.")
     elif it < dsp:
         print(f"MECHANISM ONLY: the model grounds ({it:.3f}, controls at chance) but "
               f"loses to the query-conditioned DSP detector ({dsp:.3f}). Claim the "
               f"mechanism, not a method.")
     else:
         print(f"GROUNDING: {it:.3f} with every control at chance and DSP at {dsp:.3f}.")
+    # ---- paired deltas, intact minus each arm, same dev examples, patient bootstrap.
+    # query_flip is excluded: a clip's two examples carry swapped regions, so its win
+    # vector is the complement of intact's by construction and its delta restates the
+    # intact estimate rather than testing anything.
+    print("\npaired delta vs intact (same dev examples, patient-cluster bootstrap)")
+    wi = W["intact"].mean(0)
+    res["paired_delta"] = {}
+    for k in [c for c in CONTROLS if c != "intact"] + ["dsp_query_cond", "oracle_location_crop"]:
+        d = wi - W[k].mean(0)
+        lo, hi = boot_ci(d, pid[dvi])
+        res["paired_delta"][k] = {"delta": float(d.mean()), "ci": [lo, hi]}
+        print(f"  intact - {k:<22s} {d.mean():+.4f}  95% CI [{lo:+.4f}, {hi:+.4f}]  "
+              f"excludes 0: {'yes' if (lo > 0 or hi < 0) else 'no'}")
+    lo, hi = res["intact"]["ci"]
+    print(f"  intact - chance{'':<17s} {wi.mean()-0.5:+.4f}  95% CI "
+          f"[{lo-0.5:+.4f}, {hi-0.5:+.4f}]  excludes 0: {'yes' if lo > 0.5 else 'no'}")
+
+    np.savez_compressed(args.preds_out,
+                        arms=np.array(list(W.keys())),
+                        wins=np.array([W[k] if W[k].shape[0] == len(args.seeds)
+                                       else np.repeat(W[k], len(args.seeds), 0)
+                                       for k in W], dtype=np.float32),
+                        seeds=np.array(args.seeds), pid=pid[dvi], query_bit=qb[dvi],
+                        clip_idx=ci[dvi])
     json.dump(res, open(args.out, "w"), indent=1)
-    print(f"wrote {args.out}")
+    print(f"wrote {args.out} and per-example per-seed predictions {args.preds_out}")
 
 
 if __name__ == "__main__":

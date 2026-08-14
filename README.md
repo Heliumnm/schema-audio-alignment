@@ -5,16 +5,20 @@
 The project set out to test whether structured clinical schema text is a better
 alignment target than free-form LLM narration for respiratory audio, CLIP-style. It
 is not, and neither is anything else tried: **no form of contrastive audio–text
-alignment beat simply probing the frozen audio features.** Ten hypotheses were falsified with controls across two phases. Along the way a separate result held up: **a general-purpose
+alignment beat simply probing the frozen audio features.** Ten hypotheses were falsified with controls across two phases, and an eleventh —
+patch-level grounding — produced a weak effect that fell short of its pre-registered
+development gate. Along the way a separate result held up: **a general-purpose
 AudioSet encoder substantially outperforms every respiratory-specific foundation
 model tested.**
 
 Full detail in [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md); this is the summary.
 
-**Phase 2 is under way** under a reframing that survives the above — *can an explicit
-structured acoustic representation learn a field → spectrogram-patch correspondence*,
-where the payoff is grounding rather than classification. It also corrects two
-Phase-1 overstatements. See [`docs/PHASE2_MULTIPOSITIVE.md`](docs/PHASE2_MULTIPOSITIVE.md).
+**Phase 2 is complete.** Its reframing — *can an explicit structured acoustic
+representation learn a field → spectrogram-patch correspondence*, with the payoff in
+grounding rather than classification — reached a pre-registered verdict on synthetic
+events: a weak, well-controlled effect that did not clear its development gate. Phase 2
+also corrects two Phase-1 overstatements. See
+[`docs/PHASE2_MULTIPOSITIVE.md`](docs/PHASE2_MULTIPOSITIVE.md).
 
 ## What was tested and what happened
 
@@ -30,7 +34,7 @@ Phase-1 overstatements. See [`docs/PHASE2_MULTIPOSITIVE.md`](docs/PHASE2_MULTIPO
 | 8 | False negatives explain it (multi-positive loss) | ❌ no effect on either target, across 3 loss variants |
 | 9 | Serialisation format matters at matched content | ❌ sign flips once the duration confound is removed |
 | 10 | A typed set encoder beats strings at matched content | ❌ a **constant** schema scores higher (0.750 vs 0.705, 5/5 seeds); alignment damage is monotone in how wrong the correspondence is |
-| 11 | A query→patch objective learns a field↔region correspondence | ❌ 0.569 2AFC [0.538, 0.605] against a 0.60 bar, while a linear crop classifier reads the same correspondence at **1.000** |
+| 11 | A query→patch objective learns a field↔region correspondence | ⚠️ **weak but real** — 0.569 2AFC [0.538, 0.605], significantly above chance, below the 0.60 development gate; an oracle-location crop classifier reads the same correspondence at 1.000 |
 
 **21 alignment runs across 2 splits, 2 audio towers, 2 text towers, 5 text sources,
 2 targets. Not one beat the frozen-feature baseline.** The last direction with a
@@ -103,51 +107,63 @@ log spectral centroid to 0.0002 octave. Its gate passes properly: **geometry-onl
 proxy — component count was the thing that had to be equalised — so it tests harmonic
 vs inharmonic partial structure and nothing more.
 
-## Grounding: sealed
+## Grounding: weak, and stopped at the development gate
 
-v2.1's gate passed properly, so the grounding experiment ran once, with criteria fixed
-in advance and every shortcut control the design admits. It failed at the bar — and
-unlike the three attempts before it, the failure is interpretable:
+v2.1's gate passed properly, so the grounding experiment ran once, criteria fixed in
+advance, official TRAIN split only, with every shortcut control the design admits.
 
-| arm | 2AFC | 95% CI |
-|---|---:|---|
-| **crop-probe oracle** (the gate's own classifier) | **1.000** | [1.000, 1.000] |
-| **learned per-patch head** | **0.569** | [0.538, 0.605] |
-| every shortcut control (8 arms) | 0.493–0.521 | at chance |
+| arm | 2AFC | 95% CI | paired Δ vs model |
+|---|---:|---|---:|
+| **oracle-location crop classifier** | **1.000** | [1.000, 1.000] | −0.431 [−0.462, −0.396] |
+| **query→patch bilinear head** | **0.569** | [0.538, 0.605] | — |
+| query-conditioned DSP | 0.549 | [0.481, 0.607] | +0.021 [−0.043, +0.088] |
+| 8 shortcut controls | 0.493–0.521 | at chance | +0.049 to +0.077 |
 
-The signal is real — `query_flip` lands at 0.431, exactly `1 − 0.569`, so the head does
-read the query. The information is fully present — the oracle reads the correspondence
-at 1.000. And detection separates cleanly from selection: `hit@argmax` reaches 0.546
-against a chance level of ~0.033, while choosing *which* of the two events the query
-names stays near chance.
+**The effect is weak but real.** +0.069 above chance [+0.038, +0.105], with paired
+deltas separating it from `query_shuffled`, `query_constant`, `target_permuted`,
+`position_only` and `audio_shuffled`. The head does condition on the query and does use
+the audio.
 
-Under the most favourable conditions obtainable — synthetic events matched on every
-nuisance variable, a one-bit query, and a correspondence a linear classifier reads
-perfectly — the contrastive query-to-patch objective still does not learn it. The
-proposal this project set out to test holds that a better-designed schema would supply a
-*more detailed information mapping* to the spectrogram. The mapping was not the binding
-constraint: handed an exact one, the objective did not use it.
+**It did not clear the 0.60 development gate**, so the official test set was not touched
+and no real annotation was commissioned. Both were gated on this number; both remain
+unspent.
 
-*Not claimed:* that no architecture can. One rank-1 bilinear head was tested, and the
-pre-registration forbade trying a second.
+**The distinction is entirely present in the patches.** The *oracle-location crop
+classifier* — the gate's own linear classifier, handed both ground-truth event locations
+and asked only which crop matches the query — scores 1.000. It is not a competing
+method; it isolates how much correspondence survives once localisation is free. Detection
+and selection come apart the same way: `hit@argmax` reaches 0.546 against ~0.033 chance,
+while choosing *which* event the query names stays near chance.
+
+**One rank-1 scoring architecture was tested.** Region-aware and cross-attention heads
+are untested and **not ruled out**; the pre-registration allowed a single attempt, so a
+second belongs to separately pre-registered work.
+
+> AST patches encode the synthetic acoustic distinction, but a simple query-to-patch
+> bilinear head extracts only weak query-conditioned localisation — enough to exceed
+> chance, not enough to justify held-out testing or real annotation.
 
 ## Where this stands
 
 Global alignment is finished: every hypothesis about it has been run with controls and
-rejected. Grounding is now finished too, sealed at the pre-registered bar.
+rejected. Grounding stopped at its development gate — a weak, controlled positive that
+does not justify spending the held-out test set or annotator time.
 
-**Ten hypotheses, two phases, all rejected.** Phase 1 asked whether any text source or
-training setup makes contrastive alignment work; Phase 2 asked whether the loss or the
-representation was at fault. The answer in both cases is neither — nothing beats
-probing the frozen features, and the schema representation shows no evidence of
-carrying usable structure.
+**Eleven hypotheses across two phases: ten rejected, one stopped at its gate.** Phase 1
+asked whether any text source or training setup makes contrastive alignment work; Phase 2
+asked whether the loss or the representation was at fault. The answer in both cases is
+neither — nothing beats probing the frozen features, and the schema representation shows
+no evidence of carrying usable structure. The eleventh, patch-level grounding, produced a
+weak but genuine effect that fell short of the bar set for it in advance.
 
-**Grounding has now been tested and rejected.** The reframing that opened Phase 2
-(structure may pay off in localisation rather than AUROC) reached a pre-registered
-verdict, and it also lacked its premise and its data from the start:
+**Grounding has now been tested and stopped short of its gate.** The reframing that
+opened Phase 2 (structure may pay off in localisation rather than AUROC) reached a
+pre-registered verdict on synthetic data, and it also lacked its premise and its data for
+anything beyond that:
 
 - its premise is gone: ten falsified hypotheses leave no evidence the schema
-  representation carries structure the model can use;
+  representation carries structure the model can use, and the eleventh reached only a
+  weak effect on synthetic events;
 - the annotation it needs does not exist. ICBHI has per-cycle presence flags and no
   event timing, so grounding can only be measured against a synthetic set (mechanism
   only, never a clinical result) or against manual annotation that has not been
