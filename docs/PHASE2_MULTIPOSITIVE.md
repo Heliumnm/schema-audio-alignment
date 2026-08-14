@@ -455,3 +455,76 @@ Pre-registered before launch, unchanged by any result:
 This answers whether the coarse schema carries global-representation signal. It does
 not touch grounding, which stays a separate question that global AUROC cannot stand
 in for.
+
+
+---
+
+# Day 4 audit — the constant-schema control settles it
+
+Rebuilt with train-only shuffling, 10 permutations, per-seed paired bootstrap and
+proper field-identity removal. wheeze, acoustic block, 5 seeds.
+
+| arm | AUROC |
+|---|---:|
+| *RAW AST, no alignment (reference)* | *0.796* |
+| **constant — every segment gets the same schema** | **0.750 ± 0.018** |
+| intact | 0.705 ± 0.011 |
+| nofield | 0.699 ± 0.030 |
+| record-shuffled (10 permutations) | 0.650 ± 0.025 |
+
+```
+intact − record-shuffled   Δ +0.0510  CI [−0.0127, +0.1248]  5/5 same sign  -> inconclusive
+intact − constant          Δ −0.0458  CI [−0.1181, +0.0295]  5/5 same sign  -> inconclusive
+intact − nofield           Δ +0.0068  CI [−0.0936, +0.1289]  signs disagree -> inconclusive
+```
+
+**The pre-registered criterion is not met.** `intact > shuffled` is +0.051 with all
+five seeds agreeing, but the paired CI crosses zero. No correspondence signal is
+established.
+
+## What the constant arm shows
+
+A constant schema removes the audio↔text correspondence entirely — every text
+embedding is identical, so InfoNCE has nothing to discriminate. It scores **higher
+than the real schema**, with all five seeds agreeing on the sign.
+
+The full ordering is monotone and mechanistically coherent:
+
+```
+no alignment    0.796
+constant        0.750     no correspondence      (neutral)
+intact          0.705     true correspondence
+shuffled        0.650     false correspondence   (actively wrong)
+```
+
+So the variable is not *whether the schema carries structure* but **how much the
+alignment objective damages the features**: none < uninformative < correct <
+incorrect. Any per-sample text target costs something; wrong targets cost more than
+right ones. Phase 1's conclusion arrives again by a wholly independent route.
+
+`nofield ≈ intact` also says field identity contributes nothing once values are
+present.
+
+## Verdict on hypothesis 10
+
+**Rejected** — but on the constant control, not the shuffle comparison the Day-3
+entry used. The Day-3 rejection reached the right answer through an analysis that
+did not support it; this one is properly powered and points the same way, plus it
+supplies a mechanism the earlier reading lacked.
+
+Worth noting which control did the work: the shuffle comparison, which both the
+Day-3 analysis and the audit's own primary criterion rest on, came back
+**inconclusive**. The decisive evidence came from the constant-schema arm added
+during review.
+
+## Where step 1 leaves things
+
+Answered: **the coarse categorical schema carries no global-representation signal**,
+and per-sample text alignment degrades the features monotonically with how wrong the
+correspondence is.
+
+Not answered: whether a **fine-grained** schema — event onsets, frequency intervals,
+raw Hz, harmonicity, confidence, phase — supports field→patch grounding. That schema
+was never built, and global AUROC cannot stand in for grounding. Step 2 is the small
+synthetic wheeze pilot, which needs no manual annotation to test whether the mapping
+mechanism works at all.
