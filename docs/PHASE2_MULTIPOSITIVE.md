@@ -607,3 +607,76 @@ clinical grounding.
 Under the plan's ordering, passing here is what justifies the **20-cycle real wheeze
 annotation pilot** — which is now the next step, and the one thing in this project
 that cannot be done without listening.
+
+
+---
+
+# Step 2 RETRACTED — the query contained the answer
+
+The pass is withdrawn. The query was
+
+    q = [onset + dur/2,  dur,  f0/1000]
+
+while the target is `t_idx = f(onset + dur/2)` and `f_idx = g(f0)` — both
+**deterministic functions of the query**. The task was coordinate arithmetic; the
+audio was never required.
+
+| scorer | Hit@±1 | freq_acc | 2D |
+|---|---:|---:|---:|
+| typed_intact | 0.935 | 0.894 | 0.582 |
+| **coordinate_only — no audio at all** | **1.000** | **1.000** | **1.000** |
+| audio_shuffled | 0.326 | 0.391 | 0.047 |
+| dsp_band_energy | 0.306 | 1.000 | 0.118 |
+
+A no-audio baseline scores **perfectly**, above the learned model. Every Step-2
+number is explained without listening: shuffled queries break the arithmetic, and
+swapping the query to the distractor's coordinates routes to the distractor's patch.
+
+`audio_shuffled` at 0.326 does show the learned scorer uses acoustic content — but
+that rescues nothing. The task does not *require* content, so there is no way to tell
+grounding from a noisier route to the same coordinate answer. **When a no-audio
+baseline is perfect, no positive number on that task is interpretable.**
+
+The `energy_tonality` baseline that existed to catch this was itself broken: it scored
+`np.linalg.norm(P, axis=-1)`, the magnitude of AST's embeddings, never touching the
+spectrogram. Its 0.099 said nothing about difficulty. The replacement DSP baseline
+leaks too — its `boost` term injects the queried frequency row directly, which is why
+its `freq_acc` is 1.000.
+
+## What this cost, and what it says about the process
+
+Step 2 was reported as "the first positive, controlled result in the project". It was
+neither positive nor controlled. The controls that exposed it — a coordinate-only
+baseline and an audio-content ablation — are the obvious ones for any grounding claim
+and should have been in the first design, not added after a pass was announced.
+
+The pattern to note: the previous single-injection failure was correctly diagnosed as
+a task-design flaw, the fix made the query load-bearing for *choosing between two
+events*, and the check stopped there. It never asked whether the query determined the
+answer outright.
+
+## Redesign — one attempt, criteria fixed in advance
+
+The query must not contain what is being localised.
+
+| evaluating | query may contain | query may not contain |
+|---|---|---|
+| time | type, pitch category, mono/poly | onset, offset |
+| frequency | type, duration, phase | exact frequency |
+| 2D | type, morphology, phase | onset and exact Hz |
+
+Design: each clip carries two acoustically distinct events — **A** monophonic with a
+stable fundamental, **B** polyphonic with frequency modulation — whose positions are
+randomised independently. The query names only `character: polyphonic`, so the model
+must follow the acoustic content to find which one it is.
+
+Go criteria, all required:
+
+1. `coordinate_only` and `attribute_only` fall to chance — the query cannot locate;
+2. audio zeroed or shuffled drops to chance;
+3. swapping the queried *attribute* moves the peak to the other event;
+4. intact beats shuffled-query, random and a correctly implemented DSP baseline;
+5. holds on unseen patients and unseen synthesis parameters.
+
+**One redesign, one run.** If it fails, grounding is sealed on this data rather than
+re-specified again.

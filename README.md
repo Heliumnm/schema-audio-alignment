@@ -75,33 +75,22 @@ compute, and far above the domain-specific alternatives.
 *Not claimed:* that OPERA is wrong in general. Four encoders, two corpora; HeAR, CLAP
 and AudioMAE were never tested, and OPERA reports 19 tasks.
 
-## One positive result: synthetic grounding
+## Grounding: a claimed positive, retracted
 
-Everything above measures cycle-level classification. Grounding — can a schema node
-point at the right time–frequency patch — is a separate question, and it is the one
-place the answer is yes.
+A synthetic grounding pilot was reported as passing — 0.935 Hit@±1 with correspondence
+controls at chance. **It was wrong.** The query encoded `[onset + dur/2, dur, f0]`
+while the target patch is a deterministic function of exactly those quantities, so the
+task was coordinate arithmetic. A **no-audio coordinate-only baseline scores 1.000**,
+above the learned model's 0.935.
 
-On synthetic injections with known onset and frequency, over unseen patients and an
-unseen frequency band:
+An audio-content ablation drops the learned scorer to 0.326, so it does use the audio
+— but when a no-audio baseline is perfect, no positive number on that task can be
+interpreted. The pass is withdrawn.
 
-| scorer | Hit@±1 | lands on distractor |
-|---|---:|---:|
-| **typed_intact** | **0.935** | **0.050** |
-| shuffled_coords (correspondence control) | 0.494 | 0.456 |
-| energy_tonality (no learning) | 0.099 | 0.000 |
-
-Each clip carries two injections and the query names one, so ignoring the query caps
-accuracy near 50% — which is exactly where the shuffled control lands. Swapping the
-query to the *distractor's* coordinates moves the peak there **90.1%** of the time.
-
-An earlier single-injection version showed no difference between intact and shuffled;
-the tone was conspicuous enough to find without reading the query at all, so the task
-could not test the hypothesis. That was a design failure, fixed by making the query
-load-bearing.
-
-**Limit, pre-registered:** injections are additive tones, real wheezes are not. This
-validates the mapping *mechanism*, never clinical grounding. Confirming the latter
-needs annotated real cycles, which do not exist yet.
+The redesign removes coordinates from the query entirely: two acoustically distinct
+events per clip (monophonic-stable vs polyphonic-FM) at randomised positions, with the
+query naming only the character. One attempt, criteria fixed in advance; if it fails,
+grounding is sealed on this data.
 
 ## Where this stands
 
