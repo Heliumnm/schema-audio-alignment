@@ -75,10 +75,39 @@ compute, and far above the domain-specific alternatives.
 *Not claimed:* that OPERA is wrong in general. Four encoders, two corpora; HeAR, CLAP
 and AudioMAE were never tested, and OPERA reports 19 tasks.
 
+## One positive result: synthetic grounding
+
+Everything above measures cycle-level classification. Grounding — can a schema node
+point at the right time–frequency patch — is a separate question, and it is the one
+place the answer is yes.
+
+On synthetic injections with known onset and frequency, over unseen patients and an
+unseen frequency band:
+
+| scorer | Hit@±1 | lands on distractor |
+|---|---:|---:|
+| **typed_intact** | **0.935** | **0.050** |
+| shuffled_coords (correspondence control) | 0.494 | 0.456 |
+| energy_tonality (no learning) | 0.099 | 0.000 |
+
+Each clip carries two injections and the query names one, so ignoring the query caps
+accuracy near 50% — which is exactly where the shuffled control lands. Swapping the
+query to the *distractor's* coordinates moves the peak there **90.1%** of the time.
+
+An earlier single-injection version showed no difference between intact and shuffled;
+the tone was conspicuous enough to find without reading the query at all, so the task
+could not test the hypothesis. That was a design failure, fixed by making the query
+load-bearing.
+
+**Limit, pre-registered:** injections are additive tones, real wheezes are not. This
+validates the mapping *mechanism*, never clinical grounding. Confirming the latter
+needs annotated real cycles, which do not exist yet.
+
 ## Where this stands
 
-The line is finished. Every testable hypothesis has been run with controls, and the
-one direction left untested is not viable on the current data.
+Global alignment is finished: every hypothesis about it has been run with controls and
+rejected. Grounding is not — it now has a positive synthetic result and a clear next
+step.
 
 **Ten hypotheses, two phases, all rejected.** Phase 1 asked whether any text source or
 training setup makes contrastive alignment work; Phase 2 asked whether the loss or the

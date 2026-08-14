@@ -528,3 +528,82 @@ raw Hz, harmonicity, confidence, phase — supports field→patch grounding. Tha
 was never built, and global AUROC cannot stand in for grounding. Step 2 is the small
 synthetic wheeze pilot, which needs no manual annotation to test whether the mapping
 mechanism works at all.
+
+
+---
+
+# Step 2 — synthetic grounding pilot: the first positive result
+
+Grounding is a different question from global classification, and Step 1 answered
+only the latter. No manual annotation exists, so this uses synthetic injections with
+known onset, duration and frequency. **It validates the mechanism only and is never a
+clinical result.**
+
+## The single-injection version could not test the hypothesis
+
+| scorer | Hit@1 | Hit@±1 | freq_acc | 2D |
+|---|---:|---:|---:|---:|
+| typed_intact | 0.584 | 0.965 | 0.962 | 0.567 |
+| **shuffled_coords** | **0.613** | **0.977** | 0.955 | **0.586** |
+| energy_tonality | 0.012 | 0.089 | 0.158 | 0.000 |
+
+Shuffling the query coordinates changed nothing, and a +0.4 s query shift moved the
+peak by +0.10 patches. The injected tone is conspicuous enough that the scorer found
+it straight from the patch features and **never read the query** — so the task could
+not discriminate the hypothesis either way. The `energy_tonality` baseline existed to
+catch exactly this and was too weak to (0.089).
+
+This is a design failure, not a negative result: the experiment did not test the
+thing. Fixed by making the query load-bearing rather than by relaxing anything.
+
+## Two injections make the query the only way to choose
+
+Each clip gets two injections, separated in both time and frequency; the query names
+one. Ignoring it caps accuracy near 50%.
+
+| scorer | Hit@1 | Hit@±1 | freq_acc | 2D | lands on distractor |
+|---|---:|---:|---:|---:|---:|
+| **typed_intact** | **0.617** | **0.935** | **0.894** | **0.582** | **0.050** |
+| shuffled_coords | 0.305 | 0.494 | 0.488 | 0.290 | 0.456 |
+| energy_tonality | 0.026 | 0.099 | 0.081 | 0.000 | 0.000 |
+| random | 0.029 | 0.102 | 0.094 | 0.003 | 0.010 |
+
+`shuffled_coords` now behaves as a correspondence control should — 0.494 Hit@±1 and
+0.456 on the distractor is a coin flip between the two injections. `typed_intact`
+lands on the distractor 5% of the time.
+
+## Query swap: the decisive test
+
+The +0.4 s nudge cannot discriminate in this design — the injections sit ~1 s apart,
+so the shifted point is still nearest the original and staying put is the *correct*
+answer. Swapping the query to the **distractor's** coordinates is the real test:
+
+```
+peak lands on the distractor   0.901
+peak stays on the original     0.031
+```
+
+Asked for the other injection, it points at the other injection. The query drives the
+choice.
+
+## Verdict
+
+**GO criterion passes**, on unseen patients *and* an unseen frequency band
+(1100–1500 Hz never appears in training):
+
+- 0.935 Hit@±1 with the correct query;
+- 0.901 follow-through when the query moves to the distractor;
+- both controls at chance or below.
+
+This is the **first positive, controlled result in the project**. AST's patch
+features do carry time–frequency localised information, and a schema node can address
+it.
+
+**What it does not establish.** Injections are additive tones; real wheezes arise from
+airway dynamics and sit inside the breath sound rather than on top of it. The
+pre-registered limit stands: synthetic evidence validates the mapping mechanism, never
+clinical grounding.
+
+Under the plan's ordering, passing here is what justifies the **20-cycle real wheeze
+annotation pilot** — which is now the next step, and the one thing in this project
+that cannot be done without listening.
