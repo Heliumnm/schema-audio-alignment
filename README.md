@@ -147,6 +147,11 @@ second belongs to separately pre-registered work.
 
 ## Where this stands
 
+The next hypothesis is pre-registered in
+[`docs/H12_DENSE_SCHEMA_CLIP.md`](docs/H12_DENSE_SCHEMA_CLIP.md): keep the 2-D patch grid,
+split the schema into field-level text queries, and learn field→region correspondence
+with a local contrastive loss. Nothing there has been run.
+
 Global alignment is finished: every hypothesis about it has been run with controls and
 rejected. Grounding stopped at its development gate — a weak, controlled positive that
 does not justify spending the held-out test set or annotator time.
@@ -231,6 +236,7 @@ src/official_split.py      the real ICBHI partition
 src/summarize.py           results table, baseline always included
 src/ctrl.py                bandwidth and depth controls
 scripts/                   server drivers; download_datasets.sh fetches the corpora
+docs/H12_DENSE_SCHEMA_CLIP.md  the next hypothesis, pre-registered and frozen
 docs/RUNBOOK.md           machines, the edit/run loop, fixed paths, operational traps
 docs/DATASET_NOTES.md      verified dataset structure and its traps
 docs/ENVIRONMENT.md        how to get weights onto the offline server
