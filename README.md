@@ -231,6 +231,7 @@ src/official_split.py      the real ICBHI partition
 src/summarize.py           results table, baseline always included
 src/ctrl.py                bandwidth and depth controls
 scripts/                   server drivers; download_datasets.sh fetches the corpora
+docs/RUNBOOK.md           machines, the edit/run loop, fixed paths, operational traps
 docs/DATASET_NOTES.md      verified dataset structure and its traps
 docs/ENVIRONMENT.md        how to get weights onto the offline server
 ```
