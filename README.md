@@ -30,6 +30,7 @@ Phase-1 overstatements. See [`docs/PHASE2_MULTIPOSITIVE.md`](docs/PHASE2_MULTIPO
 | 8 | False negatives explain it (multi-positive loss) | ❌ no effect on either target, across 3 loss variants |
 | 9 | Serialisation format matters at matched content | ❌ sign flips once the duration confound is removed |
 | 10 | A typed set encoder beats strings at matched content | ❌ a **constant** schema scores higher (0.750 vs 0.705, 5/5 seeds); alignment damage is monotone in how wrong the correspondence is |
+| 11 | A query→patch objective learns a field↔region correspondence | ❌ 0.569 2AFC [0.538, 0.605] against a 0.60 bar, while a linear crop classifier reads the same correspondence at **1.000** |
 
 **21 alignment runs across 2 splits, 2 audio towers, 2 text towers, 5 text sources,
 2 targets. Not one beat the frozen-feature baseline.** The last direction with a
@@ -87,16 +88,53 @@ An audio-content ablation drops the learned scorer to 0.326, so it does use the 
 — but when a no-audio baseline is perfect, no positive number on that task can be
 interpreted. The pass is withdrawn.
 
-The redesign removes coordinates from the query entirely: two acoustically distinct
-events per clip (monophonic-stable vs polyphonic-FM) at randomised positions, with the
-query naming only the character. One attempt, criteria fixed in advance; if it fails,
-grounding is sealed on this data.
+The first redesign (v2) reduced the query to a single bit — which character to locate —
+which does make coordinate leakage impossible. It leaked through the target mask
+instead: only one arm's frequency ratios were normalised, so the two characters differed
+in spectral centre, span and patch count, and **a probe on crop geometry alone with no
+audio reached 0.982**. That gate reported 1.000; it was measuring where the crop was.
+**Withdrawn.**
+
+v2.1 equalises geometry by construction rather than checking for it afterwards — three
+partials in both arms, endpoints pinned at `{1, 4}×fc`, mask spanning the whole band,
+and a counterbalanced ±0.368-octave displacement of the middle partial that matches the
+log spectral centroid to 0.0002 octave. Its gate passes properly: **geometry-only 0.477
+[0.412, 0.538], audio 0.999**. The cost is that it is no longer a mono/poly wheeze
+proxy — component count was the thing that had to be equalised — so it tests harmonic
+vs inharmonic partial structure and nothing more.
+
+## Grounding: sealed
+
+v2.1's gate passed properly, so the grounding experiment ran once, with criteria fixed
+in advance and every shortcut control the design admits. It failed at the bar — and
+unlike the three attempts before it, the failure is interpretable:
+
+| arm | 2AFC | 95% CI |
+|---|---:|---|
+| **crop-probe oracle** (the gate's own classifier) | **1.000** | [1.000, 1.000] |
+| **learned per-patch head** | **0.569** | [0.538, 0.605] |
+| every shortcut control (8 arms) | 0.493–0.521 | at chance |
+
+The signal is real — `query_flip` lands at 0.431, exactly `1 − 0.569`, so the head does
+read the query. The information is fully present — the oracle reads the correspondence
+at 1.000. And detection separates cleanly from selection: `hit@argmax` reaches 0.546
+against a chance level of ~0.033, while choosing *which* of the two events the query
+names stays near chance.
+
+Under the most favourable conditions obtainable — synthetic events matched on every
+nuisance variable, a one-bit query, and a correspondence a linear classifier reads
+perfectly — the contrastive query-to-patch objective still does not learn it. The
+proposal this project set out to test holds that a better-designed schema would supply a
+*more detailed information mapping* to the spectrogram. The mapping was not the binding
+constraint: handed an exact one, the objective did not use it.
+
+*Not claimed:* that no architecture can. One rank-1 bilinear head was tested, and the
+pre-registration forbade trying a second.
 
 ## Where this stands
 
 Global alignment is finished: every hypothesis about it has been run with controls and
-rejected. Grounding is not — it now has a positive synthetic result and a clear next
-step.
+rejected. Grounding is now finished too, sealed at the pre-registered bar.
 
 **Ten hypotheses, two phases, all rejected.** Phase 1 asked whether any text source or
 training setup makes contrastive alignment work; Phase 2 asked whether the loss or the
@@ -104,9 +142,9 @@ representation was at fault. The answer in both cases is neither — nothing bea
 probing the frozen features, and the schema representation shows no evidence of
 carrying usable structure.
 
-**The remaining direction — grounding — lacks both its premise and its data.** The
-reframing that opened Phase 2 (structure may pay off in localisation rather than
-AUROC) is still formally untested, but:
+**Grounding has now been tested and rejected.** The reframing that opened Phase 2
+(structure may pay off in localisation rather than AUROC) reached a pre-registered
+verdict, and it also lacked its premise and its data from the start:
 
 - its premise is gone: ten falsified hypotheses leave no evidence the schema
   representation carries structure the model can use;
@@ -139,8 +177,10 @@ trail is kept deliberately, in commit order:
 | local alignment is closed by the pooling diagnostic | that closed "raises AUROC", not "supports localisation" |
 | the split is ICBHI's official 60/40 | the upstream docstring was wrong; the two agree on 53.5% of recordings |
 | typed schema clears the pre-registered bar | reverses on crackle; ~¾ of the gain survives shuffling the schema |
+| the grounding pilot passes at 0.935 | the query contained the answer; a no-audio coordinate baseline scores 1.000 |
+| the v2 feasibility gate passes at 1.000 | only one arm's ratios were normalised; crop geometry alone scores 0.982 |
 
-Six retractions across ten hypotheses. Each came from a control that was cheaper than
+Eight retractions across eleven hypotheses. Each came from a control that was cheaper than
 the work it prevented.
 
 ## Protocol

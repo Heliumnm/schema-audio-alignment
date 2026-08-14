@@ -680,3 +680,148 @@ Go criteria, all required:
 
 **One redesign, one run.** If it fails, grounding is sealed on this data rather than
 re-specified again.
+
+## Redesign attempt 1 (v2): retracted before it could be used
+
+The v2 design replaced the coordinate query with a single bit — *which character to
+locate*, monophonic or polyphonic. That much worked: one bit cannot encode a position,
+so exact coordinate leakage is impossible by construction.
+
+It leaked anyway, through the target mask.
+
+Poly's ratios `(1, 1.37, 1.81)` were normalised to unit geometric mean, and mono's were
+not. `{1, 2}` has geometric mean √2 = 1.414, so **mono's spectral centre sat 41% above
+poly's** — the same class of confound the normalisation was introduced to remove, moved
+to the other arm and made larger. Mono also spanned a full octave against poly's 1.81,
+and the mask was the union of the occupied rows, so mask extent and patch count tracked
+the character too (mono 11.0 ± 1.9 patches, poly 13.6 ± 3.6).
+
+A probe on **crop and mask geometry alone, with no audio of any kind**, separated the
+two characters at **AUROC 0.982**:
+
+| feature, no audio | AUROC |
+|---|---:|
+| crop origin row | 0.782 |
+| highest occupied row | 0.790 |
+| row span | 0.744 |
+| number of occupied rows | 0.740 |
+| **all geometry, logistic regression** | **0.982** |
+
+The v2 gate reported AUROC 1.000 with a zero-width CI. That number measured where the
+crop was, not what was inside it. **The v2 feasibility pass is withdrawn.**
+
+The perfect score is what exposed it. A gate that clears its threshold by the largest
+possible margin is evidence about the design, not about the model.
+
+## Redesign attempt 2 (v2.1): geometry equalised by construction
+
+The rule the first three attempts each violated in a different way: **anything the
+target mask reveals is a leak.** v2.1 enforces it structurally instead of checking for
+it afterwards. Both characters are three simultaneous tones with endpoints fixed at
+`{1, 4} × fc`:
+
+    harmonic     fc × {1, 2.000, 4}        middle partial = 2nd harmonic
+    inharmonic   fc × {1, 1.550, 4}  or    middle partial displaced ∓0.368 octave,
+                 fc × {1, 2.581, 4}        counterbalanced
+
+so that identical endpoints give identical `row(fc)` and `row(4fc)`; the mask is the
+**whole band** rather than the union of occupied rows; component count is equal; and the
+symmetric, counterbalanced displacement matches the mean log spectral centroid exactly.
+`fc` is drawn from the admissible set on which the three middle rows are strictly
+ordered — 621 values in 362–1199 Hz, 73.7% of the range. Admissibility does not depend
+on character, so the restriction cannot leak either.
+
+The only remaining difference is **which row inside an identical band carries energy**.
+
+### What this costs
+
+This is no longer a monophonic-vs-polyphonic wheeze proxy. Clinical mono/poly wheezes
+differ in how many tones sound at once, and component count is precisely what had to be
+equalised. What remains is harmonic vs inharmonic partial structure — a mechanism probe
+on whether AST patches carry resolvable spectral fine structure, and nothing more.
+
+### Feasibility gate, 695 clips, official TRAIN split only
+
+| arm | AUROC | 95% CI |
+|---|---:|---|
+| **geometry only (no audio)** | **0.477** | [0.412, 0.538] |
+| harmonic vs inharmonic | 0.999 | [0.997, 1.000] |
+| event vs background | 1.000 | [1.000, 1.000] |
+
+Matching checks: log₂ centroid difference **0.0002 octave** (v2: 0.500), mask patch
+difference 0.28 (v2: 2.65), harm-first 0.5022, upward-variant 0.5007, region overlap
+0.000, geometry in-sample upper bound 0.544 (v2: 0.982).
+
+**Gate passed.** The geometry arm is at chance, so the 0.999 is acoustic. Note what that
+implies for the grounding task that follows: discrimination at a *known* location is
+essentially free, so all of the difficulty now sits in localisation. A grounding failure
+from here cannot be blamed on the encoder being unable to hear the manipulation.
+
+The AST frequency grid is the binding constraint throughout. Twelve rows cover
+0–8000 Hz, with boundaries at 205 / 405 / 645 / 935 / 1290 / 1720 / 2250 Hz — roughly
+half an octave to an octave per row in the wheeze band. That is why 26.3% of `fc` values
+are inadmissible: outside the admissible set the manipulation is not representable at
+all. This is the same resolution wall that limits crackle localisation to coarse
+Hit@±1.
+
+## The grounding result: hypothesis 11, rejected — and this time interpretable
+
+One attempt, criteria fixed before the run, official TRAIN split only (695 clips, 67
+patients, patient-disjoint train/dev). Query = one bit. Primary metric = within-clip
+2AFC between the two candidate regions, chance exactly 0.5.
+
+| arm | 2AFC | 95% CI (patient bootstrap) |
+|---|---:|---|
+| **crop-probe oracle** (the gate's own classifier) | **1.000** | [1.000, 1.000] |
+| **learned per-patch head** | **0.569** | [0.538, 0.605] |
+| query-conditioned DSP | 0.549 | [0.481, 0.607] |
+| query_flip (forced within-clip flip) | 0.431 | — |
+| query_only | 0.500 | — |
+| query_constant | 0.500 | — |
+| position_only | 0.510 | — |
+| query_shuffled | 0.493 | — |
+| audio_shuffled | 0.521 | — |
+| audio_zeroed | 0.507 | — |
+| target_permuted | 0.503 | — |
+
+**Verdict: below the pre-registered 0.60 bar. Grounding is sealed, unmodified.**
+
+Three things make this negative worth more than the three that preceded it.
+
+**The signal that exists is real.** Every shortcut control sits at chance, and
+`query_flip` lands at 0.431 — precisely `1 − 0.569`. A model that ignored the query
+would have stayed at 0.569 when handed the wrong one. So the head does read the query
+and does route it in the right direction; it just barely does so.
+
+**The information was fully available.** The crop-probe oracle — the *same* linear
+classifier the feasibility gate used, applied to the two candidate crops and asked to
+pick the one matching the query — scores **1.000**. This is not a tuned model and not a
+second attempt; it is the upper bound the learned head was being measured against. The
+correspondence is present in the patches and perfectly readable. What failed is the
+query-conditioned per-patch scoring head, not AST.
+
+**Detection and selection come apart.** `hit@argmax` chance is about 0.033 (roughly 32
+mask patches among ~960 valid ones). The intact model reaches 0.546 and even
+`query_constant` reaches 0.442. Finding *an* event is nearly free; identifying *which*
+event the query names is nearly absent.
+
+That decomposition is the finding. Under the most favourable conditions obtainable —
+synthetic events, matched on every nuisance variable, a one-bit query, a target
+correspondence that a linear crop classifier reads at 1.000 — a contrastive
+query-to-patch objective still fails to learn the correspondence. The premise behind
+"a well-designed schema will provide a more detailed information mapping to the
+spectrogram" is not that the mapping is too coarse to specify. It is that this family of
+objectives does not learn the mapping even when it is handed one that is exact.
+
+### Limits of the claim
+
+* One scoring architecture (rank-1 bilinear: linear patch projection, dot product with a
+  query embedding). A stronger head might close the gap to the oracle. Testing that would
+  have violated the pre-registration, so it was not tried, and this result does not rule
+  it out.
+* The DSP arm's CI covers 0.5, so it is not a working detector — its mel peak-picking is
+  defeated by the background breath sound. It therefore provides no ceiling, and the
+  "loses to DSP" branch of the plan never applied.
+* Synthetic events only. This is a mechanism probe; nothing here is a clinical result.
+* Harmonic vs inharmonic partial structure, not monophonic vs polyphonic wheeze — see
+  the v2.1 design note above for why the clinical framing had to be given up.
