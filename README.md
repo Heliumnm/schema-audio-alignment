@@ -1,5 +1,7 @@
 # Contrastive audio–text alignment for respiratory sound
 
+> 中文完整故事版：[docs/项目完整故事_中文.md](docs/项目完整故事_中文.md)
+
 **A negative result, thoroughly controlled — plus one finding that outlived it.**
 
 The project set out to test whether structured clinical schema text is a better
