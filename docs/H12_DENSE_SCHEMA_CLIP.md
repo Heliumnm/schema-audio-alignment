@@ -157,9 +157,18 @@ the uniform-positive one?
 These criteria are an operationalisation of "if MIL-search does not beat H11, the hope for
 Dense CLIP cannot be attributed to the search objective". They are frozen before the run.
 
-**If Stage 1A fails**, the search objective is not the mechanism, Stage 1B is not run, and
-the multi-field synthesis is not built. Failing here does **not** license swapping in a
+**If Stage 1A fails**, ~~the search objective is not the mechanism,~~ Stage 1B is not run,
+and the multi-field synthesis is not built. Failing here does **not** license swapping in a
 third loss inside H12.
+
+> **Narrowed after the run, and marked rather than silently edited.** The struck clause was
+> an interpretation written into the pre-registration, not one of its criteria, and it was
+> too strong: this gate can only speak for the metric it named. The consequence it gates —
+> Stage 1B not run, synthesis not built — is unchanged and was applied. The accurate
+> statement is the one recorded below: **region-mass did not pass H12's pre-specified
+> mean-region 2AFC primary criterion, so H12 does not support proceeding to Stage 1B; the
+> pre-registered secondary Hit@argmax showed a strong and stable query-conditioned pointing
+> signal.**
 
 ### What Stage 1A returned — the primary criterion fails
 
@@ -191,6 +200,13 @@ the mean is carried by one of the three.
 **Criterion 1 fails and criterion 4 fails. By the gate frozen above, Stage 1A does not
 pass, Stage 1B is not run, and the multi-field synthesis is not built.**
 
+Stated precisely, and this is the sentence the rest of the document should be read
+against: **region-mass did not pass H12's pre-specified mean-region 2AFC primary
+criterion, so H12 does not support proceeding to Stage 1B; the pre-registered secondary
+Hit@argmax showed a strong and stable query-conditioned pointing signal.** The gate speaks
+for the metric it named and for nothing wider — it does not establish that the objective
+is inert, and no claim of that form is made here.
+
 ### The pattern is not noise, and it is not a rescue
 
 Criterion 2 — a pre-registered *secondary* requirement, not a primary — moved decisively
@@ -210,12 +226,15 @@ uniform positive term it matches exactly.
 the result is precisely what this project has retracted results for, and the gate was
 frozen before the run for that reason. Two things follow instead:
 
-1. Stage 1B stays unrun and `dense_schema_clip.py` stays unwritten;
-2. "the primary metric is mis-specified for a concentrating objective" is a **new
-   hypothesis needing its own document**, with a max-based localisation metric named as
-   primary *before* anything is run. The score maps were not saved, so a max-based 2AFC is
-   not computable from `results/h12_stage1a_preds.npz` and would require a re-run — which
-   is a decision to be taken deliberately, not a number to be produced now.
+1. H12 is sealed here. Stage 1B stays unrun and `dense_schema_clip.py` stays unwritten;
+2. the pointing signal becomes the premise of a **new pre-registered hypothesis**,
+   [`H13_COMPOSITIONAL_POINTING.md`](H13_COMPOSITIONAL_POINTING.md), with max-based
+   metrics named primary *before* anything is run.
+
+**The old data is not re-scored.** Re-running Stage 1A to compute a more favourable
+max-based 2AFC on the same models would be picking the metric after seeing the result, and
+it is explicitly not done — the score maps were not saved and will not be regenerated for
+that purpose. H13 earns its metrics on new synthesis instead.
 
 One measurement worth carrying forward regardless: under a patient × seed hierarchical
 bootstrap, **H11's own intact CI is [0.511, 0.631]**, against the published patient-only

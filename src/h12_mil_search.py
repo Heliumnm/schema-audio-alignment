@@ -318,10 +318,13 @@ def main():
               f"  -> criterion 2 {c2}")
         print(f"  seed signs {['%+.3f' % x for x in sgn]}  -> criterion 4 {c4}")
     else:
-        print(f"STAGE 1A FAILS: region-mass minus uniform is {d2['delta']:+.4f}, CI "
-              f"[{d2['ci'][0]:+.4f}, {d2['ci'][1]:+.4f}], which does not exclude 0. The "
-              f"search objective is not the mechanism. Per the pre-registration, Stage 1B "
-              f"is not run and the multi-field synthesis is not built.")
+        print(f"STAGE 1A FAILS ON ITS PRIMARY CRITERION: region-mass minus uniform is "
+              f"{d2['delta']:+.4f}, CI [{d2['ci'][0]:+.4f}, {d2['ci'][1]:+.4f}], which "
+              f"does not exclude 0. Per the pre-registration, Stage 1B is not run and the "
+              f"multi-field synthesis is not built.")
+        print(f"  This speaks for the metric it named and no wider: hit@argmax moved "
+              f"{dh['delta']:+.4f} [{dh['ci'][0]:+.4f}, {dh['ci'][1]:+.4f}], so it is NOT "
+              f"a finding that the objective is inert.")
     print(f"\nwrote {args.out} and {args.preds_out}")
 
 
