@@ -33,14 +33,36 @@ patches jointly", and the region adapter follows from that reading. **But the or
 differs in two ways at once**: it reads a 5×3 crop jointly *and* it is handed both
 ground-truth locations. A region adapter addresses only the first.
 
-Separate them before building anything. Run the same frozen crop classifier as a
-**sliding window** over all valid positions, with no location given:
+Separate them before building anything. Score every valid window with the frozen 5×3 crop
+representation, **conditioned on the query**, and take the max over windows — the same
+readout dense CLIP will use, not a probe on pooled features:
 
-* sliding ≈ 1.000 → joint neighbourhood reading is sufficient; the region adapter is
-  motivated by evidence and H12 proceeds as designed;
-* sliding collapses toward chance → the bottleneck is **search**, not neighbourhood
-  reading, and adding conv + attention is an uncontrolled change of exactly the kind this
-  project has twice had to retract. Redesign the loss or the candidate mechanism instead.
+    s(q, f, t) = <query embedding, crop(P, f, t)>
+    region wins if  max over its windows  >  max over the distractor's windows
+
+* max-over-window ≈ 1.000 → joint neighbourhood reading is sufficient; the region adapter
+  is motivated by evidence and H12 proceeds as designed;
+* it collapses toward chance → the bottleneck is **search**, not neighbourhood reading,
+  and adding conv + attention is an uncontrolled change of exactly the kind this project
+  has twice had to retract. Redesign the loss or the candidate mechanism instead.
+
+### Why this is not H7 again
+
+H7 (`pooling_diagnostic.py`) already compared `mean` / `max` / `mean+max` / `segments`
+readouts on these same frozen AST features and found headroom 0.000, so a sliding window
+is, as a *feature* operation, just `segments` with overlap. The distinction is the
+estimand, and it has to stay explicit:
+
+| | H7 | Step 0 |
+|---|---|---|
+| query | none | one bit, conditions the score |
+| readout | pool features, then probe | query-conditioned similarity per window |
+| metric | classification AUROC (wheeze/crackle) | 2AFC localisation between two regions |
+| question | does time resolution raise accuracy? | can joint local reading *find* the region? |
+
+**Degeneracy guard:** if any Step-0 variant reduces to pooling features and probing for
+classification, it is H7, its answer is already known, and it must not be run or reported
+as new evidence. The query must enter the score, and the metric must be localisation.
 
 Uses only existing frozen data (`results/grounding_v21_manifest.json`, the v2.1 synthesis)
 and costs well under an hour. **No other H12 code is written until this reports.**
