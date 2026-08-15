@@ -1,0 +1,27 @@
+695 clips, 67 patients (TRAIN split only)
+frozen-synthesis check: 695 clips reproduce grounding_v21_manifest.json exactly
+patch grids (695, 12, 101, 768)
+train 938 / dev 452 examples, patient-disjoint
+window score maps (695, 8, 99)  (every valid 5x3 window, not just event crops)
+candidate windows per region: harm 30.51 +/-6.67 | inharm 30.70 +/-6.69 | delta 0.186   valid windows/clip 223.0
+
+--- Step 0: query-conditioned window search (dev, patient-cluster bootstrap) ---
+  oracle single window (H11 = 1.000) 2AFC 1.000  95% CI [1.000, 1.000]
+  max over windows in region  [PRIMARY] 2AFC 0.619  95% CI [0.575, 0.658]
+  mean over windows in region        2AFC 0.655  95% CI [0.579, 0.725]
+  hit@argmax over all valid windows  0.268   (chance 0.164)
+
+--- controls (all must sit at chance) ---
+  query_shuffled                     2AFC 0.496  95% CI [0.461, 0.529]
+  query_constant                     2AFC 0.500  95% CI [0.500, 0.500]
+  audio_shuffled                     2AFC 0.478  95% CI [0.435, 0.515]
+
+pairing check: 452 dev examples match grounding_v21_preds.npz in order
+
+paired delta vs H11 per-patch head (same dev examples, patient bootstrap)
+  max_over_windows         - h11 +0.0501  95% CI [+0.0129, +0.0841]  excludes 0: yes
+  oracle_single_window     - h11 +0.4307  95% CI [+0.3955, +0.4616]  excludes 0: yes
+
+PARTIAL: max over windows 0.619 against the oracle's 1.000. Neither branch of the pre-registered dichotomy fires cleanly; both joint reading and search carry part of the gap, and H12's design question is not settled by this run.
+
+wrote results/h12_step0_window.json
