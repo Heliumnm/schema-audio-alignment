@@ -1,0 +1,38 @@
+695 clips, 67 patients (TRAIN split only)
+frozen-synthesis check: 695 clips reproduce grounding_v21_manifest.json
+patch grids (695, 12, 101, 768)
+train 938 / dev 452 examples, patient-disjoint
+  uniform      intact           2AFC 0.569 +/-0.043   hit@argmax 0.546
+  region_mass  intact           2AFC 0.580 +/-0.032   hit@argmax 0.869
+  region_mass  query_only       2AFC 0.502 +/-0.008   hit@argmax 0.018
+  region_mass  query_constant   2AFC 0.500 +/-0.000   hit@argmax 0.487
+  region_mass  position_only    2AFC 0.474 +/-0.007   hit@argmax 0.273
+  region_mass  query_shuffled   2AFC 0.494 +/-0.008   hit@argmax 0.486
+  region_mass  audio_shuffled   2AFC 0.498 +/-0.021   hit@argmax 0.191
+  region_mass  audio_zeroed     2AFC 0.510 +/-0.006   hit@argmax 0.010
+  region_mass  target_permuted  2AFC 0.507 +/-0.013   hit@argmax 0.136
+
+reproduction check vs grounding_v21_preds.npz: 0 / 1356 per-example per-seed wins differ
+  seed 0: 0 differ, 2AFC 0.6150 (H11) vs 0.6150 (here)
+  seed 1: 0 differ, 2AFC 0.5819 (H11) vs 0.5819 (here)
+  seed 2: 0 differ, 2AFC 0.5111 (H11) vs 0.5111 (here)
+PASS — the harness is identical, so the loss is the only difference below.
+
+arm                             2AFC     sd         hier 95% CI     patient-only CI  hit@argmax
+uniform:intact                 0.569  0.043   [0.511, 0.631]   [0.538, 0.605]       0.546
+region_mass:intact             0.580  0.032   [0.528, 0.627]   [0.547, 0.611]       0.869
+region_mass:query_only         0.502  0.008   [0.451, 0.554]   [0.457, 0.549]       0.018
+region_mass:query_constant     0.500  0.000   [0.500, 0.500]   [0.500, 0.500]       0.487
+region_mass:position_only      0.474  0.007   [0.439, 0.499]   [0.442, 0.497]       0.273
+region_mass:query_shuffled     0.494  0.008   [0.473, 0.516]   [0.478, 0.508]       0.486
+region_mass:audio_shuffled     0.498  0.021   [0.460, 0.535]   [0.474, 0.519]       0.191
+region_mass:audio_zeroed       0.510  0.006   [0.462, 0.557]   [0.467, 0.555]       0.010
+region_mass:target_permuted    0.507  0.013   [0.484, 0.524]   [0.495, 0.515]       0.136
+
+paired delta, patient x seed hierarchical bootstrap (seeds matched by init)
+  2afc: region_mass - uniform      +0.0103  95% CI [-0.0656, +0.0990]  excludes 0: no
+  hit:  region_mass - uniform      +0.3237  95% CI [+0.2485, +0.3893]  excludes 0: yes
+
+STAGE 1A FAILS: region-mass minus uniform is +0.0103, CI [-0.0656, +0.0990], which does not exclude 0. The search objective is not the mechanism. Per the pre-registration, Stage 1B is not run and the multi-field synthesis is not built.
+
+wrote results/h12_stage1a_mil.json and results/h12_stage1a_preds.npz

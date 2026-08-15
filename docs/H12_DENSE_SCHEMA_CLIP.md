@@ -161,7 +161,72 @@ Dense CLIP cannot be attributed to the search objective". They are frozen before
 the multi-field synthesis is not built. Failing here does **not** license swapping in a
 third loss inside H12.
 
+### What Stage 1A returned — the primary criterion fails
+
+`src/h12_mil_search.py`, `results/h12_stage1a_mil.json`. The `uniform` arm reproduces
+`grounding_v21_preds.npz` **bit for bit** — 0 of 1356 per-example, per-seed wins differ,
+and the per-seed 2AFC matches to four decimals (0.6150 / 0.5819 / 0.5111). The harness is
+therefore provably identical and the positive aggregation is the only difference.
+
+| arm | 2AFC | seed sd | hier 95% CI | patient-only CI | hit@argmax |
+|---|---:|---:|---|---|---:|
+| uniform (H11) | 0.569 | 0.043 | [0.511, 0.631] | [0.538, 0.605] | 0.546 |
+| **region-mass** | **0.580** | 0.032 | [0.528, 0.627] | [0.547, 0.611] | **0.869** |
+| region-mass query_only | 0.502 | — | — | — | 0.018 |
+| region-mass query_constant | 0.500 | — | — | — | 0.487 |
+| region-mass position_only | 0.474 | — | — | — | 0.273 |
+| region-mass query_shuffled | 0.494 | — | — | — | 0.486 |
+| region-mass audio_shuffled | 0.498 | — | — | — | 0.191 |
+| region-mass audio_zeroed | 0.510 | — | — | — | 0.010 |
+| region-mass target_permuted | 0.507 | — | — | — | 0.136 |
+
+Paired, patient × seed hierarchical bootstrap, seeds matched by initialisation:
+
+* 2AFC: **+0.0103, 95% CI [−0.0656, +0.0990]** — does not exclude 0;
+* hit@argmax: **+0.3237, 95% CI [+0.2485, +0.3893]** — excludes 0.
+
+Per-seed 2AFC deltas are −0.022, −0.047, **+0.100**: the sign disagrees across seeds and
+the mean is carried by one of the three.
+
+**Criterion 1 fails and criterion 4 fails. By the gate frozen above, Stage 1A does not
+pass, Stage 1B is not run, and the multi-field synthesis is not built.**
+
+### The pattern is not noise, and it is not a rescue
+
+Criterion 2 — a pre-registered *secondary* requirement, not a primary — moved decisively
+and in the same direction on all three seeds (0.580 / 0.527 / 0.531 → 0.863 / 0.894 /
+0.852). It is genuinely query-conditioned: breaking the query collapses it to chance
+between the two regions (`query_shuffled` 0.486, `query_constant` 0.487), and breaking the
+target or the audio collapses it further (`target_permuted` 0.136, `audio_shuffled` 0.191).
+
+So the two metrics disagree, and the disagreement has a mechanical explanation. **2AFC
+scores the *mean* score inside each region; the region-mass objective concentrates mass on
+a few patches rather than raising all of them.** An objective that optimises a max-like
+quantity shows its gain in a max-like metric and not in a mean-like one. On this reading
+the primary metric was mis-specified *for this objective* — it was chosen for H11, whose
+uniform positive term it matches exactly.
+
+**This does not change the verdict.** Promoting a secondary metric to primary after seeing
+the result is precisely what this project has retracted results for, and the gate was
+frozen before the run for that reason. Two things follow instead:
+
+1. Stage 1B stays unrun and `dense_schema_clip.py` stays unwritten;
+2. "the primary metric is mis-specified for a concentrating objective" is a **new
+   hypothesis needing its own document**, with a max-based localisation metric named as
+   primary *before* anything is run. The score maps were not saved, so a max-based 2AFC is
+   not computable from `results/h12_stage1a_preds.npz` and would require a re-run — which
+   is a decision to be taken deliberately, not a number to be produced now.
+
+One measurement worth carrying forward regardless: under a patient × seed hierarchical
+bootstrap, **H11's own intact CI is [0.511, 0.631]**, against the published patient-only
+[0.538, 0.605]. The above-chance claim survives, but with much less margin than reported,
+and with a seed sd of 0.043 across three seeds a criterion asking for a +0.01 2AFC effect
+had very little power to begin with. That is a fact about the gate's design, recorded here
+for whoever pre-registers the next one — not a reason to reopen this one.
+
 ## Stage 1B — multi-field compositional text, on new synthesis
+
+**HELD.** Stage 1A did not pass, so nothing below has been run or built.
 
 Run only if Stage 1A passes. Official TRAIN split only; the test set is untouched at every
 stage.
@@ -324,12 +389,17 @@ New, in this order and not before:
 ## Order of work
 
 1. ~~commit Step 0~~ — done, `ad9b0b6`;
-2. ~~update this document's bottleneck explanation~~ — done, this revision;
-3. Stage 1A: loss-only validation on the frozen v2.1 data;
-4. only if it passes: rebuild the multi-field compositional synthesis;
-5. Dense Schema CLIP as the main Stage-1B arm;
-6. region adapter as the increment on top;
-7. real wheeze annotation only after the Stage-1B gate is cleared.
+2. ~~update this document's bottleneck explanation~~ — done, `edba6ca`;
+3. ~~Stage 1A: loss-only validation on the frozen v2.1 data~~ — **done, did not pass**;
+4. ~~only if it passes: rebuild the multi-field compositional synthesis~~ — **held**;
+5. ~~Dense Schema CLIP as the main Stage-1B arm~~ — **held**;
+6. ~~region adapter as the increment on top~~ — **held**;
+7. ~~real wheeze annotation~~ — **held**.
+
+The open question is not "which loss next" — the pre-registration forbids a third attempt
+inside H12. It is whether the metric mismatch Stage 1A exposed is worth a new
+pre-registered hypothesis with a max-based localisation metric named as primary in
+advance.
 
 ## The one-shot rule
 
