@@ -1,0 +1,28 @@
+pitch=low         40 admissible fc, mel rows [1, 2]
+pitch=mid        235 admissible fc, mel rows [2, 3]
+pitch=high       346 admissible fc, mel rows [3, 4]
+
+built 534 clips, 64 patients (166 skipped for length)
+
+--- matching checks ---
+  differing field: character 135  pitch 114  duration 155  intensity 130
+  character  first-slot value[0] rate 0.491  (must be ~0.500–0.5, order is randomised)
+  pitch      first-slot value[0] rate 0.326  (must be ~0.333–0.5, order is randomised)
+  duration   first-slot value[0] rate 0.504  (must be ~0.500–0.5, order is randomised)
+  intensity  first-slot value[0] rate 0.483  (must be ~0.500–0.5, order is randomised)
+filterbanks (534, 1024, 128)
+
+--- per-field ceiling (that field's own detector, on trials where it differs) ---
+field            n     2AFC   95% CI
+character      135    0.948   [0.915, 0.979]
+pitch          114    0.746   [0.670, 0.811]
+duration       155    0.961   [0.925, 0.989]
+intensity      130    0.515   [0.426, 0.615]
+
+combined (query, not told which field differs)    0.624   [0.580, 0.669]
+query_shuffled (must be at chance)                0.468   [0.430, 0.513]
+temporal Hit@argmax (combined detector)           0.526   [0.484, 0.563]   chance 0.346
+
+DSP ALREADY SOLVES duration (>= 0.900). Those fields are directly readable from the spectrogram, so the aggregate metric is carried by them and a model clearing the H13 gate would be matching a hand-written baseline. Redesign the field set before spending the weeks.
+
+wrote results/h13_dsp_ceiling.json
