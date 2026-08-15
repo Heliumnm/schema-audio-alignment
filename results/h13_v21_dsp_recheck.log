@@ -1,0 +1,25 @@
+695 clips reproduce grounding_v21_manifest.json
+filterbanks (695, 1024, 128)
+pairing check: 452 dev examples match grounding_v21_preds.npz in order
+
+variant A vs published dsp_query_cond: 0 / 452 differ (0.5487 vs 0.5487)
+PASS — the harness is identical, so B and C differ only where stated.
+
+arm                                     2AFC   95% CI
+A  published DSP (raw filterbank)      0.549   [0.481, 0.607]
+B  + background subtraction            0.659   [0.600, 0.751]
+C  + fc estimated from audio           0.947   [0.897, 0.985]
+H11 per-patch head                     0.569   [0.538, 0.605]
+H12 region-mass head                   0.580   [0.547, 0.611]
+
+paired deltas (same dev examples, patient-cluster bootstrap)
+  B - A      +0.1106  95% CI [+0.0302, +0.2430]  excludes 0: yes
+  B - H11    +0.0900  95% CI [+0.0095, +0.1973]  excludes 0: yes
+  B - H12    +0.0796  95% CI [+0.0056, +0.1880]  excludes 0: yes
+  C - A      +0.3982  95% CI [+0.3286, +0.4732]  excludes 0: yes
+  C - H11    +0.3776  95% CI [+0.3265, +0.4236]  excludes 0: yes
+  C - H12    +0.3673  95% CI [+0.3305, +0.4083]  excludes 0: yes
+
+THE GROUNDING LINE NEVER BEAT A HAND-WRITTEN DETECTOR. On the frozen v2.1 data, subtracting a per-bin background median takes the same published detector from 0.549 to 0.659, above H11's 0.569 and H12's 0.580. The published DSP arm was weak, not the task, and 'the DSP arm never functioned as a ceiling' has to be retracted.
+
+wrote results/h13_v21_dsp_recheck.json
