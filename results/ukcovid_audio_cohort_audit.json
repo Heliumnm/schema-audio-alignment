@@ -1,0 +1,93 @@
+{
+ "n_joined": 72999,
+ "primary_type": "cough",
+ "n_labelled": 72742,
+ "coverage": {
+  "cough": 72998,
+  "three_cough": 72999,
+  "exhalation": 72999
+ },
+ "missing_audio_flag": 1805,
+ "duplicates": {
+  "cough": {
+   "same_filename": 0,
+   "same_signature": 31142
+  },
+  "three_cough": {
+   "same_filename": 0,
+   "same_signature": 31308
+  },
+  "exhalation": {
+   "same_filename": 0,
+   "same_signature": 12337
+  }
+ },
+ "integrity": {
+  "checked": 72741,
+  "missing": 43,
+  "undecodable": 154,
+  "missing_examples": [
+   "105046_dubL8htcjwFo7W8w.wav",
+   "50574_OWoCCZAvunO9dv6r.wav",
+   "83596_TWFkBMRQCjF0vrq9.wav",
+   "82055_MaeJQMv09MqXa9qh.wav",
+   "83267_sJrWFU8kKH6lAO1O.wav"
+  ],
+  "undecodable_examples": [
+   "71-13-4eb21f81-3ef5-4ce9-b762fa41b39959c0.wav",
+   "71-13-4bb5ca38-7575-4760-a269449822ce044c.wav",
+   "71-13-fbf09bbc-549c-42e9-a706e905692c010e.wav",
+   "71-13-f438c9f4-2024-426a-bd7afff289bf24ad.wav",
+   "71-13-9cff6eb1-5793-44ce-aaa758d5b5744796.wav"
+  ],
+  "too_short": 86,
+  "min_duration_s": 0.5
+ },
+ "duration": {
+  "min": 0.0,
+  "median": 3.7546666666666666,
+  "max": 48.896,
+  "max_abs_mismatch": 7.105427357601002e-15,
+  "n_mismatch_gt_10ms": 0
+ },
+ "clipped_at_int16_max": 23255,
+ "splits": {
+  "train": {
+   "n_all": 20717,
+   "pos_all": 0.36057344210069026,
+   "n_audio": 20714,
+   "pos_audio": 0.36062566380225936,
+   "retained": 0.9998551913887146
+  },
+  "val": {
+   "n_all": 5180,
+   "pos_all": 0.36853281853281855,
+   "n_audio": 5179,
+   "pos_audio": 0.36860397760185365,
+   "retained": 0.9998069498069498
+  },
+  "test": {
+   "n_all": 11121,
+   "pos_all": 0.3434942900818272,
+   "n_audio": 11119,
+   "pos_audio": 0.3434661390412807,
+   "retained": 0.9998201600575488
+  },
+  "matched": {
+   "n_all": 1814,
+   "pos_all": 0.5,
+   "n_audio": 1814,
+   "pos_audio": 0.5,
+   "retained": 1.0
+  },
+  "matched_long": {
+   "n_all": 4196,
+   "pos_all": 0.5,
+   "n_audio": 4196,
+   "pos_audio": 0.5,
+   "retained": 1.0
+  }
+ },
+ "cohort_sha256_16": "974662e152d3b4b5",
+ "n_cohort": 72458
+}
