@@ -1,0 +1,37 @@
+cohort 72458 participants
+  measured 10000/72458
+  measured 20000/72458
+  measured 30000/72458
+  measured 40000/72458
+  measured 50000/72458
+  measured 60000/72458
+  measured 70000/72458
+wrote results/artefact_features.csv (72458 rows)
+joined 72458 participants with measured audio
+
+--- artefact features, by recruitment source ---
+  duration_s           REACT: 3.669   Test and Trace: 3.84
+  rms                  REACT: 2,140   Test and Trace: 2,147
+  clip_frac            REACT: 0   Test and Trace: 0
+  size_bytes           REACT: 3.441e+05   Test and Trace: 3.687e+05
+  crest_factor         REACT: 13.86   Test and Trace: 13.8
+
+--- clipping rate by recruitment source ---
+                          n  any_clipping  clip_frac_median
+recruitment_source                                         
+REACT               44295.0        0.3928               0.0
+Test and Trace      28163.0        0.3702               0.0
+
+--- artefact-only -> covid ---
+  standard       n= 11119  AUROC 0.622 [0.611, 0.633]
+  matched        n=  1814  AUROC 0.554 [0.528, 0.580]
+  matched_long   n=  4196  AUROC 0.553 [0.537, 0.571]
+
+--- artefact-only -> recruitment_source ---
+  standard       n= 11119  AUROC 0.616 [0.605, 0.626]
+  matched        n=  1814  AUROC 0.564 [0.522, 0.610]
+  matched_long   n=  4196  AUROC 0.578 [0.559, 0.596]
+
+wrote results/artefact_baseline.json
+
+These are the floors. An audio model that does not clear them is reading the microphone, not the cough.
