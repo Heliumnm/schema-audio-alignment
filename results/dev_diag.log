@@ -1,0 +1,9 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+64 annotator rows over 60 recordings
+model /mnt/hd/data_ycyang/models/Qwen2-Audio-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:05,  1.50s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:02<00:04,  1.39s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:04<00:02,  1.38s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:05<00:01,  1.33s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:05<00:00,  1.02it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:05<00:00,  1.16s/it]
+option token ids: {'A': [32, 362], 'B': [33, 425]}
+
+wrote results/dev_diag_scores.csv  rows=720
+format compliance (>=5% mass on the two option tokens): 1.0000
+Scoring and the gate are in teacher_score.py; this script decides nothing.
