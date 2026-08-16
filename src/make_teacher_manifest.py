@@ -17,27 +17,41 @@ SPLIT_SEED = 20260816       # committed; never re-drawn
 DEV_FRAC = 0.30
 
 
-def durations(uuids, audio_root):
-    """COUGHVID ships .webm and .ogg. soundfile reads ogg; webm needs librosa/audioread."""
+def decode_and_measure(uuids, audio_root, wav_dir):
+    """COUGHVID ships .webm (19,213) and .ogg (859). The webm files are MediaRecorder
+    output with **no duration field in the container**: ffprobe reports N/A and
+    librosa's audioread fallback returns 0.0 without raising. Reading either would have
+    frozen a manifest whose duration terciles were two-thirds zeros.
+
+    So decode once to 16 kHz mono wav -- which the model needs anyway -- and measure the
+    decoded stream. Any zero or missing duration is a hard failure, not a fill value."""
+    import subprocess
     import soundfile as sf
-    out = {}
-    for u in uuids:
-        d = np.nan
-        for ext in (".ogg", ".webm", ".wav"):
-            p = os.path.join(audio_root, u + ext)
-            if not os.path.exists(p):
-                continue
-            try:
-                info = sf.info(p)
-                d = info.frames / info.samplerate
-            except Exception:
-                try:
-                    import librosa
-                    d = librosa.get_duration(path=p)
-                except Exception:
-                    d = np.nan
-            break
+    os.makedirs(wav_dir, exist_ok=True)
+    out, failed = {}, []
+    for i, u in enumerate(uuids):
+        w = os.path.join(wav_dir, u + ".wav")
+        if not os.path.exists(w):
+            src = next((os.path.join(audio_root, u + e) for e in (".webm", ".ogg", ".wav")
+                        if os.path.exists(os.path.join(audio_root, u + e))), None)
+            if src is None:
+                failed.append((u, "no source file")); continue
+            r = subprocess.run(["ffmpeg", "-v", "error", "-i", src, "-ac", "1",
+                                "-ar", "16000", "-y", w], capture_output=True)
+            if r.returncode != 0:
+                failed.append((u, r.stderr.decode()[:80])); continue
+        try:
+            info = sf.info(w)
+            d = info.frames / info.samplerate
+        except Exception as e:
+            failed.append((u, str(e)[:80])); continue
+        if not np.isfinite(d) or d <= 0:
+            failed.append((u, f"duration {d}")); continue
         out[u] = d
+        if (i + 1) % 400 == 0:
+            print(f"  decoded {i+1}/{len(uuids)}", flush=True)
+    assert not failed, (f"{len(failed)} recordings have no usable duration, e.g. "
+                        f"{failed[:3]}; resolve before freezing")
     return pd.Series(out)
 
 
@@ -45,6 +59,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--long", required=True)
     ap.add_argument("--audio_root", required=True)
+    ap.add_argument("--wav_dir", default="/mnt/hd/data_heliu/resp_datasets/COUGHVID/wav16k")
     ap.add_argument("--out", default="results/teacher_split_manifest.csv")
     ap.add_argument("--config_out", default="results/teacher_run_config.json")
     args = ap.parse_args()
@@ -53,10 +68,10 @@ def main():
     L = L[L.label.isin(["dry", "wet"])].copy()
     print(f"{len(L)} annotator rows over {L.uuid.nunique()} recordings")
 
-    dur = durations(sorted(L.uuid.unique()), args.audio_root)
-    miss = int(dur.isna().sum())
-    print(f"durations read for {len(dur)-miss}/{len(dur)} recordings ({miss} missing)")
-    assert miss == 0, f"{miss} recordings have no readable audio; resolve before freezing"
+    dur = decode_and_measure(sorted(L.uuid.unique()), args.audio_root, args.wav_dir)
+    print(f"durations measured on decoded audio for {len(dur)} recordings; "
+          f"min {dur.min():.2f}s median {dur.median():.2f}s max {dur.max():.2f}s")
+    assert (dur > 0).all(), "a zero duration survived; do not freeze"
     L["duration_s"] = L.uuid.map(dur)
     L["duration_tercile"] = pd.qcut(L.uuid.map(dur), 3, labels=["t1", "t2", "t3"])
     L["quality"] = L["quality"].fillna("unknown")
@@ -97,7 +112,7 @@ def main():
             "cough_detected", "slice"]
     L[cols].sort_values(["uuid", "annotator"]).to_csv(args.out, index=False)
     h = hashlib.sha256(open(args.out, "rb").read()).hexdigest()[:16]
-    cfg = {"split_seed": SPLIT_SEED, "dev_frac": DEV_FRAC, "permutation_seed": 20260817,
+    cfg = {"wav_dir": args.wav_dir, "split_seed": SPLIT_SEED, "dev_frac": DEV_FRAC, "permutation_seed": 20260817,
            "n_permutations": 1000, "manifest_sha256_16": h,
            "model": "/mnt/hd/data_ycyang/models/Qwen2-Audio-7B-Instruct",
            "n_rows": int(len(L)), "n_recordings": int(L.uuid.nunique())}

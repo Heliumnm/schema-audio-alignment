@@ -1,0 +1,11 @@
+{
+ "wav_dir": "/mnt/hd/data_heliu/resp_datasets/COUGHVID/wav16k",
+ "split_seed": 20260816,
+ "dev_frac": 0.3,
+ "permutation_seed": 20260817,
+ "n_permutations": 1000,
+ "manifest_sha256_16": "a8f6d9481413a57a",
+ "model": "/mnt/hd/data_ycyang/models/Qwen2-Audio-7B-Instruct",
+ "n_rows": 1576,
+ "n_recordings": 1417
+}
