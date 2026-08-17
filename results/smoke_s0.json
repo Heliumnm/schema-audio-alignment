@@ -1,0 +1,56 @@
+{
+ "source_commit": "b4224f231f947f3ac3ba8dcafe1f11d8a9f3e525",
+ "input_hash": "7a562ebd0c42b3ce",
+ "arms": {
+  "correct": {
+   "pairing_ok": true,
+   "within_label_respected": true,
+   "trainable_params": 8,
+   "loss_framework": 2.153625011444092,
+   "loss_hand": 2.153625011444092,
+   "loss_matches_hand": true,
+   "recall_at_1": 16,
+   "memorised": true,
+   "out_dim": 2560,
+   "finite": true,
+   "nonzero": true,
+   "nonnegative": true,
+   "inputs_unchanged": true,
+   "first20_reproducible": true
+  },
+  "within_label": {
+   "pairing_ok": true,
+   "within_label_respected": true,
+   "trainable_params": 8,
+   "loss_framework": 2.1516125202178955,
+   "loss_hand": 2.1516127586364746,
+   "loss_matches_hand": true,
+   "recall_at_1": 16,
+   "memorised": true,
+   "out_dim": 2560,
+   "finite": true,
+   "nonzero": true,
+   "nonnegative": true,
+   "inputs_unchanged": true,
+   "first20_reproducible": true
+  },
+  "global": {
+   "pairing_ok": true,
+   "within_label_respected": true,
+   "trainable_params": 8,
+   "loss_framework": 2.152604579925537,
+   "loss_hand": 2.152604818344116,
+   "loss_matches_hand": true,
+   "recall_at_1": 16,
+   "memorised": true,
+   "out_dim": 2560,
+   "finite": true,
+   "nonzero": true,
+   "nonnegative": true,
+   "inputs_unchanged": true,
+   "first20_reproducible": true
+  }
+ },
+ "passed": true,
+ "failures": []
+}
