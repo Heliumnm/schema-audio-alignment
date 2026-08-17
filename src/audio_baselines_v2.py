@@ -63,12 +63,19 @@ def fit_head(X, y, tr, C):
 
 
 def make_folds(d, va):
-    """Five folds over the primary validation, stratified by label and matching stratum.
-    Frozen once; every arm and every C sees the identical partition."""
+    """Five folds over the FULL Standard validation, stratified by label and recruitment
+    source. Frozen once; every arm and every C sees the identical partition.
+
+    There is no target-like validation in this dataset and none is pretended: recruitment
+    source predicts the label at AUROC 0.9966 in Standard train, 0.9984 in Standard val and
+    0.999 in the 1,036-participant subset that was previously called matched-like, while
+    the matched test sets sit at exactly 0.5000. Selection therefore happens entirely in
+    the source domain, and matched / matched_long are out-of-distribution stress tests that
+    tune and calibrate nothing."""
     from sklearn.model_selection import StratifiedKFold
     idx = np.where(va)[0]
     strat = (d.loc[idx, "y"].astype(str) + "|" +
-             d.loc[idx, "stratum_matched_rebalanced_train"].fillna("NA").astype(str))
+             d.loc[idx, "recruitment_source"].fillna("NA").astype(str))
     vc = strat.value_counts()
     strat = strat.map(lambda s: s if vc[s] >= N_FOLDS else s.split("|")[0] + "|RARE")
     folds = np.full(len(d), -1)
@@ -148,7 +155,7 @@ def main():
     ap.add_argument("--cohort", default="results/ukcovid_audio_cohort.csv")
     ap.add_argument("--feats", default="results/artefact_features.csv")
     ap.add_argument("--emb", default="results/ast_embeddings.npz")
-    ap.add_argument("--out", default="results/audio_baselines_v2.json")
+    ap.add_argument("--out", default="results/audio_baselines_v3.json")
     ap.add_argument("--probes", action="store_true")
     args = ap.parse_args()
 
@@ -172,17 +179,20 @@ def main():
     y = d["y"].to_numpy()
 
     tr = (d["splits"] == "train").to_numpy()
-    va_m = ((d["splits"] == "val") & (d["in_matched_rebalanced_train"] == True)).to_numpy()  # noqa: E712
-    va_s = (d["splits"] == "val").to_numpy()
+    va_s = (d["splits"] == "val").to_numpy()          # the only validation set
+    va_m = va_s                                        # kept for interface compatibility
     tests = {"standard": (d["splits"] == "test").to_numpy(),
              "matched": (d["in_matched_rebalanced_test"] == True).to_numpy(),          # noqa: E712
              "matched_long": (d["in_matched_rebalanced_long_test"] == True).to_numpy()}  # noqa: E712
-    CAL_OF = {"standard": "standard", "matched": "matched", "matched_long": "matched"}
+    # One calibrator, fitted on the source-domain validation. The matched log-losses are
+    # therefore a measure of CALIBRATION TRANSFER out of the source domain, not of
+    # probability quality after recalibrating inside the target population.
+    CAL_OF = {"standard": "standard", "matched": "standard", "matched_long": "standard"}
 
-    folds = make_folds(d, va_m)
+    folds = make_folds(d, va_s)
     fc = np.bincount(folds[folds >= 0])
-    print(f"train {tr.sum()}  primary val {va_m.sum()} folds {list(fc)}  "
-          f"robustness val {va_s.sum()}")
+    print(f"train {tr.sum()}  Standard val {va_s.sum()} folds {list(fc)}  "
+          f"(matched/matched_long are OOD stress tests only)")
 
     A = d[ARTEFACT_FEATS].to_numpy(float)
     X = {"artifacts_only": A, "ast_only": E,
@@ -193,8 +203,7 @@ def main():
         print(f"\n--- {name} ({Xi.shape[1]} features) ---")
         C_sel, info = select_C(Xi, y, tr, folds, "primary")
         raw = fit_head(Xi, y, tr, C_sel)
-        cal = {"standard": platt(raw[va_s], y[va_s]),
-               "matched": platt(raw[va_m], y[va_m])}
+        cal = {"standard": platt(raw[va_s], y[va_s])}
         Pc = {k: apply_platt(cal[CAL_OF[k]], raw) for k in tests}
         P[name] = {"raw": raw, **Pc}
         res["selection"][name] = info
@@ -226,10 +235,10 @@ def main():
             print(f"  {a1:<20s} - {a0:<18s} ΔAUROC {da:+.4f} [{ca[0]:+.4f},{ca[1]:+.4f}]"
                   f" {star}   Δ(-ll) {dl:+.4f} [{cl[0]:+.4f},{cl[1]:+.4f}]")
 
-    np.savez_compressed("results/audio_baseline_preds_v2.npz",
+    np.savez_compressed("results/audio_baseline_preds_v3.npz",
                         participants=d[UNIT].to_numpy(), seeds=np.array([0]),
                         note="one deterministic solution per arm; seed axis length 1",
-                        **{f"{k}__{t}": P[k][t][None, :] for k in P for t in tests})
+                        **{f"{k}__{t}": P[k][t][None, :] for k in P for t in list(tests) + ["raw"]})
 
     if args.probes:
         print("\n=== probes on the frozen raw AST representation ===")
@@ -264,7 +273,7 @@ def main():
             print(f"  {t:<20s} " + "  ".join(
                 f"{k} {row[k]['auroc']:.3f}[{row[k]['ci'][0]:.3f},{row[k]['ci'][1]:.3f}]"
                 for k in tests))
-        np.savez_compressed("results/ast_probe_preds_v2.npz",
+        np.savez_compressed("results/ast_probe_preds_v3.npz",
                             participants=d[UNIT].to_numpy(), **probe_preds)
 
     json.dump(res, open(args.out, "w"), indent=1)
