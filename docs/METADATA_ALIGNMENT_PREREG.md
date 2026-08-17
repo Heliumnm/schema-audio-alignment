@@ -54,15 +54,63 @@ passed through unchanged; the loss is **one-directional audio→text**, not CLIP
 form (they cite Chen et al. 2020, not Radford et al.); negatives are **in-batch**; and
 **identical metadata texts are not given any special treatment**.
 
-Architecture and hyperparameters, from Appendix D: MLP 768 → 1024 → `D_LLM`, Layer
-Normalisation, ReLU, dropout 0.1, final linear. **500 epochs, learning rate 0.001,
-τ = 0.07.**
+## Everything frozen from the official source
+
+Pinned to RespiraMFM commit
+**`b4224f231f947f3ac3ba8dcafe1f11d8a9f3e525`**. Read from that source rather than inferred
+from the paper:
+
+| | value | where |
+|---|---|---|
+| projector | **768 → 1024 → 2560** | `model_projector.py`; `out_dim = d_llm`, and Phi-2's `d_llm` is 2560 |
+| block 1 | Linear, LayerNorm, ReLU, **Dropout 0.1** | `ContrastiveProjectionHead` |
+| block 2 | Linear, **LayerNorm, ReLU** | the trailing norm+activation the paper's appendix does not mention |
+| loss | one-directional audio→text | `symmetric_loss = False` is hard-coded; the symmetric branch exists but is unreachable |
+| temperature | 0.07 | `contrastive_loss` default |
+| batch | **64**, `shuffle=True`, `drop_last=False` | `DataLoader(..., batch_size=64, shuffle=True)` |
+| optimiser | **Adam, lr 1e-3**, PyTorch defaults, **no scheduler, no weight decay, no clipping** | `torch.optim.Adam(model.parameters(), lr=learning_rate)` |
+| epochs | **500**, and the **final** state is saved | `train.py` passes `num_epochs=500`, overriding the function's default of 100; `..._final.pth` is written after the loop |
+| text pooling | mean over the sequence | `last_hidden_state.mean(dim=1)` |
+| text max length | 125 | `truncation=True, max_length=125` |
+
+**Two deliberate departures, both forced by our texts and recorded as ours:**
+
+* **`max_length = 200`.** Our schema texts are 188–200 tokens, so 125 fits none of the
+  12,992. This says our texts are long; it is not a claim about RespiraMFM's own contexts,
+  which we have not measured.
+* **mask-aware mean rather than plain mean.** The official code encodes one context at a
+  time, so its `padding=True` adds no padding and its plain mean already *is* a valid-token
+  mean. Batching the cache preserves that semantics; it does not change it.
+
+**An implementation property worth stating plainly:** the projector ends in ReLU, so its
+output is non-negative and every projected audio vector lies in the positive orthant. After
+`F.normalize` all pairwise cosines among audio projections are therefore ≥ 0. This is
+copied faithfully and is recorded as a property of the architecture, not as a defect or a
+predicted cause of failure.
+
+### Seeds and shuffled pairings
+
+Seeds `0, 1, 2, 3, 4`. Within a seed the three trained arms share initialisation, audio
+batch order and the dropout random stream, so only the pairing differs.
+
+Each shuffled pairing is **drawn once per seed and held fixed for all 500 epochs**, never
+resampled per epoch. `within_label_shuffled` permutes participants inside each COVID label;
+`global_shuffled` permutes across the whole training set. Both forbid self-pairing. The
+mapping and its hash are saved. Landing on an identical schema by chance is **not**
+prevented — the collision rate is measured and reported.
+
+### The duplicate-induced loss floor, from the real manifest
+
+20,714 training participants at batch 64 with `drop_last=False` gives 323 full batches plus
+one of 42. Mean `log K` over that manifest is **0.5553 nats** (sd 0.0020 over 20 shuffles).
+Training reports the manifest value; the iid batch-64 approximation of 0.5658 is not used.
+Standard train carries **5,437** distinct texts over those 20,714 participants.
 
 ### Single-positive stays; multi-positive is a sanity check, not an arm
 
-20,714 training participants produce only 5,289 distinct schema texts, and the single most
-common profile covers 7.9% of them, so 2.12% of each anchor's in-batch negatives carry a
-text identical to its own.
+20,714 training participants produce only **5,437** distinct schema texts, and the single
+most common profile covers 7.9% of them, so a sizeable share of each anchor's in-batch
+negatives carries a text identical to its own.
 
 That is **a loss floor, not a learning pathology**. With K identical texts in a batch,
 
