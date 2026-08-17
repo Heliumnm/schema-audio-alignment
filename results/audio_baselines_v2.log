@@ -1,0 +1,70 @@
+train 20714  primary val 1036 folds [208, 207, 207, 207, 207]  robustness val 5179
+
+--- artifacts_only (10 features) ---
+  [primary] 0.001:0.5791  0.003:0.5752  0.01:0.5708  0.03:0.5695  0.1:0.5687  0.3:0.5688  1.0:0.5688  3.0:0.5689
+  [primary] best C=0.001 (0.5791 +/- 0.0119 SE); 1-SE band >= 0.5672 -> C=0.001
+  standard       AUROC 0.595  logloss 0.6414  slope 0.561  intercept -0.349  Brier 0.2224
+  matched        AUROC 0.534  logloss 0.6957  slope 0.332  intercept -0.012  Brier 0.2507
+  matched_long   AUROC 0.530  logloss 0.6939  slope 0.432  intercept -0.000  Brier 0.2503
+
+--- ast_only (768 features) ---
+  [primary] 0.001:0.6470  0.003:0.6565  0.01:0.6635  0.03:0.6683  0.1:0.6708  0.3:0.6716  1.0:0.6723  3.0:0.6725
+  [primary] best C=3.0 (0.6725 +/- 0.0222 SE); 1-SE band >= 0.6503 -> C=0.003
+  standard       AUROC 0.708  logloss 0.6037  slope 0.604  intercept -0.334  Brier 0.2047
+  matched        AUROC 0.538  logloss 0.7222  slope 0.203  intercept -0.026  Brier 0.2622
+  matched_long   AUROC 0.548  logloss 0.7113  slope 0.282  intercept -0.006  Brier 0.2576
+
+--- artifacts_plus_ast (778 features) ---
+  [primary] 0.001:0.6487  0.003:0.6572  0.01:0.6639  0.03:0.6689  0.1:0.6717  0.3:0.6734  1.0:0.6739  3.0:0.6741
+  [primary] best C=3.0 (0.6741 +/- 0.0230 SE); 1-SE band >= 0.6511 -> C=0.003
+  standard       AUROC 0.709  logloss 0.6044  slope 0.600  intercept -0.335  Brier 0.2046
+  matched        AUROC 0.538  logloss 0.7225  slope 0.201  intercept -0.025  Brier 0.2624
+  matched_long   AUROC 0.549  logloss 0.7109  slope 0.287  intercept -0.006  Brier 0.2575
+
+=== paired increments, same participants, same head, participant bootstrap ===
+
+[standard] n=11119
+  ast_only             - artifacts_only     ΔAUROC +0.1134 [+0.1016,+0.1261] excludes 0   Δ(-ll) +0.0376 [+0.0278,+0.0486]
+  artifacts_plus_ast   - artifacts_only     ΔAUROC +0.1141 [+0.1027,+0.1266] excludes 0   Δ(-ll) +0.0370 [+0.0275,+0.0474]
+  artifacts_plus_ast   - ast_only           ΔAUROC +0.0007 [-0.0001,+0.0014] includes 0   Δ(-ll) -0.0006 [-0.0035,+0.0011]
+
+[matched] n=1814
+  ast_only             - artifacts_only     ΔAUROC +0.0043 [-0.0247,+0.0330] includes 0   Δ(-ll) -0.0265 [-0.0413,-0.0126]
+  artifacts_plus_ast   - artifacts_only     ΔAUROC +0.0040 [-0.0245,+0.0323] includes 0   Δ(-ll) -0.0269 [-0.0413,-0.0132]
+  artifacts_plus_ast   - ast_only           ΔAUROC -0.0003 [-0.0021,+0.0013] includes 0   Δ(-ll) -0.0004 [-0.0013,+0.0006]
+
+[matched_long] n=4196
+  ast_only             - artifacts_only     ΔAUROC +0.0183 [-0.0025,+0.0375] includes 0   Δ(-ll) -0.0174 [-0.0264,-0.0085]
+  artifacts_plus_ast   - artifacts_only     ΔAUROC +0.0189 [-0.0017,+0.0377] includes 0   Δ(-ll) -0.0171 [-0.0258,-0.0084]
+  artifacts_plus_ast   - ast_only           ΔAUROC +0.0006 [-0.0006,+0.0018] includes 0   Δ(-ll) +0.0004 [-0.0002,+0.0010]
+
+=== probes on the frozen raw AST representation ===
+  [probe:recruitment_source] 0.001:0.6487  0.003:0.6569  0.01:0.6643  0.03:0.6694  0.1:0.6719  0.3:0.6738  1.0:0.6746  3.0:0.6747
+  [probe:recruitment_source] best C=3.0 (0.6747 +/- 0.0213 SE); 1-SE band >= 0.6533 -> C=0.003
+  recruitment_source   standard 0.710[0.701,0.720]  matched 0.600[0.559,0.640]  matched_long 0.589[0.570,0.608]
+  [probe:gender] 0.001:0.8892  0.003:0.9008  0.01:0.9086  0.03:0.9115  0.1:0.9115  0.3:0.9104  1.0:0.9103  3.0:0.9102
+  [probe:gender] best C=0.03 (0.9115 +/- 0.0068 SE); 1-SE band >= 0.9047 -> C=0.01
+  gender               standard 0.901[0.895,0.906]  matched 0.871[0.853,0.887]  matched_long 0.890[0.880,0.901]
+  [probe:age_65plus] 0.001:0.7562  0.003:0.7592  0.01:0.7595  0.03:0.7587  0.1:0.7565  0.3:0.7544  1.0:0.7536  3.0:0.7535
+  [probe:age_65plus] best C=0.01 (0.7595 +/- 0.0218 SE); 1-SE band >= 0.7377 -> C=0.001
+  age_65plus           standard 0.767[0.755,0.778]  matched 0.742[0.708,0.776]  matched_long 0.772[0.754,0.791]
+  [probe:symptom_cough_any] 0.001:0.5971  0.003:0.6015  0.01:0.6028  0.03:0.6012  0.1:0.5987  0.3:0.5972  1.0:0.5962  3.0:0.5957
+  [probe:symptom_cough_any] best C=0.01 (0.6028 +/- 0.0181 SE); 1-SE band >= 0.5847 -> C=0.001
+  symptom_cough_any    standard 0.745[0.736,0.755]  matched 0.726[0.703,0.749]  matched_long 0.687[0.671,0.703]
+  [probe:symptom_none] 0.001:0.6239  0.003:0.6321  0.01:0.6366  0.03:0.6397  0.1:0.6415  0.3:0.6414  1.0:0.6414  3.0:0.6413
+  [probe:symptom_none] best C=0.1 (0.6415 +/- 0.0127 SE); 1-SE band >= 0.6287 -> C=0.003
+  symptom_none         standard 0.716[0.707,0.725]  matched 0.713[0.687,0.738]  matched_long 0.672[0.655,0.691]
+  [probe:clipped] 0.001:0.9031  0.003:0.9070  0.01:0.9098  0.03:0.9098  0.1:0.9089  0.3:0.9083  1.0:0.9077  3.0:0.9075
+  [probe:clipped] best C=0.01 (0.9098 +/- 0.0086 SE); 1-SE band >= 0.9013 -> C=0.001
+  clipped              standard 0.907[0.901,0.913]  matched 0.911[0.897,0.924]  matched_long 0.913[0.905,0.921]
+  [probe:long_recording] 0.001:0.9978  0.003:0.9982  0.01:0.9985  0.03:0.9987  0.1:0.9988  0.3:0.9988  1.0:0.9987  3.0:0.9987
+  [probe:long_recording] best C=0.1 (0.9988 +/- 0.0004 SE); 1-SE band >= 0.9984 -> C=0.01
+  long_recording       standard 0.999[0.998,0.999]  matched 0.998[0.997,0.999]  matched_long 0.999[0.998,0.999]
+  [probe:loud_recording] 0.001:0.9783  0.003:0.9820  0.01:0.9846  0.03:0.9862  0.1:0.9872  0.3:0.9875  1.0:0.9874  3.0:0.9873
+  [probe:loud_recording] best C=0.3 (0.9875 +/- 0.0010 SE); 1-SE band >= 0.9865 -> C=0.1
+  loud_recording       standard 0.983[0.981,0.985]  matched 0.982[0.978,0.986]  matched_long 0.977[0.974,0.981]
+  [probe:large_file] 0.001:0.9946  0.003:0.9948  0.01:0.9951  0.03:0.9954  0.1:0.9952  0.3:0.9950  1.0:0.9949  3.0:0.9947
+  [probe:large_file] best C=0.03 (0.9954 +/- 0.0008 SE); 1-SE band >= 0.9946 -> C=0.003
+  large_file           standard 0.993[0.992,0.995]  matched 0.993[0.989,0.996]  matched_long 0.996[0.995,0.997]
+
+wrote results/audio_baselines_v2.json
