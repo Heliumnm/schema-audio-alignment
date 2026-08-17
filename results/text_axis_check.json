@@ -1,0 +1,390 @@
+{
+ "n_participants": 72458,
+ "n_unique_texts": 12992,
+ "max_token_len": 200,
+ "batch": 16,
+ "padding_side": "right",
+ "layer": "last_hidden_state",
+ "pooling": "last_valid_token",
+ "dtype": "torch.bfloat16",
+ "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0",
+ "cache_bit_identical_shuffled": true,
+ "cache_sha256_16": "c68409654f82ff76",
+ "value_audit": {
+  "AGE": {
+   "column": "age",
+   "n_missing": 0,
+   "values": [
+    "18-44",
+    "45-64",
+    "65+"
+   ],
+   "unknown": []
+  },
+  "SEX": {
+   "column": "gender",
+   "n_missing": 30,
+   "values": [
+    "Female",
+    "Male"
+   ],
+   "unknown": []
+  },
+  "SMOKER": {
+   "column": "smoker_status",
+   "n_missing": 0,
+   "values": [
+    "Current smoker (1 to 10 cigarettes per day)",
+    "Current smoker (11 or more cigarettes per day)",
+    "Current smoker (e-cigarettes or vapes only)",
+    "Ex-smoker",
+    "Never smoked",
+    "Prefer not to say"
+   ],
+   "unknown": []
+  },
+  "ASTHMA": {
+   "column": "respiratory_condition_asthma",
+   "n_missing": 183,
+   "values": [
+    "0.0",
+    "1.0"
+   ],
+   "unknown": []
+  },
+  "RESP_OTHER": {
+   "column": "respiratory_condition_other",
+   "n_missing": 183,
+   "values": [
+    "0.0",
+    "1.0"
+   ],
+   "unknown": []
+  },
+  "ABDOMINAL_PAIN": {
+   "column": "symptom_abdominal_pain",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "CHANGE_TO_SENSE_OF_SMELL_OR_TASTE": {
+   "column": "symptom_change_to_sense_of_smell_or_taste",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "COUGH_ANY": {
+   "column": "symptom_cough_any",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "DIARRHOEA": {
+   "column": "symptom_diarrhoea",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "FATIGUE": {
+   "column": "symptom_fatigue",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "FEVER_HIGH_TEMPERATURE": {
+   "column": "symptom_fever_high_temperature",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "HEADACHE": {
+   "column": "symptom_headache",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "LOSS_OF_TASTE": {
+   "column": "symptom_loss_of_taste",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "NEW_CONTINUOUS_COUGH": {
+   "column": "symptom_new_continuous_cough",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "NONE": {
+   "column": "symptom_none",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "OTHER": {
+   "column": "symptom_other",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "RUNNY_OR_BLOCKED_NOSE": {
+   "column": "symptom_runny_or_blocked_nose",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "SHORTNESS_OF_BREATH": {
+   "column": "symptom_shortness_of_breath",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  },
+  "SORE_THROAT": {
+   "column": "symptom_sore_throat",
+   "n_missing": 0,
+   "values": [
+    "0",
+    "1"
+   ],
+   "unknown": []
+  }
+ },
+ "field_decodability": {
+  "AGE": {
+   "n_classes": 3,
+   "accuracy": 1.0
+  },
+  "SEX": {
+   "n_classes": 3,
+   "accuracy": 1.0
+  },
+  "SMOKER": {
+   "n_classes": 6,
+   "accuracy": 0.9997427983539094
+  },
+  "ASTHMA": {
+   "n_classes": 3,
+   "accuracy": 1.0
+  },
+  "RESP_OTHER": {
+   "n_classes": 3,
+   "accuracy": 0.9987139917695473
+  },
+  "ABDOMINAL_PAIN": {
+   "n_classes": 2,
+   "accuracy": 1.0,
+   "auroc": 1.0
+  },
+  "CHANGE_TO_SENSE_OF_SMELL_OR_TASTE": {
+   "n_classes": 2,
+   "accuracy": 0.9971707818930041,
+   "auroc": 0.9999771837614356
+  },
+  "COUGH_ANY": {
+   "n_classes": 2,
+   "accuracy": 0.9969135802469136,
+   "auroc": 0.9998907342657343
+  },
+  "DIARRHOEA": {
+   "n_classes": 2,
+   "accuracy": 0.9979423868312757,
+   "auroc": 0.999943285956358
+  },
+  "FATIGUE": {
+   "n_classes": 2,
+   "accuracy": 0.9969135802469136,
+   "auroc": 0.999878544082221
+  },
+  "FEVER_HIGH_TEMPERATURE": {
+   "n_classes": 2,
+   "accuracy": 0.9945987654320988,
+   "auroc": 0.9997033314358379
+  },
+  "HEADACHE": {
+   "n_classes": 2,
+   "accuracy": 0.9963991769547325,
+   "auroc": 0.9997974856945621
+  },
+  "LOSS_OF_TASTE": {
+   "n_classes": 2,
+   "accuracy": 0.9979423868312757,
+   "auroc": 0.9998510175501326
+  },
+  "NEW_CONTINUOUS_COUGH": {
+   "n_classes": 2,
+   "accuracy": 0.9994855967078189,
+   "auroc": 0.9999884670710414
+  },
+  "NONE": {
+   "n_classes": 2,
+   "accuracy": 0.9979423868312757,
+   "auroc": 0.9850407472183976
+  },
+  "OTHER": {
+   "n_classes": 2,
+   "accuracy": 0.9997427983539094,
+   "auroc": 0.999998284680438
+  },
+  "RUNNY_OR_BLOCKED_NOSE": {
+   "n_classes": 2,
+   "accuracy": 0.9981995884773662,
+   "auroc": 0.9999933139634397
+  },
+  "SHORTNESS_OF_BREATH": {
+   "n_classes": 2,
+   "accuracy": 1.0,
+   "auroc": 1.0
+  },
+  "SORE_THROAT": {
+   "n_classes": 2,
+   "accuracy": 1.0,
+   "auroc": 1.0
+  }
+ },
+ "one_field_similarity": {
+  "AGE": {
+   "n_pairs": 3591,
+   "sim": 0.9876775741577148
+  },
+  "SEX": {
+   "n_pairs": 2574,
+   "sim": 0.9889153242111206
+  },
+  "SMOKER": {
+   "n_pairs": 4224,
+   "sim": 0.9879058003425598
+  },
+  "ASTHMA": {
+   "n_pairs": 1861,
+   "sim": 0.9891754388809204
+  },
+  "RESP_OTHER": {
+   "n_pairs": 544,
+   "sim": 0.9906522035598755
+  },
+  "ABDOMINAL_PAIN": {
+   "n_pairs": 1278,
+   "sim": 0.991122305393219
+  },
+  "CHANGE_TO_SENSE_OF_SMELL_OR_TASTE": {
+   "n_pairs": 1872,
+   "sim": 0.993105947971344
+  },
+  "COUGH_ANY": {
+   "n_pairs": 2157,
+   "sim": 0.9929503798484802
+  },
+  "DIARRHOEA": {
+   "n_pairs": 1314,
+   "sim": 0.9936779737472534
+  },
+  "FATIGUE": {
+   "n_pairs": 2263,
+   "sim": 0.994758129119873
+  },
+  "FEVER_HIGH_TEMPERATURE": {
+   "n_pairs": 1899,
+   "sim": 0.9956343770027161
+  },
+  "HEADACHE": {
+   "n_pairs": 2366,
+   "sim": 0.9954917430877686
+  },
+  "LOSS_OF_TASTE": {
+   "n_pairs": 1463,
+   "sim": 0.9961116313934326
+  },
+  "NEW_CONTINUOUS_COUGH": {
+   "n_pairs": 1814,
+   "sim": 0.9963639378547668
+  },
+  "NONE": {
+   "n_pairs": 57,
+   "sim": 0.9964589476585388
+  },
+  "OTHER": {
+   "n_pairs": 1535,
+   "sim": 0.9966726899147034
+  },
+  "RUNNY_OR_BLOCKED_NOSE": {
+   "n_pairs": 2346,
+   "sim": 0.9967939257621765
+  },
+  "SHORTNESS_OF_BREATH": {
+   "n_pairs": 2138,
+   "sim": 0.9971534609794617
+  },
+  "SORE_THROAT": {
+   "n_pairs": 2263,
+   "sim": 0.9953485727310181
+  }
+ },
+ "random_pair_similarity": 0.9832238554954529,
+ "ambiguity": {
+  "train_n": 20714,
+  "train_unique_texts": 5437,
+  "share_with_a_duplicate": 0.8083904605580766,
+  "modal_share": 0.07898039972965144
+ },
+ "loss_floor": {
+  "16": {
+   "E_log_K": 0.19380339837860786,
+   "E_K": 1.32305,
+   "withdrawn_log_E_K": 0.27993967731362096
+  },
+  "32": {
+   "E_log_K": 0.34749944803287197,
+   "E_K": 1.66785,
+   "withdrawn_log_E_K": 0.5115353718352309
+  },
+  "64": {
+   "E_log_K": 0.5658256413927154,
+   "E_K": 2.3567,
+   "withdrawn_log_E_K": 0.8572623354119124
+  },
+  "128": {
+   "E_log_K": 0.8386798064268777,
+   "E_K": 3.7396,
+   "withdrawn_log_E_K": 1.3189786538350234
+  }
+ }
+}

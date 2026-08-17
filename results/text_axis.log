@@ -1,0 +1,79 @@
+--- value audit (unknown values would have raised) ---
+  AGE                                3 values,     0 missing
+  SEX                                2 values,    30 missing
+  SMOKER                             6 values,     0 missing
+  ASTHMA                             2 values,   183 missing
+  RESP_OTHER                         2 values,   183 missing
+  ABDOMINAL_PAIN                     2 values,     0 missing
+  CHANGE_TO_SENSE_OF_SMELL_OR_TASTE  2 values,     0 missing
+  COUGH_ANY                          2 values,     0 missing
+  DIARRHOEA                          2 values,     0 missing
+  FATIGUE                            2 values,     0 missing
+  FEVER_HIGH_TEMPERATURE             2 values,     0 missing
+  HEADACHE                           2 values,     0 missing
+  LOSS_OF_TASTE                      2 values,     0 missing
+  NEW_CONTINUOUS_COUGH               2 values,     0 missing
+  NONE                               2 values,     0 missing
+  OTHER                              2 values,     0 missing
+  RUNNY_OR_BLOCKED_NOSE              2 values,     0 missing
+  SHORTNESS_OF_BREATH                2 values,     0 missing
+  SORE_THROAT                        2 values,     0 missing
+
+72458 participants, 12992 distinct schema texts
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.34it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.50it/s]
+token length over all 12992 texts: min 188 max 200; MAX_LEN set to the true maximum, so truncation is impossible
+unique-text embeddings (12992, 2560)
+
+1. cache stability under shuffled order: bit-identical True   hash c68409654f82ff76 vs c68409654f82ff76
+
+2. field decodability, unique texts split 9104/3888 (identical profiles cannot straddle)
+   AGE                                3 classes  acc 1.0000
+   SEX                                3 classes  acc 1.0000
+   SMOKER                             6 classes  acc 0.9997
+   ASTHMA                             3 classes  acc 1.0000
+   RESP_OTHER                         3 classes  acc 0.9987
+   ABDOMINAL_PAIN                     2 classes  acc 1.0000  AUROC 1.0000
+   CHANGE_TO_SENSE_OF_SMELL_OR_TASTE  2 classes  acc 0.9972  AUROC 1.0000
+   COUGH_ANY                          2 classes  acc 0.9969  AUROC 0.9999
+   DIARRHOEA                          2 classes  acc 0.9979  AUROC 0.9999
+   FATIGUE                            2 classes  acc 0.9969  AUROC 0.9999
+   FEVER_HIGH_TEMPERATURE             2 classes  acc 0.9946  AUROC 0.9997
+   HEADACHE                           2 classes  acc 0.9964  AUROC 0.9998
+   LOSS_OF_TASTE                      2 classes  acc 0.9979  AUROC 0.9999
+   NEW_CONTINUOUS_COUGH               2 classes  acc 0.9995  AUROC 1.0000
+   NONE                               2 classes  acc 0.9979  AUROC 0.9850
+   OTHER                              2 classes  acc 0.9997  AUROC 1.0000
+   RUNNY_OR_BLOCKED_NOSE              2 classes  acc 0.9982  AUROC 1.0000
+   SHORTNESS_OF_BREATH                2 classes  acc 1.0000  AUROC 1.0000
+   SORE_THROAT                        2 classes  acc 1.0000  AUROC 1.0000
+
+3. one-field-apart cosine similarity, constructed per field (descriptive diagnostic, not a gate)
+   AGE                                n=  3591  sim 0.9877
+   SEX                                n=  2574  sim 0.9889
+   SMOKER                             n=  4224  sim 0.9879
+   ASTHMA                             n=  1861  sim 0.9892
+   RESP_OTHER                         n=   544  sim 0.9907
+   ABDOMINAL_PAIN                     n=  1278  sim 0.9911
+   CHANGE_TO_SENSE_OF_SMELL_OR_TASTE  n=  1872  sim 0.9931
+   COUGH_ANY                          n=  2157  sim 0.9930
+   DIARRHOEA                          n=  1314  sim 0.9937
+   FATIGUE                            n=  2263  sim 0.9948
+   FEVER_HIGH_TEMPERATURE             n=  1899  sim 0.9956
+   HEADACHE                           n=  2366  sim 0.9955
+   LOSS_OF_TASTE                      n=  1463  sim 0.9961
+   NEW_CONTINUOUS_COUGH               n=  1814  sim 0.9964
+   NONE                               n=    57  sim 0.9965
+   OTHER                              n=  1535  sim 0.9967
+   RUNNY_OR_BLOCKED_NOSE              n=  2346  sim 0.9968
+   SHORTNESS_OF_BREATH                n=  2138  sim 0.9972
+   SORE_THROAT                        n=  2263  sim 0.9953
+   random pairs                       n=  5000  sim 0.9832
+
+4. ambiguity (NOT retrieval): 5437 texts for 20714 train participants; 80.8% share a profile with someone else; modal profile 7.9%
+   audio→text retrieval is measured in the projector smoke test, not here
+
+5. duplicate-induced loss floor, E[log K] over the sampler (log(E[K]) is withdrawn)
+   batch  16: E[log K] 0.1938 nats   (E[K] 1.323; the withdrawn log(E[K]) would have said 0.2799)
+   batch  32: E[log K] 0.3475 nats   (E[K] 1.668; the withdrawn log(E[K]) would have said 0.5115)
+   batch  64: E[log K] 0.5658 nats   (E[K] 2.357; the withdrawn log(E[K]) would have said 0.8573)
+   batch 128: E[log K] 0.8387 nats   (E[K] 3.740; the withdrawn log(E[K]) would have said 1.3190)
