@@ -1,0 +1,67 @@
+train 20714  primary val 1036 (pos 0.5077)  robustness val 5179
+  test:standard      n= 11119  pos 0.3435
+  test:matched       n=  1814  pos 0.5000
+  test:matched_long  n=  4196  pos 0.5000
+
+--- artifacts_only (10 features) ---
+  [primary] C=0.001:0.5798  C=0.003:0.5753  C=0.01:0.5717  C=0.03:0.5703  C=0.1:0.5697  C=0.3:0.5697  C=1.0:0.5697  C=3.0:0.5697
+  [primary] best C=0.001 (0.5798); within 1 SE -> C=0.001
+  [robustness] C=0.001:0.6309  C=0.003:0.6321  C=0.01:0.6314  C=0.03:0.6307  C=0.1:0.6305  C=0.3:0.6306  C=1.0:0.6308  C=3.0:0.6309
+  [robustness] best C=0.003 (0.6321); within 1 SE -> C=0.003
+  NOTE robustness val prefers C=0.003; reported, not acted on
+  standard       AUROC 0.595   calibrated logloss 0.6918
+  matched        AUROC 0.534   calibrated logloss 0.6957
+  matched_long   AUROC 0.530   calibrated logloss 0.6939
+
+--- ast_only (768 features) ---
+  [primary] C=0.001:0.6454  C=0.003:0.6542  C=0.01:0.6608  C=0.03:0.6656  C=0.1:0.6683  C=0.3:0.6695  C=1.0:0.6703  C=3.0:0.6706
+  [primary] best C=3.0 (0.6706); within 1 SE -> C=3.0
+  [robustness] C=0.001:0.8017  C=0.003:0.8072  C=0.01:0.8102  C=0.03:0.8107  C=0.1:0.8099  C=0.3:0.8090  C=1.0:0.8085  C=3.0:0.8084
+  [robustness] best C=0.03 (0.8107); within 1 SE -> C=0.03
+  NOTE robustness val prefers C=0.03; reported, not acted on
+  standard       AUROC 0.711   calibrated logloss 0.6301
+  matched        AUROC 0.544   calibrated logloss 0.7246
+  matched_long   AUROC 0.549   calibrated logloss 0.7156
+
+--- artifacts_plus_ast (778 features) ---
+  [primary] C=0.001:0.6473  C=0.003:0.6554  C=0.01:0.6620  C=0.03:0.6664  C=0.1:0.6697  C=0.3:0.6708  C=1.0:0.6715  C=3.0:0.6716
+  [primary] best C=3.0 (0.6716); within 1 SE -> C=3.0
+  [robustness] C=0.001:0.8030  C=0.003:0.8085  C=0.01:0.8113  C=0.03:0.8117  C=0.1:0.8109  C=0.3:0.8100  C=1.0:0.8096  C=3.0:0.8094
+  [robustness] best C=0.03 (0.8117); within 1 SE -> C=0.03
+  NOTE robustness val prefers C=0.03; reported, not acted on
+  standard       AUROC 0.711   calibrated logloss 0.6300
+  matched        AUROC 0.543   calibrated logloss 0.7248
+  matched_long   AUROC 0.550   calibrated logloss 0.7152
+
+=== paired increments, same patients, same classifier ===
+
+[standard]  n=11119
+  ast_only             - artifacts_only  ΔAUROC +0.1156 [+0.1023,+0.1286] excludes 0   Δ(-logloss) +0.0617 [+0.0557,+0.0678]
+  artifacts_plus_ast   - artifacts_only  ΔAUROC +0.1162 [+0.1030,+0.1290] excludes 0   Δ(-logloss) +0.0618 [+0.0560,+0.0675]
+
+[matched]  n=1814
+  ast_only             - artifacts_only  ΔAUROC +0.0105 [-0.0217,+0.0393] includes 0   Δ(-logloss) -0.0289 [-0.0444,-0.0142]
+  artifacts_plus_ast   - artifacts_only  ΔAUROC +0.0096 [-0.0217,+0.0382] includes 0   Δ(-logloss) -0.0292 [-0.0448,-0.0150]
+
+[matched_long]  n=4196
+  ast_only             - artifacts_only  ΔAUROC +0.0198 [-0.0012,+0.0409] includes 0   Δ(-logloss) -0.0217 [-0.0315,-0.0119]
+  artifacts_plus_ast   - artifacts_only  ΔAUROC +0.0199 [-0.0009,+0.0404] includes 0   Δ(-logloss) -0.0213 [-0.0309,-0.0117]
+
+=== raw AST probes (frozen reference for any aligned representation) ===
+  [probe:recruitment_source] C=0.001:0.6463  C=0.003:0.6555  C=0.01:0.6622  C=0.03:0.6671  C=0.1:0.6702  C=0.3:0.6718  C=1.0:0.6725  C=3.0:0.6727
+  [probe:recruitment_source] best C=3.0 (0.6727); within 1 SE -> C=3.0
+  recruitment_source   standard 0.709  matched 0.599  matched_long 0.590
+  [probe:gender] C=0.001:0.8899  C=0.003:0.9013  C=0.01:0.9084  C=0.03:0.9113  C=0.1:0.9115  C=0.3:0.9111  C=1.0:0.9106  C=3.0:0.9105
+  [probe:gender] best C=0.1 (0.9115); within 1 SE -> C=0.1
+  gender               standard 0.905  matched 0.876  matched_long 0.895
+  [probe:age_65plus] C=0.001:0.7599  C=0.003:0.7624  C=0.01:0.7626  C=0.03:0.7604  C=0.1:0.7574  C=0.3:0.7549  C=1.0:0.7538  C=3.0:0.7536
+  [probe:age_65plus] best C=0.01 (0.7626); within 1 SE -> C=0.01
+  age_65plus           standard 0.777  matched 0.748  matched_long 0.780
+  [probe:symptom_cough_any] C=0.001:0.5982  C=0.003:0.6020  C=0.01:0.6033  C=0.03:0.6015  C=0.1:0.5993  C=0.3:0.5979  C=1.0:0.5970  C=3.0:0.5968
+  [probe:symptom_cough_any] best C=0.01 (0.6033); within 1 SE -> C=0.01
+  symptom_cough_any    standard 0.749  matched 0.728  matched_long 0.689
+  [probe:symptom_none] C=0.001:0.6239  C=0.003:0.6319  C=0.01:0.6374  C=0.03:0.6409  C=0.1:0.6411  C=0.3:0.6409  C=1.0:0.6412  C=3.0:0.6410
+  [probe:symptom_none] best C=1.0 (0.6412); within 1 SE -> C=1.0
+  symptom_none         standard 0.714  matched 0.704  matched_long 0.668
+
+wrote results/audio_baselines.json
