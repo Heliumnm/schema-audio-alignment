@@ -1,0 +1,74 @@
+{
+ "source_commit": "b4224f231f947f3ac3ba8dcafe1f11d8a9f3e525",
+ "n_train": 20714,
+ "batch": 64,
+ "epochs": 1,
+ "seeds": [
+  0
+ ],
+ "input_hashes": {
+  "audio": "c3b7e6c988827b7c",
+  "text_unique": "31eee607c3a24b73",
+  "text_id": "9f009fbf7dc825ed"
+ },
+ "runs": {
+  "correct_seed0": {
+   "pairing_hash": "e8a003eb2613fb88",
+   "init_hash": "a8152142a0d44572",
+   "batch_order_hash": "4c8a3940e65bbc70",
+   "repr_raw_hash": "e8623c0c85ccc6da",
+   "repr_norm_hash": "1264f0f914bccd02",
+   "n_repr": 72458,
+   "loss_first": 4.054399712476834,
+   "loss_last": 4.054399712476834,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.054399712476834,
+     "mean_log_K": 0.5502084716417506,
+     "n_batches": 324,
+     "last_batch": 42
+    }
+   ]
+  },
+  "within_label_seed0": {
+   "pairing_hash": "8da6f4e31aa13985",
+   "init_hash": "a8152142a0d44572",
+   "batch_order_hash": "4c8a3940e65bbc70",
+   "repr_raw_hash": "a7d17f7645b884fa",
+   "repr_norm_hash": "14d5d1e77465f0c7",
+   "n_repr": 72458,
+   "loss_first": 4.13482173554764,
+   "loss_last": 4.13482173554764,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.13482173554764,
+     "mean_log_K": 0.5546109371092675,
+     "n_batches": 324,
+     "last_batch": 42
+    }
+   ]
+  },
+  "global_seed0": {
+   "pairing_hash": "f49e4bb19b91e893",
+   "init_hash": "a8152142a0d44572",
+   "batch_order_hash": "4c8a3940e65bbc70",
+   "repr_raw_hash": "9ff5d869f79d650a",
+   "repr_norm_hash": "c79548705dd118a6",
+   "n_repr": 72458,
+   "loss_first": 4.158237588259432,
+   "loss_last": 4.158237588259432,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.158237588259432,
+     "mean_log_K": 0.5558157032953135,
+     "n_batches": 324,
+     "last_batch": 42
+    }
+   ]
+  }
+ },
+ "resume_equivalent": true
+}

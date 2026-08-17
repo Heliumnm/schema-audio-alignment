@@ -174,26 +174,65 @@ validation.** Five seeds. Downstream: the same regularised logistic head, the sa
 fold selection on the full Standard val, and the same single source-domain calibrator as
 the v3 reference. The test sets are read once.
 
-### Smoke test first, one seed per arm, few steps
+### Smoke tests first — technical gates only
 
-Loss decreases; embeddings do not collapse; correct pairing beats global shuffle on
-*training-set* retrieval; the five-seed plumbing and per-participant outputs are correct.
-**No test-set disease metric is read.** Only after the smoke test and the text-axis check
-both pass does the five-seed run start.
+**S0** memorises sixteen distinct profiles per arm and checks the machinery: pairings,
+parameter freezing, the loss against a hand-computed InfoNCE, output shape and finiteness,
+input-hash stability, and step-level reproducibility.
 
-## Frozen interpretation
+**S1** runs a short pass on real data and checks that the loss moves, the outputs do not
+collapse, and the hashes and pairings hold.
 
-Disease, on the matched OOD test: paired `Δ(-logloss)` primary, paired `ΔAUROC` secondary,
-`correct_metadata − raw_ast` and `correct_metadata − within_label_shuffled`.
-Representation: `probe(aligned) − probe(raw AST)` with paired CIs, reported separately for
-sex, age, symptoms and recruitment source.
+**Neither smoke test gates on the ordering of the arms.** An earlier draft required
+`correct` to beat `global` on training-set retrieval; that requirement is removed. S1's own
+retrieval numbers turned out to sit below a no-audio frequency-prior baseline and have been
+withdrawn from the paper, which is exactly why arm ordering cannot serve as a correctness
+gate: three arms coming out alike may be a true null.
 
-| pattern | reading |
-|---|---|
-| Standard up, matched flat, metadata probes stronger | **alignment amplifies the training-distribution shortcut** |
-| `correct` beats both shuffles **and** matched improves | individual-level information that transfers |
-| `correct` ≈ `within_label_shuffled` | the effect is label-level co-occurrence, not individual pairing |
-| `correct` ≈ `global_shuffled` | alignment changed the representation in no useful way |
+A **full-cohort plumbing rehearsal** — one seed, three arms, one epoch over all 20,714 —
+runs before the formal five-seed run.
+
+## The representation, and the comparisons — frozen
+
+**Primary representation: the projector's raw post-ReLU output.** That is what Stage 2
+consumes — `model_utils.py:320`, `enc_out = self.aligner(enc_out)`, with no normalisation,
+and with the aligner frozen and in `eval()` under the contrastive setting. Normalisation
+appears only inside the Stage-1 loss. The L2-normalised representation is a
+**pre-declared sensitivity analysis**, not the main result.
+
+### Comparisons, in order of standing
+
+| standing | comparison | on |
+|---|---|---|
+| **primary** | `correct − within_label`, paired **Δ(−NLL)** | matched |
+| key secondary | `correct − raw_ast` | matched |
+| attribution | `within_label − global`, `correct − global` | matched |
+| secondary | every AUROC | all sets |
+| sensitivity | matched_long | — |
+
+**`correct − within_label` is primary because it is the only contrast that isolates
+individual-level correspondence.** `within_label` keeps the label-level co-occurrence and
+destroys only the person-to-person pairing, so anything `correct` gains over it cannot be
+group-level statistics.
+
+**AUROC is secondary throughout.** Δ(−NLL) is primary because the question is about what
+the representation carries and how it transfers, and a rank metric is insensitive to the
+calibration failure that transfer produces.
+
+**matched_long is an extended sensitivity set, not a fresh confirmation set.** It shares
+the matched construction and much of the population; agreement there is reassurance, not
+independent replication.
+
+### Probes
+
+Fixed comparisons: `correct − within_label`, `within_label − global`, `correct − raw_ast`,
+each with a paired CI, reported separately for sex, age, symptoms and recruitment source
+against the frozen v3 raw-AST probe values.
+
+**Decodable is not used.** A probe showing that a variable can be read out of the
+representation does not show that the downstream classifier reads it. The probes describe
+what alignment writes into the representation; they do not license a claim about what the
+disease head then relies on.
 
 ## Standing of any result here
 
