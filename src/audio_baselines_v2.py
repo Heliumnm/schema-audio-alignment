@@ -2,18 +2,22 @@
 
 What changed and why
 --------------------
-**The one-standard-error rule now has a standard error.** The previous version estimated it
+**The one-standard-error rule now has a standard error.** The first version estimated it
 across five `LogisticRegression` seeds, which is deterministic under lbfgs — the measured
 seed-to-seed difference was exactly 0.000e+00 — so the SE was zero and the rule degenerated
-into argmax. Here the SE comes from **five fixed validation folds, stratified by label and
-by matching stratum**, frozen once and reused by every arm and every C. The selection
-metric stays AUROC, as originally frozen; only the SE estimator is repaired.
+into argmax. Here the SE comes from **five fixed folds of the full Standard validation,
+stratified by label and recruitment source**, frozen once and reused by every arm and every
+C. The selection metric stays AUROC, as originally frozen; only the SE estimator is
+repaired.
 
-**Two calibrators, because there are two prevalences.** A Platt calibrator fitted on the
-50/50 matched-like validation cannot be applied to the Standard test set at prevalence
-0.3435. Standard is calibrated on the full Standard validation; matched and matched_long
-are calibrated on the matched-like validation. AUROC is rank-based and unaffected either
-way.
+**One calibrator, because there is only one validation domain.** An earlier version fitted
+a second calibrator on 1,036 participants it called "matched-like". They are not: within
+them recruitment source predicts the label at AUROC 0.9990, against 0.5000 on the matched
+test sets. No target-like validation exists in this release and none is claimed. Everything
+is selected and calibrated on the full Standard val, and **matched / matched_long are
+out-of-distribution stress tests that tune and calibrate nothing** — their log-losses
+measure calibration transfer out of the source domain, not probability quality after
+recalibrating inside the target population. See docs/PROTOCOL_HISTORY.md.
 
 **No fake seed axis.** A deterministic head has one solution, so predictions are stored
 with a seed axis of length one and the intervals are honestly called participant
