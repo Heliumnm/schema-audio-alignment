@@ -5,11 +5,11 @@
  "batch": 16,
  "padding_side": "right",
  "layer": "last_hidden_state",
- "pooling": "last_valid_token",
+ "pooling": "mask_aware_mean",
  "dtype": "torch.bfloat16",
  "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0",
  "cache_bit_identical_shuffled": true,
- "cache_sha256_16": "c68409654f82ff76",
+ "cache_sha256_16": "31eee607c3a24b73",
  "value_audit": {
   "AGE": {
    "column": "age",
@@ -199,7 +199,7 @@
   },
   "SMOKER": {
    "n_classes": 6,
-   "accuracy": 0.9997427983539094
+   "accuracy": 1.0
   },
   "ASTHMA": {
    "n_classes": 3,
@@ -207,7 +207,7 @@
   },
   "RESP_OTHER": {
    "n_classes": 3,
-   "accuracy": 0.9987139917695473
+   "accuracy": 0.9989711934156379
   },
   "ABDOMINAL_PAIN": {
    "n_classes": 2,
@@ -216,149 +216,149 @@
   },
   "CHANGE_TO_SENSE_OF_SMELL_OR_TASTE": {
    "n_classes": 2,
-   "accuracy": 0.9971707818930041,
-   "auroc": 0.9999771837614356
+   "accuracy": 0.9994855967078189,
+   "auroc": 0.9999994502111189
   },
   "COUGH_ANY": {
    "n_classes": 2,
-   "accuracy": 0.9969135802469136,
-   "auroc": 0.9998907342657343
+   "accuracy": 0.9987139917695473,
+   "auroc": 0.9999972683566434
   },
   "DIARRHOEA": {
    "n_classes": 2,
-   "accuracy": 0.9979423868312757,
-   "auroc": 0.999943285956358
+   "accuracy": 0.996141975308642,
+   "auroc": 0.99829166234395
   },
   "FATIGUE": {
    "n_classes": 2,
-   "accuracy": 0.9969135802469136,
-   "auroc": 0.999878544082221
+   "accuracy": 0.9984567901234568,
+   "auroc": 0.9999737234793267
   },
   "FEVER_HIGH_TEMPERATURE": {
    "n_classes": 2,
-   "accuracy": 0.9945987654320988,
-   "auroc": 0.9997033314358379
+   "accuracy": 0.9969135802469136,
+   "auroc": 0.999385743934459
   },
   "HEADACHE": {
    "n_classes": 2,
-   "accuracy": 0.9963991769547325,
-   "auroc": 0.9997974856945621
+   "accuracy": 0.9976851851851852,
+   "auroc": 0.9999749216639071
   },
   "LOSS_OF_TASTE": {
    "n_classes": 2,
-   "accuracy": 0.9979423868312757,
-   "auroc": 0.9998510175501326
+   "accuracy": 0.996141975308642,
+   "auroc": 0.9991444640005316
   },
   "NEW_CONTINUOUS_COUGH": {
    "n_classes": 2,
-   "accuracy": 0.9994855967078189,
-   "auroc": 0.9999884670710414
+   "accuracy": 0.9976851851851852,
+   "auroc": 0.9987813538400458
   },
   "NONE": {
    "n_classes": 2,
-   "accuracy": 0.9979423868312757,
-   "auroc": 0.9850407472183976
+   "accuracy": 0.9956275720164609,
+   "auroc": 0.9871565192891432
   },
   "OTHER": {
    "n_classes": 2,
-   "accuracy": 0.9997427983539094,
-   "auroc": 0.999998284680438
+   "accuracy": 0.9981995884773662,
+   "auroc": 0.9999674089283241
   },
   "RUNNY_OR_BLOCKED_NOSE": {
    "n_classes": 2,
-   "accuracy": 0.9981995884773662,
-   "auroc": 0.9999933139634397
+   "accuracy": 0.9987139917695473,
+   "auroc": 0.999944907058743
   },
   "SHORTNESS_OF_BREATH": {
    "n_classes": 2,
-   "accuracy": 1.0,
-   "auroc": 1.0
+   "accuracy": 0.9969135802469136,
+   "auroc": 0.9982496168492697
   },
   "SORE_THROAT": {
    "n_classes": 2,
-   "accuracy": 1.0,
-   "auroc": 1.0
+   "accuracy": 0.9974279835390947,
+   "auroc": 0.9981399818820047
   }
  },
  "one_field_similarity": {
   "AGE": {
    "n_pairs": 3591,
-   "sim": 0.9876775741577148
+   "sim": 0.9959914684295654
   },
   "SEX": {
    "n_pairs": 2574,
-   "sim": 0.9889153242111206
+   "sim": 0.9970293641090393
   },
   "SMOKER": {
    "n_pairs": 4224,
-   "sim": 0.9879058003425598
+   "sim": 0.9960585832595825
   },
   "ASTHMA": {
    "n_pairs": 1861,
-   "sim": 0.9891754388809204
+   "sim": 0.9973886609077454
   },
   "RESP_OTHER": {
    "n_pairs": 544,
-   "sim": 0.9906522035598755
+   "sim": 0.998004138469696
   },
   "ABDOMINAL_PAIN": {
    "n_pairs": 1278,
-   "sim": 0.991122305393219
+   "sim": 0.997946560382843
   },
   "CHANGE_TO_SENSE_OF_SMELL_OR_TASTE": {
    "n_pairs": 1872,
-   "sim": 0.993105947971344
+   "sim": 0.9991739392280579
   },
   "COUGH_ANY": {
    "n_pairs": 2157,
-   "sim": 0.9929503798484802
+   "sim": 0.999144434928894
   },
   "DIARRHOEA": {
    "n_pairs": 1314,
-   "sim": 0.9936779737472534
+   "sim": 0.9993728399276733
   },
   "FATIGUE": {
    "n_pairs": 2263,
-   "sim": 0.994758129119873
+   "sim": 0.9996012449264526
   },
   "FEVER_HIGH_TEMPERATURE": {
    "n_pairs": 1899,
-   "sim": 0.9956343770027161
+   "sim": 0.9997420310974121
   },
   "HEADACHE": {
    "n_pairs": 2366,
-   "sim": 0.9954917430877686
+   "sim": 0.9997818470001221
   },
   "LOSS_OF_TASTE": {
    "n_pairs": 1463,
-   "sim": 0.9961116313934326
+   "sim": 0.999879002571106
   },
   "NEW_CONTINUOUS_COUGH": {
    "n_pairs": 1814,
-   "sim": 0.9963639378547668
+   "sim": 0.9999260306358337
   },
   "NONE": {
    "n_pairs": 57,
-   "sim": 0.9964589476585388
+   "sim": 0.9999250173568726
   },
   "OTHER": {
    "n_pairs": 1535,
-   "sim": 0.9966726899147034
+   "sim": 0.9999512434005737
   },
   "RUNNY_OR_BLOCKED_NOSE": {
    "n_pairs": 2346,
-   "sim": 0.9967939257621765
+   "sim": 0.9999743103981018
   },
   "SHORTNESS_OF_BREATH": {
    "n_pairs": 2138,
-   "sim": 0.9971534609794617
+   "sim": 0.9999892711639404
   },
   "SORE_THROAT": {
    "n_pairs": 2263,
-   "sim": 0.9953485727310181
+   "sim": 0.9999937415122986
   }
  },
- "random_pair_similarity": 0.9832238554954529,
+ "random_pair_similarity": 0.9950899481773376,
  "ambiguity": {
   "train_n": 20714,
   "train_unique_texts": 5437,
@@ -366,25 +366,13 @@
   "modal_share": 0.07898039972965144
  },
  "loss_floor": {
-  "16": {
-   "E_log_K": 0.19380339837860786,
-   "E_K": 1.32305,
-   "withdrawn_log_E_K": 0.27993967731362096
-  },
-  "32": {
-   "E_log_K": 0.34749944803287197,
-   "E_K": 1.66785,
-   "withdrawn_log_E_K": 0.5115353718352309
-  },
-  "64": {
-   "E_log_K": 0.5658256413927154,
-   "E_K": 2.3567,
-   "withdrawn_log_E_K": 0.8572623354119124
-  },
-  "128": {
-   "E_log_K": 0.8386798064268777,
-   "E_K": 3.7396,
-   "withdrawn_log_E_K": 1.3189786538350234
-  }
+  "n_train": 20714,
+  "batch": 64,
+  "drop_last": false,
+  "n_full_batches": 323,
+  "last_batch_size": 42,
+  "mean_log_K_per_epoch": 0.5553258632955604,
+  "sd_across_epochs": 0.0020168063069280805,
+  "theoretical_batch64": 0.5658256413927154
  }
 }

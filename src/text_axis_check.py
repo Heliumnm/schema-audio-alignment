@@ -3,7 +3,10 @@
 Fixed decisions, ours and recorded as ours because the paper states none of them:
 
     layer        last hidden layer
-    pooling      last valid (non-pad) token
+    pooling      MASK-AWARE MEAN over valid tokens. The official source encodes one
+                 context at a time, so its `padding=True` adds no padding and its plain
+                 last_hidden_state.mean(dim=1) already equals a valid-token mean. Batching
+                 the cache preserves that semantics rather than changing it.
     padding      RIGHT. Not left: the last-token index would be wrong under left padding.
     max length   the true maximum over ALL unique texts, checked, not sampled
     batch        fixed size, the final batch topped up with placeholder texts so every
@@ -21,8 +24,12 @@ Three statistics from the first version are corrected or withdrawn:
 
 * **single-field similarity** — the first version sampled random pairs and hit exactly one
   one-field-apart pair in 3,000 draws. Pairs are now constructed explicitly and reported
-  per field. This is a **descriptive diagnostic, not a gate**: failing it would say Phi-2's
-  schema geometry is not smooth, not that alignment cannot be trained.
+  per field. Report it as **1 − cosine** with several digits, never as a rounded 1.0000:
+  no pair here is mathematically identical (0 pairs at 1 − cos < 1e-12). This is a
+  **descriptive diagnostic, not a gate**, and the right name for it is high anisotropy —
+  geometric compression — not a defect. If `correct` and `within_label_shuffled` later come
+  out close, this may be listed among the possible reasons; it may not be presented as the
+  explanation.
 * **"duplicate-aware top-1"** — 0.6465 was not retrieval performance. It says roughly 65%
   of the sampled participants have someone else in the sample with an identical profile,
   and the naive 0.0000 was forced by excluding self. Both are reported as *ambiguity*
@@ -82,9 +89,14 @@ def main():
         q.requires_grad_(False)
 
     lens = [len(tok(t)["input_ids"]) for t in uniq]        # ALL of them, not a sample
-    MAX_LEN = int(max(lens))
-    print(f"token length over all {len(uniq)} texts: min {min(lens)} max {MAX_LEN}; "
-          f"MAX_LEN set to the true maximum, so truncation is impossible")
+    MAX_LEN = 200          # frozen. The official source sets 125, which is incompatible
+                           # with OUR long schema texts. That is a statement about our
+                           # texts, not a defect in RespiraMFM: their own contexts may
+                           # well fit inside 125 and we have not measured them.
+    print(f"token length over all {len(uniq)} texts: min {min(lens)} max {max(lens)}; "
+          f"MAX_LEN {MAX_LEN} (official 125 would truncate {sum(l > 125 for l in lens)} "
+          f"of {len(uniq)})")
+    assert max(lens) <= MAX_LEN, "raise MAX_LEN before freezing"
 
     @torch.no_grad()
     def encode(texts):
@@ -96,9 +108,9 @@ def main():
         for i in range(0, len(padded_list), BATCH):
             b = tok(padded_list[i:i+BATCH], return_tensors="pt", padding="max_length",
                     truncation=True, max_length=MAX_LEN).to("cuda")
-            h = model(**b).last_hidden_state
-            idx = b["attention_mask"].sum(1) - 1
-            out.append(h[torch.arange(len(idx)), idx].float().cpu().numpy())
+            h = model(**b).last_hidden_state.float()
+            m = b["attention_mask"].unsqueeze(-1).float()
+            out.append(((h * m).sum(1) / m.sum(1)).cpu().numpy())   # mask-aware mean
         return np.concatenate(out)[:n]
 
     U = encode(uniq)
@@ -118,7 +130,7 @@ def main():
               f"(fall back to BATCH=1 if this is not zero)")
     res = {"n_participants": int(len(d)), "n_unique_texts": len(uniq),
            "max_token_len": MAX_LEN, "batch": BATCH, "padding_side": "right",
-           "layer": "last_hidden_state", "pooling": "last_valid_token",
+           "layer": "last_hidden_state", "pooling": "mask_aware_mean",
            "dtype": str(DTYPE), "revision": REVISION,
            "cache_bit_identical_shuffled": same, "cache_sha256_16": h1,
            "value_audit": audit}
@@ -193,20 +205,42 @@ def main():
     print("   audio→text retrieval is measured in the projector smoke test, not here")
 
     # ---- 5. the InfoNCE floor the sampler actually imposes: E[log K], not log(E[K])
-    print("\n5. duplicate-induced loss floor, E[log K] over the sampler "
-          "(log(E[K]) is withdrawn)")
-    res["loss_floor"] = {}
-    for B in (16, 32, 64, 128):
-        elog, ek = expected_log_K(trd.text, B)
-        res["loss_floor"][str(B)] = {"E_log_K": elog, "E_K": ek,
-                                     "withdrawn_log_E_K": float(np.log(ek))}
-        print(f"   batch {B:3d}: E[log K] {elog:.4f} nats   (E[K] {ek:.3f}; the withdrawn "
-              f"log(E[K]) would have said {np.log(ek):.4f})")
+    # 5 — the floor computed over the ACTUAL batch manifest the official settings produce:
+    # 20,714 participants, batch 64, drop_last=False, reshuffled every epoch. That is 323
+    # full batches plus a final batch of 42, so the last batch has a different floor and
+    # the epoch average is not the batch-64 theoretical value.
+    print("\n5. duplicate-induced loss floor over the REAL batch manifest "
+          "(batch 64, drop_last=False; log(E[K]) withdrawn)")
+    texts = trd.text.to_numpy()
+    res["loss_floor"] = {"n_train": int(len(texts)), "batch": 64, "drop_last": False}
+    per_epoch = []
+    for ep in range(20):
+        order = np.random.RandomState(1000 + ep).permutation(len(texts))
+        logK = []
+        for i in range(0, len(order), 64):
+            b = texts[order[i:i+64]]
+            _, cnt = np.unique(b, return_counts=True)
+            inv = {t: c for t, c in zip(*np.unique(b, return_counts=True))}
+            logK.extend(np.log([inv[t] for t in b]))
+        per_epoch.append(float(np.mean(logK)))
+    nb_full, last = divmod(len(texts), 64)
+    res["loss_floor"].update({
+        "n_full_batches": int(nb_full), "last_batch_size": int(last),
+        "mean_log_K_per_epoch": float(np.mean(per_epoch)),
+        "sd_across_epochs": float(np.std(per_epoch)),
+        "theoretical_batch64": float(expected_log_K(trd.text, 64)[0])})
+    r5 = res["loss_floor"]
+    print(f"   {r5['n_train']} train participants -> {nb_full} full batches of 64 "
+          f"plus one of {last}")
+    print(f"   mean log K over the real manifest: {r5['mean_log_K_per_epoch']:.4f} nats "
+          f"(sd {r5['sd_across_epochs']:.4f} across 20 shuffles)")
+    print(f"   the iid batch-64 approximation would have said "
+          f"{r5['theoretical_batch64']:.4f}; the manifest value is what training reports")
 
     np.savez_compressed(args.emb_out, participants=d[UNIT].to_numpy(),
                         text_id=np.array([tid[t] for t in d.text]),
                         unique_texts=np.array(uniq), unique_embeddings=U.astype(np.float32),
-                        layer="last_hidden_state", pooling="last_valid_token",
+                        layer="last_hidden_state", pooling="mask_aware_mean",
                         revision=REVISION, sha256_16=h1)
     json.dump(res, open(args.out, "w"), indent=1)
     print(f"\nwrote {args.out}, {args.texts_out}, {args.emb_out}")
