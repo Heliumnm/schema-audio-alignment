@@ -63,5 +63,16 @@
   }
  },
  "technical_pass": true,
- "failures": []
+ "failures": [],
+ "retrieval_numbers_withdrawn_from_paper": {
+  "reason": "a no-audio frequency-prior baseline beats every arm",
+  "frequency_prior_baseline": {
+   "mrr": 0.1702,
+   "recall_at_1": 0.0732,
+   "recall_at_10": 0.4385
+  },
+  "monitor_not_random_holdout": "subsample sorted before splitting; mon is the last 1024 by identifier order",
+  "effective_rank_ceiling": 1023,
+  "gradient_norm_note": "first and last norms are two points and prove nothing about learnability"
+ }
 }

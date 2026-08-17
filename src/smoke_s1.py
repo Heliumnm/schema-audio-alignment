@@ -9,10 +9,25 @@ projected outputs, and profile-aware retrieval — MRR and Recall@1/10 with cand
 collapsed to unique profiles, because with 5,437 texts over 20,714 people an
 exact-participant metric is measuring ambiguity, not retrieval.
 
-**The ordering of `correct` / `within_label` / `global` is an observation, not a gate.**
-The three coming out alike is a possible true null, not evidence that the code is wrong.
-What S1 gates is technical: does the loss move, do the outputs avoid collapse, are the
-hashes stable, are the pairings what they claim to be.
+**The ordering of `correct` / `within_label` / `global` is an observation, not a gate**, and
+after the fact it turned out not even to be a usable observation. **These retrieval numbers
+do not enter the paper.** Four reasons, all found after the run and all recorded rather
+than repaired, because S1's job — technical plumbing — was done either way:
+
+1. **The real baseline beats every arm.** Ranking the candidate profiles by their training
+   frequency, with no audio at all and the same ranking for every anchor, gives
+   MRR 0.1702, R@1 0.0732, R@10 0.4385 — above `correct`'s 0.0787 / 0.0400 / 0.1367.
+   `1/469 = 0.0021` was never the relevant baseline, and `correct > within > global` is
+   therefore no evidence of individual-level correspondence.
+2. **The monitor set is not a random holdout.** The subsample is sorted before it is cut,
+   so `mon` is the last 1,024 participants in identifier order, not a random 1,024.
+3. **The effective-rank denominator is wrong when written as /2560.** With 1,024 monitor
+   rows the ceiling after mean-centring is min(n−1, dim) = 1,023, so 381 is 381/1023.
+4. **A first and a last gradient norm are two points**, and cannot establish that one arm
+   is more learnable than another.
+
+What S1 does gate is technical, and that part stands: the loss moves, the outputs do not
+collapse, the hashes are stable, and the pairings are what they claim to be.
 
     python src/smoke_s1.py
 """
