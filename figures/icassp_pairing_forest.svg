@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="780" height="320" viewBox="0 0 780 320" role="img" aria-label="Forest plot of correct minus within-label alignment for AUROC and calibrated negative log-likelihood across Standard, matched, and matched-long cohorts.">
 <style>
 text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
-.small{font-size:11px}.label{font-size:12px}.title{font-size:14px;font-weight:700}
+.small{font-size:14px}.label{font-size:14px}.title{font-size:16px;font-weight:700}
 .axis{stroke:#5f6b76;stroke-width:1}.grid{stroke:#d7dde3;stroke-width:1}
 .zero{stroke:#27313a;stroke-width:1.2;stroke-dasharray:4 3}
 .ci{stroke:#2463a6;stroke-width:2}.point{fill:#2463a6;stroke:#163f6b;stroke-width:1}
@@ -11,7 +11,7 @@ text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
 </style>
 <desc>Forest plot of correct minus within-label alignment for AUROC and calibrated negative log-likelihood across Standard, matched, and matched-long cohorts.</desc>
 <rect x="0" y="0" width="780" height="320" fill="#ffffff"/>
-<text x="20" y="300" class="small">Positive values favor correct pairing; negative Δ(−NLL) means worse calibrated transfer.</text>
+<text x="20" y="300" class="small">Positive favors correct; negative Delta(-NLL) means worse calibrated transfer.</text>
 <text x="8" y="25" class="title">A  Ranking</text>
 <line x1="112.0" y1="58" x2="112.0" y2="245" class="grid"/>
 <text x="112.0" y="265" class="small" text-anchor="middle">-0.05</text>
@@ -25,7 +25,7 @@ text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
 <text x="344.0" y="265" class="small" text-anchor="middle">+0.05</text>
 <line x1="228.0" y1="58" x2="228.0" y2="245" class="zero"/>
 <line x1="112" y1="245" x2="344" y2="245" class="axis"/>
-<text x="228.0" y="287" class="small" text-anchor="middle">ΔAUROC: correct − within-label</text>
+<text x="228.0" y="287" class="small" text-anchor="middle">Delta AUROC: correct - within-label</text>
 <text x="102" y="92" class="label" text-anchor="end">Standard</text>
 <line x1="237.33608325042138" y1="88" x2="282.58176066759336" y2="88" class="ci"/>
 <line x1="237.33608325042138" y1="83" x2="237.33608325042138" y2="93" class="ci"/>
@@ -57,7 +57,7 @@ text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
 <text x="734.0" y="265" class="small" text-anchor="middle">+0.03</text>
 <line x1="656.6666666666666" y1="58" x2="656.6666666666666" y2="245" class="zero"/>
 <line x1="502" y1="245" x2="734" y2="245" class="axis"/>
-<text x="618.0" y="287" class="small" text-anchor="middle">Δ(−NLL): correct − within-label</text>
+<text x="618.0" y="287" class="small" text-anchor="middle">Delta(-NLL): correct - within-label</text>
 <text x="492" y="92" class="label" text-anchor="end">Standard</text>
 <line x1="644.6604647834066" y1="88" x2="672.5271714395419" y2="88" class="ci"/>
 <line x1="644.6604647834066" y1="83" x2="644.6604647834066" y2="93" class="ci"/>

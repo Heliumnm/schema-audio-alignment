@@ -58,7 +58,7 @@ def svg_document(width: int, height: int, body: list[str], description: str) -> 
             f'viewBox="0 0 {width} {height}" role="img" aria-label="{esc(description)}">',
             "<style>",
             "text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}",
-            ".small{font-size:11px}.label{font-size:12px}.title{font-size:14px;font-weight:700}",
+            ".small{font-size:14px}.label{font-size:14px}.title{font-size:16px;font-weight:700}",
             ".axis{stroke:#5f6b76;stroke-width:1}.grid{stroke:#d7dde3;stroke-width:1}",
             ".zero{stroke:#27313a;stroke-width:1.2;stroke-dasharray:4 3}",
             ".ci{stroke:#2463a6;stroke-width:2}.point{fill:#2463a6;stroke:#163f6b;stroke-width:1}",
@@ -101,9 +101,9 @@ def make_pairing_design() -> None:
     body.append(text(22, 190, "Training pair construction", **{"class": "title"}))
 
     rows = [
-        (218, "Correct", "z_audio(i) ↔ z_text(i)", "correct"),
-        (252, "Within-label shuffle", "z_audio(i) ↔ z_text(j),  y_i = y_j", "within"),
-        (286, "Global shuffle", "z_audio(i) ↔ z_text(k), unrestricted", "global"),
+        (218, "Correct", "z_audio(i) <-> z_text(i)", "correct"),
+        (252, "Within-label shuffle", "z_audio(i) <-> z_text(j),  y_i = y_j", "within"),
+        (286, "Global shuffle", "z_audio(i) <-> z_text(k), unrestricted", "global"),
     ]
     for y, label, explanation, style in rows:
         body.append(line(30, y, 116, y, **{"class": style}))
@@ -112,16 +112,16 @@ def make_pairing_design() -> None:
 
     body.append(rect(590, 48, 168, 82, rx=4, **{"class": "box"}))
     body.append(text(674, 71, "Standard source domain", **{"class": "label", "text-anchor": "middle"}))
-    body.append(text(674, 90, "recruitment → COVID", **{"class": "small", "text-anchor": "middle"}))
+    body.append(text(674, 90, "recruitment -> COVID", **{"class": "small", "text-anchor": "middle"}))
     body.append(text(674, 112, "AUROC 0.9966", **{"class": "title", "text-anchor": "middle"}))
 
     body.append(rect(590, 196, 168, 82, rx=4, **{"class": "box"}))
-    body.append(text(674, 219, "Covariate-matched domain", **{"class": "label", "text-anchor": "middle"}))
-    body.append(text(674, 238, "recruitment → COVID", **{"class": "small", "text-anchor": "middle"}))
+    body.append(text(674, 219, "Matched domain", **{"class": "label", "text-anchor": "middle"}))
+    body.append(text(674, 238, "recruitment -> COVID", **{"class": "small", "text-anchor": "middle"}))
     body.append(text(674, 260, "AUROC 0.5000", **{"class": "title", "text-anchor": "middle"}))
     body.append(line(674, 130, 674, 196, **{"class": "zero"}))
 
-    body.append(text(22, 318, "Correct − within-label isolates participant correspondence while retaining label-level co-occurrence.", **{"class": "small"}))
+    body.append(text(22, 318, "Correct - within-label isolates participant correspondence while retaining label-level co-occurrence.", **{"class": "small"}))
     output = OUT / "icassp_pairing_design.svg"
     output.write_text(
         svg_document(width, height, body, "Correct, within-label-shuffled, and globally-shuffled audio-metadata alignment evaluated under source and matched cohorts."),
@@ -175,10 +175,10 @@ def make_forest(result: dict[str, object]) -> None:
     auc = {split: comparison[split]["delta_auroc"] for split in SPLITS}
     nll = {split: comparison[split]["delta_neg_nll"] for split in SPLITS}
     body = [
-        text(20, 300, "Positive values favor correct pairing; negative Δ(−NLL) means worse calibrated transfer.", **{"class": "small"})
+        text(20, 300, "Positive favors correct; negative Delta(-NLL) means worse calibrated transfer.", **{"class": "small"})
     ]
-    body.extend(panel(0, "A  Ranking", "ΔAUROC: correct − within-label", auc, (-0.05, 0.05)))
-    body.extend(panel(390, "B  Calibration", "Δ(−NLL): correct − within-label", nll, (-0.06, 0.03)))
+    body.extend(panel(0, "A  Ranking", "Delta AUROC: correct - within-label", auc, (-0.05, 0.05)))
+    body.extend(panel(390, "B  Calibration", "Delta(-NLL): correct - within-label", nll, (-0.06, 0.03)))
     output = OUT / "icassp_pairing_forest.svg"
     output.write_text(
         svg_document(780, 320, body, "Forest plot of correct minus within-label alignment for AUROC and calibrated negative log-likelihood across Standard, matched, and matched-long cohorts."),

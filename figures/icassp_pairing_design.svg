@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="780" height="330" viewBox="0 0 780 330" role="img" aria-label="Correct, within-label-shuffled, and globally-shuffled audio-metadata alignment evaluated under source and matched cohorts.">
 <style>
 text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
-.small{font-size:11px}.label{font-size:12px}.title{font-size:14px;font-weight:700}
+.small{font-size:14px}.label{font-size:14px}.title{font-size:16px;font-weight:700}
 .axis{stroke:#5f6b76;stroke-width:1}.grid{stroke:#d7dde3;stroke-width:1}
 .zero{stroke:#27313a;stroke-width:1.2;stroke-dasharray:4 3}
 .ci{stroke:#2463a6;stroke-width:2}.point{fill:#2463a6;stroke:#163f6b;stroke-width:1}
@@ -38,21 +38,21 @@ text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
 <text x="22" y="190" class="title">Training pair construction</text>
 <line x1="30" y1="218" x2="116" y2="218" class="correct"/>
 <text x="128" y="222" class="label">Correct</text>
-<text x="274" y="222" class="small">z_audio(i) ↔ z_text(i)</text>
+<text x="274" y="222" class="small">z_audio(i) &lt;-&gt; z_text(i)</text>
 <line x1="30" y1="252" x2="116" y2="252" class="within"/>
 <text x="128" y="256" class="label">Within-label shuffle</text>
-<text x="274" y="256" class="small">z_audio(i) ↔ z_text(j),  y_i = y_j</text>
+<text x="274" y="256" class="small">z_audio(i) &lt;-&gt; z_text(j),  y_i = y_j</text>
 <line x1="30" y1="286" x2="116" y2="286" class="global"/>
 <text x="128" y="290" class="label">Global shuffle</text>
-<text x="274" y="290" class="small">z_audio(i) ↔ z_text(k), unrestricted</text>
+<text x="274" y="290" class="small">z_audio(i) &lt;-&gt; z_text(k), unrestricted</text>
 <rect x="590" y="48" width="168" height="82" rx="4" class="box"/>
 <text x="674" y="71" class="label" text-anchor="middle">Standard source domain</text>
-<text x="674" y="90" class="small" text-anchor="middle">recruitment → COVID</text>
+<text x="674" y="90" class="small" text-anchor="middle">recruitment -&gt; COVID</text>
 <text x="674" y="112" class="title" text-anchor="middle">AUROC 0.9966</text>
 <rect x="590" y="196" width="168" height="82" rx="4" class="box"/>
-<text x="674" y="219" class="label" text-anchor="middle">Covariate-matched domain</text>
-<text x="674" y="238" class="small" text-anchor="middle">recruitment → COVID</text>
+<text x="674" y="219" class="label" text-anchor="middle">Matched domain</text>
+<text x="674" y="238" class="small" text-anchor="middle">recruitment -&gt; COVID</text>
 <text x="674" y="260" class="title" text-anchor="middle">AUROC 0.5000</text>
 <line x1="674" y1="130" x2="674" y2="196" class="zero"/>
-<text x="22" y="318" class="small">Correct − within-label isolates participant correspondence while retaining label-level co-occurrence.</text>
+<text x="22" y="318" class="small">Correct - within-label isolates participant correspondence while retaining label-level co-occurrence.</text>
 </svg>

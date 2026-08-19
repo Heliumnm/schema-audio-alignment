@@ -8,22 +8,19 @@
 
 ## Abstract
 
-Respiratory audio models increasingly align recordings with clinical context, although
-age, symptoms, and medical history are not necessarily audible and may encode cohort
-construction. We test whether such alignment learns participant correspondence or disease
-evidence that transfers across populations. Frozen AST-6L and Phi-2 encoders are connected
-by a RespiraMFM-style audio projector trained with correct metadata, metadata shuffled
-within COVID label, or globally shuffled metadata. Within-label shuffling preserves
-label-level co-occurrence while removing individual correspondence. In UKCOVID,
-recruitment source predicts COVID with AUROC 0.9966 in Standard train but 0.5000 in a
-covariate-matched test set. Correct pairing yields a small Standard AUROC gain over
-within-label shuffling (+0.0140, 95% CI [+0.0040, +0.0235]). In the matched population,
-however, the preregistered paired change in negative log-likelihood is worse
-(Delta(-NLL) -0.0249, 95% CI [-0.0443, -0.0069]), while the AUROC difference is uncertain
-(+0.0062, 95% CI [-0.0144, +0.0279]). Probes show that correct pairing retains real
-participant correspondence, especially sex, but this does not become transferable disease
-benefit. These discovery results motivate within-label pairing controls and
-covariate-balanced evaluation as minimum audits for clinical audio--metadata alignment.
+Clinical audio models increasingly align recordings with clinical metadata, although
+symptoms and demographics may encode cohort construction rather than audible evidence. We
+test whether alignment learns participant correspondence or disease evidence that transfers
+across populations. Frozen AST-6L and Phi-2 encoders are connected by a RespiraMFM-style
+projector trained with correct metadata, metadata shuffled within COVID label, or globally
+shuffled. Within-label shuffling preserves label-level co-occurrence while removing
+individual correspondence. In UKCOVID, recruitment source predicts COVID with AUROC 0.9966
+in training but 0.5000 after covariate matching. Correct pairing improves source AUROC over
+within-label shuffling (+0.0140 [0.0040, 0.0235]) yet worsens matched negative
+log-likelihood (Delta(-NLL) -0.0249 [-0.0443, -0.0069]); its matched AUROC difference is
+uncertain (+0.0062 [-0.0144, 0.0279]). Probes confirm learned participant correspondence,
+especially sex, without transferable disease benefit. These results motivate within-label
+controls and covariate-balanced evaluation for clinical audio--metadata alignment.
 
 ## 1. Introduction
 
