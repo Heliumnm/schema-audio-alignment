@@ -115,11 +115,11 @@ eligibility rule, not a different metadata release.
 
 Manual `cough-heavy` quality annotation is incomplete and calendar-structured.  The
 pinned file covers 2,233 IDs (1,927 excellent, 167 moderate, 139 poor) and stops in
-September 2021; 427 members of the paper cohort have no annotation.  Missing quality is
-therefore not treated as evidence of bad audio.  The primary cohort uses the same
-objective decode/duration/signal QC for every file and excludes known manual-quality-zero
-files.  Restricting to manual quality 1--2 is a predeclared sensitivity analysis, not a way
-to select the primary cohort after outcomes are seen.
+September 2021; 427 members of the paper cohort have no annotation.  Manual quality is
+therefore not an entry criterion for the primary cohort: missing, 0, 1 and 2 remain
+visible while every file receives the same objective decode/duration/signal QC.
+Restricting to manual quality 1--2 is a predeclared, separately matched sensitivity
+analysis, not a way to select the primary cohort after outcomes are seen.
 
 Label provenance is a limitation: the paper reports that most positives had clinical
 testing, while many non-COVID participants lack an explicit negative test.  The external
@@ -129,15 +129,18 @@ confounders and are used for balancing/audit, not placed in the alignment text.
 
 The pinned metadata and annotations were used only for capacity planning.  Before waveform
 QC, the paper-age-range, non-returning, test-status-concordant subset has 788 participants
-(570 positive, 218 negative).  Excluding the 36 known quality-zero files while retaining
-the 298 unannotated files leaves 752 (552 positive, 200 negative).  Coarsened exact
-matching on age decade, sex, cough, fever, fatigue, sore throat and breathing difficulty
-has a theoretical maximum of 127 pairs; adding asthma leaves 118.  Exact matching of
-location and calendar quarter reduces the count below 100, so their balancing rule and
-acceptable post-match imbalance must be frozen explicitly after objective waveform QC.
+(570 positive, 218 negative).  Exact matching on age decade, sex, cough, fever, fatigue,
+sore throat, breathing difficulty, asthma and other respiratory disease leaves 114 pairs
+before audio QC.  Exact matching of location and calendar quarter reduces the count below
+100, so their balancing rule and
+acceptable post-match imbalance were frozen before objective waveform QC.  With official
+checkbox semantics and the two respiratory-comorbidity fields combined, the metadata-only
+ceiling is 114 exact pairs and the deterministic balance path first passes at 101 pairs.
 These are capacity estimates, not a selected test manifest.  If the final audio-QC cohort
-cannot supply at least 100 prespecified matched pairs, Coswara is demoted to an external
-sensitivity analysis and cannot alone support a confirmatory claim.
+cannot supply at least 100 prespecified matched pairs, Coswara is demoted to a descriptive
+external sensitivity analysis.  Even at 100--130 pairs, its power is sufficient only for
+large effects, so the frozen terminology is *external patient-level stress test*, not
+confirmatory proof.
 
 No Coswara model score has been computed and no projector training has started.
 

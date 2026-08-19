@@ -1,0 +1,49 @@
+{
+  "audit_type": "metadata_only_capacity_ceiling",
+  "created_date": "2026-08-19",
+  "dataset_commit": "bf300ae9dc47918be4a30de90436fe7563fafb45",
+  "metadata_sha256": "e462c503bee3408214195855975b0eda08dd1188c0d521b494d93d388d60a72d",
+  "model_predictions_read": false,
+  "waveform_qc_available": false,
+  "provisional_assumption": "Every metadata participant has one unique objective-QC-passing cough-heavy file; final counts can only decrease.",
+  "broad_nonreturning_binary_n": 1762,
+  "strict_test_status_candidate": {
+    "n": 788,
+    "negative": 218,
+    "positive": 570
+  },
+  "matching": {
+    "checkbox_semantics": "Blank official multi-select checkboxes mean NO. Asthma is meta_asthma; other_respiratory is the OR of meta_others_resp, meta_cld, and meta_pneumonia.",
+    "exact_fields": [
+      "age_decade",
+      "sex",
+      "cough",
+      "fever",
+      "fatigue",
+      "sore_throat",
+      "breathing_difficulty",
+      "asthma",
+      "other_respiratory"
+    ],
+    "maximum_primary_pairs": 114,
+    "first_passing_pairs_on_frozen_greedy_path": 101,
+    "maximum_abs_smd": 0.11684124756739724,
+    "maximum_abs_level_proportion_difference": 0.0792079207920792,
+    "acceptance_max_abs_smd": 0.12,
+    "acceptance_max_abs_level_proportion_difference": 0.08
+  },
+  "sensitivity_capacity": {
+    "manual_quality_1_2_maximum_pairs": 57,
+    "manual_quality_1_2_balance_pass": false,
+    "known_test_type_maximum_pairs": 62,
+    "known_test_type_balance_pass_at_60_pairs": false,
+    "manual_quality_2_maximum_pairs": 52
+  },
+  "provisional_split_after_reserving_all_evaluation_ids": {
+    "train": {"n": 1066, "negative": 692, "positive": 374},
+    "validation": {"n": 220, "negative": 144, "positive": 76},
+    "source_test": {"n": 251, "negative": 160, "positive": 91},
+    "external_evaluation_union": {"n": 225, "negative": 112, "positive": 113}
+  },
+  "decision": "Conditional GO for archive extraction and objective waveform QC only. The final primary gate still requires at least 100 passing pairs after real audio QC; no model training is authorised by this capacity ceiling."
+}

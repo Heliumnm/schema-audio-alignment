@@ -25,7 +25,7 @@ minimum_free_bytes=25000000000
 expected_entries=418
 archive_root=iiscleap-Coswara-Data-bf300ae
 
-for command_name in aria2c awk date df flock md5sum mv sed stat unzip wc zipinfo; do
+for command_name in aria2c awk date df du flock md5sum mv sed stat unzip wc zipinfo; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     echo "required command is missing: $command_name" >&2
     exit 10
@@ -39,43 +39,40 @@ if ! flock -n 9; then
   exit 11
 fi
 
-available_bytes=$(df -PB1 "$target_dir" | awk 'NR==2 {print $4}')
-if [[ ! $available_bytes =~ ^[0-9]+$ ]] || (( available_bytes < minimum_free_bytes )); then
-  echo "less than 25 GB is free on the target filesystem: ${available_bytes:-unknown}" >&2
-  exit 12
-fi
-
 verify_archive() {
   local path=$1
   local actual_size actual_md5 entry_count outside_root date_count csv_count part_count
-  actual_size=$(stat -c '%s' "$path")
+  actual_size=$(stat -c '%s' "$path") || return 1
   if [[ $actual_size -ne $expected_size ]]; then
     echo "unexpected archive size: $actual_size" >&2
     return 1
   fi
-  actual_md5=$(md5sum "$path" | awk '{print $1}')
+  actual_md5=$(md5sum "$path" | awk '{print $1}') || return 1
   if [[ $actual_md5 != $expected_md5 ]]; then
     echo "unexpected archive MD5: $actual_md5" >&2
     return 1
   fi
-  unzip -tq "$path" >/dev/null
-  entry_count=$(zipinfo -1 "$path" | wc -l | awk '{print $1}')
+  if ! unzip -tq "$path" >/dev/null; then
+    echo "ZIP CRC/integrity check failed" >&2
+    return 1
+  fi
+  entry_count=$(zipinfo -1 "$path" | wc -l | awk '{print $1}') || return 1
   if [[ $entry_count -ne $expected_entries ]]; then
     echo "unexpected ZIP entry count: $entry_count" >&2
     return 1
   fi
   outside_root=$(zipinfo -1 "$path" | awk -v root="$archive_root/" \
-    'index($0, root) != 1 {n += 1} END {print n + 0}')
+    'index($0, root) != 1 {n += 1} END {print n + 0}') || return 1
   date_count=$(zipinfo -1 "$path" | awk -F/ -v root="$archive_root" \
     '$1 == root && length($2) == 8 && $2 !~ /[^0-9]/ {seen[$2] = 1} \
-     END {for (x in seen) n += 1; print n + 0}')
+     END {for (x in seen) n += 1; print n + 0}') || return 1
   csv_count=$(zipinfo -1 "$path" | awk -F/ -v root="$archive_root" \
     '$1 == root && length($2) == 8 && $2 !~ /[^0-9]/ && $3 == $2 ".csv" {n += 1} \
-     END {print n + 0}')
+     END {print n + 0}') || return 1
   part_count=$(zipinfo -1 "$path" | awk -F/ -v root="$archive_root" \
     '$1 == root && length($2) == 8 && $2 !~ /[^0-9]/ && \
      $3 ~ /^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]\.tar\.gz\.[a-z][a-z]$/ {n += 1} \
-     END {print n + 0}')
+     END {print n + 0}') || return 1
   if [[ $outside_root -ne 0 || $date_count -ne 43 || $csv_count -ne 43 || $part_count -ne 153 ]]; then
     echo "unexpected ZIP structure: outside_root=$outside_root dates=$date_count date_csv=$csv_count tar_parts=$part_count" >&2
     return 1
@@ -120,12 +117,36 @@ if [[ -e $sidecar_path && ! -e $work_path ]]; then
   exit 15
 fi
 
+# A completed archive needs no spare-space gate.  For a true resume, require only the
+# remaining allocated bytes plus a 2 GB safety margin; for a fresh download retain the
+# conservative 25 GB gate used by the preregistered data plan.
+available_bytes=$(df -PB1 "$target_dir" | awk 'NR==2 {print $4}')
+if [[ ! $available_bytes =~ ^[0-9]+$ ]]; then
+  echo "could not determine free bytes on the target filesystem" >&2
+  exit 12
+fi
+required_free=$minimum_free_bytes
+if [[ -e $work_path && -e $sidecar_path ]]; then
+  allocated_bytes=$(du -B1 "$work_path" | awk '{print $1}')
+  if [[ ! $allocated_bytes =~ ^[0-9]+$ ]]; then
+    echo "could not determine allocated bytes for the resumable work file" >&2
+    exit 16
+  fi
+  remaining_bytes=$(( expected_size > allocated_bytes ? expected_size - allocated_bytes : 0 ))
+  required_free=$(( remaining_bytes + 2000000000 ))
+fi
+if (( available_bytes < required_free )); then
+  echo "insufficient free space: available=$available_bytes required=$required_free" >&2
+  exit 12
+fi
+
 echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "url=$url"
 echo "expected_size=$expected_size"
 echo "expected_md5=$expected_md5"
 aria2c --version | sed -n '1p'
 
+download_status=0
 aria2c \
   --continue=true \
   --auto-file-renaming=false \
@@ -142,7 +163,6 @@ aria2c \
   --dir="$work_dir" \
   --out="$archive_name" \
   "$url" || download_status=$?
-download_status=${download_status:-0}
 
 if (( download_status != 0 )); then
   echo "aria2 exited with status $download_status; preserving data and sidecar for resume" >&2
