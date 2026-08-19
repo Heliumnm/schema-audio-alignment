@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="320" viewBox="0 0 780 320" role="img" aria-label="Forest plot of correct minus within-label alignment for AUROC and calibrated negative log-likelihood across Standard, matched, and matched-long cohorts.">
+<style>
+text{font-family:Helvetica,Arial,sans-serif;fill:#1f2933}
+.small{font-size:11px}.label{font-size:12px}.title{font-size:14px;font-weight:700}
+.axis{stroke:#5f6b76;stroke-width:1}.grid{stroke:#d7dde3;stroke-width:1}
+.zero{stroke:#27313a;stroke-width:1.2;stroke-dasharray:4 3}
+.ci{stroke:#2463a6;stroke-width:2}.point{fill:#2463a6;stroke:#163f6b;stroke-width:1}
+.box{fill:#f5f7f9;stroke:#687682;stroke-width:1}
+.correct{stroke:#2463a6;stroke-width:2.4}.within{stroke:#c26d15;stroke-width:2.4;stroke-dasharray:6 3}
+.global{stroke:#687682;stroke-width:2.4;stroke-dasharray:2 3}
+</style>
+<desc>Forest plot of correct minus within-label alignment for AUROC and calibrated negative log-likelihood across Standard, matched, and matched-long cohorts.</desc>
+<rect x="0" y="0" width="780" height="320" fill="#ffffff"/>
+<text x="20" y="300" class="small">Positive values favor correct pairing; negative Δ(−NLL) means worse calibrated transfer.</text>
+<text x="8" y="25" class="title">A  Ranking</text>
+<line x1="112.0" y1="58" x2="112.0" y2="245" class="grid"/>
+<text x="112.0" y="265" class="small" text-anchor="middle">-0.05</text>
+<line x1="170.0" y1="58" x2="170.0" y2="245" class="grid"/>
+<text x="170.0" y="265" class="small" text-anchor="middle">-0.03</text>
+<line x1="228.0" y1="58" x2="228.0" y2="245" class="grid"/>
+<text x="228.0" y="265" class="small" text-anchor="middle">+0.00</text>
+<line x1="286.0" y1="58" x2="286.0" y2="245" class="grid"/>
+<text x="286.0" y="265" class="small" text-anchor="middle">+0.03</text>
+<line x1="344.0" y1="58" x2="344.0" y2="245" class="grid"/>
+<text x="344.0" y="265" class="small" text-anchor="middle">+0.05</text>
+<line x1="228.0" y1="58" x2="228.0" y2="245" class="zero"/>
+<line x1="112" y1="245" x2="344" y2="245" class="axis"/>
+<text x="228.0" y="287" class="small" text-anchor="middle">ΔAUROC: correct − within-label</text>
+<text x="102" y="92" class="label" text-anchor="end">Standard</text>
+<line x1="237.33608325042138" y1="88" x2="282.58176066759336" y2="88" class="ci"/>
+<line x1="237.33608325042138" y1="83" x2="237.33608325042138" y2="93" class="ci"/>
+<line x1="282.58176066759336" y1="83" x2="282.58176066759336" y2="93" class="ci"/>
+<circle cx="260.57" cy="88" r="4.5" class="point"/>
+<text x="253.56875994935194" y="78" class="small" text-anchor="end">+0.014</text>
+<text x="102" y="150" class="label" text-anchor="end">Matched</text>
+<line x1="194.6732257326094" y1="146" x2="292.74794408960605" y2="146" class="ci"/>
+<line x1="194.6732257326094" y1="141" x2="194.6732257326094" y2="151" class="ci"/>
+<line x1="292.74794408960605" y1="141" x2="292.74794408960605" y2="151" class="ci"/>
+<circle cx="242.27" cy="146" r="4.5" class="point"/>
+<text x="235.2733826941989" y="136" class="small" text-anchor="end">+0.006</text>
+<text x="102" y="208" class="label" text-anchor="end">Matched-long</text>
+<line x1="199.96114476066919" y1="204" x2="264.0185118764837" y2="204" class="ci"/>
+<line x1="199.96114476066919" y1="199" x2="199.96114476066919" y2="209" class="ci"/>
+<line x1="264.0185118764837" y1="199" x2="264.0185118764837" y2="209" class="ci"/>
+<circle cx="231.01" cy="204" r="4.5" class="point"/>
+<text x="224.00657305836694" y="194" class="small" text-anchor="end">+0.001</text>
+<text x="398" y="25" class="title">B  Calibration</text>
+<line x1="502.0" y1="58" x2="502.0" y2="245" class="grid"/>
+<text x="502.0" y="265" class="small" text-anchor="middle">-0.06</text>
+<line x1="560.0" y1="58" x2="560.0" y2="245" class="grid"/>
+<text x="560.0" y="265" class="small" text-anchor="middle">-0.04</text>
+<line x1="618.0" y1="58" x2="618.0" y2="245" class="grid"/>
+<text x="618.0" y="265" class="small" text-anchor="middle">-0.01</text>
+<line x1="676.0" y1="58" x2="676.0" y2="245" class="grid"/>
+<text x="676.0" y="265" class="small" text-anchor="middle">+0.01</text>
+<line x1="734.0" y1="58" x2="734.0" y2="245" class="grid"/>
+<text x="734.0" y="265" class="small" text-anchor="middle">+0.03</text>
+<line x1="656.6666666666666" y1="58" x2="656.6666666666666" y2="245" class="zero"/>
+<line x1="502" y1="245" x2="734" y2="245" class="axis"/>
+<text x="618.0" y="287" class="small" text-anchor="middle">Δ(−NLL): correct − within-label</text>
+<text x="492" y="92" class="label" text-anchor="end">Standard</text>
+<line x1="644.6604647834066" y1="88" x2="672.5271714395419" y2="88" class="ci"/>
+<line x1="644.6604647834066" y1="83" x2="644.6604647834066" y2="93" class="ci"/>
+<line x1="672.5271714395419" y1="83" x2="672.5271714395419" y2="93" class="ci"/>
+<circle cx="658.83" cy="88" r="4.5" class="point"/>
+<text x="651.8342815986925" y="78" class="small" text-anchor="end">+0.001</text>
+<text x="492" y="150" class="label" text-anchor="end">Matched</text>
+<line x1="542.366392954475" y1="146" x2="638.9507714216815" y2="146" class="ci"/>
+<line x1="542.366392954475" y1="141" x2="542.366392954475" y2="151" class="ci"/>
+<line x1="638.9507714216815" y1="141" x2="638.9507714216815" y2="151" class="ci"/>
+<circle cx="592.52" cy="146" r="4.5" class="point"/>
+<text x="599.5150040308258" y="136" class="small" text-anchor="start">-0.025</text>
+<text x="492" y="208" class="label" text-anchor="end">Matched-long</text>
+<line x1="571.4922660650903" y1="204" x2="630.5849127985011" y2="204" class="ci"/>
+<line x1="571.4922660650903" y1="199" x2="571.4922660650903" y2="209" class="ci"/>
+<line x1="630.5849127985011" y1="199" x2="630.5849127985011" y2="209" class="ci"/>
+<circle cx="601.49" cy="204" r="4.5" class="point"/>
+<text x="608.4889248469436" y="194" class="small" text-anchor="start">-0.021</text>
+</svg>

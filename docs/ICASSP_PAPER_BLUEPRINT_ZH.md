@@ -16,7 +16,8 @@ metadata 的对齐既可能学习真实的个人对应，也可能学习队列�
 作为关键控制：它保留标签级共现，却破坏逐患者对应。正确配对确实比同标签打乱多保留了
 个人对应信息，但该增量没有转化为协变量平衡人群中的可迁移疾病收益。
 
-外部确认集必须独立报告；若其主要比较不复现，论文不得把 UKCOVID 发现写成确认性结论。
+外部患者级压力测试必须独立报告；无论方向是否一致，都不得把约 100 对的小样本结果写成
+“确认性证明”，更不能把 UKCOVID 发现改写成普遍规律。
 
 ## 唯一研究问题
 
@@ -52,9 +53,9 @@ H1--H13 的探索历史。它们属于仓库审计记录，不属于这篇四页
 
 以上全部叫 **discovery audit**，因为 UKCOVID 官方测试集曾参与早期协议设计。
 
-## 外部确认必须回答的比较
+## 外部压力测试必须回答的比较
 
-外部数据必须先冻结患者级 train／validation／confirmation manifest，然后运行：
+外部数据必须先冻结患者级 train／validation／evaluation manifest，然后运行：
 
 - recording artefacts only；
 - frozen raw audio representation；
@@ -73,23 +74,31 @@ H1--H13 的探索历史。它们属于仓库审计记录，不属于这篇四页
 AUROC、Brier score 和 calibration slope 为次要指标。所有比较在同一参与者、同一 seed
 上配对，并同时重采样参与者与 seed。
 
-## 确认结果的判读规则
+## 外部压力测试的判读规则
 
-### 若外部结果复现 UKCOVID 的方向
+### 若外部结果与 UKCOVID 同方向且区间排除 0
 
-可以写：在两个数据来源中，正确 metadata 配对能够学习个人对应，但没有观察到该对应
-带来可迁移疾病收益；这支持在临床 audio--metadata 对齐研究中常规加入同标签打乱和
-患者级分布偏移评测。
+可以写：Coswara 这个匹配队列也观察到相同方向；这支持在临床 audio--metadata 对齐
+研究中常规加入同标签打乱和患者级分布偏移评测。仍不能写成跨数据集的普遍无效证明。
+
+### 若外部结果与 UKCOVID 同方向但区间覆盖 0
+
+只能写：方向一致，但外部估计不精确；不能把“没有显著差异”写成等效或确认。
 
 ### 若外部结果显示正确对齐有明确迁移收益
 
 不能隐藏或改门槛。论文应改写为边界条件研究：UKCOVID 的极端招募混淆使对齐失败，
 但在外部数据中对齐可以迁移；重点比较何种数据条件决定收益。
 
-### 若外部数据无法形成可靠患者级确认集
+### 若外部结果方向相反且区间覆盖 0
 
-不把现有 UKCOVID discovery audit 伪装成确认结果。主会投稿降级为 workshop／短文，
-或等待合适外部数据。内部 residual-long 已因无法复刻官方十岁年龄分层而被提前否决。
+写成外部结果不一致且不精确，不挑选其他指标把方向改回来。
+
+### 若外部数据无法形成至少 100 个合格匹配对
+
+按预注册判 Coswara formal gate 为 NO-GO，不更换录音类型或匹配阈值。主会稿只剩
+UKCOVID discovery audit，必须同时补第二个 backbone／readout 稳健性，或降级为
+workshop／短文。内部 residual-long 已因无法复刻官方十岁年龄分层而被提前否决。
 
 ## 四页结构
 
@@ -109,14 +118,14 @@ AUROC、Brier score 和 calibration slope 为次要指标。所有比较在同�
 
 ### 第 3 页：主要结果
 
-- 图 2：Standard、matched、matched-long（以及外部 confirmation）的 paired forest plot；
+- 图 2：Standard、matched、matched-long（以及外部 stress test）的 paired forest plot；
 - 表 1：raw audio、correct、within-label、global 的绝对 AUROC／NLL；
 - 重点陈述：源域对应信号与 matched 迁移结果分离。
 
 ### 第 4 页：机制、限制与结论
 
 - 图 3：matched probe 的 `correct - within-label` 增量；
-- 外部确认结果及其与 discovery 的异同；
+- 外部压力测试及其与 discovery 的异同；
 - 限制：单一 alignment 架构／Stage-1 风格复现、线性 readout、数据标签质量；
 - 结论：把同标签打乱与协变量平衡迁移评测作为 audio--metadata alignment 的最低审计要求。
 
@@ -135,9 +144,8 @@ AUROC、Brier score 和 calibration slope 为次要指标。所有比较在同�
 
 在 2026-09-16 前，主会稿至少需要：
 
-1. 一个满足患者身份、标签来源、固定录音类型和患者级无泄漏划分的外部数据集；
-2. 在读取 confirmation 指标前提交 manifest、hash、matching／split 和主要比较；
+1. 一个满足患者身份、标签来源、固定录音类型和患者级无泄漏划分的外部压力测试；
+2. 在读取 evaluation 指标前提交 manifest、hash、matching／split 和主要比较；
 3. 外部数据上的 artifacts、raw audio、metadata、direct fusion 与三个配对 alignment arms；
-4. discovery 与 confirmation 分开报告，不根据 confirmation 结果移动门槛；
+4. discovery 与外部 stress test 分开报告，不根据外部结果移动门槛；
 5. 代码与逐参与者逐 seed 预测可审计。
-

@@ -1,0 +1,238 @@
+{
+  "schema_version": "1.0",
+  "scope": "UKCOVID discovery audit only; no Coswara model result is included",
+  "representation": "raw post-ReLU projector output",
+  "standing": "exploratory; official UKCOVID tests informed earlier protocol versions",
+  "split_aliases": {
+    "source": "standard",
+    "matched": "matched",
+    "matched_long": "matched_long"
+  },
+  "metric_conventions": {
+    "nll": "positive negative log-likelihood; derived as -neg_nll from the formal result JSON",
+    "delta_negative_nll": "correct minus within_label; positive is better",
+    "delta_auroc": "correct minus within_label; positive is better",
+    "confidence_interval": "participant-by-seed hierarchical bootstrap for alignment results"
+  },
+  "disease_absolute": {
+    "source": {
+      "raw_ast": {
+        "n": 11119,
+        "auroc": 0.7084485646748234,
+        "nll": 0.603702828043934,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.raw_ast.standard",
+        "nll_source_key": "disease.arms.raw.raw_ast.standard.neg_nll (sign inverted)"
+      },
+      "correct": {
+        "n": 11119,
+        "auroc": 0.6494031213794044,
+        "nll": 0.6276410171134323,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.correct.standard",
+        "nll_source_key": "disease.arms.raw.correct.standard.neg_nll (sign inverted)"
+      },
+      "within_label": {
+        "n": 11119,
+        "auroc": 0.6353648627805458,
+        "nll": 0.6284819022163733,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.within_label.standard",
+        "nll_source_key": "disease.arms.raw.within_label.standard.neg_nll (sign inverted)"
+      },
+      "global": {
+        "n": 11119,
+        "auroc": 0.5708152962656079,
+        "nll": 0.6397671990028659,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.global.standard",
+        "nll_source_key": "disease.arms.raw.global.standard.neg_nll (sign inverted)"
+      }
+    },
+    "matched": {
+      "raw_ast": {
+        "n": 1814,
+        "auroc": 0.5380070965867582,
+        "nll": 0.8566046323849698,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.raw_ast.matched",
+        "nll_source_key": "disease.arms.raw.raw_ast.matched.neg_nll (sign inverted)"
+      },
+      "correct": {
+        "n": 1814,
+        "auroc": 0.528830886562799,
+        "nll": 0.795167995694313,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.correct.matched",
+        "nll_source_key": "disease.arms.raw.correct.matched.neg_nll (sign inverted)"
+      },
+      "within_label": {
+        "n": 1814,
+        "auroc": 0.522678566435989,
+        "nll": 0.7702815748442022,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.within_label.matched",
+        "nll_source_key": "disease.arms.raw.within_label.matched.neg_nll (sign inverted)"
+      },
+      "global": {
+        "n": 1814,
+        "auroc": 0.5100420714059094,
+        "nll": 0.7393374557945688,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.global.matched",
+        "nll_source_key": "disease.arms.raw.global.matched.neg_nll (sign inverted)"
+      }
+    },
+    "matched_long": {
+      "raw_ast": {
+        "n": 4196,
+        "auroc": 0.5478823174460947,
+        "nll": 0.8502698560339755,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.raw_ast.matched_long",
+        "nll_source_key": "disease.arms.raw.raw_ast.matched_long.neg_nll (sign inverted)"
+      },
+      "correct": {
+        "n": 4196,
+        "auroc": 0.5315796241551943,
+        "nll": 0.7944326218424447,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.correct.matched_long",
+        "nll_source_key": "disease.arms.raw.correct.matched_long.neg_nll (sign inverted)"
+      },
+      "within_label": {
+        "n": 4196,
+        "auroc": 0.5302836874921052,
+        "nll": 0.773027463377897,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.within_label.matched_long",
+        "nll_source_key": "disease.arms.raw.within_label.matched_long.neg_nll (sign inverted)"
+      },
+      "global": {
+        "n": 4196,
+        "auroc": 0.5243903813246262,
+        "nll": 0.7373839736413871,
+        "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+        "source_key": "disease.arms.raw.global.matched_long",
+        "nll_source_key": "disease.arms.raw.global.matched_long.neg_nll (sign inverted)"
+      }
+    }
+  },
+  "correct_minus_within_label": {
+    "source": {
+      "n": 11119,
+      "delta_negative_nll": 0.0008408851029410913,
+      "delta_negative_nll_ci95": [-0.00465757831678191, 0.006152782023960219],
+      "delta_auroc": 0.014038258598858589,
+      "delta_auroc_ci95": [0.004024173814836793, 0.02352662097741092],
+      "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+      "source_key": "disease.comparisons.raw.correct_minus_within_label.standard"
+    },
+    "matched": {
+      "n": 1814,
+      "delta_negative_nll": -0.02488642085011068,
+      "delta_negative_nll_ci95": [-0.04434062342283295, -0.006872545569175297],
+      "delta_auroc": 0.006152320126809862,
+      "delta_auroc_ci95": [-0.014364988908358018, 0.027908596590347428],
+      "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+      "source_key": "disease.comparisons.raw.correct_minus_within_label.matched"
+    },
+    "matched_long": {
+      "n": 4196,
+      "delta_negative_nll": -0.021405158464547734,
+      "delta_negative_nll_ci95": [-0.03304179333681841, -0.010117921759202132],
+      "delta_auroc": 0.0012959366630892033,
+      "delta_auroc_ci95": [-0.012085713465228791, 0.015525220636415362],
+      "source_file": "results/metadata_alignment_results__raw_disease_primary.json",
+      "source_key": "disease.comparisons.raw.correct_minus_within_label.matched_long"
+    }
+  },
+  "raw_ast_attribute_probes": {
+    "patient_context": {
+      "recruitment_source": {
+        "source": {"n": 11119, "auroc": 0.7102589867922279, "ci95": [0.7004335792328338, 0.7202166416276303], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.recruitment_source.raw_ast.standard"},
+        "matched": {"n": 1814, "auroc": 0.6000443794379438, "ci95": [0.5567967844655346, 0.6407979484696501], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.recruitment_source.raw_ast.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.589398577490717, "ci95": [0.5712021144211465, 0.6080404448244761], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.recruitment_source.raw_ast.matched_long"}
+      },
+      "gender": {
+        "source": {"n": 11117, "auroc": 0.9005644043659521, "ci95": [0.8948243966220499, 0.9060234539196957], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.gender.raw_ast.standard"},
+        "matched": {"n": 1814, "auroc": 0.8707237014862665, "ci95": [0.8535398722970721, 0.8874198125887587], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.gender.raw_ast.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.8903947671853694, "ci95": [0.879693046647069, 0.9000763288101399], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.gender.raw_ast.matched_long"}
+      },
+      "age_65plus": {
+        "source": {"n": 11119, "auroc": 0.7673487839106057, "ci95": [0.7552988253662256, 0.7785775397370314], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.age_65plus.raw_ast.standard"},
+        "matched": {"n": 1814, "auroc": 0.7422017909034282, "ci95": [0.7072742559861948, 0.775578929644681], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.age_65plus.raw_ast.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.7721209129262232, "ci95": [0.7533478300950524, 0.7914666054816015], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.age_65plus.raw_ast.matched_long"}
+      },
+      "symptom_cough_any": {
+        "source": {"n": 11119, "auroc": 0.747697407793825, "ci95": [0.7374907379823863, 0.7574989072883989], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.symptom_cough_any.raw_ast.standard"},
+        "matched": {"n": 1814, "auroc": 0.7280291026120504, "ci95": [0.7044459320346371, 0.7501337782493771], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.symptom_cough_any.raw_ast.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.6887066395317398, "ci95": [0.6719679610529394, 0.7048172878208702], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.symptom_cough_any.raw_ast.matched_long"}
+      },
+      "symptom_none": {
+        "source": {"n": 11119, "auroc": 0.7142222869392874, "ci95": [0.7048563884707562, 0.7237660428954943], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.symptom_none.raw_ast.standard"},
+        "matched": {"n": 1814, "auroc": 0.710894985747603, "ci95": [0.6838654733429519, 0.7370359209715378], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.symptom_none.raw_ast.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.6696170296843929, "ci95": [0.6517254968878353, 0.6886169728815081], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.arms.raw.symptom_none.raw_ast.matched_long"}
+      }
+    },
+    "recording_artifacts": {
+      "clipped": {
+        "source": {"n": 11119, "auroc": 0.9106186753483743, "ci95": [0.9051040402611118, 0.9161515981281333], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.clipped.standard"},
+        "matched": {"n": 1814, "auroc": 0.9140711394700757, "ci95": [0.9003269153309343, 0.9268392892662002], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.clipped.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.9168546489099084, "ci95": [0.9089757909116851, 0.9244447025096474], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.clipped.matched_long"}
+      },
+      "long_recording": {
+        "source": {"n": 11119, "auroc": 0.9989721724291402, "ci95": [0.9987401300193667, 0.9991801542477562], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.long_recording.standard"},
+        "matched": {"n": 1814, "auroc": 0.9981751381107999, "ci95": [0.9972592430768327, 0.9989616776686756], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.long_recording.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.9987447294139643, "ci95": [0.9982953180654995, 0.9991267860709886], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.long_recording.matched_long"}
+      },
+      "loud_recording": {
+        "source": {"n": 11119, "auroc": 0.9828348834501585, "ci95": [0.9811258891262666, 0.9844853115632922], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.loud_recording.standard"},
+        "matched": {"n": 1814, "auroc": 0.9816847534612908, "ci95": [0.9773253647154834, 0.9858265027322405], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.loud_recording.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.9764450995693518, "ci95": [0.9730223717747992, 0.9799049794012694], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.loud_recording.matched_long"}
+      },
+      "large_file": {
+        "source": {"n": 11119, "auroc": 0.9939059582358898, "ci95": [0.9926029019568385, 0.9950277584729323], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.large_file.standard"},
+        "matched": {"n": 1814, "auroc": 0.9939018452699742, "ci95": [0.9909978558164986, 0.9963478349932857], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.large_file.matched"},
+        "matched_long": {"n": 4196, "auroc": 0.9962124772155224, "ci95": [0.9950602669102583, 0.9973044020302629], "source_file": "results/audio_baselines_v3.json", "source_key": "probes.large_file.matched_long"}
+      }
+    }
+  },
+  "correct_minus_within_label_demographic_probes": {
+    "gender": {
+      "source": {"n": 11117, "delta_auroc": 0.19690739134327367, "ci95": [0.18711069833980695, 0.2070627376436594], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.comparisons.raw.gender.correct_minus_within_label.standard"},
+      "matched": {"n": 1814, "delta_auroc": 0.19121868599338265, "ci95": [0.16772149880291276, 0.21562290314982185], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.comparisons.raw.gender.correct_minus_within_label.matched"},
+      "matched_long": {"n": 4196, "delta_auroc": 0.18161932501804764, "ci95": [0.1663068225081698, 0.19718369365215765], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.comparisons.raw.gender.correct_minus_within_label.matched_long"}
+    },
+    "age_65plus": {
+      "source": {"n": 11119, "delta_auroc": 0.08186374150399447, "ci95": [0.06873422301085927, 0.09500033924087087], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.comparisons.raw.age_65plus.correct_minus_within_label.standard"},
+      "matched": {"n": 1814, "delta_auroc": 0.046455257009016517, "ci95": [0.0069063404968383755, 0.08540373764197567], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.comparisons.raw.age_65plus.correct_minus_within_label.matched"},
+      "matched_long": {"n": 4196, "delta_auroc": 0.06783239305755266, "ci95": [0.046074793066107345, 0.0876383913064731], "source_file": "results/metadata_alignment_results__raw_probes.json", "source_key": "probes.comparisons.raw.age_65plus.correct_minus_within_label.matched_long"}
+    }
+  },
+  "consistency_checks": {
+    "disease_npz_recalculation": {
+      "status": "exact within floating-point precision",
+      "prediction_file": "results/metadata_alignment_predictions__raw_disease_primary.npz",
+      "cohort_file": "results/ukcovid_audio_cohort.csv",
+      "comparison_file": "results/metadata_alignment_results__raw_disease_primary.json",
+      "maximum_absolute_difference": 1.1102230246251565e-16,
+      "checked_metrics": "all 12 arm-by-split AUROCs and NLLs"
+    },
+    "paper_document": {
+      "status": "consistent after rounding to three or four decimals",
+      "source_file": "docs/METADATA_ALIGNMENT_OUTCOME_ZH.md",
+      "source_sections": ["各 arm 的绝对表现", "事先指定的主比较", "正式 probes：对齐究竟保留了什么"]
+    },
+    "raw_ast_probe_duplicate_reports": {
+      "status": "minor numerical differences, no interpretive conflict",
+      "formal_source_used_here": "results/metadata_alignment_results__raw_probes.json",
+      "earlier_source": "results/audio_baselines_v3.json",
+      "maximum_auroc_point_difference": 0.00007328216734836523,
+      "location_of_maximum": "age_65plus.matched",
+      "formal_value": 0.7422017909034282,
+      "earlier_value": 0.7421285087360798,
+      "resolution": "use the formal metadata-alignment probe result for patient-context probes; use audio_baselines_v3 only for recording-artifact probes absent from the formal probe file"
+    }
+  }
+}
