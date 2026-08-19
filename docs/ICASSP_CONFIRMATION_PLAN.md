@@ -87,11 +87,39 @@ The dataset is not yet approved for training.  The changing GitHub `master` cont
 - size: 12,984,309,908 bytes;
 - MD5: `53721d9c106f99872bf7f878c8196d31`.
 
+The archive root is pinned to upstream commit
+`bf300ae9dc47918be4a30de90436fe7563fafb45`.  Its metadata CSV SHA-256 is
+`e462c503bee3408214195855975b0eda08dd1188c0d521b494d93d388d60a72d`.
+The Zenodo record labels the release CC BY 4.0, while the README inside the pinned archive
+states CC BY-NC-ND 4.0.  This licence conflict is recorded rather than silently resolved;
+the paper may cite and analyse the dataset, but no audio or derived data are redistributed
+until the data owner clarifies the applicable terms.
+
 The fixed release must first be downloaded, checksum-verified and audited for repeated
 participants/sessions, exact and near-duplicate audio, decodability, duration, signal
 quality and the availability of `cough-heavy`.  Recovered and under-validation statuses
 are excluded.  Returning users and the meaning of missing symptom values must be resolved
 from the frozen archive rather than inferred from the live summary CSV.
+
+The outer ZIP contains 43 date directories and 153 split gzip-tar parts.  The nine audio
+types are interleaved inside those streams, so `cough-heavy` cannot be downloaded alone.
+After the full ZIP passes its byte-count, MD5 and ZIP integrity checks, each date stream is
+reassembled in order and only `cough-heavy.wav` is written.  Other audio types and
+intermediate tar parts are not materialised.
+
+The pinned metadata CSV contains 2,746 unique IDs.  The paper's reported 2,635-person
+cohort is reproduced exactly by removing 81 `under_validation` rows and 30 participants
+outside its stated age range of 15--90 years.  The remaining counts are 1,819 non-COVID,
+674 positive and 142 recovered.  This resolves the apparent version discrepancy: it is an
+eligibility rule, not a different metadata release.
+
+Manual `cough-heavy` quality annotation is incomplete and calendar-structured.  The
+pinned file covers 2,233 IDs (1,927 excellent, 167 moderate, 139 poor) and stops in
+September 2021; 427 members of the paper cohort have no annotation.  Missing quality is
+therefore not treated as evidence of bad audio.  The primary cohort uses the same
+objective decode/duration/signal QC for every file and excludes known manual-quality-zero
+files.  Restricting to manual quality 1--2 is a predeclared sensitivity analysis, not a way
+to select the primary cohort after outcomes are seen.
 
 Label provenance is a limitation: the paper reports that most positives had clinical
 testing, while many non-COVID participants lack an explicit negative test.  The external
@@ -99,11 +127,17 @@ document must therefore distinguish the broad paper-defined train/validation lab
 test-status-confirmed confirmation subset.  Location and calendar wave are acquisition
 confounders and are used for balancing/audit, not placed in the alignment text.
 
-The live GitHub metadata was used only as a capacity proxy.  It suggests that a strict
-test-status subset may support roughly 80--119 matched pairs after balancing age, sex,
-key symptoms and acquisition proxies.  These are not final counts.  If the frozen,
-audio-QC cohort cannot supply at least 100 prespecified matched pairs, Coswara is demoted
-to an external sensitivity analysis and cannot alone support a confirmatory claim.
+The pinned metadata and annotations were used only for capacity planning.  Before waveform
+QC, the paper-age-range, non-returning, test-status-concordant subset has 788 participants
+(570 positive, 218 negative).  Excluding the 36 known quality-zero files while retaining
+the 298 unannotated files leaves 752 (552 positive, 200 negative).  Coarsened exact
+matching on age decade, sex, cough, fever, fatigue, sore throat and breathing difficulty
+has a theoretical maximum of 127 pairs; adding asthma leaves 118.  Exact matching of
+location and calendar quarter reduces the count below 100, so their balancing rule and
+acceptable post-match imbalance must be frozen explicitly after objective waveform QC.
+These are capacity estimates, not a selected test manifest.  If the final audio-QC cohort
+cannot supply at least 100 prespecified matched pairs, Coswara is demoted to an external
+sensitivity analysis and cannot alone support a confirmatory claim.
 
 No Coswara model score has been computed and no projector training has started.
 
