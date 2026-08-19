@@ -1,0 +1,140 @@
+20714 Standard-train participants -> 323 batches of 64 plus one of 42
+input hashes {'audio': 'c3b7e6c988827b7c', 'text_unique': '31eee607c3a24b73', 'text_id': '9f009fbf7dc825ed'}   source b4224f231f94   device cuda
+pairing check: 5 seeds x 3 arms are legal bijections
+
+  [correct seed 0] pairing e8a003eb2613fb88  init a8152142a0d44572  batch-order 4c8a3940e65bbc70  collisions n/a (identity)
+    [correct s0] epoch 1/500 loss 4.0544 floor 0.5502
+    [correct s0] epoch 100/500 loss 3.7235 floor 0.5506
+    [correct s0] epoch 200/500 loss 3.6513 floor 0.5561
+    [correct s0] epoch 300/500 loss 3.6283 floor 0.5543
+    [correct s0] epoch 400/500 loss 3.6196 floor 0.5554
+    [correct s0] epoch 500/500 loss 3.6118 floor 0.5580
+    saved representation for 72458 participants  raw 06b145af7ba79008  norm dc5281586d807dfe
+
+  [within_label seed 0] pairing 8da6f4e31aa13985  init a8152142a0d44572  batch-order 4c8a3940e65bbc70  collisions 3.28%
+    [within_label s0] epoch 1/500 loss 4.1348 floor 0.5546
+    [within_label s0] epoch 100/500 loss 3.7522 floor 0.5550
+    [within_label s0] epoch 200/500 loss 3.6725 floor 0.5544
+    [within_label s0] epoch 300/500 loss 3.6454 floor 0.5601
+    [within_label s0] epoch 400/500 loss 3.6295 floor 0.5532
+    [within_label s0] epoch 500/500 loss 3.6189 floor 0.5540
+    saved representation for 72458 participants  raw 9d945369c5d25c8d  norm 330c416b695d9178
+
+  [global seed 0] pairing f49e4bb19b91e893  init a8152142a0d44572  batch-order 4c8a3940e65bbc70  collisions 2.02%
+    [global s0] epoch 1/500 loss 4.1582 floor 0.5558
+    [global s0] epoch 100/500 loss 3.7557 floor 0.5537
+    [global s0] epoch 200/500 loss 3.6806 floor 0.5578
+    [global s0] epoch 300/500 loss 3.6480 floor 0.5563
+    [global s0] epoch 400/500 loss 3.6327 floor 0.5579
+    [global s0] epoch 500/500 loss 3.6187 floor 0.5588
+    saved representation for 72458 participants  raw a8a1b462bb2aeacc  norm 6ddd9ecfc40af272
+
+  [correct seed 1] pairing e8a003eb2613fb88  init 8b2ae539256bcd4c  batch-order d57c01478032e56f  collisions n/a (identity)
+    [correct s1] epoch 1/500 loss 4.0529 floor 0.5554
+    [correct s1] epoch 100/500 loss 3.7213 floor 0.5575
+    [correct s1] epoch 200/500 loss 3.6533 floor 0.5561
+    [correct s1] epoch 300/500 loss 3.6245 floor 0.5549
+    [correct s1] epoch 400/500 loss 3.6139 floor 0.5555
+    [correct s1] epoch 500/500 loss 3.6080 floor 0.5537
+    saved representation for 72458 participants  raw b89520158545262b  norm d3cf6429a3710b62
+
+  [within_label seed 1] pairing 4f554fb1e9fc2df2  init 8b2ae539256bcd4c  batch-order d57c01478032e56f  collisions 3.03%
+    [within_label s1] epoch 1/500 loss 4.1362 floor 0.5558
+    [within_label s1] epoch 100/500 loss 3.7514 floor 0.5551
+    [within_label s1] epoch 200/500 loss 3.6710 floor 0.5552
+    [within_label s1] epoch 300/500 loss 3.6435 floor 0.5562
+    [within_label s1] epoch 400/500 loss 3.6286 floor 0.5578
+    [within_label s1] epoch 500/500 loss 3.6206 floor 0.5573
+    saved representation for 72458 participants  raw d18ab685b1ff5b0e  norm 56928093378e1343
+
+  [global seed 1] pairing bc45d1637ef1551b  init 8b2ae539256bcd4c  batch-order d57c01478032e56f  collisions 2.24%
+    [global s1] epoch 1/500 loss 4.1582 floor 0.5584
+    [global s1] epoch 100/500 loss 3.7614 floor 0.5547
+    [global s1] epoch 200/500 loss 3.6790 floor 0.5536
+    [global s1] epoch 300/500 loss 3.6485 floor 0.5529
+    [global s1] epoch 400/500 loss 3.6332 floor 0.5543
+    [global s1] epoch 500/500 loss 3.6199 floor 0.5538
+    saved representation for 72458 participants  raw abf2ab8ab07b3eaa  norm c981a5b4ba9683cb
+
+  [correct seed 2] pairing e8a003eb2613fb88  init cce0c981d2fc5751  batch-order 0b3995973fa37275  collisions n/a (identity)
+    [correct s2] epoch 1/500 loss 4.0509 floor 0.5552
+    [correct s2] epoch 100/500 loss 3.7209 floor 0.5539
+    [correct s2] epoch 200/500 loss 3.6553 floor 0.5533
+    [correct s2] epoch 300/500 loss 3.6261 floor 0.5553
+    [correct s2] epoch 400/500 loss 3.6189 floor 0.5571
+    [correct s2] epoch 500/500 loss 3.6093 floor 0.5556
+    saved representation for 72458 participants  raw 8d983e3a82eb00ac  norm 08bb726febb67565
+
+  [within_label seed 2] pairing 00dac774aab4d171  init cce0c981d2fc5751  batch-order 0b3995973fa37275  collisions 3.33%
+    [within_label s2] epoch 1/500 loss 4.1358 floor 0.5565
+    [within_label s2] epoch 100/500 loss 3.7512 floor 0.5520
+    [within_label s2] epoch 200/500 loss 3.6719 floor 0.5556
+    [within_label s2] epoch 300/500 loss 3.6413 floor 0.5508
+    [within_label s2] epoch 400/500 loss 3.6277 floor 0.5534
+    [within_label s2] epoch 500/500 loss 3.6173 floor 0.5546
+    saved representation for 72458 participants  raw 2a9d37eb96dc34e3  norm dbaef651ac39b0b8
+
+  [global seed 2] pairing 54baa41a43b09279  init cce0c981d2fc5751  batch-order 0b3995973fa37275  collisions 2.10%
+    [global s2] epoch 1/500 loss 4.1581 floor 0.5535
+    [global s2] epoch 100/500 loss 3.7589 floor 0.5547
+    [global s2] epoch 200/500 loss 3.6794 floor 0.5583
+    [global s2] epoch 300/500 loss 3.6510 floor 0.5522
+    [global s2] epoch 400/500 loss 3.6345 floor 0.5534
+    [global s2] epoch 500/500 loss 3.6229 floor 0.5546
+    saved representation for 72458 participants  raw c3f6ab5491d4ab28  norm 2cbb951134fc3d2e
+
+  [correct seed 3] pairing e8a003eb2613fb88  init 8e2699edaef69b12  batch-order 0eaafaefcba05e7f  collisions n/a (identity)
+    [correct s3] epoch 1/500 loss 4.0523 floor 0.5542
+    [correct s3] epoch 100/500 loss 3.7252 floor 0.5562
+    [correct s3] epoch 200/500 loss 3.6549 floor 0.5586
+    [correct s3] epoch 300/500 loss 3.6291 floor 0.5588
+    [correct s3] epoch 400/500 loss 3.6157 floor 0.5530
+    [correct s3] epoch 500/500 loss 3.6095 floor 0.5533
+    saved representation for 72458 participants  raw 27c435d57d7f2e4c  norm 765b4c54e4b4b485
+
+  [within_label seed 3] pairing 4627e09131759a22  init 8e2699edaef69b12  batch-order 0eaafaefcba05e7f  collisions 3.15%
+    [within_label s3] epoch 1/500 loss 4.1354 floor 0.5555
+    [within_label s3] epoch 100/500 loss 3.7533 floor 0.5554
+    [within_label s3] epoch 200/500 loss 3.6786 floor 0.5590
+    [within_label s3] epoch 300/500 loss 3.6423 floor 0.5564
+    [within_label s3] epoch 400/500 loss 3.6282 floor 0.5549
+    [within_label s3] epoch 500/500 loss 3.6169 floor 0.5531
+    saved representation for 72458 participants  raw 0e42f17853d68ff7  norm 75332ba50dfdf5d7
+
+  [global seed 3] pairing 64d224e344336892  init 8e2699edaef69b12  batch-order 0eaafaefcba05e7f  collisions 1.96%
+    [global s3] epoch 1/500 loss 4.1581 floor 0.5544
+    [global s3] epoch 100/500 loss 3.7560 floor 0.5549
+    [global s3] epoch 200/500 loss 3.6789 floor 0.5542
+    [global s3] epoch 300/500 loss 3.6472 floor 0.5523
+    [global s3] epoch 400/500 loss 3.6307 floor 0.5558
+    [global s3] epoch 500/500 loss 3.6238 floor 0.5557
+    saved representation for 72458 participants  raw c4c7c9db22b257e1  norm 7764483a8cdb1d74
+
+  [correct seed 4] pairing e8a003eb2613fb88  init d2e86b9f9aff0827  batch-order 971b3aec7b8d3c82  collisions n/a (identity)
+    [correct s4] epoch 1/500 loss 4.0525 floor 0.5551
+    [correct s4] epoch 100/500 loss 3.7248 floor 0.5525
+    [correct s4] epoch 200/500 loss 3.6547 floor 0.5525
+    [correct s4] epoch 300/500 loss 3.6275 floor 0.5602
+    [correct s4] epoch 400/500 loss 3.6198 floor 0.5576
+    [correct s4] epoch 500/500 loss 3.6095 floor 0.5550
+    saved representation for 72458 participants  raw a62eb14d96c7cfd7  norm def09a74886918ed
+
+  [within_label seed 4] pairing 73ac0a66f6177b42  init d2e86b9f9aff0827  batch-order 971b3aec7b8d3c82  collisions 3.20%
+    [within_label s4] epoch 1/500 loss 4.1354 floor 0.5549
+    [within_label s4] epoch 100/500 loss 3.7503 floor 0.5514
+    [within_label s4] epoch 200/500 loss 3.6714 floor 0.5520
+    [within_label s4] epoch 300/500 loss 3.6464 floor 0.5558
+    [within_label s4] epoch 400/500 loss 3.6261 floor 0.5602
+    [within_label s4] epoch 500/500 loss 3.6161 floor 0.5566
+    saved representation for 72458 participants  raw 3b1e0f19701f1cfb  norm f8abd4803d9a1650
+
+  [global seed 4] pairing e67a1fe603d38e6e  init d2e86b9f9aff0827  batch-order 971b3aec7b8d3c82  collisions 2.16%
+    [global s4] epoch 1/500 loss 4.1582 floor 0.5543
+    [global s4] epoch 100/500 loss 3.7560 floor 0.5566
+    [global s4] epoch 200/500 loss 3.6785 floor 0.5527
+    [global s4] epoch 300/500 loss 3.6498 floor 0.5541
+    [global s4] epoch 400/500 loss 3.6314 floor 0.5546
+    [global s4] epoch 500/500 loss 3.6212 floor 0.5599
+    saved representation for 72458 participants  raw 88bf1d25d71dc511  norm 956b5770e4bfe333
+
+wrote results/alignment/manifest.json

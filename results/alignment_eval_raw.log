@@ -1,0 +1,18 @@
+cohort 72458  train 20714  Standard val 5179  folds [1036, 1036, 1036, 1036, 1035]
+[raw] raw_ast seed 0: selecting downstream C
+[raw] correct seed 0: selecting downstream C
+[raw] correct seed 1: selecting downstream C
+[raw] correct seed 2: selecting downstream C
+[raw] correct seed 3: selecting downstream C
+[raw] correct seed 4: selecting downstream C
+[raw] within_label seed 0: selecting downstream C
+[raw] within_label seed 1: selecting downstream C
+[raw] within_label seed 2: selecting downstream C
+[raw] within_label seed 3: selecting downstream C
+[raw] within_label seed 4: selecting downstream C
+[raw] global seed 0: selecting downstream C
+[raw] global seed 1: selecting downstream C
+[raw] global seed 2: selecting downstream C
+[raw] global seed 3: selecting downstream C
+[raw] global seed 4: selecting downstream C
+wrote formal predictions, fits and exploratory test results under results/alignment_eval with tag raw_disease_primary
