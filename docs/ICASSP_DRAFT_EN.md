@@ -3,8 +3,8 @@
 
 > **Draft status (2026-08-19).** UKCOVID is a discovery audit because its official test
 > sets informed earlier protocol development. Coswara is a preregistered, pending external
-> patient-level stress test; no Coswara model score is included. Citation keys and figure
-> panels remain production placeholders.
+> patient-level stress test; no Coswara model score is included. Figures and verified
+> bibliography entries are linked to frozen repository artefacts.
 
 ## Abstract
 
@@ -29,7 +29,7 @@ covariate-balanced evaluation as minimum audits for clinical audio--metadata ali
 
 Clinical audio models often use symptoms, demographics, medical history, or text assembled
 from those fields. Contrastive alignment can make this context accessible to an audio
-representation [RespiraMFM]. Yet, unlike an audible description of pitch or timing,
+representation [@siam2026respiramfm]. Yet, unlike an audible description of pitch or timing,
 clinical metadata may describe the participant or recruitment process rather than the
 waveform. A model can therefore learn the intended mapping while exploiting cohort
 structure that does not transfer.
@@ -39,7 +39,8 @@ largely positive Test-and-Trace cohort with a largely negative population-survei
 cohort. Recruitment source alone predicts COVID with AUROC 0.9966 in Standard train but
 0.5000 in the covariate-matched test population. Symptoms are also a strong recruitment
 proxy: “no symptoms” occurs in 0.786 of training negatives and 0.019 of positives. Aligning
-audio to symptom text may thus reinforce a source-specific association [UKCOVID-Audit].
+audio to symptom text may thus reinforce a source-specific association
+[@coppock2024audio].
 
 A global shuffle cannot isolate this mechanism because it removes both participant
 correspondence and disease-level co-occurrence. We introduce a **within-label shuffle**:
@@ -65,22 +66,24 @@ same COVID-label co-occurrence.
 
 ### 2.1 Data and representations
 
-We learn representations on the patient-level UKCOVID Standard train split. After the
-frozen audio-availability audit, it contains 20,714 participants. We evaluate Standard, the
-primary covariate-matched test set, and the participant-disjoint matched-long sensitivity
-set. Because official tests informed earlier protocol development, these results are a
-**discovery audit**, not independent confirmation.
+We learn representations on the patient-level UKCOVID Standard train split
+[@budd2024ukcovid]. After the frozen audio-availability audit, it contains 20,714
+participants. We evaluate Standard, the primary covariate-matched test set, and the
+participant-disjoint matched-long sensitivity set. Because official tests informed earlier
+protocol development, these results are a **discovery audit**, not independent
+confirmation.
 
-Audio is encoded by frozen six-layer Audio Spectrogram Transformer features [AST]; text is
-encoded by frozen Phi-2 [Phi-2]. Metadata is deterministically rendered from age, sex,
-smoking, asthma, other respiratory conditions, and symptoms, with missingness explicit.
-COVID results, test details, recruitment source, timestamps, and recording artefacts are
-excluded.
+Audio is encoded by frozen six-layer Audio Spectrogram Transformer features
+[@gong2021ast]; text is encoded by frozen Phi-2 [@javaheripi2023phi2]. Metadata is
+deterministically rendered from age, sex, smoking, asthma, other respiratory conditions,
+and symptoms, with missingness explicit. COVID results, test details, recruitment source,
+timestamps, and recording artefacts are excluded.
 
-Only an audio-side projector is trained, following RespiraMFM Stage 1 [RespiraMFM]. It maps
-768 to 1,024 to 2,560 dimensions using LayerNorm and ReLU after both linear layers and
-dropout 0.1 after the first. For frozen audio embedding \(a_i\), frozen text embedding
-\(t_i\), and projector \(f_\theta\), the one-directional objective is
+Only an audio-side projector is trained, following RespiraMFM Stage 1
+[@siam2026respiramfm]. It maps 768 to 1,024 to 2,560 dimensions using LayerNorm and ReLU
+after both linear layers and dropout 0.1 after the first. For frozen audio embedding
+\(a_i\), frozen text embedding \(t_i\), and projector \(f_\theta\), the one-directional
+objective is
 
 \[
 \mathcal{L}=-\frac{1}{N}\sum_i\log
@@ -113,7 +116,8 @@ symptoms measure decodability, not causal classifier use.
 
 ### 2.3 External stress test
 
-Before any external model score, we froze a Coswara v1.0 protocol using one
+Before any external model score, we froze a Coswara v1.0 protocol
+[@bhattacharya2023coswara] using one
 `cough-heavy.wav` per participant, objective waveform QC, decoded-PCM duplicate removal,
 patient-disjoint development splits, and 1:1 covariate matching. Formal execution requires
 at least 100 balanced pairs and adequate development class counts. A metadata-only capacity
@@ -212,11 +216,3 @@ small source-domain ranking advantage, but not improved calibrated disease predi
 after covariate balancing. Clinical audio--metadata studies should minimally include a
 within-label shuffle and a cohort-balanced transfer evaluation; otherwise, source gains
 may be mistaken for portable disease evidence.
-
-## References to resolve before IEEE formatting
-
-- **[AST]** Audio Spectrogram Transformer original paper and implementation.
-- **[Phi-2]** Phi-2 technical report/model card.
-- **[RespiraMFM]** *RespiraMFM: A Multimodal Foundation Model with Contrastive
-  Audio-Language Alignment for Respiratory Disease Identification*.
-- **[UKCOVID-Audit]** UKCOVID cohort paper and matched confounding analysis.
