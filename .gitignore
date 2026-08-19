@@ -1,4 +1,14 @@
-results/*.npz
-results/*.npy
+data/
+features/
+checkpoints/
+*.pt
+*.ckpt
 __pycache__/
 *.pyc
+.DS_Store
+results/*.npz
+results/*.npy
+wandb/
+results/schema_text.json
+results/*_index.json
+results/t1_qwen2.jsonl

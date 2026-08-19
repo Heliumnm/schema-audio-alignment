@@ -1,0 +1,26 @@
+{
+ "coordinate_only": {
+  "hit1pm_t": 1.0,
+  "freq_acc": 1.0,
+  "point2d": 1.0,
+  "distractor": 0.0
+ },
+ "dsp_band_energy": {
+  "hit1pm_t": 0.306282722513089,
+  "freq_acc": 1.0,
+  "point2d": 0.11780104712041885,
+  "distractor": 0.0
+ },
+ "typed_intact": {
+  "hit1pm_t": 0.9354275741710296,
+  "freq_acc": 0.894415357766143,
+  "point2d": 0.5820244328097731,
+  "distractor": 0.049738219895287955
+ },
+ "audio_shuffled": {
+  "hit1pm_t": 0.3263525305410122,
+  "freq_acc": 0.3909249563699826,
+  "point2d": 0.04712041884816753,
+  "distractor": 0.0
+ }
+}
