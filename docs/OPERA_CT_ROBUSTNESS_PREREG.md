@@ -31,6 +31,11 @@ The full-coverage rule is our explicit adaptation because OPERA's released
 `get_entire_signal_librosa` does not define a fixed-length policy for recordings longer
 than its expected 8-second inputs. It is frozen before any OPERA UKCOVID disease score.
 
+The first preflight launch stopped before model loading because both the frozen cohort
+and a redundantly merged split table supplied a `splits` column. No embedding or outcome
+was produced. The redundant merge was removed; the frozen cohort's existing split flags
+are now the sole source used for stratified technical sampling.
+
 ## Technical gates
 
 A stratified 100-recording preflight must cover short/long recordings, the 8-second

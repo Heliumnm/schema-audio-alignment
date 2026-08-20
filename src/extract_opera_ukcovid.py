@@ -149,13 +149,9 @@ def embed_participant_batch(rows: list, audio_root: Path, torch, model,
 def build_check_set(cohort: pd.DataFrame, artefacts: pd.DataFrame,
                     data_dir: Path, n: int = 100) -> pd.DataFrame:
     meta = pd.read_csv(data_dir / "participant_metadata.csv", low_memory=False)
-    splits = pd.read_csv(data_dir / "train_test_splits.csv", low_memory=False)
     keep_meta = ["participant_identifier", "recruitment_source"]
-    keep_split = ["participant_identifier", "splits", "in_matched_rebalanced_test",
-                  "in_matched_rebalanced_long_test"]
     d = (cohort.merge(artefacts, on="participant_identifier", validate="one_to_one")
-         .merge(meta[keep_meta], on="participant_identifier", validate="one_to_one")
-         .merge(splits[keep_split], on="participant_identifier", validate="one_to_one"))
+         .merge(meta[keep_meta], on="participant_identifier", validate="one_to_one"))
     d["clipped"] = d["clip_frac"] > 0
     rng, chosen = np.random.RandomState(20260820), []
 
