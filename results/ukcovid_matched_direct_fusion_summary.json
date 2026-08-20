@@ -1,0 +1,42 @@
+{
+  "standing": "exploratory attribution control; official UKCOVID tests informed earlier protocols",
+  "frozen_result_sha256": "894b16b64cb6e7ccde3dbedb8442b85e6abc6f234e523be7179450bcca91bbfb",
+  "predictions_sha256": "c4a5d52246c4b8818c6ac577c4932c85dbbdd433e996b69882c794777fb85d03",
+  "head_fits_sha256": "dfdeabb1f64f0b6be285eed2fb8a5bd6ec864ab0e017d8c42ca986af761c9d0b",
+  "matched_n": 1814,
+  "matched_arms": {
+    "metadata_only": {"auroc": 0.5985, "nll": 1.4341},
+    "metadata_raw_ast": {"auroc": 0.6013, "nll": 1.4374},
+    "metadata_correct": {"auroc": 0.5973, "nll": 1.4452},
+    "metadata_within_label": {"auroc": 0.5817, "nll": 1.1753},
+    "metadata_global": {"auroc": 0.5976, "nll": 1.4207}
+  },
+  "matched_paired_comparisons": {
+    "metadata_raw_ast_minus_metadata_only": {
+      "delta_neg_nll": -0.0033653296991953408,
+      "delta_neg_nll_ci": [-0.01941616701288813, 0.012611492759598095],
+      "delta_auroc": 0.0028347448304197886,
+      "delta_auroc_ci": [-0.0018893806812590702, 0.007076503645607619]
+    },
+    "metadata_correct_minus_metadata_within_label": {
+      "delta_neg_nll": -0.2698223976210447,
+      "delta_neg_nll_ci": [-0.31945982199383427, -0.22029177723710333],
+      "delta_auroc": 0.015616623857805711,
+      "delta_auroc_ci": [0.0036989684132679728, 0.02795814441635771],
+      "delta_neg_nll_seed_signs": [-1, -1, -1, -1, -1]
+    },
+    "metadata_correct_minus_metadata_raw_ast": {
+      "delta_neg_nll": -0.007728110581801495,
+      "delta_neg_nll_ci": [-0.030092131347103757, 0.01565254177929903],
+      "delta_auroc": -0.004014835002534567,
+      "delta_auroc_ci": [-0.00934937120978737, 0.0014665047339454628]
+    },
+    "metadata_correct_minus_metadata_only": {
+      "delta_neg_nll": -0.011093440280996836,
+      "delta_neg_nll_ci": [-0.03630831544919815, 0.014134020178430198],
+      "delta_auroc": -0.0011800901721147783,
+      "delta_auroc_ci": [-0.007147702325878752, 0.0046524921519015775]
+    }
+  },
+  "interpretation": "Raw AST supplies no detectable paired increment over the frozen schema metadata on the primary matched cohort. Correct alignment does not improve over raw fusion; versus within-label pairing it improves ranking slightly but substantially worsens source-calibrated NLL."
+}
