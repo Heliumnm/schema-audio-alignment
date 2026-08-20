@@ -159,11 +159,13 @@ def calibration_in_the_large(z: np.ndarray, y: np.ndarray,
 
 
 def probability_metrics(y: np.ndarray, source_prob: np.ndarray,
-                        raw_logits: np.ndarray | None = None) -> dict:
+                        raw_logits: np.ndarray | None = None,
+                        rank_score: np.ndarray | None = None) -> dict:
     y = np.asarray(y, dtype=int)
     p = np.clip(np.asarray(source_prob, dtype=np.float64), EPS, 1 - EPS)
     z = logit(p)
     raw = z if raw_logits is None else np.asarray(raw_logits, dtype=np.float64)
+    rank = p if rank_score is None else np.asarray(rank_score, dtype=np.float64)
     nll_all = float(logloss(y, p).mean())
     brier = float(np.mean((p - y) ** 2))
     cal = calib_diag(y, p)
@@ -173,7 +175,12 @@ def probability_metrics(y: np.ndarray, source_prob: np.ndarray,
         "n": int(len(y)),
         "prevalence": prevalence,
         "raw_logit_auroc": float(auroc(y, raw)),
-        "source_platt_auroc": float(auroc(y, p)),
+        # A strictly positive affine-logit Platt map is mathematically rank
+        # preserving. Near the slope=0 constraint boundary, float64 sigmoid
+        # values can collapse to ties. Callers therefore supply the pre-sigmoid
+        # rank score for transported probabilities while NLL/Brier continue to
+        # use the actual calibrated probabilities.
+        "source_platt_auroc": float(auroc(y, rank)),
         "nll": nll_all,
         "excess_nll_vs_log2": nll_all - math.log(2.0),
         "nll_positive": float(logloss(y[y == 1], p[y == 1]).mean()),
@@ -257,17 +264,37 @@ def point_target_transport(prob: np.ndarray, cal_mask: np.ndarray, eval_mask: np
     for seed in range(prob.shape[0]):
         fit = fit_monotone_platt(z[seed, cal_mask], y[cal_mask])
         p = apply_monotone_platt(z[seed], fit)
-        before = auroc(y[eval_mask], z[seed, eval_mask])
-        after = auroc(y[eval_mask], p[eval_mask])
-        assert before == after or abs(before - after) < 1e-15, \
-            "strictly monotone target calibration changed AUROC"
+        order = np.argsort(z[seed], kind="mergesort")
+        ordered_z, ordered_p = z[seed, order], p[order]
+        distinct = np.diff(ordered_z) > 0
+        reversals = int(np.sum(np.diff(ordered_p)[distinct] < 0))
+        assert fit[1] > 0 and np.isfinite(p).all() and reversals == 0, \
+            "positive-slope target calibration must not reverse rank order"
         out.append(p)
-        fits.append({"intercept": fit[0], "slope": fit[1]})
+        fits.append({
+            "intercept": fit[0],
+            "slope": fit[1],
+            "boundary_fit": bool(fit[1] <= 1.0000001e-12),
+            "eta_min": float(np.min(fit[0] + fit[1] * z[seed])),
+            "eta_max": float(np.max(fit[0] + fit[1] * z[seed])),
+            "n_unique_input_logit": int(np.unique(z[seed]).size),
+            "n_unique_output_probability": int(np.unique(p).size),
+            "float_induced_new_ties": int(max(
+                0, np.unique(z[seed]).size - np.unique(p).size)),
+            "n_probability_exact_zero": int(np.sum(p == 0)),
+            "n_probability_exact_one": int(np.sum(p == 1)),
+            "n_at_metric_clip_boundary": int(np.sum((p <= EPS) | (p >= 1 - EPS))),
+            "order_reversals": reversals,
+        })
     return np.stack(out), fits
 
 
-def _metric_delta(y: np.ndarray, a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
-    return (float(auroc(y, a) - auroc(y, b)),
+def _metric_delta(y: np.ndarray, a: np.ndarray, b: np.ndarray,
+                  a_rank: np.ndarray | None = None,
+                  b_rank: np.ndarray | None = None) -> tuple[float, float, float]:
+    ar = a if a_rank is None else a_rank
+    br = b if b_rank is None else b_rank
+    return (float(auroc(y, ar) - auroc(y, br)),
             float(-logloss(y, a).mean() + logloss(y, b).mean()),
             float(np.mean((b - y) ** 2) - np.mean((a - y) ** 2)))
 
@@ -292,7 +319,8 @@ def bootstrap_transport_pair(a_prob: np.ndarray, b_prob: np.ndarray,
             fb = fit_monotone_platt(zb[s, ci], y[ci])
             pa = apply_monotone_platt(za[s, ei], fa)
             pb = apply_monotone_platt(zb[s, ei], fb)
-            per_seed.append(_metric_delta(y[ei], pa, pb))
+            per_seed.append(_metric_delta(
+                y[ei], pa, pb, a_rank=za[s, ei], b_rank=zb[s, ei]))
         values.append(np.mean(per_seed, axis=0))
     assert values, "transport bootstrap produced no valid replicate"
     values = np.asarray(values)
@@ -304,8 +332,12 @@ def bootstrap_transport_pair(a_prob: np.ndarray, b_prob: np.ndarray,
 
 
 def paired_point(a: np.ndarray, b: np.ndarray, y: np.ndarray,
-                 mask: np.ndarray) -> dict:
-    per_seed = [_metric_delta(y[mask], a[s, mask], b[s, mask])
+                 mask: np.ndarray, a_rank: np.ndarray | None = None,
+                 b_rank: np.ndarray | None = None) -> dict:
+    ar = a if a_rank is None else a_rank
+    br = b if b_rank is None else b_rank
+    per_seed = [_metric_delta(
+        y[mask], a[s, mask], b[s, mask], ar[s, mask], br[s, mask])
                 for s in range(a.shape[0])]
     per_seed = np.asarray(per_seed)
     names = ("delta_auroc", "delta_neg_nll", "delta_neg_brier")
@@ -325,7 +357,18 @@ def self_test() -> None:
     assert np.allclose(shrink_after_prior(p, .3, 0), .5)
     fit = fit_monotone_platt(logit(p), y)
     pt = apply_monotone_platt(logit(p), fit)
-    assert fit[1] > 0 and abs(auroc(y, p) - auroc(y, pt)) < 1e-15
+    assert fit[1] > 0
+    assert abs(auroc(y, p) - probability_metrics(
+        y, pt, rank_score=logit(p))["source_platt_auroc"]) < 1e-15
+    # A deliberately reversed relation reaches the nonnegative-slope boundary.
+    # The probability channel may acquire float ties, while the separately
+    # retained rank channel remains exactly the one frozen by the protocol.
+    boundary = fit_monotone_platt(logit(p), 1 - y)
+    assert boundary[1] > 0
+    boundary_p = apply_monotone_platt(logit(p), boundary)
+    assert np.isfinite(boundary_p).all()
+    assert abs(auroc(1 - y, p) - probability_metrics(
+        1 - y, boundary_p, rank_score=logit(p))["source_platt_auroc"]) < 1e-15
     masks = np.zeros(n, bool), np.zeros(n, bool)
     masks[0][:150] = True; masks[1][150:] = True
     a = np.repeat(p[None, :], 5, axis=0)
@@ -382,6 +425,10 @@ def main() -> None:
         "lambdas_reported_without_selection": list(LAMBDAS),
         "target_transport": (
             "fit nonnegative 1D Platt on matched-long, apply unchanged to participant-disjoint matched"),
+        "target_transport_auroc_policy": (
+            "AUROC uses the pre-sigmoid input rank score for every positive-slope "
+            "target Platt map; NLL/Brier use transported float64 probabilities; "
+            "float-induced ties, saturation and order reversals are recorded per arm/seed"),
         "reverse_sensitivity": "fit matched, apply unchanged to matched-long",
         "target_tuning_for_deployment": False,
         "bootstrap": args.bootstrap,
@@ -474,11 +521,14 @@ def main() -> None:
                 }
             arm_out["target_transport"] = {
                 "matched_long_to_matched_per_seed": [
-                    probability_metrics(y[matched], forward[s, matched], raw[s, matched])
+                    probability_metrics(
+                        y[matched], forward[s, matched], raw[s, matched],
+                        rank_score=logit(prob[s, matched]))
                     for s in range(len(SEEDS))],
                 "matched_to_matched_long_per_seed": [
-                    probability_metrics(y[matched_long], reverse[s, matched_long],
-                                        raw[s, matched_long])
+                    probability_metrics(
+                        y[matched_long], reverse[s, matched_long], raw[s, matched_long],
+                        rank_score=logit(prob[s, matched_long]))
                     for s in range(len(SEEDS))],
             }
 
@@ -498,7 +548,8 @@ def main() -> None:
                                        shrink_after_prior(bb, pi_source, lam), y, matched)
                 for lam in LAMBDAS
             }
-            comp["matched_long_to_matched"] = paired_point(fa, fb, y, matched)
+            comp["matched_long_to_matched"] = paired_point(
+                fa, fb, y, matched, a_rank=logit(aa), b_rank=logit(bb))
             forward_boot = bootstrap_transport_pair(
                 aa, bb, y, matched_long, matched, args.bootstrap,
                 args.bootstrap_seed + len(gout["comparisons"]))
@@ -506,7 +557,8 @@ def main() -> None:
                 comp["matched_long_to_matched"][metric]["ci"] = forward_boot[metric]["ci"]
             comp["matched_long_to_matched"]["n_valid_bootstrap"] = \
                 forward_boot["n_valid_bootstrap"]
-            comp["matched_to_matched_long"] = paired_point(ra, rb, y, matched_long)
+            comp["matched_to_matched_long"] = paired_point(
+                ra, rb, y, matched_long, a_rank=logit(aa), b_rank=logit(bb))
             reverse_boot = bootstrap_transport_pair(
                 aa, bb, y, matched, matched_long, args.bootstrap,
                 args.bootstrap_seed + 100 + len(gout["comparisons"]))

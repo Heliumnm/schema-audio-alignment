@@ -275,8 +275,11 @@ sharpness 高度一致，不能再把负向 NLL 直接说成“正确对齐损�
 bootstrap 的每个 replicate 内同时重采样 calibrator 集、evaluation 集和 seed，并重新拟合
 一维 calibrator；arm 和 seed 保持配对。matched 与 matched-long 患者不得交叉。
 
-不报告可结果后选择的 ECE。AUROC 在所有 slope 非负的单调校准下应逐位不变，并作为代码
-断言。第 2 项不得从曲线中挑一个 lambda 作为“新正式模型”。
+不报告可结果后选择的 ECE。正 slope 的 Platt 校准在数学上不改变排序；正式实现将 AUROC
+从校准前的 rank score 计算，将 NLL/Brier 从校准后的概率计算，并断言不存在反序。这样可
+避免 slope 接近 0 时 float64 sigmoid 把不同 score 压成并列值而伪造 AUROC 变化；新增并列
+值、饱和值与边界拟合会逐 arm/seed 留档。固定收缩曲线中的 `lambda=0` 是预先声明的常数
+端点，不适用该排序不变性。第 2 项不得从曲线中挑一个 lambda 作为“新正式模型”。
 
 ### 4.4 判读
 
