@@ -47,6 +47,14 @@ Full extraction is sharded across three GPUs. Every participant must appear exac
 all shard hashes, checkpoint/script/cohort hashes, window counts and failures are frozen.
 The merged participant order must exactly match `results/ukcovid_audio_cohort.csv`.
 
+Formal alignment seeds may be scheduled independently across GPUs because the frozen
+trainer resets model, batch-order and dropout RNGs within every seed. Each seed still runs
+all three arms together. Part manifests must have identical inputs and protocol fields,
+disjoint seeds and all 15 final checkpoints/representations before a no-overwrite merge.
+An initial single-GPU timing run was stopped at seed 0/correct/epoch 50 before any formal
+checkpoint or representation was produced, retained under `preliminary_aborted`; it was
+restarted as seed groups 0--1, 2--3 and 4 on GPUs 0, 1 and 2 respectively.
+
 ## Alignment and evaluation
 
 The frozen metadata texts, Phi-2 cache, pairings, projector architecture, batch size,
