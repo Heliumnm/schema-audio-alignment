@@ -1,10 +1,10 @@
 # Does Clinical Metadata Alignment Transfer Disease Evidence?
 # A Pairing-Controlled Audit of Respiratory Audio under Cohort Shift
 
-> **Draft status (2026-08-19).** UKCOVID is a discovery audit because its official test
-> sets informed earlier protocol development. Coswara is a preregistered, pending external
-> patient-level stress test; no Coswara model score is included. Figures and verified
-> bibliography entries are linked to frozen repository artefacts.
+> **Draft status (2026-08-20).** UKCOVID is a discovery audit because its official test
+> sets informed earlier protocol development. A preregistered Coswara patient-level data
+> gate failed after waveform QC and before any model was fitted or scored. Figures and
+> verified bibliography entries are linked to frozen repository artefacts.
 
 ## Abstract
 
@@ -114,15 +114,14 @@ symptoms measure decodability, not causal classifier use.
 ### 2.3 External stress test
 
 Before any external model score, we froze a Coswara v1.0 protocol
-[@bhattacharya2023coswara] using one
-`cough-heavy.wav` per participant, objective waveform QC, decoded-PCM duplicate removal,
-patient-disjoint development splits, and 1:1 covariate matching. Formal execution requires
-at least 100 balanced pairs and adequate development class counts. A metadata-only capacity
-audit provides a ceiling of 114 pairs and first passes deterministic balance trimming at
-101; waveform QC can therefore close the gate. If it passes, the same pairing arms and raw,
-artefact, metadata, and direct-fusion baselines are read once. UKCOVID and Coswara are not
-pooled. This small analysis is an **external patient-level stress test**, never
-confirmatory proof.
+[@bhattacharya2023coswara] using one `cough-heavy.wav` per participant, objective waveform
+QC, decoded-PCM duplicate control, patient-disjoint development splits, and 1:1 covariate
+matching. Formal execution required at least 100 pairs, maximum absolute SMD 0.12, maximum
+fine-balance difference 0.08, and adequate development class counts. We extracted all
+2,746 recordings; 2,646 passed objective QC. Exact matching yielded at most 112 pairs.
+Frozen deterministic trimming reached the 100-pair floor with maximum categorical SMD
+0.140, so the gate failed. No Coswara representation, classifier, or model score was
+produced. This is a data-feasibility outcome, not an external model result.
 
 ## 3. Results
 
@@ -174,16 +173,15 @@ projector, not that alignment adds demographic information beyond raw AST.
 ![Paired effects](../figures/icassp_pairing_forest.svg)
 
 **Fig. 2.** Correct-minus-within-label \(\Delta\)AUROC (A) and
-\(\Delta(-\mathrm{NLL})\) (B) across Standard, matched, and matched-long. Any later
-Coswara estimate is displayed separately and never pooled.
+\(\Delta(-\mathrm{NLL})\) (B) across Standard, matched, and matched-long.
 
 ### 3.3 Coswara status
 
-The Coswara source, modality, QC, matching, split, model family, outcomes, and interpretation
-are frozen. Extraction and post-QC power gating remain pending, so no external result or
-cross-dataset confirmation is claimed. The final paper will report either a separate
-patient-level stress-test estimate if the 100-pair gate passes, or a transparent NO-GO if
-the cohort is underpowered or imbalanced.
+The preregistered Coswara gate returned NO-GO before model execution. All 2,746 recordings
+decoded, but 100 failed objective QC; after duplicate control, the primary exact match had
+112 pairs. At the frozen 100-pair floor, categorical imbalance remained above threshold
+(maximum absolute SMD 0.140 versus 0.12). We therefore changed no threshold or matching
+field, read no model prediction, and claim no cross-dataset confirmation.
 
 ## 4. Discussion
 
@@ -201,10 +199,9 @@ The study does not establish that metadata alignment is universally harmful or t
 contains no COVID information. It tests one Stage-1 projector, one frozen backbone, and a
 linear readout in an unusually confounded dataset. UKCOVID is exploratory; matched-long is
 not independent replication; probe decodability does not establish causal classifier use;
-and the pending Coswara cohort is near its minimum gate. A clear opposite-direction
-Coswara result would define a boundary condition, not be hidden or used to move thresholds.
-Future work should use untouched cohorts, additional backbones and readouts, and explicitly
-separate audible evidence from independent clinical context.
+and the Coswara external branch stopped at its preregistered data-feasibility gate. Future
+work should use untouched cohorts with sufficient covariate overlap, additional backbones
+and readouts, and explicitly separate audible evidence from independent clinical context.
 
 ## 5. Conclusion
 

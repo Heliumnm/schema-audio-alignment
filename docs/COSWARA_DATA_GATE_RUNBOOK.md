@@ -2,6 +2,10 @@
 
 Frozen implementation commit: `6d783a4`
 
+Execution outcome (2026-08-20): **NO-GO at the preregistered balance gate; no model was
+fitted and no Coswara prediction was read.** See `docs/COSWARA_DATA_GATE_OUTCOME_ZH.md`
+and `results/coswara_external_data_gate.json`.
+
 This runbook stops before representation extraction, projector training or disease-model
 evaluation.  Its only outcome is a frozen participant/audio manifest and a GO/NO-GO data
 gate.

@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "decision_date": "2026-08-20",
+  "decision": "NO-GO",
+  "scope": "preregistered Coswara external patient-level stress-test data gate",
+  "model_fitted": false,
+  "model_predictions_read": false,
+  "archive": {
+    "zenodo_record": "7188627",
+    "upstream_commit": "bf300ae9dc47918be4a30de90436fe7563fafb45",
+    "bytes": 12984309908,
+    "md5": "53721d9c106f99872bf7f878c8196d31"
+  },
+  "extraction": {
+    "recording_type": "cough-heavy.wav",
+    "verified_dates": 43,
+    "recordings": 2746,
+    "participants": 2746,
+    "output_size_gib_approx": 1.5
+  },
+  "objective_audio_qc": {
+    "passed": 2646,
+    "decode_failures": 0,
+    "too_short": 49,
+    "all_zero": 97,
+    "nonfinite": 0,
+    "header_frame_mismatch": 0,
+    "participants_with_multiple_recordings": 0,
+    "cross_participant_raw_duplicate_groups": 7,
+    "cross_participant_pcm_duplicate_groups": 7,
+    "manual_quality_missing": 513,
+    "record_date_mismatch_diagnostic_only": 2159
+  },
+  "frozen_gate": {
+    "minimum_primary_pairs": 100,
+    "maximum_abs_smd": 0.12,
+    "maximum_level_proportion_difference": 0.08,
+    "eligible_after_audio_qc_and_dedup": 1701,
+    "strict_confirmation_candidates": 760,
+    "maximum_primary_pairs_before_balance_trimming": 112,
+    "primary_pairs_after_frozen_trimming": 100,
+    "final_age_smd": -0.0016954700568776572,
+    "final_max_abs_categorical_smd": 0.14011388882081174,
+    "final_max_abs_proportion_difference": 0.08000000000000002,
+    "balance_passed": false,
+    "development_size_gate_passed": true,
+    "formal_external_gate_passed": false
+  },
+  "sensitivity_gates": {
+    "manual_quality_1_2_pairs": 57,
+    "manual_quality_1_2_powered": false,
+    "known_test_type_pairs": 60,
+    "known_test_type_powered": false,
+    "manual_quality_2_pairs": 52
+  },
+  "frozen_split_counts": {
+    "train": {
+      "n": 1024,
+      "negative": 661,
+      "positive": 363
+    },
+    "validation": {
+      "n": 214,
+      "negative": 140,
+      "positive": 74
+    },
+    "source_test": {
+      "n": 241,
+      "negative": 150,
+      "positive": 91
+    },
+    "external_evaluation_union": {
+      "n": 222,
+      "negative": 111,
+      "positive": 111,
+      "note": "union of primary and descriptive sensitivity pair sets; no model was run"
+    }
+  },
+  "artifact_sha256": {
+    "extraction_summary_json": "0e7645d9907b3ef0eb703a12a5096b84d2e2c8c20cce375004257766f9447843",
+    "audio_qc_csv": "e9d9c3578a8fdb0e14ffaaf73e2fe64cec1f01877a583b4ee4e9591f545bf4d7",
+    "audio_qc_audit_json": "879407fa2a1be1bf9aac2333367c5f1a3320ca7f00e8b2d6ed865d7bf2ee2f0d",
+    "participant_manifest_csv": "89707ff80f54d39f179a8808507739f7124d678cffafd1b1c9baac100196c8cb",
+    "pairs_csv": "fd12c2d6fcf007e2243c97df5056c0369e428aee367da36028bd1b42b7760e96",
+    "split_audit_json": "d5d89aee5bb9897171635ae2bdeeb5e345a0ff54632f4036b574a98920722ef4"
+  },
+  "interpretation": "The preregistered external model experiment was not opened because the post-QC primary cohort failed the frozen balance gate at the 100-pair floor. This is a data-feasibility NO-GO, not a model result. Thresholds, labels, matching fields, modality and balance limits must not be changed to rescue the experiment."
+}

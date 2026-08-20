@@ -9,9 +9,9 @@ The current PDF is intentionally **not submission-ready**:
 - author names and affiliations are explicit placeholders;
 - UKCOVID is labelled a discovery audit because its official test sets informed earlier
   protocol development;
-- Coswara contains no model score until the frozen post-QC 100-pair gate is executed;
-- any Coswara result will be reported as an external patient-level stress test, not as
-  confirmatory proof.
+- the frozen Coswara post-QC gate returned NO-GO because balance still failed at the
+  100-pair floor; no Coswara model was fitted or scored, and the paper makes no
+  cross-dataset confirmation claim.
 
 Build the layout test with:
 
