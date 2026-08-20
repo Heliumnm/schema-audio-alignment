@@ -11,7 +11,9 @@ The current PDF is intentionally **not submission-ready**:
   protocol development;
 - the frozen Coswara post-QC gate returned NO-GO because balance still failed at the
   100-pair floor; no Coswara model was fitted or scored, and the paper makes no
-  cross-dataset confirmation claim.
+  cross-dataset confirmation claim;
+- the matched direct-fusion attribution control and OPERA-CT second-backbone robustness
+  analysis are included, but both remain part of the UKCOVID discovery audit.
 
 Build the layout test with:
 

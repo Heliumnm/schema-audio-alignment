@@ -31,8 +31,9 @@ in training but 0.5000 after covariate matching. Correct pairing improves source
 within-label shuffling (+0.0140 [0.0040, 0.0235]) yet worsens matched negative
 log-likelihood ($\deltanll=-0.0249$ [-0.0443, -0.0069]); its matched AUROC difference is
 uncertain (+0.0062 [-0.0144, 0.0279]). Probes confirm learned participant correspondence,
-especially sex, without transferable disease benefit. These results motivate within-label
-controls and covariate-balanced evaluation for clinical audio--metadata alignment.
+especially sex, without transferable disease benefit. OPERA-CT repeats the negative
+matched NLL direction. These results motivate within-label controls and covariate-balanced
+evaluation for clinical audio--metadata alignment.
 \end{abstract}
 
 \begin{keywords}
@@ -63,8 +64,8 @@ within-label arms share label-level statistics and differ only in individual pai
 Our contributions are: (i) a pairing-controlled protocol separating participant
 correspondence from label-level audio--metadata co-occurrence; (ii) a transfer audit using
 source and covariate-matched populations, with calibrated NLL as the primary outcome; and
-(iii) a probe decomposition showing genuine participant mapping without measurable
-matched-population disease benefit.
+(iii) direct-fusion, second-backbone, and probe controls separating weak audio increment
+from alignment-specific effects and learned participant mapping.
 
 \begin{figure*}[t]
   \centering
@@ -119,6 +120,11 @@ correct pairing. AUROC is secondary. Intervals hierarchically resample participa
 seeds while retaining paired arm predictions. Linear probes measure decodability, not
 causal classifier use.
 
+As an attribution control, we concatenate the same schema metadata with raw AST under the
+same linear protocol. A prespecified robustness analysis repeats the full alignment
+experiment with frozen OPERA-CT respiratory-audio features \cite{zhang2024opera}, changing
+only the backbone.
+
 \subsection{External stress test}
 Before any external model score, we froze a Coswara v1.0 protocol
 \cite{bhattacharya2023coswara} using one cough-heavy recording per participant, objective
@@ -128,6 +134,14 @@ covariate matching. Formal execution required at least 100 pairs, maximum absolu
 extracted all 2,746 recordings; 2,646 passed objective QC. Exact matching yielded at most
 112 pairs. Frozen trimming reached the 100-pair floor with maximum categorical SMD 0.140,
 so the gate failed. No Coswara representation, classifier, or model score was produced.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{icassp_pairing_forest.png}
+  \caption{Correct-minus-within-label $\Delta$AUROC (left) and $\deltanll$ (right) for
+  AST-6L and OPERA-CT across Standard, matched, and matched-long.}
+  \label{fig:paired}
+\end{figure*}
 
 \section{Results}
 \subsection{Disease transfer}
@@ -162,6 +176,17 @@ the same NLL direction and near-zero AUROC difference. Normalization preserves t
 direction: normalized matched $\deltanll$ is -0.0179 [-0.0371, 0.0011], and matched-long is
 -0.0204 [-0.0328, -0.0082].
 
+This is not solely an alignment-specific failure. On matched, adding raw AST to metadata
+gives $\Delta$AUROC +0.0028 [-0.0019, 0.0071] and $\deltanll$ -0.0034 [-0.0194, 0.0126].
+Correct alignment also does not improve over metadata plus raw AST
+($\Delta$AUROC -0.0040 [-0.0093, 0.0015]; $\deltanll$ -0.0077 [-0.0301, 0.0157]).
+
+OPERA-CT reproduces the prespecified direction. Correct minus within-label is positive in
+Standard ($\Delta$AUROC +0.0156 [0.0082, 0.0230]) but negative in matched NLL
+($\deltanll$ -0.0176 [-0.0335, -0.0010]); all five seed effects are negative. Its matched
+AUROC effect is -0.0020 [-0.0191, 0.0168], and matched-long repeats the negative NLL
+(-0.0182 [-0.0328, -0.0033]). Normalization preserves the direction.
+
 \begin{table}[t]
 \centering
 \caption{Correct minus within-label paired effects [95\% CI].}
@@ -189,14 +214,6 @@ every probe (e.g., sex 0.871 versus 0.812 and age 0.742 versus 0.657). We theref
 selective retention relative to the within-label projector, not demographic information
 added beyond raw AST.
 
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{icassp_pairing_forest.png}
-  \caption{Correct-minus-within-label $\Delta$AUROC (left) and $\deltanll$ (right) across
-  Standard, matched, and matched-long.}
-  \label{fig:paired}
-\end{figure*}
-
 \subsection{Coswara status}
 The preregistered Coswara gate returned NO-GO before model execution. All 2,746 recordings
 decoded, but 100 failed objective QC. At the frozen 100-pair floor, categorical imbalance
@@ -207,20 +224,21 @@ or matching field, read no model prediction, and claim no cross-dataset confirma
 Correct pairing produced both a source-domain ranking gain and strong participant-level sex
 correspondence; calling alignment wholly ineffective would therefore be inaccurate.
 Nevertheless, the preregistered matched NLL comparison was negative, matched AUROC was
-uncertain, and matched-long agreed in NLL direction. In this setting, learning genuine
-clinical metadata correspondence did not guarantee portable disease evidence.
+uncertain, matched-long agreed in NLL direction, and OPERA-CT reproduced this pattern. In
+this setting, learning genuine clinical metadata correspondence did not guarantee portable
+disease evidence.
 
 Within-label shuffling makes this interpretation possible. Unlike global shuffling, it
 retains the disease--metadata association and removes only participant identity. It should
 accompany global controls whenever cohort metadata is label-associated.
 
-The study does not establish that metadata alignment is universally harmful or that AST
-contains no COVID information. It tests one Stage-1 projector, one frozen backbone, and a
-linear readout in an unusually confounded dataset. UKCOVID is exploratory; matched-long is
-not independent replication; probe decodability does not establish causal classifier use;
+The study does not establish that metadata alignment is universally harmful or that either
+backbone contains no COVID information. It tests one Stage-1 projector, two frozen
+backbones, and a linear readout in an unusually confounded dataset. UKCOVID is exploratory;
+matched-long is not independent replication; probe decodability does not establish causal classifier use;
 and the Coswara branch stopped at its preregistered data-feasibility gate. Future work
-should use untouched cohorts with sufficient covariate overlap, additional backbones and
-readouts, and separate audible evidence from independent clinical context.
+should use untouched cohorts with sufficient covariate overlap, nonlinear readouts, and
+separate audible evidence from independent clinical context.
 
 In summary, correct audio--metadata pairing learns participant correspondence and a small
 source-domain ranking advantage, but not improved calibrated disease prediction after

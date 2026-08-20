@@ -2,6 +2,23 @@
 
 > 中文完整故事版：[docs/项目完整故事_中文.md](docs/项目完整故事_中文.md)
 
+## Current ICASSP audit extension (August 2026)
+
+The active paper track now asks a narrower transfer question on UKCOVID: does correct
+audio--metadata pairing learn portable disease evidence or source-specific participant
+structure? A within-label shuffle preserves COVID-level co-occurrence while breaking
+participant correspondence. Correct pairing improves source-domain ranking, but calibrated
+matched performance is worse; the direction repeats with both AST-6L and OPERA-CT. A
+matched direct-fusion control finds no detectable raw-AST increment beyond the same schema
+metadata. The preregistered Coswara external branch stopped at its data-balance gate before
+any model score.
+
+Start with [the Chinese execution status](docs/ICASSP_EXECUTION_STATUS_ZH.md),
+[the OPERA-CT robustness result](docs/OPERA_CT_ROBUSTNESS_OUTCOME.md), and the
+[layout-tested four-page draft](output/pdf/icassp2027_draft.pdf). UKCOVID remains a
+discovery audit; these results do not establish that metadata alignment is universally
+harmful.
+
 **A negative result, thoroughly controlled — plus one finding that outlived it.**
 
 The project set out to test whether structured clinical schema text is a better

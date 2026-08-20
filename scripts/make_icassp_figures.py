@@ -14,6 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULT = ROOT / "results" / "metadata_alignment_results__raw_disease_primary.json"
+OPERA_RESULT = ROOT / "results" / "metadata_alignment_results__opera-ct-raw-disease.json"
 OUT = ROOT / "figures"
 SPLITS = ("standard", "matched", "matched_long")
 SPLIT_LABELS = {
@@ -61,7 +62,8 @@ def svg_document(width: int, height: int, body: list[str], description: str) -> 
             ".small{font-size:14px}.label{font-size:14px}.title{font-size:16px;font-weight:700}",
             ".axis{stroke:#5f6b76;stroke-width:1}.grid{stroke:#d7dde3;stroke-width:1}",
             ".zero{stroke:#27313a;stroke-width:1.2;stroke-dasharray:4 3}",
-            ".ci{stroke:#2463a6;stroke-width:2}.point{fill:#2463a6;stroke:#163f6b;stroke-width:1}",
+            ".ci_ast{stroke:#2463a6;stroke-width:2}.point_ast{fill:#2463a6;stroke:#163f6b;stroke-width:1}",
+            ".ci_opera{stroke:#c26d15;stroke-width:2}.point_opera{fill:#c26d15;stroke:#7c420b;stroke-width:1}",
             ".box{fill:#f5f7f9;stroke:#687682;stroke-width:1}",
             ".correct{stroke:#2463a6;stroke-width:2.4}.within{stroke:#c26d15;stroke-width:2.4;stroke-dasharray:6 3}",
             ".global{stroke:#687682;stroke-width:2.4;stroke-dasharray:2 3}",
@@ -133,7 +135,7 @@ def panel(
     x0: int,
     title_value: str,
     x_label: str,
-    values: dict[str, dict[str, object]],
+    values: dict[str, dict[str, dict[str, object]]],
     domain: tuple[float, float],
 ) -> list[str]:
     body: list[str] = []
@@ -156,32 +158,41 @@ def panel(
 
     for index, split in enumerate(SPLITS):
         y = 88 + index * 58
-        item = values[split]
-        observed = float(item["observed"])
-        ci_low, ci_high = (float(value) for value in item["ci"])
         body.append(text(left - 10, y + 4, SPLIT_LABELS[split], **{"class": "label", "text-anchor": "end"}))
-        body.append(line(sx(ci_low), y, sx(ci_high), y, **{"class": "ci"}))
-        body.append(line(sx(ci_low), y - 5, sx(ci_low), y + 5, **{"class": "ci"}))
-        body.append(line(sx(ci_high), y - 5, sx(ci_high), y + 5, **{"class": "ci"}))
-        body.append(f'<circle cx="{sx(observed):.2f}" cy="{y}" r="4.5" class="point"/>')
-        anchor = "start" if observed <= 0 else "end"
-        offset = 7 if observed <= 0 else -7
-        body.append(text(sx(observed) + offset, y - 10, f"{observed:+.03f}", **{"class": "small", "text-anchor": anchor}))
+        for model, y_offset, css in (("ast", -6, "ast"), ("opera", 6, "opera")):
+            item = values[model][split]
+            observed = float(item["observed"])
+            ci_low, ci_high = (float(value) for value in item["ci"])
+            py = y + y_offset
+            body.append(line(sx(ci_low), py, sx(ci_high), py, **{"class": f"ci_{css}"}))
+            body.append(line(sx(ci_low), py - 4, sx(ci_low), py + 4, **{"class": f"ci_{css}"}))
+            body.append(line(sx(ci_high), py - 4, sx(ci_high), py + 4, **{"class": f"ci_{css}"}))
+            body.append(f'<circle cx="{sx(observed):.2f}" cy="{py}" r="4" class="point_{css}"/>')
     return body
 
 
-def make_forest(result: dict[str, object]) -> None:
-    comparison = result["disease"]["comparisons"]["raw"]["correct_minus_within_label"]
-    auc = {split: comparison[split]["delta_auroc"] for split in SPLITS}
-    nll = {split: comparison[split]["delta_neg_nll"] for split in SPLITS}
+def make_forest(result: dict[str, object], opera_result: dict[str, object]) -> None:
+    ast = result["disease"]["comparisons"]["raw"]["correct_minus_within_label"]
+    opera = opera_result["disease"]["comparisons"]["raw"]["correct_minus_within_label"]
+    auc = {
+        "ast": {split: ast[split]["delta_auroc"] for split in SPLITS},
+        "opera": {split: opera[split]["delta_auroc"] for split in SPLITS},
+    }
+    nll = {
+        "ast": {split: ast[split]["delta_neg_nll"] for split in SPLITS},
+        "opera": {split: opera[split]["delta_neg_nll"] for split in SPLITS},
+    }
     body = [
-        text(20, 300, "Positive favors correct; negative Delta(-NLL) means worse calibrated transfer.", **{"class": "small"})
+        '<circle cx="285" cy="313" r="4" class="point_ast"/>',
+        text(295, 317, "AST-6L", **{"class": "small"}),
+        '<circle cx="390" cy="313" r="4" class="point_opera"/>',
+        text(400, 317, "OPERA-CT", **{"class": "small"}),
     ]
     body.extend(panel(0, "A  Ranking", "Delta AUROC: correct - within-label", auc, (-0.05, 0.05)))
     body.extend(panel(390, "B  Calibration", "Delta(-NLL): correct - within-label", nll, (-0.06, 0.03)))
     output = OUT / "icassp_pairing_forest.svg"
     output.write_text(
-        svg_document(780, 320, body, "Forest plot of correct minus within-label alignment for AUROC and calibrated negative log-likelihood across Standard, matched, and matched-long cohorts."),
+        svg_document(780, 330, body, "Forest plot of correct minus within-label alignment for AST-6L and OPERA-CT across Standard, matched, and matched-long cohorts."),
         encoding="utf-8",
     )
 
@@ -214,12 +225,15 @@ def write_absolute_table(result: dict[str, object]) -> None:
 
 def main() -> None:
     result = json.loads(RESULT.read_text())
+    opera_result = json.loads(OPERA_RESULT.read_text())
     expected = "comparisons.raw.correct_minus_within_label.matched.delta_neg_nll"
     if result["disease"].get("primary_result_path") != expected:
         raise ValueError("formal primary-result pointer changed; refusing to redraw figures")
+    if opera_result["disease"].get("primary_result_path") != expected:
+        raise ValueError("OPERA primary-result pointer changed; refusing to redraw figures")
     OUT.mkdir(exist_ok=True)
     make_pairing_design()
-    make_forest(result)
+    make_forest(result, opera_result)
     write_absolute_table(result)
     print(f"wrote frozen ICASSP assets to {OUT}")
 

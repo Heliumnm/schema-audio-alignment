@@ -1,0 +1,78 @@
+{
+ "spec": "opera-ct-ukcovid-v1-2026-08-20",
+ "n_participants": 72458,
+ "embedding_shape": [
+  72458,
+  768
+ ],
+ "finite": true,
+ "nonzero": 72458,
+ "embedding_norm": {
+  "min": 18.290172576904297,
+  "median": 24.38681411743164,
+  "max": 27.619842529296875
+ },
+ "window_counts": {
+  "1": 70510,
+  "2": 1821,
+  "3": 125,
+  "4": 1,
+  "7": 1
+ },
+ "checkpoint_sha256": "83c35b435518ad5f395bf4d34e552caa088faf9e63f6b8058d5288e9abb350ae",
+ "script_sha256": "b9c7cffd7f3e367f2f984abf977977c4967ba80ba5696da5b67e3efca22f24c3",
+ "cohort_sha256": "974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128",
+ "output_sha256": "910c188914d2e57e86af390857063ff96aee3c97da97509904a5c6e539497ebf",
+ "embedding_values_sha16": "12c58dd4da4fe376",
+ "shards": [
+  {
+   "spec": "opera-ct-ukcovid-v1-2026-08-20",
+   "complete": true,
+   "completed": 24153,
+   "n_rows": 24153,
+   "shard": 0,
+   "num_shards": 3,
+   "checkpoint_sha256": "83c35b435518ad5f395bf4d34e552caa088faf9e63f6b8058d5288e9abb350ae",
+   "script_sha256": "b9c7cffd7f3e367f2f984abf977977c4967ba80ba5696da5b67e3efca22f24c3",
+   "cohort_sha256": "974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128",
+   "participant_ids_sha16": "8bce45269fafb00f",
+   "embedding_file_sha256": "79ca355c65d32725eafb08f1903b0d724e94c0e03acce283ab5036cf5262d99a",
+   "windows_file_sha256": "0d0991effa5abfac30c962e3e3cd3e4481a53aa5b5e01555c8f5876fbff365cf",
+   "duration_file_sha256": "981a2ed64df1b3800ebf6e69ab3bfc1753c8853ad57b51c0cf74e9657cff2755",
+   "embedding_values_sha16": "2237d96c6938e019"
+  },
+  {
+   "spec": "opera-ct-ukcovid-v1-2026-08-20",
+   "complete": true,
+   "completed": 24153,
+   "n_rows": 24153,
+   "shard": 1,
+   "num_shards": 3,
+   "checkpoint_sha256": "83c35b435518ad5f395bf4d34e552caa088faf9e63f6b8058d5288e9abb350ae",
+   "script_sha256": "b9c7cffd7f3e367f2f984abf977977c4967ba80ba5696da5b67e3efca22f24c3",
+   "cohort_sha256": "974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128",
+   "participant_ids_sha16": "6e14216f9e798738",
+   "embedding_file_sha256": "3d1183a69228519260206ecb3b700a1c121eadd2417e474410987c3de33d8119",
+   "windows_file_sha256": "754074d3ff106421f6f1d90e7870d229a875bb69d122d5d8effbf520f80e2770",
+   "duration_file_sha256": "a56ae9b5b52d407940c1aee6dd5536d0a88f9c4e85c7e253ac871f24276228ee",
+   "embedding_values_sha16": "8b448c919ffd4608"
+  },
+  {
+   "spec": "opera-ct-ukcovid-v1-2026-08-20",
+   "complete": true,
+   "completed": 24152,
+   "n_rows": 24152,
+   "shard": 2,
+   "num_shards": 3,
+   "checkpoint_sha256": "83c35b435518ad5f395bf4d34e552caa088faf9e63f6b8058d5288e9abb350ae",
+   "script_sha256": "b9c7cffd7f3e367f2f984abf977977c4967ba80ba5696da5b67e3efca22f24c3",
+   "cohort_sha256": "974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128",
+   "participant_ids_sha16": "e103cfa8306183b8",
+   "embedding_file_sha256": "002256b375118037c349bf0ffa015d11602b8e4a41374baa2e9edaf3c1f89192",
+   "windows_file_sha256": "29c7faa9727bf9ac7e667ab021de864bc19e531403cbd0483d4296dc18be4684",
+   "duration_file_sha256": "ff7b1970c32b0f18f9de269f8a0d4455282f518cf59d58e48defae537b5aa00b",
+   "embedding_values_sha16": "4422ed6ba22d20cc"
+  }
+ ],
+ "disease_metric_computed": false
+}
