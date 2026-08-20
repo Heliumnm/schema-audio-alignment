@@ -1,43 +1,57 @@
-# ICASSP 2027 论文蓝图（冻结主线）
+# ICASSP 2027 论文蓝图（Route A：Audit Framework）
 
 日期：2026-08-20（Day 1 与 Day 2--4 后更新）
 
 ## 暂定题目
 
-**Does Clinical Metadata Alignment Transfer Disease Evidence? A Pairing-Controlled
-Audit of Respiratory Audio under Cohort Shift**
+**Pairing-Controlled Auditing of Clinical Audio--Metadata Alignment: Separating
+Participant Correspondence from Transferable Disease Evidence**
 
-中文直译：临床 metadata 对齐是否真的传递疾病证据？——呼吸音在队列偏移下的配对控制审计。
+中文直译：临床音频--metadata 对齐的配对控制审计——分离患者对应与可迁移疾病证据。
 
 ## 一句话故事
 
-在 UKCOVID 的训练分布中，招募来源几乎等于 COVID 标签，因此音频与症状／人口学
-metadata 的对齐既可能学习真实的个人对应，也可能学习队列结构。我们用同标签内打乱
-作为关键控制：它保留标签级共现，却破坏逐患者对应。正确配对确实比同标签打乱多保留了
-个人对应信息，但该增量没有转化为协变量平衡人群中的可迁移疾病收益。
+现有临床 audio--metadata alignment 的评价把三种不同能力混在一起：学习逐患者
+correspondence、学习标签／人群层面的统计共现，以及学习可跨人群迁移的疾病证据。我们提出
+Pairing-Controlled Transfer Audit，用 correct／within-label／global 三种配对和 matched
+evaluation 把三者分开。正确配对可以学到真实患者对应并增加源域信心，但这不保证在协变量
+平衡人群中获得疾病排序收益。
 
 Coswara 外部患者级压力测试在冻结的数据平衡门上 NO-GO，没有运行模型。作为补救，稿件
 增加了 matched direct-fusion attribution control 和完整的 OPERA-CT 第二编码器稳健性；
 它们增强内部机制归因，但不能把 UKCOVID 发现改写成外部确认或普遍规律。
 
-## 唯一研究问题
+## 核心 conceptual contribution
 
-> 当疾病标签与队列结构高度混淆时，audio--metadata alignment 学到的是能够跨人群迁移的
-> 疾病证据，还是只在源数据分布中有用的患者／队列对应？
+传统问题只有一句：“alignment 是否提高 downstream accuracy？”本稿把它拆成三个可分别
+证伪的问题：
+
+1. alignment 是否学会了真实的 metadata profile correspondence？
+2. 学到的是逐患者信息，还是仅有疾病标签／群体共现？
+3. 这些 correspondence 是否转化成协变量平衡人群中的疾病排序与可靠概率？
 
 不再同时讲 audible reasoning、局部 grounding、schema 对自然语言、teacher 失败或
 H1--H13 的探索历史。它们属于仓库审计记录，不属于这篇四页论文的主线。
 
-## 三项贡献
+## 三层贡献
 
-1. **配对控制协议。** 引入 `within-label shuffle`：在相同疾病标签内打乱 metadata，
-   保留疾病与 metadata 的总体共现，只移除逐患者对应；再用 `global shuffle` 测量完全
-   破坏对应后的下界。
-2. **协变量平衡的迁移审计。** 同时报告源域和 matched 人群，并把校准负对数似然作为
-   主要指标，避免只看源域 AUROC 得出“对齐有效”的结论。
-3. **机制与稳健性分解。** direct fusion 表明 matched null 不全是 alignment 特有；probe
-   表明正确配对相对同标签打乱保留性别与部分年龄；OPERA-CT 重复了源域正向、matched
-   校准负向的主方向。
+1. **问题贡献。** 指出 correspondence learning、label-level association 与 transferable
+   clinical evidence 是三个不同能力，现有 downstream-only 评价无法区分。
+2. **方法贡献。** 提出 Pairing-Controlled Transfer Audit：`correct-within` 测逐样本对应，
+   `within-global` 测标签级共现，profile retrieval 验证优化是否真的学会对应，taxonomy
+   probes 说明对应内容，matched evaluation 与 probability-transport audit 检验迁移。
+3. **科学发现。** 两个呼吸音 backbone 上，correct pairing 学到了真实患者 context 并产生
+   源域排序／信心增益，但这份增益没有稳定变成 matched disease ranking；受控 synthetic
+   stress test 只在通过预注册准入门时用于展示一种充分机制。
+
+## Introduction 的固定四段逻辑
+
+1. **领域假设：** 更好的 audio--metadata alignment 被默认等价于更好的临床表示；
+2. **评价漏洞：** metadata 同时包含 patient、clinical-context 与 cohort/protocol 信息，
+   contrastive loss 只要求 positive pair 接近，不知道哪部分可迁移；
+3. **研究问题：** 如何区分 correspondence success 与 portable disease evidence？
+4. **解决方案：** Pairing-Controlled Transfer Audit，随后给出 UKCOVID discovery、两个
+   backbone 和 controlled synthetic mechanism 的证据链。
 
 ## UKCOVID discovery 结果（固定）
 
@@ -116,33 +130,52 @@ AUROC、Brier score 和 calibration slope 为次要指标。所有比较在同�
 UKCOVID discovery audit，必须同时补第二个 backbone／readout 稳健性，或降级为
 workshop／短文。内部 residual-long 已因无法复刻官方十岁年龄分层而被提前否决。
 
+## 实验叙事顺序（冻结）
+
+1. **Does alignment learn correspondence?** 正式 unique-profile retrieval：MRR、R@1、R@10，
+   correct／within／global 五 seed 配对；
+2. **What correspondence is learned?** information-channel matrix：录音采集、患者背景、
+   clinical context、cohort/protocol 与 disease；
+3. **Does correspondence transfer?** Standard→matched／matched-long 的 AUROC、NLL、
+   metadata-only／raw／aligned／fusion；这是 punchline；
+4. **Why can this separation occur?** 只有通过准入门的 D+S synthetic confounding sweep；
+5. **Robustness, not a second story.** OPERA、raw-preserving direct fusion、固定 MLP 和
+   probability-transport audit 用紧凑表格／一句话封住替代解释。
+
 ## 四页结构
 
-### 第 1 页：问题与设计
+### 第 1 页：评价歧义与 audit framework
 
-- 临床 metadata 不一定能从声音中听出，却可能与标签强烈共现；
-- UKCOVID 的 `source -> label` 极端混淆；
-- 图 1：correct / within-label / global 三种配对及 source-to-matched shift；
-- 三项贡献。
+- 第一段直接提出 alignment 的隐含假设；
+- 图 1 不以 encoder architecture 为视觉中心，而画 alignment ambiguity：同一个 positive pair
+  可能承载 patient／context／cohort／disease 多种通道；
+- 图 1 下半部分接 correct／within-label／global 的 pairing decomposition；
+- 三层贡献：问题、协议、failure mode。
 
-### 第 2 页：方法
+### 第 2 页：方法与 correspondence 操作检验
 
-- 数据、患者级划分与外部确认；
+- 数据、患者级划分与 discovery 定位；
 - 冻结 audio／text encoder，仅训练 projector；
-- 三种配对、下游同一分类头与校准协议；
+- 三种配对、unique-profile retrieval、probe taxonomy；
+- metadata-only、raw audio、aligned audio 与 direct fusion；
 - 配对 bootstrap、主次指标和 one-shot 规则。
 
-### 第 3 页：主要结果
+### 第 3 页：从 correspondence 到 transfer
 
-- 图 2：Standard、matched、matched-long（以及外部 stress test）的 paired forest plot；
-- 表 1：raw audio、correct、within-label、global 的绝对 AUROC／NLL；
-- 重点陈述：源域对应信号与 matched 迁移结果分离。
+- 先报 retrieval `Correct > Within > Global` 是否成立；
+- 紧凑 taxonomy matrix 回答学到了什么；
+- 主图使用 Correspondence--Transfer Map 或 pairing forest：对应学会了，但 matched disease
+  gain 没有跟上；
+- 主表必须含 metadata only、raw audio、aligned audio、raw+metadata，避免看起来遗漏最强
+  临床基线。
 
-### 第 4 页：机制、限制与结论
+### 第 4 页：机制、稳健性与限制
 
-- 图 3：matched probe 的 `correct - within-label` 增量；
-- 外部压力测试及其与 discovery 的异同；
-- 限制：单一 alignment 架构／Stage-1 风格复现、线性 readout、数据标签质量；
+- synthetic 只有通过预注册正文门才占一张双面板图：confounding-strength heatmap +
+  source→matched shift curve；未过门则完全不进正文；
+- OPERA、MLP、raw-preserving 与 probability transport 用一段压缩；
+- Coswara NO-GO 压成限制中的一句，不再占完整 Results 小节；
+- 限制：没有外部患者级确认、单一 alignment 架构／Stage-1 风格复现、数据标签质量；
 - 结论：把同标签打乱与协变量平衡迁移评测作为 audio--metadata alignment 的最低审计要求。
 
 ## 禁止的过度表述
