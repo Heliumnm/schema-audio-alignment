@@ -2,6 +2,11 @@
 
 Date frozen: 2026-08-19
 
+> **Outcome update (2026-08-23).** The Coswara branch failed its frozen covariate-balance
+> data gate before any representation, classifier, or model score was produced. The current
+> paper therefore has no external confirmation and remains a UKCOVID discovery audit. Final
+> status: `docs/ICASSP_EXECUTION_STATUS_ZH.md`.
+
 ## Purpose
 
 The UKCOVID metadata-alignment results are a discovery audit, not a confirmatory result.

@@ -1,8 +1,16 @@
-# ICASSP 严格补实验预注册（设计稿，尚未运行）
+# ICASSP 严格补实验预注册（冻结原文）
 
 日期：2026-08-20  
-状态：**E1/E2 只冻结设计，尚未运行；E3 已做过一次既有 AST 预测的 post-hoc 诊断，
-已看数字的部分明确标出，不冒充预注册。**
+冻结状态：本文件保留运行前的设计与判读规则，不根据结果改写。
+
+执行状态（2026-08-23）：**E1--E4 已全部运行。** 最终结局见
+`docs/ICASSP_EXECUTION_STATUS_ZH.md`，可审计 JSON 与 SHA-256 见
+`results/route_a_final/README.md`。其中 profile retrieval 通过操作检验；固定 MLP 未救回稳定
+疾病迁移；probability transport 将负向 source-calibrated NLL 定位为主要的置信度尺度失配；
+synthetic 只通过 correspondence gate、未通过正文机制准入门。
+
+下面从“研究边界”开始的内容均为运行前冻结原文。原状态曾为：E1/E2 尚未运行；E3 只有
+一次明确披露的 AST post-hoc 诊断。
 
 ## 0. 研究边界
 

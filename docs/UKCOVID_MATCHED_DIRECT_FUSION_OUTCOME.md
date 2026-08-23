@@ -1,5 +1,9 @@
 # UKCOVID matched direct-fusion 结果
 
+> **后续更新（2026-08-23）：** 本文是 AST 先导 attribution control。最终 Route-A 同时报告
+> AST／OPERA、raw-preserving arms、固定 MLP 与 probability transport；综合判读见
+> `ICASSP_EXECUTION_STATUS_ZH.md`。
+
 状态：**已完成；探索性 attribution control，不是外部确认。**  
 冻结协议：`UKCOVID_MATCHED_DIRECT_FUSION_PREREG.md`。
 

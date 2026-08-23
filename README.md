@@ -2,22 +2,39 @@
 
 > 中文完整故事版：[docs/项目完整故事_中文.md](docs/项目完整故事_中文.md)
 
-## Current ICASSP audit extension (August 2026)
+## Current ICASSP audit extension (final Route-A run, August 2026)
 
-The active paper track now asks a narrower transfer question on UKCOVID: does correct
-audio--metadata pairing learn portable disease evidence or source-specific participant
-structure? A within-label shuffle preserves COVID-level co-occurrence while breaking
-participant correspondence. Correct pairing improves source-domain ranking, but calibrated
-matched performance is worse; the direction repeats with both AST-6L and OPERA-CT. A
-matched direct-fusion control finds no detectable raw-AST increment beyond the same schema
-metadata. The preregistered Coswara external branch stopped at its data-balance gate before
-any model score.
+The Route-A audit is complete. It asks whether correct audio--metadata pairing learns
+portable disease evidence or participant/cohort correspondence. The controlled arms are
+correct pairing, within-label shuffling (label-level association preserved, individual
+pairing broken), and global shuffling.
 
-Start with [the Chinese execution status](docs/ICASSP_EXECUTION_STATUS_ZH.md),
-[the OPERA-CT robustness result](docs/OPERA_CT_ROBUSTNESS_OUTCOME.md), and the
-[layout-tested four-page draft](output/pdf/icassp2027_draft.pdf). UKCOVID remains a
-discovery audit; these results do not establish that metadata alignment is universally
-harmful.
+The manipulation worked: correct pairing improves unique-profile retrieval over
+within-label shuffling for both AST-6L and OPERA-CT, with all five seed effects positive.
+Information-channel probes show strong retained participant correspondence, especially
+sex, but no stable correct-minus-within COVID increment. Under covariate-matched evaluation,
+disease ranking gains are not robust across backbones or linear/nonlinear readouts, and
+correct alignment does not beat the frozen raw-audio representation. Probability-transport
+analysis further shows that the adverse source-calibrated NLL is mainly unsupported
+confidence: target-domain recalibration removes the NLL gap without creating a disease
+ranking gain.
+
+The controlled synthetic sweep learned correspondence but failed its preregistered
+mechanism gates, so it is not used as causal evidence. The Coswara external branch stopped
+at its frozen data-balance gate before any model score. UKCOVID therefore remains a
+single-dataset discovery audit; the results do not establish that metadata alignment is
+universally harmful or ineffective.
+
+Start with:
+
+- [Chinese final execution status](docs/ICASSP_EXECUTION_STATUS_ZH.md)
+- [Chinese ICASSP paper blueprint](docs/ICASSP_PAPER_BLUEPRINT_ZH.md)
+- [English ICASSP draft](docs/ICASSP_DRAFT_EN.md)
+- [Frozen strict follow-up design](docs/ICASSP_STRICT_FOLLOWUP_PREREG_ZH.md)
+- [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
+- [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
+
+## Historical ICBHI/schema track
 
 **A negative result, thoroughly controlled — plus one finding that outlived it.**
 

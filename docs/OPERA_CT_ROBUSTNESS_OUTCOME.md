@@ -1,5 +1,9 @@
 # OPERA-CT 第二音频编码器稳健性结果
 
+> **后续更新（2026-08-23）：** 本文记录 OPERA 的首轮线性评估；Route-A 已进一步补齐
+> profile retrieval、information-channel probes、raw-preserving fusion、target calibration
+> transport 和固定 MLP。最终综合结论见 `ICASSP_EXECUTION_STATUS_ZH.md`。
+
 状态：**正式完成。** 这是同一 UKCOVID 发现性队列上的 backbone robustness，不是外部
 确认。
 

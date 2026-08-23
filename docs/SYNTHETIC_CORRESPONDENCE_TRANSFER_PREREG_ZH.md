@@ -1,7 +1,13 @@
 # Synthetic Correspondence--Transfer Stress Test（冻结设计稿）
 
-日期：2026-08-20  
-状态：**尚未实现、尚未运行。**
+日期：2026-08-20
+
+冻结时状态：尚未实现、尚未运行。
+
+> **执行结局（2026-08-23）：** 3×3 条件、每条件 10 seeds 的正式 sweep 已完成。
+> correspondence gate 通过，但 high-confounding、dose-trend 与 rho-zero boundary gates
+> 失败；Phi-2 sensitivity 也未取得正文资格。因此该实验不能作为一般机制证明。冻结设计原文
+> 保留如下；结果见 `results/route_a_final/synthetic/`。
 
 ## 1. 定位
 

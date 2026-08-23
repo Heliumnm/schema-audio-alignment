@@ -1,5 +1,10 @@
 # Metadata alignment 正式实验结果（中文）
 
+> **后续更新（2026-08-23）：** 本文记录首轮 AST 正式结果，数字仍保留；Route-A 后续已补齐
+> unique-profile retrieval、OPERA-CT、raw-preserving fusion、probability transport、固定 MLP
+> 和 synthetic gate。最终综合判读见 `ICASSP_EXECUTION_STATUS_ZH.md`，不要只引用本文的
+> source-calibrated NLL 作为“疾病信息受损”证据。
+
 ## 一句话结论
 
 在 UKCOVID 的源数据分布里，正确 metadata 对齐比乱配对齐更容易学习，也能提高
