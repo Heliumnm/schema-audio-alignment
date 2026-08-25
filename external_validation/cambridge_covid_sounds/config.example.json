@@ -1,0 +1,101 @@
+{
+  "format_version": "cambridge-external-v1",
+  "dataset": "Cambridge COVID-19 Sounds NeurIPS 2021 DTA release",
+  "output_root": "./output/private_run_DO_NOT_COMMIT",
+  "inputs": {
+    "participant_csv": "/REPLACE/data_0426_en_task2_with_metadata.csv",
+    "metadata_csv": null,
+    "metadata_participant_id": "uid",
+    "audio_root": "/REPLACE/0426_EN_used_task2",
+    "audio_manifest_csv": null
+  },
+  "columns": {
+    "participant_id": "uid",
+    "label": "label",
+    "split": "fold",
+    "canonical": {
+      "age": "age",
+      "sex": "gender",
+      "smoker": "smoker",
+      "cough": "cough",
+      "fever": "fever",
+      "sore_throat": "sore_throat",
+      "shortness_of_breath": "shortness_of_breath",
+      "asthma": "asthma",
+      "other_respiratory": "other_respiratory",
+      "platform": "platform"
+    }
+  },
+  "labels": {
+    "positive_values": [1, "1", "positive", "Positive"],
+    "negative_values": [0, "0", "negative", "Negative"]
+  },
+  "splits": {
+    "train_values": ["train", 0, "0"],
+    "validation_values": ["validation", "val", 1, "1"],
+    "test_values": ["test", 2, "2"]
+  },
+  "field_rules": {
+    "age": {"kind": "number", "min": 18, "max": 100, "allow_missing": false, "tag": "AGE"},
+    "sex": {
+      "kind": "category", "allow_missing": false, "tag": "SEX",
+      "map": {"female": "FEMALE", "male": "MALE", "other": "OTHER", "prefer not to say": "PREFER_NOT_TO_SAY"}
+    },
+    "smoker": {
+      "kind": "category", "allow_missing": true, "identity": true, "tag": "SMOKER"
+    },
+    "cough": {"kind": "boolean", "true_values": [1, "1", true, "yes", "true"], "false_values": [0, "0", false, "no", "false"], "tag": "COUGH"},
+    "fever": {"kind": "boolean", "true_values": [1, "1", true, "yes", "true"], "false_values": [0, "0", false, "no", "false"], "tag": "FEVER"},
+    "sore_throat": {"kind": "boolean", "true_values": [1, "1", true, "yes", "true"], "false_values": [0, "0", false, "no", "false"], "tag": "SORE_THROAT"},
+    "shortness_of_breath": {"kind": "boolean", "true_values": [1, "1", true, "yes", "true"], "false_values": [0, "0", false, "no", "false"], "tag": "SHORTNESS_OF_BREATH"},
+    "asthma": {"kind": "boolean", "true_values": [1, "1", true, "yes", "true"], "false_values": [0, "0", false, "no", "false"], "tag": "ASTHMA"},
+    "other_respiratory": {"kind": "boolean", "true_values": [1, "1", true, "yes", "true"], "false_values": [0, "0", false, "no", "false"], "tag": "RESP_OTHER"},
+    "platform": {"kind": "category", "allow_missing": true, "identity": true, "tag": "PLATFORM"}
+  },
+  "audio": {
+    "primary_modalities": ["cough"],
+    "min_duration_s": 0.5,
+    "scan_layout": "cambridge_task2",
+    "manifest_columns": {"participant_id": "uid", "path": "path", "modality": "modality"}
+  },
+  "matching": {
+    "min_pairs": 100,
+    "max_abs_smd": 0.12,
+    "max_fine_balance_difference": 0.08,
+    "exact_fields": ["age_decade", "sex", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
+    "cost_fields": [
+      {"field": "age", "kind": "continuous", "scale": 10, "weight": 1},
+      {"field": "smoker", "kind": "categorical", "weight": 1},
+      {"field": "platform", "kind": "categorical", "weight": 2}
+    ],
+    "smd_fields": ["age", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
+    "continuous_smd_fields": ["age"],
+    "fine_balance_fields": ["platform", "smoker"]
+  },
+  "protocol": {
+    "formal_unlock": "REVIEW_GATE_BEFORE_SETTING_THIS",
+    "schema_fields": ["age_decade", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
+    "cohort_field": "platform",
+    "min_train_n": 500,
+    "min_train_per_class": 100,
+    "min_validation_per_class": 30,
+    "min_test_per_class": 100,
+    "bootstrap": 2000,
+    "auroc_equivalence_margin": 0.02,
+    "nll_equivalence_margin": 0.01,
+    "probes": {
+      "sex_female": {"field": "sex", "kind": "category", "positive_values": ["FEMALE"]},
+      "age_65plus": {"field": "age", "kind": "threshold", "threshold": 65},
+      "cough": {"field": "cough", "kind": "category", "positive_values": ["YES"]},
+      "asthma": {"field": "asthma", "kind": "category", "positive_values": ["YES"]},
+      "platform_web": {"field": "platform", "kind": "category", "positive_values": ["web"]}
+    }
+  },
+  "models": {
+    "device": "cuda",
+    "ast": {"enabled": true, "model_path": "/REPLACE/hf_models/ast-finetuned-audioset-10-10-0.4593", "layers": 6},
+    "opera_ct": {"enabled": true, "opera_root": "/REPLACE/OPERA", "checkpoint_path": "/REPLACE/OPERA/cks/model/encoder-operaCT.ckpt"},
+    "text": {"model_path": "/REPLACE/hf_models/phi-2", "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0", "max_length": 256, "batch_size": 16, "dtype": "bfloat16"},
+    "alignment": {"seeds": [0, 1, 2, 3, 4], "epochs": 500, "device": "cuda"}
+  }
+}

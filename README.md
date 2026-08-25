@@ -33,6 +33,7 @@ Start with:
 - [Frozen strict follow-up design](docs/ICASSP_STRICT_FOLLOWUP_PREREG_ZH.md)
 - [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
+- [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
 
 ## Historical ICBHI/schema track
 
