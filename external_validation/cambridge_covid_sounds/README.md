@@ -1,5 +1,9 @@
 # Cambridge COVID-19 Sounds：一键受限数据外部验证包
 
+> **当前状态（2026-08-29）：等待有 DTA 授权的英国合作者执行。** Coswara 与 CODA TB
+> 均在各自冻结的数据平衡门停止，未读取模型分数；因此 Cambridge 是当前唯一仍开放的
+> confirmatory external route。合作者必须先只运行 `gate`，不能直接解锁 `formal`。
+
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge
 COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridge 数据。
 

@@ -1,0 +1,66 @@
+{
+  "dataset": "CODA TB DREAM Challenge training data",
+  "decision": "NO-GO",
+  "decision_stage": "model-blind data feasibility gate",
+  "run_date": "2026-08-29",
+  "failed_gates": [
+    "matched_balance"
+  ],
+  "model_outputs_read": false,
+  "audio_encoders_run": false,
+  "projectors_trained": false,
+  "tb_classifiers_trained": false,
+  "source_counts": {
+    "clinical_rows": 1105,
+    "additional_metadata_rows": 1105,
+    "solicited_audio_mappings": 9772,
+    "mapped_participants": 1082
+  },
+  "audio_qc": {
+    "missing_wav": 0,
+    "extra_wav": 0,
+    "decoded_and_passed": 9772,
+    "sample_rate_hz": 44100,
+    "channels": 1,
+    "bits_per_sample": 16,
+    "cross_participant_duplicate_groups": 0,
+    "within_participant_duplicate_groups": 0
+  },
+  "eligible_cohort": {
+    "participants": 1081,
+    "tb_positive": 291,
+    "tb_negative": 790,
+    "excluded_no_valid_solicited_cough": 23,
+    "excluded_invalid_required_metadata": 1
+  },
+  "participant_split": {
+    "train": 431,
+    "validation": 86,
+    "source_test": 119,
+    "matched_target": 200,
+    "target_unmatched": 245,
+    "split_overlap": 0
+  },
+  "matching": {
+    "initial_pairs": 117,
+    "final_pairs": 100,
+    "minimum_pairs_required": 100,
+    "exact_country_by_sex_balance": true,
+    "max_absolute_smd": 0.2755833821648542,
+    "max_absolute_smd_limit": 0.12,
+    "max_categorical_level_difference": 0.13,
+    "max_categorical_level_difference_limit": 0.08,
+    "balance_passed": false
+  },
+  "interpretation": "The controlled-access data were downloaded, linked, decoded, and quality-checked successfully, but the frozen matched target did not meet the preregistered covariate-balance limits. This is a data-feasibility NO-GO, not a negative model result.",
+  "source_sha256": {
+    "clinical_metadata": "2194c36368fa38711de94280c51041cd2efa90e7ec801ff86fe58d1e7fce9005",
+    "additional_metadata": "8ac6e15378fa8ba9d69f0276bd711353de36e7a6451af880b667e80b742cfa19",
+    "solicited_audio_map": "c043a8bb89e40d827d88f83a7301661fe7190b8b0dd978e6b233b16e14cabc9e"
+  },
+  "controlled_output_sha256": {
+    "audio_qc_csv": "b2df1c98bdcbbf5302d12a0f34b873b87e03e7cf3db3e5d4b5b9f16180004848",
+    "matched_pairs_csv": "6225c3351050bbb1fb42c6745482c57ab7d7c838f1f6682389eae8bc8e1d5f26",
+    "participant_manifest_csv": "db412072b750e5ce9dad3504c89a946b01a743577cc1ba3a1a1f7092a9779296"
+  }
+}

@@ -1,5 +1,12 @@
 # CODA TB external transfer audit
 
+> **Outcome (2026-08-29): NO-GO at the frozen model-blind balance gate.** All 9,772
+> solicited-cough WAV files passed objective QC, but the final 100 matched pairs had maximum
+> absolute SMD 0.276 (limit 0.12) and maximum categorical level difference 0.13 (limit
+> 0.08). No representation, projector, classifier, or model score was produced. See
+> [`../../docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md`](../../docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
+> and [`../../results/coda_tb_data_gate_summary.json`](../../results/coda_tb_data_gate_summary.json).
+
 This directory contains the model-blind data gate for applying the frozen
 Pairing-Controlled Transfer Audit to the controlled-access CODA TB training data.
 
@@ -28,7 +35,8 @@ GO gate passed.  Exit code 3 is a planned NO-GO, not a software failure.
 
 Formal AST/OPERA extraction and Correct/Within-label/Global alignment are forbidden until
 the aggregate gate has been reviewed and the controlled manifests have been hashed and
-frozen.
+frozen. The formal gate has now been reviewed and returned NO-GO, so those model stages
+remain closed under this preregistration.
 
 ## Frozen data assumptions
 
@@ -42,4 +50,3 @@ frozen.
 - primary audio: solicited cough only; longitudinal cough is not downloaded or substituted.
 
 See `PREREGISTRATION_ZH.md` for the scientific contract.
-

@@ -1,9 +1,9 @@
 # Pairing-Controlled Auditing of Clinical Audio--Metadata Alignment:
 # Separating Participant Correspondence from Transferable Disease Evidence
 
-> **Draft status (2026-08-23).** The frozen Route-A audit is complete. UKCOVID is a
+> **Draft status (2026-08-29).** The frozen Route-A audit is complete. UKCOVID is a
 > discovery dataset because its official test sets informed earlier protocol development.
-> A preregistered Coswara data-feasibility gate failed before any external model score.
+> Preregistered Coswara and CODA TB data-feasibility gates failed before any external model score.
 > Compact final JSON outputs and hashes are stored in `results/route_a_final/`.
 
 ## Abstract
@@ -208,7 +208,11 @@ experiment as causal mechanism evidence.
 For external validation, all 2,746 Coswara cough recordings were decoded and 2,646 passed
 objective QC. At the frozen 100-pair matching floor, maximum covariate SMD was 0.140 versus
 the preregistered 0.12 limit. The gate returned NO-GO before any representation, classifier,
-or model score was produced.
+or model score was produced. A second model-blind gate on CODA TB successfully decoded all
+9,772 solicited-cough recordings and retained 1,081 eligible participants. Its final 100
+matched TB-positive/TB-negative pairs had maximum absolute SMD 0.276 and maximum categorical
+level difference 0.13, exceeding the frozen limits of 0.12 and 0.08. It also returned
+NO-GO before any representation or model score.
 
 ## 4. Discussion
 
@@ -234,7 +238,7 @@ confounded cohort; the official tests informed earlier protocol development. Mat
 evaluation balances measured covariates but does not remove all confounding. Probe
 decodability does not prove causal model use. We test one Stage-1-style projector, two
 frozen audio backbones, and linear/fixed-MLP readouts rather than the full downstream
-RespiraMFM system. The external data gate failed, and the synthetic model did not establish
+RespiraMFM system. Both external data gates failed, and the synthetic model did not establish
 a general mechanism.
 
 ## 5. Conclusion

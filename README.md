@@ -20,10 +20,10 @@ confidence: target-domain recalibration removes the NLL gap without creating a d
 ranking gain.
 
 The controlled synthetic sweep learned correspondence but failed its preregistered
-mechanism gates, so it is not used as causal evidence. The Coswara external branch stopped
-at its frozen data-balance gate before any model score. UKCOVID therefore remains a
-single-dataset discovery audit; the results do not establish that metadata alignment is
-universally harmful or ineffective.
+mechanism gates, so it is not used as causal evidence. The Coswara and CODA TB external
+branches both stopped at their frozen data-balance gates before any model score. UKCOVID
+therefore remains a single-dataset discovery audit; the results do not establish that
+metadata alignment is universally harmful or ineffective.
 
 Start with:
 
@@ -33,6 +33,7 @@ Start with:
 - [Frozen strict follow-up design](docs/ICASSP_STRICT_FOLLOWUP_PREREG_ZH.md)
 - [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
+- [CODA TB model-blind data-gate outcome](docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
 - [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
 
 ## Historical ICBHI/schema track

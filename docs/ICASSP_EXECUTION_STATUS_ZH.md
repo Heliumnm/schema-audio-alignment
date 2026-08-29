@@ -1,6 +1,6 @@
 # ICASSP Route A 最终执行状态
 
-日期：2026-08-23
+日期：2026-08-29
 
 状态：**冻结设计中的 Route-A audit 已全部执行；新 mitigation 方法尚未执行。**
 
@@ -51,6 +51,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
+| CODA TB 外部确认 | 数据门 NO-GO | 9,772 条音频通过 QC，但 100 对匹配未达到平衡门；没有模型分数 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
 ## 3. Alignment 是否真的学会了 correspondence？
@@ -153,6 +154,12 @@ alignment 必然越差”这一一般机制。它不得作为正文的正向机�
 Coswara 2,746 条录音完成 QC，2,646 条通过；冻结匹配在 100 对下限时最大 SMD 为 0.140，
 高于 0.12 门槛，因此 NO-GO。没有生成 Coswara 表征、分类器或模型分数。
 
+CODA TB 的 9,772 条 solicited cough 全部成功解码并通过 QC；1,081 名 participant 进入
+eligible cohort（TB+ 291、TB− 790）。冻结 split 和 matching 最终保留 100 对，但最大绝对
+SMD 为 0.276（门槛 0.12），最大分类水平比例差为 0.13（门槛 0.08），因此同样 NO-GO。
+没有运行 AST／OPERA、projector、retrieval 或 TB classifier。该结果是数据可行性 NO-GO，
+不是 CODA TB 模型负结果。
+
 当前证据是：
 
 - 一个 UKCOVID discovery audit；
@@ -160,6 +167,7 @@ Coswara 2,746 条录音完成 QC，2,646 条通过；冻结匹配在 100 对下�
 - 线性和固定 MLP 两种 readout；
 - retrieval、probe、fusion 和 calibration 的闭环；
 - 没有独立外部模型确认；
+- 两个受控外部数据集均在预注册平衡门停止，未通过 post-hoc 修改规则救回；
 - synthetic 没有通过机制门。
 
 ## 9. 当前可以与不能说的话
@@ -177,7 +185,7 @@ Coswara 2,746 条录音完成 QC，2,646 条通过；冻结匹配在 100 对下�
 - probe 可解码性证明分类器因果使用了某属性；
 - matched evaluation 消除了所有 confounding；
 - synthetic 已证明一般机制；
-- Coswara 已完成外部复现。
+- Coswara 或 CODA TB 已完成外部复现。
 
 ## 10. 仓库位置
 
@@ -186,5 +194,9 @@ Coswara 2,746 条录音完成 QC，2,646 条通过；冻结匹配在 100 对下�
 - 论文蓝图：`docs/ICASSP_PAPER_BLUEPRINT_ZH.md`
 - 英文草稿：`docs/ICASSP_DRAFT_EN.md`
 - 最终小型结果与 SHA-256：`results/route_a_final/`
+- Coswara 数据门结局：`docs/COSWARA_DATA_GATE_OUTCOME_ZH.md`
+- CODA TB 数据门结局：`docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md`
+- CODA TB 公开聚合摘要：`results/coda_tb_data_gate_summary.json`
+- Cambridge 合作者一键外部验证包：`external_validation/cambridge_covid_sounds/`
 - 一次性执行器：`scripts/run_icassp_route_a_once.sh`
 - 下一阶段方法设计（未执行）：`docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md`

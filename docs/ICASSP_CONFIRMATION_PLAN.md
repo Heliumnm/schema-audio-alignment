@@ -7,6 +7,12 @@ Date frozen: 2026-08-19
 > paper therefore has no external confirmation and remains a UKCOVID discovery audit. Final
 > status: `docs/ICASSP_EXECUTION_STATUS_ZH.md`.
 
+> **Second outcome update (2026-08-29).** CODA TB also returned model-blind NO-GO. All
+> 9,772 solicited coughs passed QC, but the final 100 matched pairs exceeded both frozen
+> balance limits (max absolute SMD 0.276; max categorical level difference 0.13). No CODA
+> representation or model score was produced. The next controlled-access execution route
+> is the frozen Cambridge COVID-19 Sounds collaborator package.
+
 ## Purpose
 
 The UKCOVID metadata-alignment results are a discovery audit, not a confirmatory result.
