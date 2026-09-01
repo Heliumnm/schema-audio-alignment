@@ -1,40 +1,45 @@
-CAMBRIDGE COVID-19 SOUNDS — EXTERNAL DATA-GATE QUICK START
-===========================================================
+CAMBRIDGE COVID-19 SOUNDS 外部数据门快速指南
+=============================================
 
-Purpose
--------
-Run the frozen, model-blind feasibility gate for Cambridge COVID-19 Sounds
-Task 2 (COVID-positive versus COVID-negative). This first stage does not load
-AST, OPERA, Phi-2, embeddings, predictions, AUROC or NLL.
+用途
+----
+
+本指南用于运行 Cambridge COVID-19 Sounds Task 2（COVID 阳性与阴性）的冻结、
+模型盲态数据可行性检查。
+
+第一阶段不会加载 AST、OPERA、Phi-2，不会生成 embedding、prediction、AUROC
+或 NLL。它只检查数据能否支撑事先规定的外部验证。
 
 
-1. Required Cambridge data
---------------------------
-Please prepare these three inputs inside the authorised DTA environment:
+一、需要准备的 Cambridge 数据
+-------------------------------
 
-A. Official Task-2 split/label table
+请在获得授权的 DTA 环境中准备以下三部分数据。
+
+1. 官方 Task 2 标签与划分表
 
    task2/data_0426_en_task2.csv
 
-   Required official columns: uid, label, fold.
+   需要包含官方字段：uid、label、fold。
 
-B. Full metadata directory
+2. 完整 metadata 文件夹
 
    all_metadata/
 
-   It should contain the Android, iOS and Web metadata CSV files. The script
-   automatically joins these files to the Task-2 table and parses Age, Sex,
-   Smoking, Symptoms and Medhistory.
+   其中应包含 Android、iOS 和 Web 三个平台的 metadata CSV。程序会自动根据
+   uid 与 Task 2 表连接，并解析 Age、Sex、Smoking、Symptoms 和 Medhistory。
 
-C. One audio root, using either option below
+3. 一份音频目录，下面两种任选一种
 
-   Preferred smaller option:
+   推荐使用体积较小的 Task 2 音频子集：
+
    task2/0426_EN_used_task2/
 
-   OR the full release:
+   或者使用完整音频母目录：
+
    covid19/
 
-   The full release may have this structure:
+   完整音频目录可能是以下结构：
 
    covid19/
      participant_ID/
@@ -43,28 +48,28 @@ C. One audio root, using either option below
          audio_file_cough.wav
          audio_file_read.wav
 
-   The script enters only participant IDs listed in the official Task-2 CSV
-   and uses only filenames containing "cough". Multiple collection times from
-   one participant remain one participant-level analysis unit.
+   程序只进入官方 Task 2 CSV 中列出的 participant ID，只使用文件名包含
+   “cough”的录音。同一位参与者的多个采集时间最终仍然只作为一个患者级
+   分析单位。
 
-Not required for this gate:
+本阶段不需要下载：
 
-- Task 1
-- openSMILE features
-- Dataset Document.xlsx
-- breathing or read/voice features
-- AST, OPERA or Phi-2 checkpoints
+- Task 1；
+- openSMILE 特征；
+- Dataset Document.xlsx；
+- breathing 或 read/voice 特征；
+- AST、OPERA、Phi-2 模型文件。
 
 
-2. Download the code
---------------------
+二、下载实验代码
+----------------
 
 git clone --depth 1 https://github.com/Heliumnm/schema-audio-alignment.git
 cd schema-audio-alignment/external_validation/cambridge_covid_sounds
 
 
-3. Create the gate environment
-------------------------------
+三、创建数据门运行环境
+----------------------
 
 python3 -m venv .venv
 source .venv/bin/activate
@@ -72,10 +77,10 @@ python -m pip install --upgrade pip
 pip install -r requirements-gate.txt
 
 
-4. Run the model-blind gate
----------------------------
+四、运行模型盲态数据门
+----------------------
 
-Replace the four example paths below with local absolute paths:
+把下面四个示例路径替换为本地绝对路径：
 
 bash run_task2_gate.sh \
   /DATA/task2/data_0426_en_task2.csv \
@@ -83,56 +88,58 @@ bash run_task2_gate.sh \
   /DATA/covid19 \
   /DATA/cambridge_audit_output
 
-If using the smaller Task-2 audio subset, replace /DATA/covid19 with:
+如果使用体积较小的 Task 2 音频子集，把第三个路径 /DATA/covid19 替换为：
 
   /DATA/task2/0426_EN_used_task2
 
 
-5. Inspect the result
----------------------
+五、查看数据门结果
+------------------
 
-The aggregate result files are:
+聚合结果位于：
 
 /DATA/cambridge_audit_output/public/DATA_GATE_REPORT.md
 /DATA/cambridge_audit_output/public/data_gate.json
 /DATA/cambridge_audit_output/public/PUBLIC_RESULTS.zip
 
-If the verdict is NO_GO:
+如果结果是 NO_GO：
 
-- stop immediately;
-- do not change the 100-pair, 0.12-SMD or 0.08 fine-balance thresholds;
-- do not run any model;
-- return only PUBLIC_RESULTS.zip plus the Git commit SHA and environment notes.
+- 立即停止；
+- 不得修改 100 对、0.12 SMD 或 0.08 fine-balance 门槛；
+- 不得运行任何模型；
+- 只返回 PUBLIC_RESULTS.zip、Git commit SHA 和运行环境说明。
 
-If the verdict is GO:
+如果结果是 GO：
 
-- send PUBLIC_RESULTS.zip to the project lead for independent review;
-- do not start the formal model stage until the project lead supplies the
-  explicit unlock instruction.
+- 先把 PUBLIC_RESULTS.zip 发给项目负责人独立核对；
+- 在项目负责人明确提供正式解锁指令前，不得运行正式模型阶段。
 
 
-6. Privacy boundary
--------------------
+六、隐私边界
+------------
 
-Do not send, upload or commit any content from:
+不得发送、上传或提交以下目录中的任何内容：
 
 /DATA/cambridge_audit_output/private/
 
-This directory contains participant identifiers, audio paths, matched-pair
-manifests and other row-level material. It must remain inside the authorised
-DTA environment.
+该目录包含 participant ID、音频路径、匹配关系和其他逐患者材料，必须留在
+获得授权的 DTA 环境中。
 
-Return only the aggregate public archive:
+默认只返回聚合结果压缩包：
 
 /DATA/cambridge_audit_output/public/PUBLIC_RESULTS.zip
 
-The local data steward and DTA requirements always take precedence if they are
-stricter than this guide.
+如果当地 data steward 或 DTA 有更严格的规定，应以其规定为准。
 
 
-Frozen code version
--------------------
+七、冻结代码位置
+----------------
 
-Repository: https://github.com/Heliumnm/schema-audio-alignment
-Branch: main
-Cambridge package: external_validation/cambridge_covid_sounds
+GitHub 仓库：
+https://github.com/Heliumnm/schema-audio-alignment
+
+分支：
+main
+
+Cambridge 执行包：
+external_validation/cambridge_covid_sounds
