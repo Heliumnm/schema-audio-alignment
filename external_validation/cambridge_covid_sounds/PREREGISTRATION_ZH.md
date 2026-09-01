@@ -22,6 +22,9 @@ Cambridge 分支只问：
 - 多段 cough：每段先编码，participant 内等权平均；每人一个 loss；
 - label：官方 task-2 COVID positive/negative；其他／未知状态排除；
 - split：官方患者级 train/validation/test，不重新随机划分。
+- 原始输入：官方 `data_0426_en_task2.csv` 的 `uid/label/fold`、完整 `covid19` 音频母目录
+  （结构为 `ID/采集时间/audio_file_cough.wav`，亦兼容 `0426_EN_used_task2`）和
+  `all_metadata` 三平台 CSV；扫描仅进入 Task-2 ID，不使用 Task 1。
 
 Cambridge hidden scoring queue 不承担本 audit，除非数据方明确提供逐患者、可匹配、可做配对CI
 的输出。总体 leaderboard 分数只能是独立的 secondary benchmark。
@@ -42,17 +45,23 @@ Cambridge hidden scoring queue 不承担本 audit，除非数据方明确提供�
 
 ### 3.2 Metadata schema
 
-进入alignment文本：10岁年龄段、sex、smoking、cough、fever、sore throat、shortness of breath、
+进入alignment文本：官方年龄段、sex、smoking、cough、fever、sore throat、shortness of breath、
 asthma、other respiratory disease。缺失为 `[MISSING]`；未知枚举必须报错，不能默认为NO。
+
+原始 metadata 适配规则在模型执行前冻结：年龄历史 typo `30-29` 规范为 `30-39`；静态年龄段、
+sex、smoking 在同一患者多行中不一致则排除；每日 `Symptoms` 和 `Medhistory` 采用
+ever-positive 聚合（任一记录出现目标代码为YES；存在有效回答但无目标代码为NO；仅缺失／不愿
+回答为`[MISSING]`）。platform优先由 Android/iOS/Web metadata 文件来源确定，文件名无法确定时
+才使用官方Task-2 loader／数据字典的UID规则。以上处理不读取标签分布或模型结果。
 
 不进入文本：COVID label、participant ID、audio ID、platform/site/location/device。这些只用作
 matching、diagnostic或probe。
 
 ### 3.3 Matched endpoint
 
-只在官方 test 中1:1、无放回匹配。exact字段：10岁年龄段、sex、cough、fever、sore throat、
-shortness of breath、asthma、other respiratory disease。最小代价辅助匹配连续年龄、smoking和
-platform；所有tie由固定SHA-256解决。
+只在官方 test 中1:1、无放回匹配。exact字段：官方年龄段、sex、cough、fever、sore throat、
+shortness of breath、asthma、other respiratory disease。原始数据只提供年龄段，因此不虚构
+连续年龄；最小代价只辅助匹配smoking和platform，所有tie由固定SHA-256解决。
 
 若最大匹配集不平衡，沿唯一的确定性greedy trimming路径逐对删除，第一次通过即停止；不得搜索
 另一条更有利路径，也不得删除到100对以下。
@@ -70,6 +79,9 @@ platform；所有tie由固定SHA-256解决。
 7. participant ID、metadata、label、split和cough linkage无歧义。
 
 任一失败：`NO_GO`，正式模型阶段关闭。这是数据可行性结论，不是模型负结果。
+
+官方Task 2约1,000名参与者，test约20%；100对等于200名参与者，因此该门几乎没有QC与exact
+matching余量。这个紧约束在看数据门结果前保留；不得因为官方子集上限而事后降低门槛。
 
 ## 4. 冻结模型
 
@@ -110,7 +122,7 @@ validation unique-profile macro MRR。主差值：`C-W`，profile×seed paired b
 
 ### Information channels
 
-至少报告sex、age 65+、cough、asthma和web-vs-app platform；若DTA字段支持，再加site/device。主差值为
+至少报告sex、age 70+（与已发布年龄段边界一致）、cough、asthma和web-vs-app platform；若DTA字段支持，再加site/device。主差值为
 matched `C-W`，`C-R`用于避免把“相对within保留”误写成“比raw编码更多”。
 
 ### Disease transfer

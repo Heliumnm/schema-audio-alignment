@@ -25,6 +25,11 @@ branches both stopped at their frozen data-balance gates before any model score.
 therefore remains a single-dataset discovery audit; the results do not establish that
 metadata alignment is universally harmful or ineffective.
 
+The remaining controlled-access route is Cambridge COVID-19 Sounds Task 2. Its package now
+accepts the official `uid/label/fold`, three-platform `all_metadata`, and Task-2 cough folder
+directly, and runs a model-blind gate from four local paths. No Cambridge gate or model result
+has yet been returned.
+
 Start with:
 
 - [Chinese final execution status](docs/ICASSP_EXECUTION_STATUS_ZH.md)

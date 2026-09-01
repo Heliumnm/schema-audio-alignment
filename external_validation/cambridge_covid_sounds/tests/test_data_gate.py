@@ -42,7 +42,8 @@ def config(root: Path, imbalanced_platform: bool = False) -> Path:
                     "sore_throat": index % 2, "shortness_of_breath": 0,
                     "asthma": 0, "other_respiratory": 0, "platform": platform,
                 })
-                write_wave(root / "audio" / pid / "session" / f"{pid}_cough.wav",
+                write_wave(root / "audio" / pid / "2021-03-24_17_52_04_636224" /
+                           "audio_file_cough.wav",
                            220 + {"train": 0, "validation": 100, "test": 200}[split]
                            + label * 40 + index)
     pd.DataFrame(rows).to_csv(root / "participants.csv", index=False)
@@ -106,6 +107,80 @@ def config(root: Path, imbalanced_platform: bool = False) -> Path:
 
 
 class DataGateTest(unittest.TestCase):
+    def test_official_task2_and_all_metadata_run_without_manual_merge(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config_path = config(root)
+            participants = pd.read_csv(root / "participants.csv")
+            participants[["uid", "label", "fold"]].to_csv(
+                root / "data_0426_en_task2.csv", index=False)
+
+            metadata_rows = []
+            for row in participants.itertuples(index=False):
+                age = "30-29" if int(str(row.uid).rsplit("_", 1)[1]) % 2 else "20-29"
+                base = {"Uid": row.uid, "Age": age,
+                        "Sex": "female" if row.gender == "female" else "male",
+                        "Smoking": "never", "Medhistory": "asthma" if row.asthma else "None"}
+                metadata_rows.append({**base, "Symptoms": "drycough, fever"})
+                metadata_rows.append({**base, "Symptoms": "sorethroat, shortbreath"})
+            metadata_root = root / "all_metadata"
+            metadata_root.mkdir()
+            pd.DataFrame(metadata_rows).to_csv(metadata_root / "android_data.csv", index=False)
+            write_wave(root / "audio" / "train_0_000" / "2021-03-25_21_11_43_226499" /
+                       "audio_file_cough.wav", 777)
+
+            payload = json.loads(config_path.read_text())
+            payload["inputs"]["participant_csv"] = str(root / "data_0426_en_task2.csv")
+            payload["inputs"]["source_adapter"] = {
+                "name": "cambridge_task2_raw", "metadata_root": str(metadata_root),
+                "metadata_glob": "**/*.csv",
+            }
+            payload["columns"]["canonical"] = {
+                "age_band": "__cam_age_band", "sex": "__cam_sex",
+                "smoker": "__cam_smoker", "cough": "__cam_cough",
+                "fever": "__cam_fever", "sore_throat": "__cam_sore_throat",
+                "shortness_of_breath": "__cam_shortness_of_breath",
+                "asthma": "__cam_asthma",
+                "other_respiratory": "__cam_other_respiratory",
+                "platform": "__cam_platform",
+            }
+            payload["field_rules"] = {
+                field: {"kind": "category", "identity": True, "allow_missing": True}
+                for field in ("age_band", "sex", "smoker", "platform")
+            }
+            payload["field_rules"].update({
+                field: {"kind": "boolean", "true_values": ["YES"],
+                        "false_values": ["NO"], "allow_missing": True}
+                for field in ("cough", "fever", "sore_throat", "shortness_of_breath",
+                              "asthma", "other_respiratory")
+            })
+            payload["matching"].update({
+                "exact_fields": ["age_band", "sex", "cough", "fever", "sore_throat",
+                                 "shortness_of_breath", "asthma", "other_respiratory"],
+                "cost_fields": [{"field": "smoker", "kind": "categorical"},
+                                {"field": "platform", "kind": "categorical"}],
+                "smd_fields": ["age_band", "sex", "smoker", "cough", "fever",
+                               "sore_throat", "shortness_of_breath", "asthma",
+                               "other_respiratory"],
+                "continuous_smd_fields": [],
+            })
+            payload["protocol"]["schema_fields"] = [
+                "age_band", "sex", "smoker", "cough", "fever", "sore_throat",
+                "shortness_of_breath", "asthma", "other_respiratory",
+            ]
+            config_path.write_text(json.dumps(payload))
+
+            result = execute(config_path)
+            self.assertEqual(result["verdict"], "GO")
+            self.assertEqual(result["source_adapter"]["n_task2_participants_after_join"], 144)
+            self.assertEqual(result["audio_qc"]["n_discovered_files"], 145)
+            self.assertFalse(result["model_outputs_read"])
+            private = pd.read_csv(root / "out" / "private" / "participant_manifest.csv")
+            self.assertEqual(set(private.age_band), {"20-29", "30-39"})
+            self.assertEqual(set(private.cough), {"YES"})
+            self.assertEqual(set(private.shortness_of_breath), {"YES"})
+            self.assertEqual(set(private.platform), {"ANDROID"})
+
     def test_optional_metadata_table_is_joined_before_canonical_validation(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -92,6 +92,11 @@ def public_config(config: dict[str, Any]) -> dict[str, Any]:
     return {
         "format_version": config["format_version"],
         "dataset": config.get("dataset"),
+        "source_adapter": {
+            "name": config.get("inputs", {}).get("source_adapter", {}).get("name"),
+            "metadata_glob": config.get("inputs", {}).get("source_adapter", {}).get(
+                "metadata_glob"),
+        } if config.get("inputs", {}).get("source_adapter") else None,
         "protocol": config.get("protocol", {}),
         "labels": config.get("labels", {}),
         "splits": config.get("splits", {}),

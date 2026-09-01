@@ -9,7 +9,7 @@ export PYTHONPATH="$HERE/src${PYTHONPATH:+:$PYTHONPATH}"
 
 if [[ ! -f "$CONFIG" ]]; then
   echo "Missing config: $CONFIG"
-  echo "Copy config.example.json to config.local.json and map the DTA release columns."
+  echo "Use run_task2_gate.sh for the official raw release, or copy config.example.json for a canonical table."
   exit 2
 fi
 if [[ "$STAGE" != "gate" && "$STAGE" != "formal" && "$STAGE" != "all" ]]; then

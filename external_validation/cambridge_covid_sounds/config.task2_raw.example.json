@@ -1,0 +1,99 @@
+{
+  "format_version": "cambridge-external-v1",
+  "dataset": "Cambridge COVID-19 Sounds official Task 2 + all_metadata",
+  "output_root": "./output/private_run_DO_NOT_COMMIT",
+  "inputs": {
+    "participant_csv": "/REPLACE/task2/data_0426_en_task2.csv",
+    "metadata_csv": null,
+    "source_adapter": {
+      "name": "cambridge_task2_raw",
+      "metadata_root": "/REPLACE/all_metadata",
+      "metadata_glob": "**/*.csv"
+    },
+    "audio_root": "/REPLACE/covid19",
+    "audio_manifest_csv": null
+  },
+  "columns": {
+    "participant_id": "uid",
+    "label": "label",
+    "split": "fold",
+    "canonical": {
+      "age_band": "__cam_age_band",
+      "sex": "__cam_sex",
+      "smoker": "__cam_smoker",
+      "cough": "__cam_cough",
+      "fever": "__cam_fever",
+      "sore_throat": "__cam_sore_throat",
+      "shortness_of_breath": "__cam_shortness_of_breath",
+      "asthma": "__cam_asthma",
+      "other_respiratory": "__cam_other_respiratory",
+      "platform": "__cam_platform"
+    }
+  },
+  "labels": {
+    "positive_values": [1, "1", "positive", "Positive"],
+    "negative_values": [0, "0", "negative", "Negative"]
+  },
+  "splits": {
+    "train_values": ["train", 0, "0"],
+    "validation_values": ["validation", "val", 1, "1"],
+    "test_values": ["test", 2, "2"]
+  },
+  "field_rules": {
+    "age_band": {"kind": "category", "allow_missing": true, "identity": true, "tag": "AGE_BAND"},
+    "sex": {"kind": "category", "allow_missing": true, "identity": true, "tag": "SEX"},
+    "smoker": {"kind": "category", "allow_missing": true, "identity": true, "tag": "SMOKER"},
+    "cough": {"kind": "boolean", "allow_missing": true, "true_values": ["YES"], "false_values": ["NO"], "tag": "COUGH"},
+    "fever": {"kind": "boolean", "allow_missing": true, "true_values": ["YES"], "false_values": ["NO"], "tag": "FEVER"},
+    "sore_throat": {"kind": "boolean", "allow_missing": true, "true_values": ["YES"], "false_values": ["NO"], "tag": "SORE_THROAT"},
+    "shortness_of_breath": {"kind": "boolean", "allow_missing": true, "true_values": ["YES"], "false_values": ["NO"], "tag": "SHORTNESS_OF_BREATH"},
+    "asthma": {"kind": "boolean", "allow_missing": true, "true_values": ["YES"], "false_values": ["NO"], "tag": "ASTHMA"},
+    "other_respiratory": {"kind": "boolean", "allow_missing": true, "true_values": ["YES"], "false_values": ["NO"], "tag": "RESP_OTHER"},
+    "platform": {"kind": "category", "allow_missing": true, "identity": true, "tag": "PLATFORM"}
+  },
+  "audio": {
+    "primary_modalities": ["cough"],
+    "min_duration_s": 0.5,
+    "scan_layout": "cambridge_task2",
+    "manifest_columns": {"participant_id": "uid", "path": "path", "modality": "modality"}
+  },
+  "matching": {
+    "min_pairs": 100,
+    "max_abs_smd": 0.12,
+    "max_fine_balance_difference": 0.08,
+    "exact_fields": ["age_band", "sex", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
+    "cost_fields": [
+      {"field": "smoker", "kind": "categorical", "weight": 1},
+      {"field": "platform", "kind": "categorical", "weight": 2}
+    ],
+    "smd_fields": ["age_band", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
+    "continuous_smd_fields": [],
+    "fine_balance_fields": ["platform", "smoker"]
+  },
+  "protocol": {
+    "formal_unlock": "REVIEW_GATE_BEFORE_SETTING_THIS",
+    "schema_fields": ["age_band", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
+    "cohort_field": "platform",
+    "min_train_n": 500,
+    "min_train_per_class": 100,
+    "min_validation_per_class": 30,
+    "min_test_per_class": 100,
+    "bootstrap": 2000,
+    "auroc_equivalence_margin": 0.02,
+    "nll_equivalence_margin": 0.01,
+    "probes": {
+      "sex_female": {"field": "sex", "kind": "category", "positive_values": ["FEMALE"]},
+      "age_70plus": {"field": "age_band", "kind": "category", "positive_values": ["70-79", "80-89", "90+"]},
+      "cough": {"field": "cough", "kind": "category", "positive_values": ["YES"]},
+      "asthma": {"field": "asthma", "kind": "category", "positive_values": ["YES"]},
+      "platform_web": {"field": "platform", "kind": "category", "positive_values": ["WEB"]}
+    }
+  },
+  "models": {
+    "device": "cuda",
+    "ast": {"enabled": true, "model_path": "/REPLACE/hf_models/ast-finetuned-audioset-10-10-0.4593", "layers": 6},
+    "opera_ct": {"enabled": true, "opera_root": "/REPLACE/OPERA", "checkpoint_path": "/REPLACE/OPERA/cks/model/encoder-operaCT.ckpt"},
+    "text": {"model_path": "/REPLACE/hf_models/phi-2", "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0", "max_length": 256, "batch_size": 16, "dtype": "bfloat16"},
+    "alignment": {"seeds": [0, 1, 2, 3, 4], "epochs": 500, "device": "cuda"}
+  }
+}

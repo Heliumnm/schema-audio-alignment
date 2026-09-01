@@ -1,6 +1,6 @@
 # Cambridge COVID-19 Sounds：一键受限数据外部验证包
 
-> **当前状态（2026-08-29）：等待有 DTA 授权的英国合作者执行。** Coswara 与 CODA TB
+> **当前状态（2026-09-01）：等待有 DTA 授权的英国合作者执行。** Coswara 与 CODA TB
 > 均在各自冻结的数据平衡门停止，未读取模型分数；因此 Cambridge 是当前唯一仍开放的
 > confirmatory external route。合作者必须先只运行 `gate`，不能直接解锁 `formal`。
 
@@ -25,6 +25,55 @@ COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridg
 这样可以保证 Cambridge 不是为了得到一个好结果才事后改 subset、matching 或字段。
 
 ## 合作者最快使用方式
+
+### 官方 Task 2 原始发布格式（推荐，不需要手工合并表）
+
+当前研究问题是 COVID-19 disease transfer，因此使用 **Task 2**，不是用于“是否有呼吸症状”的
+Task 1。官方 Task 2 入口文件是：
+
+```text
+task2/data_0426_en_task2.csv       # 官方 uid / label / fold
+covid19/                           # 完整音频母目录（也兼容 0426_EN_used_task2）
+all_metadata/                      # Android / iOS / Web 原始 metadata CSV
+```
+
+只安装数据门依赖：
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-gate.txt
+```
+
+然后用一条命令运行完全 model-blind 的检查：
+
+```bash
+bash run_task2_gate.sh \
+  /DTA/task2/data_0426_en_task2.csv \
+  /DTA/all_metadata \
+  /DTA/covid19 \
+  /DTA/cambridge_audit_output
+```
+
+脚本会自动：
+
+- 按 `uid` 连接官方 Task-2 split 与三平台 metadata；
+- 把官方年龄段（含历史 `30-29` typo）标准化；
+- 把 `Symptoms` 和 `Medhistory` 多选字段拆成预注册字段；
+- 从 metadata 文件来源／官方 UID 规则恢复 Android、iOS、Web；
+- 只进入 Task-2 CSV 所列 ID 的目录，识别 `ID/采集时间/audio_file_cough.wav`，不会质检整库；
+- 扫描 cough、执行客观波形 QC、做 test 内匹配和平衡检查；
+- 若 `NO_GO`，打包聚合结果并在任何模型加载前停止。
+
+本步骤的正式输出是：
+
+```text
+/DTA/cambridge_audit_output/public/DATA_GATE_REPORT.md
+/DTA/cambridge_audit_output/public/data_gate.json
+/DTA/cambridge_audit_output/public/PUBLIC_RESULTS.zip
+```
+
+### 已经手工整理成 canonical table（高级用法）
 
 ```bash
 cd external_validation/cambridge_covid_sounds
@@ -82,11 +131,15 @@ profile retrieval + probes + Standard/matched COVID AUROC/NLL
 仅聚合的 PUBLIC_RESULTS.zip
 ```
 
-## 输入方式
+## 输入方式与冻结聚合规则
 
-推荐把 Cambridge 官方 task-2 患者表与完整 DTA metadata 合并成一个 CSV／XLSX；也可以在
-配置中分别提供participant表和metadata表，由程序按患者ID合并。文件必须至少
-包含配置中映射的：
+推荐直接使用 `config.task2_raw.example.json` 对应的官方原始格式，不再要求合作者手工合并。
+静态字段（年龄段、性别、吸烟）在同一患者的多行记录中必须一致，否则患者被排除；每日
+`Symptoms` / `Medhistory` 使用事前固定的 **ever-positive** 聚合：任一记录出现目标代码为 YES，
+有有效回答但没有目标代码为 NO，只有缺失／不愿回答为 `[MISSING]`。该规则不读取标签分布或
+模型结果。
+
+若使用高级 canonical-table 模式，文件必须至少包含配置中映射的：
 
 ```text
 participant ID, COVID label, official fold,
@@ -97,11 +150,19 @@ shortness of breath, asthma, other respiratory disease, platform/cohort
 音频有两种接入方式：
 
 1. `audio_manifest_csv`：每行 `participant ID / relative path / modality`；推荐；
-2. `cambridge_task2` 扫描：兼容官方 `0426_EN_used_task2` 目录结构，只选择文件名含
-   `cough` 的录音。
+2. `cambridge_task2` 扫描：兼容 `covid19/ID/采集时间/audio_file_cough.wav` 和官方
+   `0426_EN_used_task2`；只进入 Task-2 CSV 中的 ID，并只选择文件名含 `cough` 的录音。
 
 多个 cough 文件会先各自编码，再在 participant 内等权平均。一个 participant 永远只贡献
 一个 contrastive loss、一个 prediction 和一个 bootstrap unit。
+
+## 一个必须提前知道的数据门限制
+
+官方论文报告的 Task 2 约为 1,000 名参与者，官方 test 约占 20%。当前预注册要求至少
+`100 positive/negative matched pairs`，也就是 test 中至少 200 名可用且能通过 exact matching
+的参与者。因此这个门几乎没有 QC 或 common-support 余量。代码不会为了让外部验证通过而降低
+100-pair、0.12 SMD 或 0.08 fine-balance 阈值；若因此 `NO_GO`，正确结论是“该官方子集不足以
+承担预注册的 confirmatory transfer endpoint”，不是模型失败。
 
 ## 隐私边界
 

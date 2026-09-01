@@ -16,6 +16,7 @@ import hashlib
 import json
 import math
 import os
+import re
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
@@ -32,6 +33,127 @@ AUDIO_SUFFIXES = {".wav", ".flac", ".ogg", ".mp3", ".m4a", ".webm"}
 MISSING = "[MISSING]"
 
 
+CAMBRIDGE_FIELD_ALIASES = {
+    "participant_id": ("Uid", "uid", "UID", "participant_id"),
+    "age": ("Age", "age"),
+    "sex": ("Sex", "sex", "gender", "Gender"),
+    "smoker": ("Smoking", "smoking", "smoker", "Smoker"),
+    "medical_history": ("Medhistory", "medhistory", "medical_history"),
+    "symptoms": ("Symptoms", "symptoms"),
+}
+
+
+def _find_column(table: pd.DataFrame, aliases: Iterable[str], required: bool = True) -> str | None:
+    lookup = {str(column).strip().casefold(): str(column) for column in table.columns}
+    for alias in aliases:
+        if str(alias).strip().casefold() in lookup:
+            return lookup[str(alias).strip().casefold()]
+    if required:
+        raise ValueError(f"none of the expected columns {list(aliases)!r} were found")
+    return None
+
+
+def _normalise_code(value: Any) -> str:
+    return re.sub(r"[^a-z0-9+]", "", canonical_string(value).casefold())
+
+
+def _normalise_age_group(value: Any) -> str:
+    code = _normalise_code(value)
+    mapping = {
+        "018": "00-19", "019": "00-19", "1619": "00-19", "1819": "00-19",
+        "2029": "20-29", "3029": "30-39", "3039": "30-39",
+        "4049": "40-49", "5059": "50-59", "6069": "60-69",
+        "7079": "70-79", "8089": "80-89", "90": "90+", "90+": "90+",
+    }
+    if code in {"", "missing", "pnts", "ptns", "prefernottosay", "nan", "none"}:
+        return MISSING
+    if code in mapping:
+        return mapping[code]
+    # Some exports contain exact numeric ages even though the released data dictionary
+    # specifies bands. Convert them deterministically without pretending the band is exact.
+    try:
+        number = int(float(canonical_string(value)))
+    except ValueError as exc:
+        raise ValueError(f"unmapped Cambridge age band {value!r}") from exc
+    if not 0 <= number <= 120:
+        raise ValueError(f"Cambridge age {number} outside [0, 120]")
+    if number < 20:
+        return "00-19"
+    if number >= 90:
+        return "90+"
+    return f"{10 * (number // 10):02d}-{10 * (number // 10) + 9:02d}"
+
+
+def _normalise_sex(value: Any) -> str:
+    code = _normalise_code(value)
+    mapping = {"female": "FEMALE", "f": "FEMALE", "male": "MALE", "m": "MALE",
+               "other": "OTHER"}
+    if code in {"", "missing", "pnts", "ptns", "prefernottosay", "nan", "none"}:
+        return MISSING
+    if code not in mapping:
+        raise ValueError(f"unmapped Cambridge sex value {value!r}")
+    return mapping[code]
+
+
+def _normalise_smoking(value: Any) -> str:
+    code = _normalise_code(value)
+    mapping = {
+        "ex": "EX_SMOKER", "exsmoker": "EX_SMOKER", "never": "NEVER",
+        "ltonce": "LESS_THAN_ONCE", "1to10": "1_TO_10", "11to20": "11_TO_20",
+        "21+": "21_PLUS", "21plus": "21_PLUS", "ecig": "E_CIGARETTE",
+    }
+    if code in {"", "missing", "pnts", "ptns", "prefernottosay", "nan", "none"}:
+        return MISSING
+    if code not in mapping:
+        raise ValueError(f"unmapped Cambridge smoking value {value!r}")
+    return mapping[code]
+
+
+def _codes(value: Any) -> set[str]:
+    text = canonical_string(value)
+    if text == MISSING:
+        return set()
+    localised_keys = re.findall(r"key\s*:\s*[\"']([^\"']+)[\"']", text,
+                                flags=re.IGNORECASE)
+    if localised_keys:
+        return {_normalise_code(key) for key in localised_keys if _normalise_code(key)}
+    return {_normalise_code(token) for token in re.findall(r"[A-Za-z][A-Za-z0-9_+ -]*", text)
+            if _normalise_code(token)}
+
+
+def _multiselect_state(values: Iterable[Any], positive_codes: set[str]) -> str:
+    observed: set[str] = set()
+    for value in values:
+        observed.update(_codes(value))
+    if observed & positive_codes:
+        return "YES"
+    prefer = {"pnts", "ptns", "prefernottosay", "localizedstringkey"}
+    informative = {code for code in observed if code not in prefer}
+    return "NO" if informative else MISSING
+
+
+def _platform_from_path(path: Path) -> str:
+    text = str(path).casefold()
+    if "android" in text:
+        return "ANDROID"
+    if "ios" in text:
+        return "IOS"
+    if "web" in text:
+        return "WEB"
+    return MISSING
+
+
+def _platform_from_uid(uid: str) -> str:
+    # This follows the official Task-2 loader and the released data dictionary.
+    if "202" in uid:
+        return "WEB"
+    if len(uid) == 10:
+        return "ANDROID"
+    if len(uid) == 12:
+        return "IOS"
+    return MISSING
+
+
 def read_table(path: Path, nrows: int | None = None) -> pd.DataFrame:
     """Read the Cambridge release without requiring a manual Excel-to-CSV conversion."""
 
@@ -40,6 +162,137 @@ def read_table(path: Path, nrows: int | None = None) -> pd.DataFrame:
     if path.suffix.casefold() == ".csv":
         return pd.read_csv(path, nrows=nrows, low_memory=False)
     raise ValueError(f"unsupported table format {path.suffix!r}; use CSV, XLSX or XLSM")
+
+
+def _single_static_value(values: Iterable[Any], normaliser, field: str) -> Any:
+    normalised = []
+    for value in values:
+        candidate = normaliser(value)
+        if candidate != MISSING:
+            normalised.append(candidate)
+    unique = sorted(set(normalised))
+    if len(unique) > 1:
+        raise ValueError(f"conflicting static Cambridge field {field}: {unique}")
+    return unique[0] if unique else MISSING
+
+
+def _metadata_files(adapter: dict[str, Any], config_path: Path) -> tuple[Path, list[Path]]:
+    root = resolve_path(config_path, adapter.get("metadata_root"))
+    if root is None or not root.is_dir():
+        raise ValueError("source_adapter.metadata_root must point to the all_metadata directory")
+    pattern = str(adapter.get("metadata_glob", "**/*.csv"))
+    files = sorted(path for path in root.glob(pattern) if path.is_file())
+    if not files:
+        raise ValueError(f"no Cambridge metadata files matched {pattern!r} below metadata_root")
+    return root, files
+
+
+def adapt_cambridge_task2_raw(source: pd.DataFrame, config: dict[str, Any],
+                              config_path: Path) -> tuple[pd.DataFrame, dict[str, Any]]:
+    """Join the official uid/label/fold file to raw three-platform metadata.
+
+    Static demographics must be internally consistent. Daily symptom and medical-history
+    multi-select fields are collapsed with a prespecified participant-level ``ever`` rule:
+    any positive code gives YES; observed non-target responses give NO; only missing/prefer-
+    not-to-say gives [MISSING]. This adapter never reads audio or model output.
+    """
+
+    adapter = config["inputs"].get("source_adapter", {})
+    if adapter.get("name") != "cambridge_task2_raw":
+        return source, {}
+    source = source.copy()
+    source_id = _find_column(source, CAMBRIDGE_FIELD_ALIASES["participant_id"])
+    configured_id = config["columns"]["participant_id"]
+    if source_id != configured_id:
+        source = source.rename(columns={source_id: configured_id})
+    source[configured_id] = source[configured_id].map(canonical_string)
+
+    metadata_root, files = _metadata_files(adapter, config_path)
+    frames, skipped = [], Counter()
+    hashes = []
+    for path in files:
+        frame = read_table(path)
+        uid_column = _find_column(frame, CAMBRIDGE_FIELD_ALIASES["participant_id"], required=False)
+        if uid_column is None:
+            skipped["no_participant_id_column"] += 1
+            continue
+        frame = frame.copy()
+        frame["__cam_uid"] = frame[uid_column].map(canonical_string)
+        frame["__cam_source_platform"] = _platform_from_path(path)
+        renamed = {}
+        for field, aliases in CAMBRIDGE_FIELD_ALIASES.items():
+            if field == "participant_id":
+                continue
+            column = _find_column(frame, aliases, required=False)
+            if column is not None:
+                renamed[column] = f"__raw_{field}"
+        frame = frame.rename(columns=renamed)
+        for field in ("age", "sex", "smoker", "medical_history", "symptoms"):
+            column = f"__raw_{field}"
+            if column not in frame:
+                frame[column] = None
+        frames.append(frame[["__cam_uid", "__cam_source_platform", "__raw_age", "__raw_sex",
+                             "__raw_smoker", "__raw_medical_history", "__raw_symptoms"]])
+        hashes.append((str(path.relative_to(metadata_root)), sha256_file(path)))
+    if not frames:
+        raise ValueError("none of the all_metadata files contained a Cambridge Uid column")
+    metadata = pd.concat(frames, ignore_index=True)
+    metadata = metadata[metadata.__cam_uid != MISSING]
+
+    symptom_codes = {
+        "cough": {"drycough", "wetcough", "cough"},
+        "fever": {"fever"},
+        "sore_throat": {"sorethroat"},
+        "shortness_of_breath": {"shortbreath", "shortnessofbreath"},
+    }
+    history_codes = {
+        "asthma": {"asthma"},
+        "other_respiratory": {
+            "copd", "cystic", "cysticfibrosis", "long", "longtermlungdisease",
+            "lung", "lungdisease", "pulmonary", "pulmonaryfibrosis",
+            "otherrespiratory", "otherrespiratorycondition",
+        },
+    }
+    rows, exclusions = [], Counter()
+    for uid, group in metadata.groupby("__cam_uid", sort=False):
+        try:
+            age = _single_static_value(group.__raw_age, _normalise_age_group, "age")
+            sex = _single_static_value(group.__raw_sex, _normalise_sex, "sex")
+            smoker = _single_static_value(group.__raw_smoker, _normalise_smoking, "smoking")
+            platforms = {value for value in group.__cam_source_platform if value != MISSING}
+            if len(platforms) > 1:
+                raise ValueError("participant occurs in multiple platform metadata files")
+        except ValueError:
+            exclusions["conflicting_or_invalid_static_metadata"] += 1
+            continue
+        platform = next(iter(platforms), _platform_from_uid(uid))
+        record = {
+            "__cam_uid": uid, "__cam_age_band": age, "__cam_sex": sex,
+            "__cam_smoker": smoker, "__cam_platform": platform,
+        }
+        for field, codes in symptom_codes.items():
+            record[f"__cam_{field}"] = _multiselect_state(group.__raw_symptoms, codes)
+        for field, codes in history_codes.items():
+            record[f"__cam_{field}"] = _multiselect_state(group.__raw_medical_history, codes)
+        rows.append(record)
+    canonical = pd.DataFrame(rows)
+    if canonical.empty:
+        raise ValueError("no valid participant metadata remained after Cambridge adaptation")
+    before = int(source[configured_id].nunique())
+    source = source.merge(canonical, left_on=configured_id, right_on="__cam_uid",
+                          how="inner", validate="many_to_one")
+    after = int(source[configured_id].nunique())
+    digest_payload = "\n".join(f"{name}\t{digest}" for name, digest in hashes)
+    report = {
+        "name": "cambridge_task2_raw", "n_metadata_files": len(hashes),
+        "n_metadata_rows": int(len(metadata)), "n_task2_participants_before_join": before,
+        "n_task2_participants_after_join": after,
+        "n_task2_participants_without_valid_metadata": before - after,
+        "metadata_bundle_sha256": sha256_text(digest_payload),
+        "metadata_files_skipped": dict(skipped), "adapter_exclusions": dict(exclusions),
+        "aggregation_rule": "static-consistent; multiselect-ever-positive",
+    }
+    return source, report
 
 
 def _normalised_lookup(values: Iterable[Any]) -> dict[str, str]:
@@ -126,6 +379,7 @@ def load_rows(config: dict[str, Any], config_path: Path) -> tuple[pd.DataFrame, 
     participant_path = resolve_path(config_path, inputs["participant_csv"])
     assert participant_path is not None and participant_path.is_file()
     source = read_table(participant_path)
+    source, adapter_report = adapt_cambridge_task2_raw(source, config, config_path)
     columns = config["columns"]
     primary_required = {columns["participant_id"], columns["label"], columns["split"]}
     primary_missing = sorted(primary_required - set(source.columns))
@@ -135,6 +389,8 @@ def load_rows(config: dict[str, Any], config_path: Path) -> tuple[pd.DataFrame, 
             f"are written to the column inventory")
 
     extra_path = resolve_path(config_path, inputs.get("metadata_csv"))
+    if adapter_report and extra_path is not None:
+        raise ValueError("use source_adapter.metadata_root or metadata_csv, not both")
     if extra_path is not None:
         extra = read_table(extra_path)
         extra_id = inputs.get("metadata_participant_id", columns["participant_id"])
@@ -158,9 +414,11 @@ def load_rows(config: dict[str, Any], config_path: Path) -> tuple[pd.DataFrame, 
 
     inventory = {
         "participant_csv_sha256": sha256_file(participant_path),
-        "metadata_csv_sha256": sha256_file(extra_path) if extra_path else None,
+        "metadata_csv_sha256": (adapter_report.get("metadata_bundle_sha256") if adapter_report
+                                else sha256_file(extra_path) if extra_path else None),
         "n_input_rows": int(len(source)),
         "columns": sorted(map(str, source.columns)),
+        "source_adapter": adapter_report or None,
     }
     records, exclusions = [], Counter()
     field_rules = config["field_rules"]
@@ -204,7 +462,8 @@ def load_rows(config: dict[str, Any], config_path: Path) -> tuple[pd.DataFrame, 
                 break
         if failed:
             continue
-        record["age_decade"] = age_band(record.get("age", MISSING))
+        if "age" in record:
+            record["age_decade"] = age_band(record.get("age", MISSING))
         records.append(record)
     table = pd.DataFrame(records)
     if table.empty:
@@ -217,7 +476,8 @@ def load_rows(config: dict[str, Any], config_path: Path) -> tuple[pd.DataFrame, 
     return table, inventory
 
 
-def scan_audio(config: dict[str, Any], config_path: Path) -> pd.DataFrame:
+def scan_audio(config: dict[str, Any], config_path: Path,
+               allowed_participants: set[str] | None = None) -> pd.DataFrame:
     inputs, audio = config["inputs"], config["audio"]
     audio_root = resolve_path(config_path, inputs["audio_root"])
     assert audio_root is not None and audio_root.is_dir()
@@ -235,26 +495,37 @@ def scan_audio(config: dict[str, Any], config_path: Path) -> pd.DataFrame:
             modality = canonical_string(values.get(modality_column)) if modality_column else "cough"
             if modality.casefold() not in {str(v).casefold() for v in audio["primary_modalities"]}:
                 continue
+            pid = safe_identifier(values[mapping["participant_id"]])
+            if allowed_participants is not None and pid not in allowed_participants:
+                continue
             path = Path(str(values[mapping["path"]]))
             path = path if path.is_absolute() else audio_root / path
-            rows.append({"participant_identifier": safe_identifier(values[mapping["participant_id"]]),
+            rows.append({"participant_identifier": pid,
                          "audio_path": str(path.resolve()), "modality": modality})
     else:
         if audio.get("scan_layout") != "cambridge_task2":
             raise ValueError("without audio_manifest_csv, audio.scan_layout must be cambridge_task2")
-        for path in sorted(audio_root.rglob("*")):
-            if not path.is_file() or path.suffix.casefold() not in AUDIO_SUFFIXES:
+        # The DTA/full release is covid19/<participant>/<collection-time>/<three wavs>.
+        # Web recordings may instead live under form-app-users/<participant>. Enumerate only
+        # the Task-2 participant directories so a 1,000-person audit does not decode the full
+        # restricted corpus by accident.
+        participant_roots: list[tuple[str, Path]] = []
+        allowed = allowed_participants
+        for child in sorted(audio_root.iterdir()):
+            if not child.is_dir():
                 continue
-            name = path.name.casefold()
-            if "cough" not in name:
-                continue
-            relative = path.relative_to(audio_root)
-            parts = relative.parts
-            if len(parts) < 2:
-                continue
-            pid = parts[1] if parts[0] == "form-app-users" and len(parts) >= 3 else parts[0]
-            rows.append({"participant_identifier": safe_identifier(pid),
-                         "audio_path": str(path.resolve()), "modality": "cough"})
+            if child.name == "form-app-users":
+                for web_child in sorted(child.iterdir()):
+                    if web_child.is_dir() and (allowed is None or web_child.name in allowed):
+                        participant_roots.append((safe_identifier(web_child.name), web_child))
+            elif allowed is None or child.name in allowed:
+                participant_roots.append((safe_identifier(child.name), child))
+        for pid, participant_root in participant_roots:
+            for path in sorted(participant_root.rglob("*")):
+                if (path.is_file() and path.suffix.casefold() in AUDIO_SUFFIXES and
+                        "cough" in path.name.casefold()):
+                    rows.append({"participant_identifier": pid,
+                                 "audio_path": str(path.resolve()), "modality": "cough"})
     if not rows:
         raise ValueError("no primary cough audio files were discovered")
     return pd.DataFrame(rows).drop_duplicates(["participant_identifier", "audio_path"])
@@ -499,7 +770,7 @@ def execute(config_file: str | Path) -> dict[str, Any]:
     })
 
     people, inventory = load_rows(config, config_path)
-    audio = scan_audio(config, config_path)
+    audio = scan_audio(config, config_path, set(people.participant_identifier))
     audited, audio_report = audit_audio(audio, config)
     valid_audio = audited[audited.objective_qc_pass & ~audited.duplicate_participant_excluded]
     files = valid_audio.groupby("participant_identifier").audio_path.apply(list)
@@ -572,6 +843,7 @@ def execute(config_file: str | Path) -> dict[str, Any]:
         "profiles": profile_report, "gate_checks": gate_checks,
         "input_hashes": {"participant_csv": inventory["participant_csv_sha256"],
                          "metadata_csv": inventory["metadata_csv_sha256"]},
+        "source_adapter": inventory.get("source_adapter"),
         "standardisation_exclusions": inventory["standardisation_exclusions"],
         "protocol_note": ("NO_GO is a data-feasibility decision, not a model result."
                           if verdict == "NO_GO" else
