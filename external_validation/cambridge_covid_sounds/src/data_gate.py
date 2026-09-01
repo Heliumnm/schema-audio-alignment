@@ -61,6 +61,7 @@ def _normalise_age_group(value: Any) -> str:
     code = _normalise_code(value)
     mapping = {
         "018": "00-19", "019": "00-19", "1619": "00-19", "1819": "00-19",
+        "unter20": "00-19",
         "2029": "20-29", "3029": "30-39", "3039": "30-39",
         "4049": "40-49", "5059": "50-59", "6069": "60-69",
         "7079": "70-79", "8089": "80-89", "90": "90+", "90+": "90+",
@@ -160,7 +161,15 @@ def read_table(path: Path, nrows: int | None = None) -> pd.DataFrame:
     if path.suffix.casefold() in {".xlsx", ".xlsm"}:
         return pd.read_excel(path, nrows=nrows)
     if path.suffix.casefold() == ".csv":
-        return pd.read_csv(path, nrows=nrows, low_memory=False)
+        # The official Task-2 table is comma-separated, whereas the three released
+        # android/ios/web metadata files are semicolon-separated and start with an empty
+        # exported-index column. Detect this from the header rather than requiring the
+        # collaborator to rewrite controlled-access data.
+        with path.open("r", encoding="utf-8-sig", errors="replace") as handle:
+            header = handle.readline()
+        separator = ";" if header.count(";") > header.count(",") else ","
+        return pd.read_csv(path, nrows=nrows, low_memory=False, sep=separator,
+                           encoding="utf-8-sig")
     raise ValueError(f"unsupported table format {path.suffix!r}; use CSV, XLSX or XLSM")
 
 
@@ -179,7 +188,7 @@ def _single_static_value(values: Iterable[Any], normaliser, field: str) -> Any:
 def _metadata_files(adapter: dict[str, Any], config_path: Path) -> tuple[Path, list[Path]]:
     root = resolve_path(config_path, adapter.get("metadata_root"))
     if root is None or not root.is_dir():
-        raise ValueError("source_adapter.metadata_root must point to the all_metadata directory")
+        raise ValueError("source_adapter.metadata_root must point to the three-platform metadata directory")
     pattern = str(adapter.get("metadata_glob", "**/*.csv"))
     files = sorted(path for path in root.glob(pattern) if path.is_file())
     if not files:
@@ -235,7 +244,7 @@ def adapt_cambridge_task2_raw(source: pd.DataFrame, config: dict[str, Any],
                              "__raw_smoker", "__raw_medical_history", "__raw_symptoms"]])
         hashes.append((str(path.relative_to(metadata_root)), sha256_file(path)))
     if not frames:
-        raise ValueError("none of the all_metadata files contained a Cambridge Uid column")
+        raise ValueError("none of the metadata files contained a Cambridge Uid column")
     metadata = pd.concat(frames, ignore_index=True)
     metadata = metadata[metadata.__cam_uid != MISSING]
 

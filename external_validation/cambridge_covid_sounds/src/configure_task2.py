@@ -30,7 +30,7 @@ def main() -> None:
     if not paths["task2_csv"].is_file():
         raise SystemExit(f"Task-2 CSV not found: {paths['task2_csv']}")
     if not paths["metadata_root"].is_dir():
-        raise SystemExit(f"all_metadata directory not found: {paths['metadata_root']}")
+        raise SystemExit(f"three-platform metadata directory not found: {paths['metadata_root']}")
     if not paths["audio_root"].is_dir():
         raise SystemExit(f"Task-2 audio directory not found: {paths['audio_root']}")
     if paths["write"].exists() and not args.force:

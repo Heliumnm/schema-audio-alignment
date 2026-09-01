@@ -34,7 +34,7 @@ Task 1。官方 Task 2 入口文件是：
 ```text
 task2/data_0426_en_task2.csv       # 官方 uid / label / fold
 covid19/                           # 完整音频母目录（也兼容 0426_EN_used_task2）
-all_metadata/                      # Android / iOS / Web 原始 metadata CSV
+covid19/metadata/                  # android.csv / ios.csv / web.csv
 ```
 
 只安装数据门依赖：
@@ -50,7 +50,7 @@ pip install -r requirements-gate.txt
 ```bash
 bash run_task2_gate.sh \
   /DTA/task2/data_0426_en_task2.csv \
-  /DTA/all_metadata \
+  /DTA/covid19/metadata \
   /DTA/covid19 \
   /DTA/cambridge_audit_output
 ```
@@ -134,6 +134,8 @@ profile retrieval + probes + Standard/matched COVID AUROC/NLL
 ## 输入方式与冻结聚合规则
 
 推荐直接使用 `config.task2_raw.example.json` 对应的官方原始格式，不再要求合作者手工合并。
+程序会自动识别 Task-2 表的逗号分隔，以及 `android.csv / ios.csv / web.csv` 的分号分隔和
+空导出索引列。
 静态字段（年龄段、性别、吸烟）在同一患者的多行记录中必须一致，否则患者被排除；每日
 `Symptoms` / `Medhistory` 使用事前固定的 **ever-positive** 聚合：任一记录出现目标代码为 YES，
 有有效回答但没有目标代码为 NO，只有缺失／不愿回答为 `[MISSING]`。该规则不读取标签分布或

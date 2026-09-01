@@ -25,7 +25,7 @@ prediction). No manual metadata merge is needed. Provide exactly these four path
 ```bash
 bash run_task2_gate.sh \
   /DTA/task2/data_0426_en_task2.csv \
-  /DTA/all_metadata \
+  /DTA/covid19/metadata \
   /DTA/covid19 \
   /DTA/cambridge_audit_output
 ```

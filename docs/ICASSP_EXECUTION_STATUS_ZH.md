@@ -52,7 +52,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
 | CODA TB 外部确认 | 数据门 NO-GO | 9,772 条音频通过 QC，但 100 对匹配未达到平衡门；没有模型分数 |
-| Cambridge Task 2 外部确认 | 等待英国合作者数据门 | 官方原始 `uid/label/fold + all_metadata + cough` 已可四路径一键运行；尚无数据门或模型结果 |
+| Cambridge Task 2 外部确认 | 等待英国合作者数据门 | 官方原始 `uid/label/fold + covid19/metadata + cough` 已可四路径一键运行；尚无数据门或模型结果 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
 ## 3. Alignment 是否真的学会了 correspondence？

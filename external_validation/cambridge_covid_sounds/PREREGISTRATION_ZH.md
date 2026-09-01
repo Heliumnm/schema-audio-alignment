@@ -24,7 +24,8 @@ Cambridge 分支只问：
 - split：官方患者级 train/validation/test，不重新随机划分。
 - 原始输入：官方 `data_0426_en_task2.csv` 的 `uid/label/fold`、完整 `covid19` 音频母目录
   （结构为 `ID/采集时间/audio_file_cough.wav`，亦兼容 `0426_EN_used_task2`）和
-  `all_metadata` 三平台 CSV；扫描仅进入 Task-2 ID，不使用 Task 1。
+  `covid19/metadata` 下的 `android.csv / ios.csv / web.csv`；扫描仅进入 Task-2 ID，不使用
+  Task 1。三份 metadata 为分号分隔并带空导出索引列，解析器按表头自动识别，不改写原始数据。
 
 Cambridge hidden scoring queue 不承担本 audit，除非数据方明确提供逐患者、可匹配、可做配对CI
 的输出。总体 leaderboard 分数只能是独立的 secondary benchmark。
@@ -48,7 +49,8 @@ Cambridge hidden scoring queue 不承担本 audit，除非数据方明确提供�
 进入alignment文本：官方年龄段、sex、smoking、cough、fever、sore throat、shortness of breath、
 asthma、other respiratory disease。缺失为 `[MISSING]`；未知枚举必须报错，不能默认为NO。
 
-原始 metadata 适配规则在模型执行前冻结：年龄历史 typo `30-29` 规范为 `30-39`；静态年龄段、
+原始 metadata 适配规则在模型执行前冻结：年龄历史 typo `30-29` 规范为 `30-39`，德语
+`Unter 20`规范为`00-19`；静态年龄段、
 sex、smoking 在同一患者多行中不一致则排除；每日 `Symptoms` 和 `Medhistory` 采用
 ever-positive 聚合（任一记录出现目标代码为YES；存在有效回答但无目标代码为NO；仅缺失／不愿
 回答为`[MISSING]`）。platform优先由 Android/iOS/Web metadata 文件来源确定，文件名无法确定时

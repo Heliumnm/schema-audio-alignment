@@ -24,10 +24,11 @@ CAMBRIDGE COVID-19 SOUNDS 外部数据门快速指南
 
 2. 完整 metadata 文件夹
 
-   all_metadata/
+   covid19/metadata/
 
-   其中应包含 Android、iOS 和 Web 三个平台的 metadata CSV。程序会自动根据
-   uid 与 Task 2 表连接，并解析 Age、Sex、Smoking、Symptoms 和 Medhistory。
+   其中应包含 android.csv、ios.csv 和 web.csv。程序会自动识别三份文件的
+   分号分隔格式及空索引列，根据 uid 与 Task 2 表连接，并解析 Age、Sex、
+   Smoking、Symptoms 和 Medhistory，不需要手工转成逗号 CSV。
 
 3. 一份音频目录，下面两种任选一种
 
@@ -84,7 +85,7 @@ pip install -r requirements-gate.txt
 
 bash run_task2_gate.sh \
   /DATA/task2/data_0426_en_task2.csv \
-  /DATA/all_metadata \
+  /DATA/covid19/metadata \
   /DATA/covid19 \
   /DATA/cambridge_audit_output
 

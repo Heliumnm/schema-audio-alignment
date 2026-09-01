@@ -1,13 +1,13 @@
 {
   "format_version": "cambridge-external-v1",
-  "dataset": "Cambridge COVID-19 Sounds official Task 2 + all_metadata",
+  "dataset": "Cambridge COVID-19 Sounds official Task 2 + three-platform metadata",
   "output_root": "./output/private_run_DO_NOT_COMMIT",
   "inputs": {
     "participant_csv": "/REPLACE/task2/data_0426_en_task2.csv",
     "metadata_csv": null,
     "source_adapter": {
       "name": "cambridge_task2_raw",
-      "metadata_root": "/REPLACE/all_metadata",
+      "metadata_root": "/REPLACE/covid19/metadata",
       "metadata_glob": "**/*.csv"
     },
     "audio_root": "/REPLACE/covid19",

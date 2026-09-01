@@ -125,7 +125,8 @@ class DataGateTest(unittest.TestCase):
                 metadata_rows.append({**base, "Symptoms": "sorethroat, shortbreath"})
             metadata_root = root / "all_metadata"
             metadata_root.mkdir()
-            pd.DataFrame(metadata_rows).to_csv(metadata_root / "android_data.csv", index=False)
+            # Mirror the controlled release: semicolon-separated with an exported index.
+            pd.DataFrame(metadata_rows).to_csv(metadata_root / "android.csv", sep=";", index=True)
             write_wave(root / "audio" / "train_0_000" / "2021-03-25_21_11_43_226499" /
                        "audio_file_cough.wav", 777)
 
