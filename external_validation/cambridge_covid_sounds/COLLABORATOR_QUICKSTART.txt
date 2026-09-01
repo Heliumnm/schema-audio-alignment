@@ -1,0 +1,138 @@
+CAMBRIDGE COVID-19 SOUNDS — EXTERNAL DATA-GATE QUICK START
+===========================================================
+
+Purpose
+-------
+Run the frozen, model-blind feasibility gate for Cambridge COVID-19 Sounds
+Task 2 (COVID-positive versus COVID-negative). This first stage does not load
+AST, OPERA, Phi-2, embeddings, predictions, AUROC or NLL.
+
+
+1. Required Cambridge data
+--------------------------
+Please prepare these three inputs inside the authorised DTA environment:
+
+A. Official Task-2 split/label table
+
+   task2/data_0426_en_task2.csv
+
+   Required official columns: uid, label, fold.
+
+B. Full metadata directory
+
+   all_metadata/
+
+   It should contain the Android, iOS and Web metadata CSV files. The script
+   automatically joins these files to the Task-2 table and parses Age, Sex,
+   Smoking, Symptoms and Medhistory.
+
+C. One audio root, using either option below
+
+   Preferred smaller option:
+   task2/0426_EN_used_task2/
+
+   OR the full release:
+   covid19/
+
+   The full release may have this structure:
+
+   covid19/
+     participant_ID/
+       collection_time/
+         audio_file_breathe.wav
+         audio_file_cough.wav
+         audio_file_read.wav
+
+   The script enters only participant IDs listed in the official Task-2 CSV
+   and uses only filenames containing "cough". Multiple collection times from
+   one participant remain one participant-level analysis unit.
+
+Not required for this gate:
+
+- Task 1
+- openSMILE features
+- Dataset Document.xlsx
+- breathing or read/voice features
+- AST, OPERA or Phi-2 checkpoints
+
+
+2. Download the code
+--------------------
+
+git clone --depth 1 https://github.com/Heliumnm/schema-audio-alignment.git
+cd schema-audio-alignment/external_validation/cambridge_covid_sounds
+
+
+3. Create the gate environment
+------------------------------
+
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements-gate.txt
+
+
+4. Run the model-blind gate
+---------------------------
+
+Replace the four example paths below with local absolute paths:
+
+bash run_task2_gate.sh \
+  /DATA/task2/data_0426_en_task2.csv \
+  /DATA/all_metadata \
+  /DATA/covid19 \
+  /DATA/cambridge_audit_output
+
+If using the smaller Task-2 audio subset, replace /DATA/covid19 with:
+
+  /DATA/task2/0426_EN_used_task2
+
+
+5. Inspect the result
+---------------------
+
+The aggregate result files are:
+
+/DATA/cambridge_audit_output/public/DATA_GATE_REPORT.md
+/DATA/cambridge_audit_output/public/data_gate.json
+/DATA/cambridge_audit_output/public/PUBLIC_RESULTS.zip
+
+If the verdict is NO_GO:
+
+- stop immediately;
+- do not change the 100-pair, 0.12-SMD or 0.08 fine-balance thresholds;
+- do not run any model;
+- return only PUBLIC_RESULTS.zip plus the Git commit SHA and environment notes.
+
+If the verdict is GO:
+
+- send PUBLIC_RESULTS.zip to the project lead for independent review;
+- do not start the formal model stage until the project lead supplies the
+  explicit unlock instruction.
+
+
+6. Privacy boundary
+-------------------
+
+Do not send, upload or commit any content from:
+
+/DATA/cambridge_audit_output/private/
+
+This directory contains participant identifiers, audio paths, matched-pair
+manifests and other row-level material. It must remain inside the authorised
+DTA environment.
+
+Return only the aggregate public archive:
+
+/DATA/cambridge_audit_output/public/PUBLIC_RESULTS.zip
+
+The local data steward and DTA requirements always take precedence if they are
+stricter than this guide.
+
+
+Frozen code version
+-------------------
+
+Repository: https://github.com/Heliumnm/schema-audio-alignment
+Branch: main
+Cambridge package: external_validation/cambridge_covid_sounds

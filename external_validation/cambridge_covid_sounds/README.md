@@ -190,4 +190,5 @@ output/public/
 - 不允许为了 GO 修改 `0.12 SMD`、`0.08 fine balance`、标签、主音频或 matching 字段。
 
 详细协议见 [PREREGISTRATION_ZH.md](PREREGISTRATION_ZH.md)，英文执行说明见
-[COLLABORATOR_RUNBOOK.md](COLLABORATOR_RUNBOOK.md)。
+[COLLABORATOR_RUNBOOK.md](COLLABORATOR_RUNBOOK.md)。可直接转发给合作者的纯文本快速指南见
+[COLLABORATOR_QUICKSTART.txt](COLLABORATOR_QUICKSTART.txt)。
