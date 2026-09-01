@@ -74,6 +74,7 @@
   },
   "protocol": {
     "formal_unlock": "REVIEW_GATE_BEFORE_SETTING_THIS",
+    "split_origin": "provided canonical participant table",
     "schema_fields": ["age_decade", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
     "cohort_field": "platform",
     "min_train_n": 500,

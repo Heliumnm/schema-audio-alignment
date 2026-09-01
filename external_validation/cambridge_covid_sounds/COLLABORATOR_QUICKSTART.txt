@@ -4,7 +4,7 @@ CAMBRIDGE COVID-19 SOUNDS 外部数据门快速指南
 用途
 ----
 
-本指南用于运行 Cambridge COVID-19 Sounds Task 2（COVID 阳性与阴性）的冻结、
+本指南用于运行 Cambridge COVID-19 Sounds COVID 阳性与阴性的冻结、
 模型盲态数据可行性检查。
 
 第一阶段不会加载 AST、OPERA、Phi-2，不会生成 embedding、prediction、AUROC
@@ -14,15 +14,9 @@ CAMBRIDGE COVID-19 SOUNDS 外部数据门快速指南
 一、需要准备的 Cambridge 数据
 -------------------------------
 
-请在获得授权的 DTA 环境中准备以下三部分数据。
+请在获得授权的 DTA 环境中准备以下两部分数据。
 
-1. 官方 Task 2 标签与划分表
-
-   task2/data_0426_en_task2.csv
-
-   需要包含官方字段：uid、label、fold。
-
-2. 完整 metadata 文件夹
+1. 完整 metadata 文件夹
 
    covid19/metadata/
 
@@ -30,7 +24,7 @@ CAMBRIDGE COVID-19 SOUNDS 外部数据门快速指南
    分号分隔格式及空索引列，根据 uid 与 Task 2 表连接，并解析 Age、Sex、
    Smoking、Symptoms 和 Medhistory，不需要手工转成逗号 CSV。
 
-3. 一份音频目录，下面两种任选一种
+2. 一份音频目录，下面两种任选一种
 
    推荐使用体积较小的 Task 2 音频子集：
 
@@ -49,9 +43,11 @@ CAMBRIDGE COVID-19 SOUNDS 外部数据门快速指南
          audio_file_cough.wav
          audio_file_read.wav
 
-   程序只进入官方 Task 2 CSV 中列出的 participant ID，只使用文件名包含
-   “cough”的录音。同一位参与者的多个采集时间最终仍然只作为一个患者级
-   分析单位。
+   程序用 Uid + Folder Name 把 metadata 和同一次采集的 cough 连接，只使用
+   文件名包含“cough”的录音。同一位参与者最终只作为一个患者级分析单位。
+
+本次发布包中没有 data_0426_en_task2.csv，所以不需要也不应虚构该文件。
+程序会从 metadata 严格重建 cohort，并明确标记它不是官方 split 复现。
 
 本阶段不需要下载：
 
@@ -81,15 +77,14 @@ pip install -r requirements-gate.txt
 四、运行模型盲态数据门
 ----------------------
 
-把下面四个示例路径替换为本地绝对路径：
+把下面三个示例路径替换为本地绝对路径：
 
-bash run_task2_gate.sh \
-  /DATA/task2/data_0426_en_task2.csv \
+bash run_reconstructed_gate.sh \
   /DATA/covid19/metadata \
   /DATA/covid19 \
   /DATA/cambridge_audit_output
 
-如果使用体积较小的 Task 2 音频子集，把第三个路径 /DATA/covid19 替换为：
+如果使用体积较小的 Task 2 音频子集，把第二个路径 /DATA/covid19 替换为：
 
   /DATA/task2/0426_EN_used_task2
 
@@ -144,3 +139,16 @@ main
 
 Cambridge 执行包：
 external_validation/cambridge_covid_sounds
+
+
+八、重建规则（不得修改）
+------------------------
+
+- 只保留 Language=en；
+- 阳性只接受 positiveLast14 / last14；
+- 阴性只接受 negativeNever；
+- 同一患者若跨时间同时出现正负标签，整人排除；
+- 每人固定选择一个有 cough 的采集时点；
+- 患者级 70%/10%/20% 切分，按 label × platform 分层、固定哈希排序；
+- 不是随意 70/15/15，也不能声称复现官方 Task-2 split；
+- 任何数据门阈值都不能为了得到 GO 而修改。

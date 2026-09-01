@@ -9,7 +9,7 @@ export PYTHONPATH="$HERE/src${PYTHONPATH:+:$PYTHONPATH}"
 
 if [[ ! -f "$CONFIG" ]]; then
   echo "Missing config: $CONFIG"
-  echo "Use run_task2_gate.sh for the official raw release, or copy config.example.json for a canonical table."
+  echo "Use run_reconstructed_gate.sh when the split CSV is absent, run_task2_gate.sh for the official raw release, or copy config.example.json for a canonical table."
   exit 2
 fi
 if [[ "$STAGE" != "gate" && "$STAGE" != "formal" && "$STAGE" != "all" ]]; then

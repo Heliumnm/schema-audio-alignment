@@ -20,19 +20,27 @@ Cambridge 分支只问：
 - primary modality：`cough`；breathing/voice 不替代缺失 cough；
 - unit：participant；所有 split、loss、prediction、matching 和 bootstrap 都是患者级；
 - 多段 cough：每段先编码，participant 内等权平均；每人一个 loss；
-- label：官方 task-2 COVID positive/negative；其他／未知状态排除；
-- split：官方患者级 train/validation/test，不重新随机划分。
-- 原始输入：官方 `data_0426_en_task2.csv` 的 `uid/label/fold`、完整 `covid19` 音频母目录
-  （结构为 `ID/采集时间/audio_file_cough.wav`，亦兼容 `0426_EN_used_task2`）和
-  `covid19/metadata` 下的 `android.csv / ios.csv / web.csv`；扫描仅进入 Task-2 ID，不使用
-  Task 1。三份 metadata 为分号分隔并带空导出索引列，解析器按表头自动识别，不改写原始数据。
+- label（重建主路径）：同次采集的 `positiveLast14/last14` 为1，`negativeNever`为0；
+  既往阳性、近期转阴、未检测、含糊和未知状态排除；
+- split（重建主路径）：患者级70/10/20，在 `label × platform` 内用固定SHA-256排序分配；
+  该比例来自官方论文，但成员关系不冒充丢失的官方split；
+- 原始输入：完整 `covid19` 音频母目录
+  （结构为 `ID/采集时间/audio_file_cough.wav`，亦兼容仅含子集音频的目录）和
+  `covid19/metadata` 下的 `android.csv / ios.csv / web.csv`；只扫描严格标签且能按采集时间连接
+  的ID，不使用Task 1。三份 metadata 为分号分隔并带空导出索引列，解析器按表头自动识别，
+  不改写原始数据；
+- 若之后找回 `data_0426_en_task2.csv`，可另跑官方成员/split入口；两种cohort不得混称或合并。
+
+重建时以 `Uid + Folder Name` 连接同一次采集的标签、metadata和cough。同一患者若在严格纳入状态
+中同时出现阳性与阴性，整位患者排除；若有多个同标签且有音频的采集时点，按固定、标签盲哈希
+选择一个index session。所有症状和病史来自该次采集，不使用未来记录。
 
 Cambridge hidden scoring queue 不承担本 audit，除非数据方明确提供逐患者、可匹配、可做配对CI
 的输出。总体 leaderboard 分数只能是独立的 secondary benchmark。
 
 ## 3. 模型盲数据门
 
-数据门允许读取：患者ID、COVID标签、官方split、metadata、音频路径和客观波形QC。禁止读取或
+数据门允许读取：患者ID、COVID标签、冻结split、metadata、音频路径和客观波形QC。禁止读取或
 生成 embedding、projector、retrieval、AUROC、NLL 或模型预测。
 
 ### 3.1 Audio QC
@@ -50,18 +58,17 @@ Cambridge hidden scoring queue 不承担本 audit，除非数据方明确提供�
 asthma、other respiratory disease。缺失为 `[MISSING]`；未知枚举必须报错，不能默认为NO。
 
 原始 metadata 适配规则在模型执行前冻结：年龄历史 typo `30-29` 规范为 `30-39`，德语
-`Unter 20`规范为`00-19`；静态年龄段、
-sex、smoking 在同一患者多行中不一致则排除；每日 `Symptoms` 和 `Medhistory` 采用
-ever-positive 聚合（任一记录出现目标代码为YES；存在有效回答但无目标代码为NO；仅缺失／不愿
-回答为`[MISSING]`）。platform优先由 Android/iOS/Web metadata 文件来源确定，文件名无法确定时
-才使用官方Task-2 loader／数据字典的UID规则。以上处理不读取标签分布或模型结果。
+`Unter 20`规范为`00-19`。重建主路径只聚合同一个index session的重复行：任一重复行出现目标
+症状／病史代码为YES；存在有效回答但无目标代码为NO；仅缺失／不愿回答为`[MISSING]`，不读取
+该患者其他时间的症状。age、sex、smoking在该session重复行中不一致则排除。platform由
+Android/iOS/Web metadata文件来源确定。以上处理不读取标签分布或模型结果。
 
 不进入文本：COVID label、participant ID、audio ID、platform/site/location/device。这些只用作
 matching、diagnostic或probe。
 
 ### 3.3 Matched endpoint
 
-只在官方 test 中1:1、无放回匹配。exact字段：官方年龄段、sex、cough、fever、sore throat、
+只在冻结test中1:1、无放回匹配。exact字段：官方年龄段、sex、cough、fever、sore throat、
 shortness of breath、asthma、other respiratory disease。原始数据只提供年龄段，因此不虚构
 连续年龄；最小代价只辅助匹配smoking和platform，所有tie由固定SHA-256解决。
 
@@ -112,7 +119,7 @@ schema字段（training vocabulary one-hot，未见值单列），`raw_audio_plu
 
 - train拟合projector和下游head；
 - validation用固定五折 one-SE 规则选logistic C，并拟合唯一source Platt calibrator；
-- 官方test和matched subset不选择epoch、projector、C、readout或calibrator；
+- 冻结test和matched subset不选择epoch、projector、C、readout或calibrator；
 - test评价source-distribution，matched评价covariate-balanced endpoint；
 - matched CI以matching pair为cluster，并在seed维保持配对。
 
@@ -158,4 +165,5 @@ matched `C-W`，`C-R`用于避免把“相对within保留”误写成“比raw�
 ## 9. 禁止的修改
 
 模型执行后不得：换标签、换主模态、修改SMD/fine-balance门槛、改matching字段、选择更有利的
-platform/subset、增加seed/epoch/模型、用test挑calibrator、把不显著写成相等。
+platform/subset、增加seed/epoch/模型、用test挑calibrator、把不显著写成相等；也不得把重建
+cohort写成官方Task-2 split复现。

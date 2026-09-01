@@ -89,6 +89,16 @@ def safe_identifier(value: Any) -> str:
 def public_config(config: dict[str, Any]) -> dict[str, Any]:
     """Return a path-free configuration summary safe for aggregate result bundles."""
 
+    public_models = {}
+    for key, value in config.get("models", {}).items():
+        if isinstance(value, dict):
+            public_models[key] = {
+                name: item for name, item in value.items()
+                if "path" not in name and "root" not in name
+            }
+        else:
+            public_models[key] = value
+
     return {
         "format_version": config["format_version"],
         "dataset": config.get("dataset"),
@@ -102,8 +112,5 @@ def public_config(config: dict[str, Any]) -> dict[str, Any]:
         "splits": config.get("splits", {}),
         "field_rules": config.get("field_rules", {}),
         "matching": config.get("matching", {}),
-        "models": {
-            key: {k: v for k, v in value.items() if "path" not in k and "root" not in k}
-            for key, value in config.get("models", {}).items()
-        },
+        "models": public_models,
     }

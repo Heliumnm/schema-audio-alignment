@@ -17,7 +17,30 @@ pip install -r requirements-gate.txt
 The formal model stage requires `pip install -r requirements.txt` and local, already-authorised copies of the
 frozen AST checkpoint, Phi-2, the OPERA repository and the frozen OPERA-CT checkpoint.
 
-## 2. Run the official Task-2 release directly (recommended)
+## 2. Current release: reconstruct before the model-blind gate (recommended)
+
+The delivered `task1/` and `task2/` directories contain audio but not the
+`data_0426_en_task2.csv` file referenced by the public repository. Do not invent that file or
+describe a new random split as the official benchmark. Run:
+
+```bash
+bash run_reconstructed_gate.sh \
+  /DTA/covid19/metadata \
+  /DTA/covid19 \
+  /DTA/cambridge_audit_output
+```
+
+The second argument may instead be a Task-2-only audio tree, provided it retains
+`participant-ID/collection-time/cough-file` linkage. The reconstruction keeps English
+`positiveLast14/last14` versus `negativeNever` sessions, excludes participants observed under
+both labels, selects one audio-linked session per participant by a fixed label-blind hash, and
+creates a participant-level 70/10/20 split stratified by label and platform. It is explicitly
+reported as a reconstructed cohort, not an official split reproduction.
+
+If `public/data_gate.json` says `NO_GO`, return the public bundle and stop. Do not change the
+split ratio, label definition, 100-pair, 0.12-SMD or 0.08 fine-balance criteria.
+
+## 3. Optional route if the official Task-2 CSV is later recovered
 
 Use Task 2 (COVID-positive versus COVID-negative), not Task 1 (respiratory-symptom
 prediction). No manual metadata merge is needed. Provide exactly these four paths:
@@ -46,7 +69,7 @@ Review:
 If the verdict is `NO_GO`, return `PUBLIC_RESULTS.zip` and stop. Do not relax the 100-pair,
 0.12-SMD or 0.08 fine-balance criteria.
 
-## 3. Canonical-table route (advanced)
+## 4. Canonical-table route (advanced)
 
 ```bash
 cp config.example.json config.local.json
@@ -70,7 +93,7 @@ relative audio path and modality; paths remain private.
 Participant and metadata tables may be CSV, XLSX or XLSM. They may be supplied separately;
 the gate performs a validated participant-ID join before checking the canonical columns.
 
-## 4. Run the model-blind data gate for the advanced route
+## 5. Run the model-blind data gate for the advanced route
 
 ```bash
 bash run_once.sh config.local.json gate
@@ -79,7 +102,7 @@ bash run_once.sh config.local.json gate
 Review `output/.../public/data_gate.json`. A `NO_GO` is a valid final outcome. Return only
 `output/.../public/PUBLIC_RESULTS.zip`; do not run a model.
 
-## 5. Formal unlock after independent review
+## 6. Formal unlock after independent review
 
 If and only if the gate is `GO`, send the aggregate gate JSON to the project lead. After
 approval, set:
@@ -97,7 +120,7 @@ bash run_once.sh config.local.json formal
 The command is resumable at completed artefacts. It refuses to overwrite an incompatible
 cache, representation or training manifest.
 
-## 6. Return contract
+## 7. Return contract
 
 Return only:
 
@@ -112,7 +135,7 @@ Do not return `output/private`. The public bundle deliberately contains no parti
 audio path or row-level prediction. If an authorised data steward imposes stricter rules,
 those rules override this package.
 
-## 7. Troubleshooting rule
+## 8. Troubleshooting rule
 
 Technical failures may be fixed only when they do not change the frozen scientific
 definition. Any proposed change to labels, modality, cohort, matching, thresholds, arms,

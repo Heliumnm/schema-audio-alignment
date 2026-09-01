@@ -1,43 +1,38 @@
 {
   "format_version": "cambridge-external-v1",
-  "dataset": "Cambridge COVID-19 Sounds official Task 2 + three-platform metadata",
+  "dataset": "Cambridge COVID-19 Sounds reconstructed recent-positive versus never-positive-negative cohort",
   "output_root": "./output/private_run_DO_NOT_COMMIT",
   "inputs": {
-    "participant_csv": "/REPLACE/task2/data_0426_en_task2.csv",
+    "participant_csv": "/REPLACE/private/reconstructed_participants.csv",
     "metadata_csv": null,
-    "source_adapter": {
-      "name": "cambridge_task2_raw",
-      "metadata_root": "/REPLACE/covid19/metadata",
-      "metadata_glob": "**/*.csv"
-    },
     "audio_root": "/REPLACE/covid19",
-    "audio_manifest_csv": null
+    "audio_manifest_csv": "/REPLACE/private/reconstructed_audio_manifest.csv"
   },
   "columns": {
     "participant_id": "uid",
     "label": "label",
     "split": "fold",
     "canonical": {
-      "age_band": "__cam_age_band",
-      "sex": "__cam_sex",
-      "smoker": "__cam_smoker",
-      "cough": "__cam_cough",
-      "fever": "__cam_fever",
-      "sore_throat": "__cam_sore_throat",
-      "shortness_of_breath": "__cam_shortness_of_breath",
-      "asthma": "__cam_asthma",
-      "other_respiratory": "__cam_other_respiratory",
-      "platform": "__cam_platform"
+      "age_band": "age_band",
+      "sex": "sex",
+      "smoker": "smoker",
+      "cough": "cough",
+      "fever": "fever",
+      "sore_throat": "sore_throat",
+      "shortness_of_breath": "shortness_of_breath",
+      "asthma": "asthma",
+      "other_respiratory": "other_respiratory",
+      "platform": "platform"
     }
   },
   "labels": {
-    "positive_values": [1, "1", "positive", "Positive"],
-    "negative_values": [0, "0", "negative", "Negative"]
+    "positive_values": [1, "1"],
+    "negative_values": [0, "0"]
   },
   "splits": {
-    "train_values": ["train", 0, "0"],
-    "validation_values": ["validation", "val", 1, "1"],
-    "test_values": ["test", 2, "2"]
+    "train_values": ["train"],
+    "validation_values": ["validation"],
+    "test_values": ["test"]
   },
   "field_rules": {
     "age_band": {"kind": "category", "allow_missing": true, "identity": true, "tag": "AGE_BAND"},
@@ -72,7 +67,7 @@
   },
   "protocol": {
     "formal_unlock": "REVIEW_GATE_BEFORE_SETTING_THIS",
-    "split_origin": "official Task-2 uid/label/fold CSV",
+    "split_origin": "reconstructed model-blind 70/10/20 participant split",
     "schema_fields": ["age_band", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
     "cohort_field": "platform",
     "min_train_n": 500,

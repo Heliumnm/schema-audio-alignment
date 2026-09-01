@@ -1,8 +1,8 @@
 """Data-only GO/NO-GO gate for Cambridge COVID-19 Sounds.
 
 This program never imports torch or opens a representation/prediction file. It standardises
-the restricted release, audits cough waveforms, freezes a participant-level official split,
-and constructs a deterministic matched subset inside the official test population.
+the restricted release, audits cough waveforms, freezes a participant-level split, and
+constructs a deterministic matched subset inside the frozen test population.
 
 Private row-level manifests are written below ``output/private``. Only aggregate JSON and
 Markdown are written below ``output/public``. The latter is the only directory intended to
@@ -790,7 +790,7 @@ def execute(config_file: str | Path) -> dict[str, Any]:
     if eligible.empty:
         raise ValueError("no participant has both standardised metadata and passing cough audio")
 
-    # Official train/validation/test membership is immutable; target matching uses test only.
+    # Frozen train/validation/test membership is immutable; target matching uses test only.
     candidates = eligible[eligible.splits == "test"].copy()
     pairs_initial = make_pairs(candidates, config)
     pairs, balance, removed = trim_pairs(pairs_initial, eligible, config)
@@ -839,13 +839,14 @@ def execute(config_file: str | Path) -> dict[str, Any]:
         "split_disjoint": True,  # one canonical row per participant makes this structural
     }
     verdict = "GO" if all(gate_checks.values()) else "NO_GO"
+    split_origin = str(config["protocol"].get("split_origin", "provided participant CSV"))
     public = {
         "format_version": "cambridge-external-gate-v1",
         "verdict": verdict,
         "model_outputs_read": False,
         "representations_generated": False,
         "n_standardised": int(len(people)), "n_audio_eligible": int(len(eligible)),
-        "split_counts": split_counts, "audio_qc": audio_report,
+        "split_origin": split_origin, "split_counts": split_counts, "audio_qc": audio_report,
         "matching": {"n_initial_pairs": int(len(pairs_initial)),
                      "n_final_pairs": int(len(pairs)), "n_trimmed": removed,
                      "balance": balance},
@@ -879,7 +880,7 @@ def execute(config_file: str | Path) -> dict[str, Any]:
         "# Cambridge COVID-19 Sounds external data gate",
         "", f"**Verdict: {verdict}**", "",
         f"- audio-eligible participants: {len(eligible)}",
-        f"- official train/validation/test: {split_counts['train']['n']} / "
+        f"- frozen train/validation/test ({split_origin}): {split_counts['train']['n']} / "
         f"{split_counts['validation']['n']} / {split_counts['test']['n']}",
         f"- matched pairs: {len(pairs)} (initial {len(pairs_initial)})",
         f"- max |SMD|: {balance['max_abs_smd']:.4f}",

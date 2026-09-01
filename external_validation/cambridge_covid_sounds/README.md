@@ -19,14 +19,40 @@ COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridg
 
 流程分成两道一次性命令：
 
-1. **数据门**：只读取患者ID、标签、metadata、官方split和波形QC；不加载模型；
+1. **数据门**：只读取患者ID、标签、metadata、冻结split和波形QC；不加载模型；
 2. **正式模型**：只有数据门 `GO` 且研究者人工复核后才解锁。
 
 这样可以保证 Cambridge 不是为了得到一个好结果才事后改 subset、matching 或字段。
 
 ## 合作者最快使用方式
 
-### 官方 Task 2 原始发布格式（推荐，不需要手工合并表）
+### 当前实际发布包没有 Task-2 CSV：从原始 metadata 重建（当前推荐入口）
+
+本次收到的受限数据中，`task1/` 和 `task2/` 只有音频，没有仓库说明里提到的
+`data_0426_en_task2.csv`。因此不能声称复现官方 Task-2 成员和 split。代码提供一条独立、
+模型盲态的重建路径：
+
+```bash
+bash run_reconstructed_gate.sh \
+  /DTA/covid19/metadata \
+  /DTA/covid19 \
+  /DTA/cambridge_audit_output
+```
+
+其中第二个参数也可以指向仅含 Task-2 音频的目录。程序会：
+
+- 通过 `Uid + Folder Name` 把一次采集的 metadata 与同次 cough 精确连接；
+- 只保留英语、近14天阳性（`positiveLast14/last14`）和从未阳性的阴性
+  （`negativeNever`）；
+- 排除同一患者跨采集出现两种严格标签的情况；
+- 每位患者用固定、与标签无关的哈希选择一个有 cough 的采集时点；
+- 按患者、在 `label × platform` 内固定哈希切成 70%/10%/20%；
+- 再执行同一个100对、0.12 SMD、0.08 fine-balance数据门。
+
+选择 70/10/20 是因为官方论文使用这个比例；不是为了复原已经缺失的官方成员关系。输出会明确
+标记 `official_split_reproduced: false`，论文中必须称为 *reconstructed cohort*。
+
+### 如果以后找到官方 Task 2 CSV：官方成员与 split 路径
 
 当前研究问题是 COVID-19 disease transfer，因此使用 **Task 2**，不是用于“是否有呼吸症状”的
 Task 1。官方 Task 2 入口文件是：
@@ -133,9 +159,9 @@ profile retrieval + probes + Standard/matched COVID AUROC/NLL
 
 ## 输入方式与冻结聚合规则
 
-推荐直接使用 `config.task2_raw.example.json` 对应的官方原始格式，不再要求合作者手工合并。
-程序会自动识别 Task-2 表的逗号分隔，以及 `android.csv / ios.csv / web.csv` 的分号分隔和
-空导出索引列。
+当前推荐用 `run_reconstructed_gate.sh` 从三平台metadata和按采集时间组织的音频树自动生成
+冻结manifest。若以后找回官方CSV，再使用 `config.task2_raw.example.json`；程序会自动识别
+Task-2表的逗号分隔，以及 `android.csv / ios.csv / web.csv` 的分号分隔和空导出索引列。
 静态字段（年龄段、性别、吸烟）在同一患者的多行记录中必须一致，否则患者被排除；每日
 `Symptoms` / `Medhistory` 使用事前固定的 **ever-positive** 聚合：任一记录出现目标代码为 YES，
 有有效回答但没有目标代码为 NO，只有缺失／不愿回答为 `[MISSING]`。该规则不读取标签分布或
@@ -166,6 +192,11 @@ shortness of breath, asthma, other respiratory disease, platform/cohort
 100-pair、0.12 SMD 或 0.08 fine-balance 阈值；若因此 `NO_GO`，正确结论是“该官方子集不足以
 承担预注册的 confirmatory transfer endpoint”，不是模型失败。
 
+对本机三份 metadata 的模型盲审计（音频尚未连接）得到：53,449行；英语且属于上述严格标签的
+3,493位患者中，48位跨时间出现正负冲突；排除后为521位仅阳性、2,924位仅阴性。按20% test，
+阳性理论上约104人，因此重建路径同样几乎没有QC和matching余量。这个数字解释门槛风险，不能
+用来修改split或阈值。
+
 ## 隐私边界
 
 ```text
@@ -193,4 +224,5 @@ output/public/
 
 详细协议见 [PREREGISTRATION_ZH.md](PREREGISTRATION_ZH.md)，英文执行说明见
 [COLLABORATOR_RUNBOOK.md](COLLABORATOR_RUNBOOK.md)。可直接转发给合作者的中文纯文本快速指南见
-[COLLABORATOR_QUICKSTART.txt](COLLABORATOR_QUICKSTART.txt)。
+[COLLABORATOR_QUICKSTART.txt](COLLABORATOR_QUICKSTART.txt)。官方split文件缺失后的证据和冻结决定见
+[MISSING_TASK2_SPLIT_DECISION_ZH.md](MISSING_TASK2_SPLIT_DECISION_ZH.md)。
