@@ -1,0 +1,80 @@
+CAMBRIDGE MATCH-FIRST V2：数据门GO后的正式模型步骤
+===================================================
+
+当前冻结状态
+------------
+
+真实WAV数据门已GO：975人、975条通过QC的cough；matched target为100对；
+train/validation/source-test为539/114/122。不要再修改participant、split、matching、schema、
+threshold、arm、seed或epoch。
+
+一、更新代码
+------------
+
+cd /home/yl809/projects/covid
+git pull --ff-only origin main
+git rev-parse --short HEAD
+
+二、编辑原数据门输出目录中的私有配置
+--------------------------------------
+
+配置通常位于：
+
+/你刚才的输出目录/config.local.json
+
+只允许填写以下本地模型路径：
+
+models.ast.model_path
+models.opera_ct.opera_root
+models.opera_ct.checkpoint_path
+models.text.model_path
+
+并把：
+
+"formal_unlock": "REVIEW_GATE_BEFORE_SETTING_THIS"
+
+改成：
+
+"formal_unlock": "FROZEN_PROTOCOL_AND_DATA_GATE_GO"
+
+不要把顶层format_version改为v2；它必须保持：
+
+"format_version": "cambridge-external-v1"
+
+三、准备正式环境
+----------------
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+source .venv/bin/activate
+pip install -r requirements.txt
+
+如正式环境不是这里的.venv，提交前设置：
+
+export CAMBRIDGE_VENV=/你的正式Python环境路径
+
+四、提交GPU任务
+---------------
+
+sbatch submit_formal.slurm /你刚才的输出目录/config.local.json
+
+如果集群要求partition或account，只在submit_formal.slurm头部增加相应#SBATCH行，不改实验参数。
+
+查看：
+
+squeue -u "$USER"
+tail -f cambridge_formal_任务编号.out
+tail -f cambridge_formal_任务编号.err
+
+这条命令会按冻结流程运行Phi-2文本缓存、AST-6L与OPERA-CT提取、Correct/Within-label/Global
+三臂、5 seeds、500 epochs和最终评测。已有且兼容的产物会复用，不兼容产物会拒绝覆盖。
+
+五、只返回公开结果
+------------------
+
+任务完成后只返回：
+
+/你刚才的输出目录/public/PUBLIC_RESULTS.zip
+
+同时告诉项目负责人：git commit SHA、Python/CUDA/GPU环境，以及DTA是否允许发表聚合表。
+绝对不要发送output/private、checkpoint、embedding、prediction、matched pairs、participant
+manifest、音频或逐人metadata。

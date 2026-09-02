@@ -121,6 +121,14 @@ Then run:
 bash run_once.sh config.local.json formal
 ```
 
+On a Slurm cluster, prefer the checked GPU wrapper after filling the same private config:
+
+```bash
+sbatch submit_formal.slurm /absolute/path/to/config.local.json
+```
+
+The Chinese handoff is in `CAMBRIDGE_FORMAL_NEXT_STEPS_ZH.txt`.
+
 The command is resumable at completed artefacts. It refuses to overwrite an incompatible
 cache, representation or training manifest.
 
