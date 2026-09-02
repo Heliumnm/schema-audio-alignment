@@ -8,6 +8,12 @@
 > result. See [`PREREGISTRATION_MATCH_FIRST_V2_ZH.md`](PREREGISTRATION_MATCH_FIRST_V2_ZH.md)
 > and [`../../docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md`](../../docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md).
 
+> **Formal model protocol frozen (2026-09-03).** The permitted v2 model experiment is now
+> specified before any CODA representation or model score is read: frozen AST-6L and
+> OPERA-CT, Correct/Within-label/Global pairings, five seeds, source-only model selection,
+> and a single read of the 100-pair matched target. See
+> [`PREREGISTRATION_FORMAL_MODELS_V1_ZH.md`](PREREGISTRATION_FORMAL_MODELS_V1_ZH.md).
+
 > **Original v1 outcome (2026-08-29): NO-GO at the frozen model-blind balance gate.** All 9,772
 > solicited-cough WAV files passed objective QC, but the final 100 matched pairs had maximum
 > absolute SMD 0.276 (limit 0.12) and maximum categorical level difference 0.13 (limit
@@ -41,10 +47,11 @@ The command writes controlled participant and pair manifests to the supplied aud
 directory plus an aggregate `coda_tb_data_gate.json`.  A zero exit code means every frozen
 GO gate passed.  Exit code 3 is a planned NO-GO, not a software failure.
 
-Formal AST/OPERA extraction and Correct/Within-label/Global alignment are forbidden until
-the aggregate gate has been reviewed and the controlled manifests have been hashed and
-frozen. The formal gate has now been reviewed and returned NO-GO, so those model stages
-remain closed under this preregistration.
+Formal AST/OPERA extraction and Correct/Within-label/Global alignment were forbidden under
+the original split-first v1 after its NO-GO. The separately frozen match-first v2 returned
+GO, and its model protocol is now frozen in
+`PREREGISTRATION_FORMAL_MODELS_V1_ZH.md`. Only that secondary protocol may unlock model
+execution; v1 remains closed and is not overwritten.
 
 ## Secondary match-first v2
 
