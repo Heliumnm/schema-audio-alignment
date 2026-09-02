@@ -13,8 +13,8 @@ if [[ ! -f "$CONFIG" ]]; then
   exit 2
 fi
 case "$STAGE" in
-  prepare|text|extract|s0|s1|train|evaluate) ;;
-  *) echo "stage must be prepare|text|extract|s0|s1|train|evaluate" >&2; exit 2 ;;
+  prepare|text|extract|s0|s1|train|audit-train|evaluate) ;;
+  *) echo "stage must be prepare|text|extract|s0|s1|train|audit-train|evaluate" >&2; exit 2 ;;
 esac
 
 export PYTHONPATH="$ENGINE${PYTHONPATH:+:$PYTHONPATH}"
@@ -64,6 +64,11 @@ if [[ "$STAGE" == "train" ]]; then
   for backbone in ast opera_ct; do
     python "$ENGINE/train_alignment.py" --config "$CONFIG" --backbone "$backbone"
   done
+  exit 0
+fi
+
+if [[ "$STAGE" == "audit-train" ]]; then
+  python "$HERE/src/audit_formal_training.py" --config "$CONFIG"
   exit 0
 fi
 
