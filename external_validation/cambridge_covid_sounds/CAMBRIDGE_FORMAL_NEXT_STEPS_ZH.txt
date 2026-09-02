@@ -8,6 +8,14 @@ CAMBRIDGE MATCH-FIRST V2：数据门GO后的正式模型步骤
 train/validation/source-test为539/114/122。不要再修改participant、split、matching、schema、
 threshold、arm、seed或epoch。
 
+本次 CSD3 的固定目录已经写入仓库内 `run.sh`。更新代码后，正常情况只需：
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+sbatch run.sh
+
+`run.sh` 会激活 `env_chao`、准备/校验模型、只填充私有模型路径和解锁口令，再执行本文件
+余下的冻结流程。下面保留手工步骤作为排错和审计说明。
+
 一、更新代码
 ------------
 

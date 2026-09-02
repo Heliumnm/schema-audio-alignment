@@ -5,6 +5,11 @@
 > secondary sensitivity analysis，不冒充官方split或untouched confirmation。正式聚合数字见
 > [CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md](CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md)。
 
+当前英国合作者的 CSD3 固定布局可在本目录直接运行 `sbatch run.sh`；脚本会使用
+`/home/yl809/rds/hpc-work/datasets/covid19`、既有 `cambridge_audit_output`、`env_chao` 和
+RDS 模型缓存，一次完成正式阶段。`csd3:` 前缀只用于从其他机器执行 scp/rsync，不能写进
+Slurm 内部文件路径。
+
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge
 COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridge 数据。
 

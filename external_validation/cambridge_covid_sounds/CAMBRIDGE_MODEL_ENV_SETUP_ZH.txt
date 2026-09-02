@@ -4,6 +4,22 @@ Cambridge 正式模型阶段：环境与模型准备（给执行合作者）
 这一步只在 match-first v2 数据门已经得到 GO 后执行。它不改变数据、划分、匹配、
 模型 arm、seed、epoch 或指标。不要把模型、受限数据或私有配置提交到 GitHub。
 
+本次 CSD3 已配置成一键入口：
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+sbatch run.sh
+
+`run.sh` 已固定项目、数据、数据门输出、模型缓存、`env_chao`、Slurm account/partition，
+并自动完成下面各节。以下长说明主要用于审计和排错，不需要逐条手工重复执行。
+
+路径写法必须区分执行位置：
+
+- 在 CSD3/Slurm 内部：`/home/yl809/projects/covid`
+- 从个人电脑执行 scp/rsync：`csd3:/home/yl809/projects/covid`
+
+`csd3:` 是 SSH 主机别名，不是服务器文件系统的一部分，不能写进 Python 配置或 Slurm
+脚本中的本地路径。
+
 需要准备的三个冻结模型
 ----------------------
 
