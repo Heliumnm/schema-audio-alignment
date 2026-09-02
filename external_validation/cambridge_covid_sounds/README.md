@@ -7,8 +7,9 @@
 
 当前英国合作者的 CSD3 固定布局可在本目录直接运行 `sbatch run.sh`；脚本会使用
 `/home/yl809/rds/hpc-work/datasets/covid19`、既有 `cambridge_audit_output`、`env_chao` 和
-RDS 模型缓存，一次完成正式阶段。`csd3:` 前缀只用于从其他机器执行 scp/rsync，不能写进
-Slurm 内部文件路径。
+RDS 模型缓存，一次完成正式阶段。新增依赖只安装到RDS上的隔离venv；`env_chao`仅提供
+现有Python/CUDA/PyTorch，不被直接安装package。`csd3:` 前缀只用于从其他机器执行
+scp/rsync，不能写进Slurm内部文件路径。
 
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge
 COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridge 数据。

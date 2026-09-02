@@ -32,7 +32,8 @@ run.sh 已经固定：
 - 实验目录：/home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 - 数据目录：/home/yl809/rds/hpc-work/datasets/covid19
 - 数据门输出：/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output
-- Conda环境：env_chao
+- 基础Conda环境：env_chao（只复用Python/CUDA/PyTorch，不向其中安装新包）
+- 独立正式环境：/home/yl809/rds/hpc-work/venvs/cambridge_formal
 - 模型缓存：/home/yl809/rds/hpc-work/models/schema_audio_alignment
 - Slurm account：MASCOLO-SL2-GPU
 - partition：ampere
@@ -41,7 +42,7 @@ run.sh 已经固定：
 脚本会自动完成：
 
 1. 复核数据门仍为 GO；
-2. 安装/检查正式实验依赖；
+2. 从env_chao创建独立RDS venv，并只在独立环境安装/检查正式实验依赖；
 3. 检查 torch、torchaudio 和 CUDA；
 4. 下载或复用 AST、固定 revision 的 Phi-2、OPERA 和 OPERA-CT；
 5. 校验 OPERA-CT checkpoint SHA-256；
@@ -76,6 +77,9 @@ backbone可复用；如果在某个backbone的15个alignment runs中途超时，
 如果 env_chao 中 torch 与 torchaudio 不匹配，脚本会在训练前停止并在 err/out 日志中明确
 写出版本，不会带着错误环境继续训练。此时请把完整日志和两个版本发回，不要自行更换模型
 或修改实验协议。
+
+新版不会直接向env_chao安装package。env_chao只提供集群已经配置好的Python、CUDA、torch
+和torchaudio；pytorch-lightning、torchlibrosa等新增依赖全部进入上面的独立正式环境。
 
 四、任务完成后返回什么
 --------------------

@@ -26,6 +26,7 @@ DATA_ROOT=/home/yl809/rds/hpc-work/datasets/covid19
 OUTPUT_ROOT=$HERE/cambridge_audit_output
 CONFIG=$OUTPUT_ROOT/config.local.json
 MODEL_ROOT=/home/yl809/rds/hpc-work/models/schema_audio_alignment
+FORMAL_VENV=/home/yl809/rds/hpc-work/venvs/cambridge_formal
 AST_ROOT=$MODEL_ROOT/ast-finetuned-audioset-10-10-0.4593
 PHI_ROOT=$MODEL_ROOT/phi-2
 OPERA_ROOT=$MODEL_ROOT/OPERA
@@ -38,8 +39,24 @@ echo "host=$(hostname) slurm_job_id=${SLURM_JOB_ID:-none}"
 
 source "$HOME/.bashrc"
 conda activate env_chao
-set -u
 cd "$HERE"
+
+# env_chao supplies the CSD3-tested Python/CUDA/PyTorch stack only.  All extra
+# audit/OPERA packages are installed into an isolated RDS venv, never directly
+# into env_chao.  --system-site-packages reuses its matching torch/torchaudio
+# without copying or replacing them.
+BASE_PYTHON=$(command -v python)
+if [[ ! -x "$FORMAL_VENV/bin/python" ]]; then
+  mkdir -p "$(dirname "$FORMAL_VENV")"
+  "$BASE_PYTHON" -m venv --system-site-packages "$FORMAL_VENV"
+fi
+source "$FORMAL_VENV/bin/activate"
+set -u
+echo "base_python=$BASE_PYTHON"
+echo "isolated_formal_python=$(command -v python)"
+[[ "$(command -v python)" == "$FORMAL_VENV/bin/python" ]] || {
+  echo "Failed to activate isolated formal venv: $FORMAL_VENV"; exit 2;
+}
 
 [[ -d "$DATA_ROOT" ]] || { echo "Missing data root: $DATA_ROOT"; exit 2; }
 [[ -f "$CONFIG" ]] || {
@@ -59,9 +76,8 @@ if gate.get("verdict") != "GO":
 print("REVIEWED DATA GATE GO")
 PY
 
-# Install only the Python-side dependencies needed by this repository and by
-# OPERA imports.  PyTorch and torchaudio are deliberately not replaced here:
-# their CUDA builds must remain the versions provided by env_chao/CSD3.
+# Install only inside FORMAL_VENV. PyTorch and torchaudio are deliberately not
+# replaced: the isolated venv sees the matching builds supplied by env_chao.
 python -m pip install -r requirements.txt
 python -m pip install \
   "huggingface_hub>=0.23" \
