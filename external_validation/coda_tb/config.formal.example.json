@@ -1,0 +1,68 @@
+{
+  "format_version": "cambridge-external-v1",
+  "dataset": "CODA TB DREAM Challenge Train match-first-v2",
+  "output_root": "/REPLACE/CODA_TB/formal_match_first_v2",
+  "inputs": {
+    "participant_manifest": "/REPLACE/CODA_TB/audit_match_first_v2/coda_tb_participant_manifest.csv",
+    "matched_pairs": "/REPLACE/CODA_TB/audit_match_first_v2/coda_tb_matched_pairs.csv",
+    "audio_qc": "/REPLACE/CODA_TB/audit_match_first_v2/coda_tb_audio_qc.csv",
+    "audio_root": "/REPLACE/CODA_TB/raw/raw_data/solicited_data",
+    "expected_sha256": {
+      "participant_manifest": "f3a423d6dc2f09c1ec4a21af7ff45774cf7cb25fe3d84d3ed0285461e7781a6c",
+      "matched_pairs": "f2587ffe9ac14102f73dc18c1b65186c23d38f5953be83e3fa5ac6836c43cea4",
+      "audio_qc": "b2df1c98bdcbbf5302d12a0f34b873b87e03e7cf3db3e5d4b5b9f16180004848"
+    }
+  },
+  "protocol": {
+    "formal_unlock": "FROZEN_PROTOCOL_AND_DATA_GATE_GO",
+    "cohort_field": "country",
+    "schema_fields": [
+      "age", "sex", "height", "weight", "reported_cough_dur", "tb_prior",
+      "tb_prior_pul", "tb_prior_extrapul", "tb_prior_unknown", "hemoptysis",
+      "heart_rate", "temperature", "weight_loss", "smoke_lweek", "fever",
+      "night_sweats"
+    ],
+    "bootstrap": 10000,
+    "auroc_equivalence_margin": 0.02,
+    "nll_equivalence_margin": 0.01,
+    "probes": {
+      "sex_female": {"field": "sex", "kind": "category", "positive_values": ["Female"]},
+      "age_45plus": {"field": "age", "kind": "threshold", "threshold": 45},
+      "prior_tb": {"field": "tb_prior", "kind": "category", "positive_values": ["Yes"]},
+      "fever": {"field": "fever", "kind": "category", "positive_values": ["Yes"]},
+      "night_sweats": {"field": "night_sweats", "kind": "category", "positive_values": ["Yes"]},
+      "hemoptysis": {"field": "hemoptysis", "kind": "category", "positive_values": ["Yes"]},
+      "weight_loss": {"field": "weight_loss", "kind": "category", "positive_values": ["Yes"]},
+      "recent_smoking": {"field": "smoke_lweek", "kind": "category", "positive_values": ["Yes"]},
+      "audio_count_8plus": {"field": "audio_count", "kind": "threshold", "threshold": 8},
+      "country_IN": {"field": "country", "kind": "category", "positive_values": ["IN"]},
+      "country_MG": {"field": "country", "kind": "category", "positive_values": ["MG"]},
+      "country_PH": {"field": "country", "kind": "category", "positive_values": ["PH"]},
+      "country_SA": {"field": "country", "kind": "category", "positive_values": ["SA"]},
+      "country_TZ": {"field": "country", "kind": "category", "positive_values": ["TZ"]},
+      "country_UG": {"field": "country", "kind": "category", "positive_values": ["UG"]},
+      "country_VN": {"field": "country", "kind": "category", "positive_values": ["VN"]}
+    }
+  },
+  "models": {
+    "device": "cuda",
+    "ast": {
+      "enabled": true,
+      "model_path": "/REPLACE/hf_models/ast-finetuned-audioset-10-10-0.4593",
+      "layers": 6
+    },
+    "opera_ct": {
+      "enabled": true,
+      "opera_root": "/REPLACE/OPERA",
+      "checkpoint_path": "/REPLACE/OPERA/cks/model/encoder-operaCT.ckpt"
+    },
+    "text": {
+      "model_path": "/REPLACE/hf_models/phi-2",
+      "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0",
+      "max_length": 256,
+      "batch_size": 16,
+      "dtype": "bfloat16"
+    },
+    "alignment": {"seeds": [0, 1, 2, 3, 4], "epochs": 500, "device": "cuda"}
+  }
+}

@@ -73,6 +73,34 @@ bash external_validation/coda_tb/run_match_first_v2.sh \
 This is a secondary external sensitivity analysis, not a replacement for the v1
 preregistration and not the official CODA challenge validation.
 
+## Formal v2 model experiment
+
+The scientific contract was frozen and pushed in commit `ed86399` before this runner was
+implemented. A model-before-execution dry run subsequently clarified one denominator:
+9,772 solicited recordings passed QC in the release, while the frozen 1,081-participant
+eligible cohort contains 9,749 of them (the remaining 23 belong to one ineligible
+participant). No split, pair, endpoint, threshold, or participant membership changed.
+
+Copy `config.formal.example.json` to a private path, fill only filesystem/model paths, and
+run the stages in order. Never commit `config.formal.local.json` because it contains
+controlled-data paths.
+
+```bash
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json prepare
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json s0
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json text
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json extract
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json s1
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json train
+bash external_validation/coda_tb/run_formal_models.sh /private/config.formal.local.json evaluate
+```
+
+`prepare` refuses every manifest except the three frozen SHA-256 inputs and reconstructs
+the private participant table without changing row membership. `s0` is synthetic code
+correctness. `s1` is a 500-update train-only rehearsal. Only `evaluate` reads source-test
+and matched-target outcomes. See
+[`PREREGISTRATION_FORMAL_MODELS_V1_ZH.md`](PREREGISTRATION_FORMAL_MODELS_V1_ZH.md).
+
 ## Frozen data assumptions
 
 - Synapse Train folder: `syn39711065`;

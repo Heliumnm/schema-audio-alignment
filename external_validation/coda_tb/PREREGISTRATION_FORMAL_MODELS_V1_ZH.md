@@ -30,8 +30,10 @@ cough**。不使用 longitudinal cough，不使用官方隐藏 validation，不�
 - matched-pair manifest：`f2587ffe9ac14102f73dc18c1b65186c23d38f5953be83e3fa5ac6836c43cea4`
 - audio-QC manifest：`b2df1c98bdcbbf5302d12a0f34b873b87e03e7cf3db3e5d4b5b9f16180004848`
 
-固定分析单位为 participant。1,081 名 eligible participant 和 9,772 条已通过 QC 的 solicited
-cough 构成唯一队列：
+固定分析单位为 participant。原始 solicited 映射中的 9,772 条音频全部通过 QC；其中 23 条
+属于 1 名未进入 eligible cohort 的 participant。因此正式模型队列固定为 **1,081 名
+participant、9,749 条 solicited cough**。这一计数勘误由模型前 dry run 发现，不改变任何
+participant、split、pair、threshold 或 endpoint：
 
 | population | TB− | TB+ | total | 用途 |
 |---|---:|---:|---:|---|
@@ -237,4 +239,3 @@ bootstrap 均值代替。
 原始音频、临床表、participant manifest、matched pairs、逐 participant embedding/prediction、
 checkpoint 与 pairing 不得进入公开 GitHub。公开仓库只保存代码、配置模板、输入/输出 hash、
 聚合统计、CI 和不含 ID 的日志。
-
