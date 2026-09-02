@@ -110,16 +110,32 @@ def opera_recording(path: Path, model, preprocess, torch, device: str) -> np.nda
     return features.mean(axis=0).astype(np.float32)
 
 
-def check_indices(table: pd.DataFrame, n: int = 24) -> list[int]:
-    chosen = []
+def check_indices(table: pd.DataFrame, n: int = 28) -> list[int]:
+    """Deterministic split/label coverage plus CODA recording-count/duration extremes."""
+    chosen, seen = [], set()
+
+    def add(indices) -> None:
+        for index in indices:
+            index = int(index)
+            if index not in seen:
+                chosen.append(index); seen.add(index)
+
     splits = ["train", "validation", "test"]
     if "matched_target" in set(table.splits.astype(str)):
         splits.append("matched_target")
-    per_cell = max(1, n // (2 * len(splits)))
+    per_cell = 2 if n >= 2 * len(splits) * 2 else 1
     for split in splits:
         for label in (0, 1):
             indices = table.index[(table.splits == split) & (table.y == label)].tolist()
-            chosen.extend(indices[:per_cell])
+            add(indices[:per_cell])
+
+    for field in ("audio_count", "audio_total_duration_s", "audio_max_duration_s"):
+        if field in table:
+            add(table.sort_values([field, "participant_identifier"],
+                                  ascending=[True, True]).index[:2])
+            add(table.sort_values([field, "participant_identifier"],
+                                  ascending=[False, True]).index[:2])
+    add(table.sort_values("participant_identifier").index)
     return chosen[:n]
 
 

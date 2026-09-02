@@ -121,6 +121,9 @@ def execute(config_file: str) -> Path:
     if set(pair_id) != target or len(target) != 200:
         raise RuntimeError("pair manifest does not cover the frozen target exactly")
 
+    qc_stats = qc.groupby("participant").duration_seconds.agg(
+        audio_total_duration_s="sum", audio_min_duration_s="min",
+        audio_max_duration_s="max")
     audio_root = resolve(config_path, inputs["audio_root"])
     rows, all_audio = [], []
     for item in table.itertuples(index=False):
@@ -138,6 +141,12 @@ def execute(config_file: str) -> Path:
             "in_matched_test": values["split"] == "matched_target",
             "pair_id": pair_id.get(str(values["participant"]), ""),
             "audio_files_json": json.dumps(paths, separators=(",", ":")),
+            "audio_total_duration_s": float(qc_stats.loc[values["participant"],
+                                                           "audio_total_duration_s"]),
+            "audio_min_duration_s": float(qc_stats.loc[values["participant"],
+                                                         "audio_min_duration_s"]),
+            "audio_max_duration_s": float(qc_stats.loc[values["participant"],
+                                                         "audio_max_duration_s"]),
         })
         row["text"] = schema_text(pd.Series(row))
         rows.append(row)
