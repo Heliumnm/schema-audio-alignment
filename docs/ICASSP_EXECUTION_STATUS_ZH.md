@@ -52,7 +52,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
 | CODA TB 外部敏感性 | v1 NO-GO；**match-first v2 数据门 GO** | v2 从全部1,081人先冻结100对，SMD 0.0819、level diff 0.040；模型尚未运行 |
-| Cambridge Task 2 外部敏感性 | v1 NO-GO；**match-first v2预检查PROVISIONAL GO** | 结构确认983人/1,486次cough；严格连接后975人，v2可冻结100对；等待英国合作者用WAV复核QC，尚无模型结果 |
+| Cambridge Task 2 外部敏感性 | v1 NO-GO；**match-first v2正式数据门GO** | 英国合作者已用真实WAV复核：975人/975条cough全部通过QC，冻结100对平衡target；模型尚未运行 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
 ## 3. Alignment 是否真的学会了 correspondence？
@@ -179,10 +179,10 @@ SMD为**0.0819**、最大分类比例差为**0.040**，全部数据门通过且�
 
 Cambridge Task 2 的 `structure.json` 已确认983名参与者和1,486次cough采集；通过
 `UID + Folder Name` 精确连接并执行英语／严格标签筛选后为975人（500阴性、475阳性）。历史
-split-first v1只得到26对，保持NO-GO。单独版本化的match-first v2在结构+metadata预检查中
-先得到277对，再冻结恰好100对平衡target（最终max SMD与类别比例差均为0），剩余人为
-540 train／114 validation／121 source-test。因为本机没有WAV，当前只可称
-`PROVISIONAL_GO`；需英国合作者重新执行波形QC后才是正式数据门，Cambridge模型结果仍不存在。
+split-first v1只得到26对，保持NO-GO。英国合作者随后在DTA环境中用真实WAV运行单独版本化的
+match-first v2：975条入组cough全部通过QC，从241个初始匹配中冻结恰好100对平衡target
+（max SMD与fine-balance difference均为0），剩余人为539 train／114 validation／122
+source-test。因此正式数据门为`GO`；Cambridge模型结果仍不存在。
 
 ## 9. 当前可以与不能说的话
 

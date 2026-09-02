@@ -1,9 +1,9 @@
 # Cambridge COVID-19 Sounds：一键受限数据外部验证包
 
-> **当前状态（2026-09-03）：Task-2结构与metadata的match-first v2预检查为
-> `PROVISIONAL_GO`，等待有DTA授权的英国合作者用真实WAV复核。** v1 split-first结果永久保留为
-> `NO_GO`；v2是显式版本化的secondary sensitivity analysis，不冒充官方split或untouched
-> confirmation。合作者必须先只运行 `gate`，不能直接解锁 `formal`。
+> **当前状态（2026-09-03）：英国合作者已用真实WAV完成Task-2 match-first v2数据门，正式
+> 判定为`GO`；模型尚未运行。** v1 split-first结果永久保留为`NO_GO`；v2是显式版本化的
+> secondary sensitivity analysis，不冒充官方split或untouched confirmation。正式聚合数字见
+> [CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md](CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md)。
 
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge
 COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridge 数据。
@@ -31,8 +31,8 @@ COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridg
 
 `structure.json` 已确认 Task 2 含983名参与者、1,486次cough session。按
 `UID + Folder Name` 精确连接并执行严格英语/标签规则后，得到975名可分析参与者
-（500阴性、475阳性）。结构与metadata预检查可先匹配277对，并沿冻结路径得到平衡的100对
-target；正式判定仍需在DTA环境中重新执行波形QC。
+（500阴性、475阳性）。真实WAV审计发现975条cough全部通过QC；正式数据门从241个初始匹配
+中冻结平衡的100对target，并将其余人固定为539 train、114 validation和122 source-test。
 
 ```bash
 bash run_reconstructed_match_first_v2.sh \
