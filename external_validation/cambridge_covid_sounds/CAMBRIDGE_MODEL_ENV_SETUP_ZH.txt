@@ -176,7 +176,9 @@ tail -f cambridge_formal_任务编号.err
 
 作业首先检查：配置版本、GO 解锁、四个模型路径和 GPU CUDA；通过后依次完成 Phi-2 缓存、
 AST-6L/OPERA-CT 提取、Correct/Within-label/Global × 5 seeds × 500 epochs、最终评测与
-公开聚合结果打包。中断后用同一条 sbatch 命令重新提交，会核对并复用兼容产物。
+公开聚合结果打包。文本缓存、表示提取和已经完整写出 manifest 的 backbone 可以复用；若在
+某个 backbone 的15个alignment runs中途超时，该backbone会从头重跑。因此首次建议申请
+4小时；2小时可以尝试但偏紧，1小时不建议。
 
 七、返回内容
 ----------

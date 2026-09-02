@@ -12,7 +12,9 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64G
-#SBATCH --time=48:00:00
+# Four hours is a queue-conscious upper bound for the first run (downloads included).
+# A locally submitted two-hour job may finish, but is intentionally considered tight.
+#SBATCH --time=04:00:00
 #SBATCH --output=/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_formal_%j.out
 #SBATCH --error=/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_formal_%j.err
 
@@ -187,7 +189,9 @@ PY
 
 # The existing one-entry workflow reruns the model-blind gate as an integrity
 # check, then caches Phi-2, extracts both backbones, trains all frozen arms and
-# packages only aggregate public results.  Compatible outputs are resumable.
+# packages only aggregate public results.  Completed text/extraction/full-backbone
+# artefacts are reusable; an alignment backbone interrupted before its final
+# manifest is written restarts that backbone's 15 runs.
 bash run_once.sh "$CONFIG" formal
 
 echo "completed_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"

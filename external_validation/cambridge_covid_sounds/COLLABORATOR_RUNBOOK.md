@@ -129,8 +129,10 @@ sbatch submit_formal.slurm /absolute/path/to/config.local.json
 
 The Chinese handoff is in `CAMBRIDGE_FORMAL_NEXT_STEPS_ZH.txt`.
 
-The command is resumable at completed artefacts. It refuses to overwrite an incompatible
-cache, representation or training manifest.
+The command reuses completed text caches, raw representations and a backbone whose complete
+training manifest has been written. It refuses to overwrite an incompatible artefact. A
+backbone interrupted before its final training manifest is written restarts that backbone's
+15 alignment runs; it is not per-run resumable.
 
 ## 7. Return contract
 

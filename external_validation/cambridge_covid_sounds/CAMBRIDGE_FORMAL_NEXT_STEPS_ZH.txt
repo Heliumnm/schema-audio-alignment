@@ -78,7 +78,9 @@ tail -f cambridge_formal_任务编号.out
 tail -f cambridge_formal_任务编号.err
 
 这条命令会按冻结流程运行Phi-2文本缓存、AST-6L与OPERA-CT提取、Correct/Within-label/Global
-三臂、5 seeds、500 epochs和最终评测。已有且兼容的产物会复用，不兼容产物会拒绝覆盖。
+三臂、5 seeds、500 epochs和最终评测。文本缓存、表示提取和完整完成的backbone会复用；
+alignment若在该backbone最终manifest写出前中断，该backbone会从头重跑。不兼容产物会
+拒绝覆盖。
 
 五、只返回公开结果
 ------------------

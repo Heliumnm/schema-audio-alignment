@@ -36,7 +36,7 @@ run.sh 已经固定：
 - 模型缓存：/home/yl809/rds/hpc-work/models/schema_audio_alignment
 - Slurm account：MASCOLO-SL2-GPU
 - partition：ampere
-- 资源：1 GPU、8 CPU、64 GB、48小时
+- 资源：1 GPU、8 CPU、64 GB、4小时（首次运行的保守上限）
 
 脚本会自动完成：
 
@@ -68,8 +68,10 @@ tail -f /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/ca
 
 tail -f /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_formal_123456.err
 
-第一次运行需要下载模型并安装缺少的依赖，所以启动阶段会比后续重跑慢。下载和训练产物均可
-复用；若任务因集群原因中断，确认没有同一任务仍在运行后，重新执行 sbatch run.sh 即可。
+第一次运行需要下载模型并安装缺少的依赖，所以启动阶段会比后续重跑慢。1小时不建议；
+2小时可能够但偏紧；默认4小时兼顾排队和安全余量。文本缓存、表示提取和已经完整结束的
+backbone可复用；如果在某个backbone的15个alignment runs中途超时，该backbone会从头重跑。
+确认没有同一任务仍在运行后，才可重新执行sbatch run.sh。
 
 如果 env_chao 中 torch 与 torchaudio 不匹配，脚本会在训练前停止并在 err/out 日志中明确
 写出版本，不会带着错误环境继续训练。此时请把完整日志和两个版本发回，不要自行更换模型
