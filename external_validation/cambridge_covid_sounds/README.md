@@ -225,4 +225,6 @@ output/public/
 详细协议见 [PREREGISTRATION_ZH.md](PREREGISTRATION_ZH.md)，英文执行说明见
 [COLLABORATOR_RUNBOOK.md](COLLABORATOR_RUNBOOK.md)。可直接转发给合作者的中文纯文本快速指南见
 [COLLABORATOR_QUICKSTART.txt](COLLABORATOR_QUICKSTART.txt)。官方split文件缺失后的证据和冻结决定见
-[MISSING_TASK2_SPLIT_DECISION_ZH.md](MISSING_TASK2_SPLIT_DECISION_ZH.md)。
+[MISSING_TASK2_SPLIT_DECISION_ZH.md](MISSING_TASK2_SPLIT_DECISION_ZH.md)。集群提交说明见
+[SLURM_GATE_GUIDE_ZH.txt](SLURM_GATE_GUIDE_ZH.txt)，可直接提交的脚本为
+[submit_reconstructed_gate.slurm](submit_reconstructed_gate.slurm)。
