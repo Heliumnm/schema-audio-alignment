@@ -205,6 +205,19 @@ bootstrap 均值代替。
 不得把 missing 当 negative。若 train 或 validation 缺少某一类，该 probe 报
 `not_estimable`，不换定义。
 
+### 8.4 评测前实现说明（2026-09-03，未读取任何模型科学分数）
+
+正式训练完成后的无模型分数 preflight 发现：用于 TB readout 的 TB-label 分层五折虽然每折
+都有 TB+/-，但 `hemoptysis` 与 `country_TZ` 各有一折恰好没有该 probe 的阳性样本，因而不能
+在那一折计算 probe AUROC。两项在完整 train 与 validation 均同时有正负类，不属于上一段的
+`not_estimable`。
+
+因此明确实现如下：TB disease readout 继续使用第 8.2 节冻结的 TB-label 分层五折；每个
+secondary probe 的 one-SE C 选择使用相同 train、相同 validation、相同五折数、相同
+`shuffle=True` 与 `random_state=20260903`，但按该 probe 自己的观测标签分层。缺失 target
+仍完全排除。此说明不改变 participant、split、probe 定义、阈值、模型、比较或终点，只保证
+每个既定 probe 的验证折内两类都存在；它在 source-test/matched-target 第一次读取前提交。
+
 ## 9. 事先冻结的解释分支
 
 1. **Retrieval 不通过：** 没有建立 alignment correspondence；任何 disease 差异都不能归因于

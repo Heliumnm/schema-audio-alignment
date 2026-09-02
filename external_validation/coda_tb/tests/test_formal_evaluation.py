@@ -22,6 +22,15 @@ def test_frozen_validation_folds_cover_only_validation_and_both_classes():
         assert set(table.loc[folds == fold, "y"]) == {0, 1}
 
 
+def test_probe_folds_stratify_probe_and_exclude_missing():
+    target = pd.Series(([False] * 10 + [True] * 10 + [None] * 5), dtype="boolean")
+    mask = np.ones(len(target), dtype=bool)
+    folds = MODULE.probe_validation_folds(target, mask)
+    assert np.all(folds[target.isna()] == -1)
+    for fold in range(5):
+        assert set(target.iloc[np.where(folds == fold)[0]].astype(bool)) == {False, True}
+
+
 def test_profile_mrr_is_one_for_exact_unique_embeddings():
     bank = np.eye(4, dtype=np.float32)
     text_id = np.arange(4)

@@ -42,6 +42,28 @@ def validation_folds(table: pd.DataFrame, mask: np.ndarray) -> np.ndarray:
     return folds
 
 
+def probe_validation_folds(target: pd.Series, mask: np.ndarray) -> np.ndarray:
+    """Fixed target-stratified folds for one probe's one-SE readout selection.
+
+    Disease-stratified folds are correct for the TB head but need not contain both classes
+    of every secondary probe. Missing probe targets remain outside all folds.
+    """
+    observed = target.notna().to_numpy()
+    indices = np.where(mask & observed)[0]
+    values = target.iloc[indices].astype(int).to_numpy()
+    counts = np.bincount(values, minlength=2)
+    folds = np.full(len(target), -1, dtype=np.int16)
+    if np.any(counts < 5):
+        return folds
+    splitter = StratifiedKFold(5, shuffle=True, random_state=20260903)
+    for fold, (_, held) in enumerate(splitter.split(indices, values)):
+        folds[indices[held]] = fold
+    if any(np.unique(target.iloc[folds == fold].astype(int)).size != 2
+           for fold in range(5)):
+        raise RuntimeError("a frozen probe validation fold lacks one class")
+    return folds
+
+
 def retrieval(representations: dict[str, np.ndarray], table: pd.DataFrame,
               text_path: Path, boot: int) -> dict:
     text = np.load(text_path, allow_pickle=True)
@@ -166,11 +188,14 @@ def execute(config_file: str, backbone: str) -> Path:
         if np.unique(target_y[train & observed]).size < 2 or \
                 np.unique(target_y[val & observed]).size < 2:
             probes[probe_name] = {"status": "not_estimable_in_source"}; continue
+        probe_folds = probe_validation_folds(target, val)
+        if np.any(probe_folds[val & observed] < 0):
+            probes[probe_name] = {"status": "not_estimable_in_source"}; continue
         probe_logits[probe_name] = {}
         for arm in AUDIO_ARMS:
             indices = [0] if arm == "raw_audio" else range(5); values = []
             for seed_index in indices:
-                value, _, _, _ = fit_probe(reps[arm][seed_index], target, train, folds,
+                value, _, _, _ = fit_probe(reps[arm][seed_index], target, train, probe_folds,
                                            SEEDS[seed_index])
                 values.append(value)
             if arm == "raw_audio": values *= 5
