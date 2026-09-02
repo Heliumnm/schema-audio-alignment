@@ -44,6 +44,10 @@ models.text.model_path
 三、准备正式环境
 ----------------
 
+完整的模型下载、OPERA附加依赖、版本检查和配置示例见：
+
+CAMBRIDGE_MODEL_ENV_SETUP_ZH.txt
+
 cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 source .venv/bin/activate
 pip install -r requirements.txt

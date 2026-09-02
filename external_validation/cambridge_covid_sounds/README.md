@@ -181,6 +181,9 @@ output/.../public/DATA_GATE_REPORT.md
 bash run_once.sh config.local.json formal
 ```
 
+Slurm 提交入口为 `submit_formal.slurm`；模型、环境和私有配置的完整中文准备步骤见
+`CAMBRIDGE_MODEL_ENV_SETUP_ZH.txt`。
+
 它依次执行：
 
 ```text

@@ -1,0 +1,174 @@
+Cambridge 正式模型阶段：环境与模型准备（给执行合作者）
+======================================================
+
+这一步只在 match-first v2 数据门已经得到 GO 后执行。它不改变数据、划分、匹配、
+模型 arm、seed、epoch 或指标。不要把模型、受限数据或私有配置提交到 GitHub。
+
+需要准备的三个冻结模型
+----------------------
+
+1. AST：MIT/ast-finetuned-audioset-10-10-0.4593
+2. 文本编码器：microsoft/phi-2，revision
+   810d367871c1d460086d9f82db8696f2e0a0fcd0
+3. OPERA-CT：官方 OPERA 源码 + encoder-operaCT.ckpt
+
+如果集群已经有这些文件，不要重复下载，直接记录绝对路径并跳到“填写私有配置”。
+
+一、更新代码
+------------
+
+cd /home/yl809/projects/covid
+git pull --ff-only origin main
+git rev-parse HEAD
+
+二、建立或复用一个 GPU Python 环境
+---------------------------------
+
+推荐复用已经确认能在 Slurm GPU 节点使用 CUDA 的 Python 3.10 环境。以下仅为新建示例；
+PyTorch/CUDA 的安装方式必须服从本集群 module/conda 规范，不要在不知道 CUDA wheel 的
+情况下盲目替换管理员提供的 torch。
+
+python3.10 -m venv /home/yl809/venvs/cambridge_formal
+source /home/yl809/venvs/cambridge_formal/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/requirements.txt
+
+OPERA 源码在导入时还需要下列包：
+
+python -m pip install pytorch-lightning efficientnet-pytorch torchlibrosa timm matplotlib seaborn
+
+torchaudio 必须和 torch 的主、次版本以及 CUDA 构建匹配。先检查：
+
+python - <<'PY'
+import torch
+print("torch=", torch.__version__, "torch CUDA=", torch.version.cuda)
+try:
+    import torchaudio
+    print("torchaudio=", torchaudio.__version__)
+except Exception as exc:
+    print("torchaudio unavailable:", repr(exc))
+PY
+
+如果 torchaudio 缺失或版本不匹配，请使用本集群推荐的 module/conda/PyTorch wheel安装；
+不要只执行无版本的“pip install torchaudio”，因为它可能连带替换 torch。
+
+三、下载模型（只在集群尚无模型时）
+--------------------------------
+
+模型可以放在不受 Git 管理的共享模型目录，例如：
+
+mkdir -p /home/yl809/models
+python -m pip install "huggingface_hub[cli]"
+
+下载 AST：
+
+hf download MIT/ast-finetuned-audioset-10-10-0.4593 \
+  --local-dir /home/yl809/models/ast-finetuned-audioset-10-10-0.4593
+
+下载固定 revision 的 Phi-2：
+
+hf download microsoft/phi-2 \
+  --revision 810d367871c1d460086d9f82db8696f2e0a0fcd0 \
+  --local-dir /home/yl809/models/phi-2
+
+准备 OPERA 源码和权重：
+
+git clone https://github.com/evelyn0414/OPERA.git /home/yl809/models/OPERA
+mkdir -p /home/yl809/models/OPERA/cks/model
+curl -L --fail --retry 5 \
+  https://huggingface.co/evelyn0414/OPERA/resolve/main/encoder-operaCT.ckpt \
+  -o /home/yl809/models/OPERA/cks/model/encoder-operaCT.ckpt
+
+冻结代码会核对 OPERA-CT checkpoint；预期 SHA-256 为：
+
+83c35b435518ad5f395bf4d34e552caa088faf9e63f6b8058d5288e9abb350ae
+
+手工核对：
+
+sha256sum /home/yl809/models/OPERA/cks/model/encoder-operaCT.ckpt
+
+四、做 CPU 侧依赖与本地文件检查
+-------------------------------
+
+source /home/yl809/venvs/cambridge_formal/bin/activate
+export PYTHONPATH=/home/yl809/models/OPERA:$PYTHONPATH
+
+python - <<'PY'
+from pathlib import Path
+import numpy, pandas, scipy, sklearn, soundfile, librosa, transformers, torch
+import pytorch_lightning, efficientnet_pytorch, torchlibrosa, torchaudio
+from src.model.models_cola import Cola
+
+paths = [
+    Path('/home/yl809/models/ast-finetuned-audioset-10-10-0.4593'),
+    Path('/home/yl809/models/phi-2'),
+    Path('/home/yl809/models/OPERA/cks/model/encoder-operaCT.ckpt'),
+]
+assert all(path.exists() for path in paths), paths
+print('CPU IMPORT/PATH PREFLIGHT PASS')
+print('torch', torch.__version__, 'torchaudio', torchaudio.__version__)
+PY
+
+这里不要求登录节点 torch.cuda.is_available() 为 True；CUDA 会在 Slurm GPU 作业内检查。
+
+五、填写数据门输出目录中的私有配置
+----------------------------------
+
+不要新建第二份 cohort，也不要重新划分。找到刚才数据门输出目录中的：
+
+/ABSOLUTE/PATH/cambridge_match_first_v2/config.local.json
+
+只修改四个模型路径和一个解锁字段：
+
+"models": {
+  "ast": {
+    "model_path": "/home/yl809/models/ast-finetuned-audioset-10-10-0.4593"
+  },
+  "opera_ct": {
+    "opera_root": "/home/yl809/models/OPERA",
+    "checkpoint_path": "/home/yl809/models/OPERA/cks/model/encoder-operaCT.ckpt"
+  },
+  "text": {
+    "model_path": "/home/yl809/models/phi-2"
+  }
+},
+"protocol": {
+  "formal_unlock": "FROZEN_PROTOCOL_AND_DATA_GATE_GO"
+}
+
+顶层必须仍然是：
+
+"format_version": "cambridge-external-v1"
+
+不要修改 input/output 路径以外的数据定义，也不要修改 threshold、arm、seed、epoch、
+equivalence margin 或 bootstrap。
+
+六、提交正式 GPU 作业
+--------------------
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+export CAMBRIDGE_VENV=/home/yl809/venvs/cambridge_formal
+sbatch submit_formal.slurm /ABSOLUTE/PATH/cambridge_match_first_v2/config.local.json
+
+如果集群要求 partition/account/module，只添加集群要求的 Slurm/module 设置，不改实验参数。
+
+查看状态：
+
+squeue -u "$USER"
+tail -f cambridge_formal_任务编号.out
+tail -f cambridge_formal_任务编号.err
+
+作业首先检查：配置版本、GO 解锁、四个模型路径和 GPU CUDA；通过后依次完成 Phi-2 缓存、
+AST-6L/OPERA-CT 提取、Correct/Within-label/Global × 5 seeds × 500 epochs、最终评测与
+公开聚合结果打包。中断后用同一条 sbatch 命令重新提交，会核对并复用兼容产物。
+
+七、返回内容
+----------
+
+只返回：
+
+/ABSOLUTE/PATH/cambridge_match_first_v2/public/PUBLIC_RESULTS.zip
+
+另附：git commit SHA、Python/torch/torchaudio/transformers/CUDA/GPU 版本，以及 DTA 是否允许
+发表聚合表。不要返回 private、音频、metadata 行、participant manifest、matched pairs、
+embedding、checkpoint 或逐人 prediction。
