@@ -1,5 +1,8 @@
 # Cambridge Task-2 划分文件缺失后的冻结决定
 
+> 历史v1记录：该split-first路径已因不足100对而NO-GO。当前secondary路线见
+> `PREREGISTRATION_MATCH_FIRST_V2_ZH.md`；不得覆盖或删除本文件。
+
 日期：2026-09-02
 
 ## 观察到的发布内容
@@ -56,4 +59,3 @@ bash run_reconstructed_gate.sh \
 
 若以后找到原始 `data_0426_en_task2.csv`，另行使用 `run_task2_gate.sh`。两条路线分别报告，
 不得合并成员或选择其中结果更好的一条。
-

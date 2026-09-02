@@ -213,6 +213,42 @@ class DataGateTest(unittest.TestCase):
             self.assertEqual(int(private.in_matched_test.sum()), 40)
             self.assertEqual(private.participant_identifier.nunique(), len(private))
 
+    def test_match_first_v2_freezes_exact_target_then_splits_remainder(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config_path = config(root)
+            payload = json.loads(config_path.read_text())
+            payload["protocol"].update({
+                "split_strategy": "match_first_v2",
+                "split_origin": "synthetic target-first test",
+                "development_split_salt": "cambridge-match-first-v2-development",
+                "development_split_ratios": [0.70, 0.15, 0.15],
+                "min_validation_n": 10,
+                "min_test_n": 10,
+                "min_validation_per_class": 5,
+                "min_test_per_class": 5,
+                "min_train_unique_profiles": 2,
+                "max_train_modal_profile_share": 1.0,
+            })
+            config_path.write_text(json.dumps(payload))
+
+            result = execute(config_path)
+            self.assertEqual(result["verdict"], "GO")
+            self.assertEqual(result["format_version"], "cambridge-external-gate-v2")
+            self.assertEqual(result["matching"]["n_final_pairs"], 10)
+            self.assertEqual(result["split_counts"]["matched_target"],
+                             {"n": 20, "negative": 10, "positive": 10})
+            self.assertEqual(result["split_counts"]["train"]["n"] +
+                             result["split_counts"]["validation"]["n"] +
+                             result["split_counts"]["test"]["n"], 124)
+            private = pd.read_csv(root / "out" / "private" / "participant_manifest.csv")
+            target = private[private.splits == "matched_target"]
+            self.assertEqual(len(target), 20)
+            self.assertTrue(target.in_matched_test.all())
+            self.assertFalse(private[private.splits != "matched_target"].in_matched_test.any())
+            public_text = (root / "out" / "public" / "data_gate.json").read_text()
+            self.assertNotIn("train_1_000", public_text)
+
     def test_frozen_fine_balance_returns_no_go_without_model_output(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

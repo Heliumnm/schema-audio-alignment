@@ -274,7 +274,8 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
     return report
 
 
-def write_config(audio_root: Path, output_root: Path, destination: Path) -> None:
+def write_config(audio_root: Path, output_root: Path, destination: Path,
+                 split_strategy: str = "provided_split_v1") -> None:
     template = json.loads((PACKAGE_ROOT / "config.reconstructed.example.json").read_text())
     template["output_root"] = str(output_root.resolve())
     template["inputs"]["participant_csv"] = str(
@@ -282,6 +283,23 @@ def write_config(audio_root: Path, output_root: Path, destination: Path) -> None
     template["inputs"]["audio_manifest_csv"] = str(
         (output_root / "private" / "reconstructed_audio_manifest.csv").resolve())
     template["inputs"]["audio_root"] = str(audio_root.resolve())
+    if split_strategy == "match_first_v2":
+        template["format_version"] = "cambridge-external-v2"
+        template["protocol"].update({
+            "split_strategy": "match_first_v2",
+            "split_origin": ("model-blind target-first matching; remaining participants split "
+                             "70/15/15 by label x platform"),
+            "development_split_salt": "cambridge-match-first-v2-development",
+            "development_split_ratios": [0.70, 0.15, 0.15],
+            "min_validation_n": 75,
+            "min_test_n": 75,
+            "min_validation_per_class": 20,
+            "min_test_per_class": 20,
+            "min_train_unique_profiles": 100,
+            "max_train_modal_profile_share": 0.10,
+        })
+    elif split_strategy != "provided_split_v1":
+        raise ValueError(f"unknown split strategy: {split_strategy}")
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(template, indent=2) + "\n")
 
@@ -292,12 +310,15 @@ def main() -> None:
     parser.add_argument("--audio-root", required=True)
     parser.add_argument("--output-root", required=True)
     parser.add_argument("--write-config", required=True)
+    parser.add_argument("--split-strategy", choices=("provided_split_v1", "match_first_v2"),
+                        default="provided_split_v1")
     args = parser.parse_args()
     metadata_root = Path(args.metadata_root).expanduser().resolve()
     audio_root = Path(args.audio_root).expanduser().resolve()
     output_root = Path(args.output_root).expanduser().resolve()
     report = build(metadata_root, audio_root, output_root)
-    write_config(audio_root, output_root, Path(args.write_config).expanduser().resolve())
+    write_config(audio_root, output_root, Path(args.write_config).expanduser().resolve(),
+                 args.split_strategy)
     print(f"RECONSTRUCTED: {report['n_reconstructed_participants']} participants")
     print(f"aggregate report: {output_root / 'public' / 'reconstruction_report.json'}")
 

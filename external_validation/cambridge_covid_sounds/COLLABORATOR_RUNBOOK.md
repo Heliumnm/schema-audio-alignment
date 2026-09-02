@@ -17,28 +17,32 @@ pip install -r requirements-gate.txt
 The formal model stage requires `pip install -r requirements.txt` and local, already-authorised copies of the
 frozen AST checkpoint, Phi-2, the OPERA repository and the frozen OPERA-CT checkpoint.
 
-## 2. Current release: reconstruct before the model-blind gate (recommended)
+## 2. Current release: match-first v2 model-blind gate (recommended)
 
 The delivered `task1/` and `task2/` directories contain audio but not the
 `data_0426_en_task2.csv` file referenced by the public repository. Do not invent that file or
 describe a new random split as the official benchmark. Run:
 
 ```bash
-bash run_reconstructed_gate.sh \
+bash run_reconstructed_match_first_v2.sh \
   /DTA/covid19/metadata \
-  /DTA/covid19 \
-  /DTA/cambridge_audit_output
+  /DTA/test2 \
+  /DTA/cambridge_match_first_v2
 ```
 
-The second argument may instead be a Task-2-only audio tree, provided it retains
+The second argument must be the Task-2-only audio tree and must retain
 `participant-ID/collection-time/cough-file` linkage. The reconstruction keeps English
 `positiveLast14/last14` versus `negativeNever` sessions, excludes participants observed under
-both labels, selects one audio-linked session per participant by a fixed label-blind hash, and
-creates a participant-level 70/10/20 split stratified by label and platform. It is explicitly
-reported as a reconstructed cohort, not an official split reproduction.
+both labels, and selects one audio-linked session per participant by a fixed label-blind hash.
+It first freezes exactly 100 matched positive/negative pairs, then splits only the remaining
+participants 70/15/15 within label x platform into train, validation and source-test. It is a
+versioned secondary sensitivity endpoint, not an official split reproduction or an untouched
+confirmation.
 
 If `public/data_gate.json` says `NO_GO`, return the public bundle and stop. Do not change the
-split ratio, label definition, 100-pair, 0.12-SMD or 0.08 fine-balance criteria.
+match-first order, split ratio, label definition, 100-pair, 0.12-SMD or 0.08 fine-balance
+criteria. The earlier `run_reconstructed_gate.sh` command is the preserved split-first v1 and
+already returned NO-GO; do not substitute it for v2.
 
 ## 3. Optional route if the official Task-2 CSV is later recovered
 

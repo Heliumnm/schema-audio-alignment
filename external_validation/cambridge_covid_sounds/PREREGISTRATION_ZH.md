@@ -1,5 +1,8 @@
 # Cambridge COVID-19 Sounds 外部 Pairing-Controlled Transfer Audit 预注册
 
+> 历史v1协议：split-first数据门已NO-GO。当前显式版本化的secondary match-first协议见
+> `PREREGISTRATION_MATCH_FIRST_V2_ZH.md`；v2不冒充本协议的confirmatory结果。
+
 状态：**代码冻结候选；模型执行必须等待 DTA 环境中的数据门 GO。**
 
 ## 1. 科学问题

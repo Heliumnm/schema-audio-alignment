@@ -52,7 +52,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
 | CODA TB 外部敏感性 | v1 NO-GO；**match-first v2 数据门 GO** | v2 从全部1,081人先冻结100对，SMD 0.0819、level diff 0.040；模型尚未运行 |
-| Cambridge Task 2 外部确认 | 等待英国合作者数据门 | 官方原始 `uid/label/fold + covid19/metadata + cough` 已可四路径一键运行；尚无数据门或模型结果 |
+| Cambridge Task 2 外部敏感性 | v1 NO-GO；**match-first v2预检查PROVISIONAL GO** | 结构确认983人/1,486次cough；严格连接后975人，v2可冻结100对；等待英国合作者用WAV复核QC，尚无模型结果 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
 ## 3. Alignment 是否真的学会了 correspondence？
@@ -177,10 +177,12 @@ SMD为**0.0819**、最大分类比例差为**0.040**，全部数据门通过且�
   数据门，模型结果尚不存在；
 - synthetic 没有通过机制门。
 
-Cambridge COVID-19 Sounds 是仍开放的受限数据外部路线。仓库已提供官方 Task 2 原始发布格式
-适配器和一条命令的数据门；它会自动连接三平台 metadata、解析年龄段及多选症状／病史，并在
-任何模型加载前执行 QC 和 test 内匹配。当前状态只是“可执行，等待授权合作者返回聚合 gate”，
-不能写成已有第三个数据集结果。
+Cambridge Task 2 的 `structure.json` 已确认983名参与者和1,486次cough采集；通过
+`UID + Folder Name` 精确连接并执行英语／严格标签筛选后为975人（500阴性、475阳性）。历史
+split-first v1只得到26对，保持NO-GO。单独版本化的match-first v2在结构+metadata预检查中
+先得到277对，再冻结恰好100对平衡target（最终max SMD与类别比例差均为0），剩余人为
+540 train／114 validation／121 source-test。因为本机没有WAV，当前只可称
+`PROVISIONAL_GO`；需英国合作者重新执行波形QC后才是正式数据门，Cambridge模型结果仍不存在。
 
 ## 9. 当前可以与不能说的话
 
@@ -212,5 +214,7 @@ Cambridge COVID-19 Sounds 是仍开放的受限数据外部路线。仓库已提
 - CODA TB v2 公开摘要：`results/coda_tb_match_first_v2_summary.json`
 - CODA TB 公开聚合摘要：`results/coda_tb_data_gate_summary.json`
 - Cambridge 合作者一键外部验证包：`external_validation/cambridge_covid_sounds/`
+- Cambridge Task-2结构与v2预检查：`external_validation/cambridge_covid_sounds/TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md`
+- Cambridge v2聚合预检查：`results/cambridge_task2_match_first_precheck.json`
 - 一次性执行器：`scripts/run_icassp_route_a_once.sh`
 - 下一阶段方法设计（未执行）：`docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md`

@@ -194,7 +194,8 @@ def execute(config_file: str, backbone: str) -> Path:
     validation = (table.splits == "validation").to_numpy()
     standard = (table.splits == "test").to_numpy()
     matched = table.in_matched_test.astype(bool).to_numpy()
-    if np.any(train & validation) or np.any((train | validation) & standard):
+    if (np.any(train & validation) or np.any((train | validation) & standard) or
+            np.any((train | validation | standard) & matched)):
         raise RuntimeError("participant split overlap")
     y = table.y.astype(int).to_numpy()
     folds = make_validation_folds(table, validation)

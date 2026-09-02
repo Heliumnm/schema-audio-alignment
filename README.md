@@ -28,10 +28,12 @@ No CODA model score exists yet, so UKCOVID remains the only completed disease-tr
 audit; the results do not establish that metadata alignment is universally harmful or
 ineffective.
 
-The remaining controlled-access route is Cambridge COVID-19 Sounds Task 2. Its package now
-accepts the official `uid/label/fold`, three-platform `covid19/metadata`, and Task-2 cough folder
-directly, and runs a model-blind gate from four local paths. No Cambridge gate or model result
-has yet been returned.
+Cambridge COVID-19 Sounds Task 2 is now structurally resolved: the released subset contains
+983 participants and 1,486 cough sessions, with 975 participants eligible after exact
+session-to-metadata linkage.  The original split-first gate remains NO-GO.  A visibly versioned
+model-blind match-first v2 precheck can freeze 100 balanced pairs (final max SMD and categorical
+difference both 0.000), but remains PROVISIONAL until the authorised collaborator reruns waveform
+QC.  No Cambridge model score exists.
 
 Start with:
 

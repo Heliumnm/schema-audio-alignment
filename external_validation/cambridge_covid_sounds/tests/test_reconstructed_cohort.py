@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import math
 import struct
 import sys
@@ -105,6 +106,13 @@ class ReconstructedCohortTest(unittest.TestCase):
             self.assertEqual(gate["split_origin"],
                              "reconstructed model-blind 70/10/20 participant split")
             self.assertFalse(gate["model_outputs_read"])
+
+            v2_config_path = root / "out1/config.match_first_v2.json"
+            write_config(audio_root, root / "out1", v2_config_path, "match_first_v2")
+            v2_config = json.loads(v2_config_path.read_text())
+            self.assertEqual(v2_config["protocol"]["split_strategy"], "match_first_v2")
+            self.assertEqual(v2_config["protocol"]["development_split_ratios"],
+                             [0.70, 0.15, 0.15])
 
 
 if __name__ == "__main__":

@@ -1,8 +1,9 @@
 # Cambridge COVID-19 Sounds：一键受限数据外部验证包
 
-> **当前状态（2026-09-01）：等待有 DTA 授权的英国合作者执行。** Coswara 与 CODA TB
-> 均在各自冻结的数据平衡门停止，未读取模型分数；因此 Cambridge 是当前唯一仍开放的
-> confirmatory external route。合作者必须先只运行 `gate`，不能直接解锁 `formal`。
+> **当前状态（2026-09-03）：Task-2结构与metadata的match-first v2预检查为
+> `PROVISIONAL_GO`，等待有DTA授权的英国合作者用真实WAV复核。** v1 split-first结果永久保留为
+> `NO_GO`；v2是显式版本化的secondary sensitivity analysis，不冒充官方split或untouched
+> confirmation。合作者必须先只运行 `gate`，不能直接解锁 `formal`。
 
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge
 COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridge 数据。
@@ -26,7 +27,29 @@ COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridg
 
 ## 合作者最快使用方式
 
-### 当前实际发布包没有 Task-2 CSV：从原始 metadata 重建（当前推荐入口）
+### 当前推荐：Task-2 match-first v2（先匹配target，再划开发集）
+
+`structure.json` 已确认 Task 2 含983名参与者、1,486次cough session。按
+`UID + Folder Name` 精确连接并执行严格英语/标签规则后，得到975名可分析参与者
+（500阴性、475阳性）。结构与metadata预检查可先匹配277对，并沿冻结路径得到平衡的100对
+target；正式判定仍需在DTA环境中重新执行波形QC。
+
+```bash
+bash run_reconstructed_match_first_v2.sh \
+  /DTA/covid19/metadata \
+  /DTA/test2 \
+  /DTA/cambridge_match_first_v2
+```
+
+如果实际Task-2音频目录名不同，只替换第二个路径。程序先冻结恰好100对
+`matched_target`，再把剩余人按`label × platform`固定划为70% train、15% validation、
+15% source-test；全程不加载模型。
+
+结果与边界见
+[TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md](TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md) 和
+[PREREGISTRATION_MATCH_FIRST_V2_ZH.md](PREREGISTRATION_MATCH_FIRST_V2_ZH.md)。
+
+### 历史v1：先随机划分，再只在test匹配
 
 本次收到的受限数据中，`task1/` 和 `task2/` 只有音频，没有仓库说明里提到的
 `data_0426_en_task2.csv`。因此不能声称复现官方 Task-2 成员和 split。代码提供一条独立、
@@ -50,7 +73,8 @@ bash run_reconstructed_gate.sh \
 - 再执行同一个100对、0.12 SMD、0.08 fine-balance数据门。
 
 选择 70/10/20 是因为官方论文使用这个比例；不是为了复原已经缺失的官方成员关系。输出会明确
-标记 `official_split_reproduced: false`，论文中必须称为 *reconstructed cohort*。
+标记 `official_split_reproduced: false`，论文中必须称为 *reconstructed cohort*。这个v1路径
+已经因test内不足100对而`NO_GO`；保留它是为了让版本变化可见，不应用它替代上面的v2命令。
 
 #### 只有 Task-2 UID 列表时先做什么
 
@@ -200,13 +224,14 @@ shortness of breath, asthma, other respiratory disease, platform/cohort
 多个 cough 文件会先各自编码，再在 participant 内等权平均。一个 participant 永远只贡献
 一个 contrastive loss、一个 prediction 和一个 bootstrap unit。
 
-## 一个必须提前知道的数据门限制
+## 为什么需要显式区分 v1 和 v2
 
 官方论文报告的 Task 2 约为 1,000 名参与者，官方 test 约占 20%。当前预注册要求至少
 `100 positive/negative matched pairs`，也就是 test 中至少 200 名可用且能通过 exact matching
-的参与者。因此这个门几乎没有 QC 或 common-support 余量。代码不会为了让外部验证通过而降低
-100-pair、0.12 SMD 或 0.08 fine-balance 阈值；若因此 `NO_GO`，正确结论是“该官方子集不足以
-承担预注册的 confirmatory transfer endpoint”，不是模型失败。
+的参与者。因此v1几乎没有QC或common-support余量，实际只得到26对。代码没有降低100-pair、
+0.12 SMD或0.08 fine-balance阈值。v2也没有降低门槛，而是明确改变estimand：先从全部可用
+Task-2人群冻结100对平衡target，再只用剩余人开发模型。它能回答secondary matched sensitivity，
+不能恢复缺失的官方split，也不能成为原始confirmatory test。
 
 对本机三份 metadata 的模型盲审计（音频尚未连接）得到：53,449行；英语且属于上述严格标签的
 3,493位患者中，48位跨时间出现正负冲突；排除后为521位仅阳性、2,924位仅阴性。按20% test，
@@ -243,4 +268,5 @@ output/public/
 [COLLABORATOR_QUICKSTART.txt](COLLABORATOR_QUICKSTART.txt)。官方split文件缺失后的证据和冻结决定见
 [MISSING_TASK2_SPLIT_DECISION_ZH.md](MISSING_TASK2_SPLIT_DECISION_ZH.md)。集群提交说明见
 [SLURM_GATE_GUIDE_ZH.txt](SLURM_GATE_GUIDE_ZH.txt)，可直接提交的脚本为
-[submit_reconstructed_gate.slurm](submit_reconstructed_gate.slurm)。
+[submit_reconstructed_gate.slurm](submit_reconstructed_gate.slurm)（v1）或
+[submit_reconstructed_match_first_v2.slurm](submit_reconstructed_match_first_v2.slurm)（当前v2）。

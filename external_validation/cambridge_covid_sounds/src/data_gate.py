@@ -737,7 +737,8 @@ def make_pairs(candidates: pd.DataFrame, config: dict[str, Any]) -> pd.DataFrame
 
 
 def trim_pairs(pairs: pd.DataFrame, people: pd.DataFrame,
-               config: dict[str, Any]) -> tuple[pd.DataFrame, dict[str, Any], int]:
+               config: dict[str, Any], *,
+               force_minimum: bool = False) -> tuple[pd.DataFrame, dict[str, Any], int]:
     threshold_smd = float(config["matching"]["max_abs_smd"])
     threshold_fine = float(config["matching"]["max_fine_balance_difference"])
     minimum = int(config["matching"]["min_pairs"])
@@ -746,21 +747,130 @@ def trim_pairs(pairs: pd.DataFrame, people: pd.DataFrame,
         return max(report["max_abs_smd"] / threshold_smd,
                    report["max_fine_difference"] / threshold_fine)
 
-    current, removed = pairs.copy(), 0
+    def removal_objectives(current_pairs: pd.DataFrame) -> np.ndarray:
+        """Compute every one-pair deletion objective without rebuilding data frames.
+
+        This is algebraically the same balance objective used by ``balance_report``.  The
+        vectorised form matters for match-first v2: Cambridge starts with roughly 277 pairs
+        and follows the frozen greedy path all the way to exactly 100 pairs.
+        """
+        n = len(current_pairs)
+        if n <= 1:
+            return np.full(n, math.inf)
+        indexed = people.set_index("participant_identifier")
+        negative = indexed.loc[current_pairs.negative_id].reset_index()
+        positive = indexed.loc[current_pairs.positive_id].reset_index()
+        after_n = float(n - 1)
+        max_smd = np.zeros(n, dtype=float)
+        continuous = set(config["matching"].get("continuous_smd_fields", []))
+
+        for field in config["matching"]["smd_fields"]:
+            if field in continuous:
+                a = pd.to_numeric(negative[field], errors="coerce").to_numpy(float)
+                b = pd.to_numeric(positive[field], errors="coerce").to_numpy(float)
+                observed = ((negative[field].astype(str).to_numpy() != MISSING) &
+                            (positive[field].astype(str).to_numpy() != MISSING) &
+                            np.isfinite(a) & np.isfinite(b))
+                weight = observed.astype(float)
+                count = weight.sum() - weight
+                sum_a = np.sum(np.where(observed, a, 0.0)) - np.where(observed, a, 0.0)
+                sum_b = np.sum(np.where(observed, b, 0.0)) - np.where(observed, b, 0.0)
+                square_a = np.sum(np.where(observed, a * a, 0.0)) - \
+                    np.where(observed, a * a, 0.0)
+                square_b = np.sum(np.where(observed, b * b, 0.0)) - \
+                    np.where(observed, b * b, 0.0)
+                valid = count >= 2
+                value = np.full(n, math.inf)
+                if np.any(valid):
+                    mean_a = sum_a[valid] / count[valid]
+                    mean_b = sum_b[valid] / count[valid]
+                    var_a = np.maximum(
+                        (square_a[valid] - sum_a[valid] ** 2 / count[valid]) /
+                        (count[valid] - 1), 0.0)
+                    var_b = np.maximum(
+                        (square_b[valid] - sum_b[valid] ** 2 / count[valid]) /
+                        (count[valid] - 1), 0.0)
+                    pooled = np.sqrt((var_a + var_b) / 2)
+                    difference = mean_a - mean_b
+                    local = np.divide(
+                        difference, pooled, out=np.full_like(difference, math.inf),
+                        where=pooled != 0)
+                    local[(pooled == 0) & (difference == 0)] = 0.0
+                    value[valid] = local
+                max_smd = np.maximum(max_smd, np.abs(value))
+            else:
+                left = negative[field].astype(str).to_numpy()
+                right = positive[field].astype(str).to_numpy()
+                for level in sorted(set(left) | set(right)):
+                    a = (left == level).astype(float)
+                    b = (right == level).astype(float)
+                    pa = (a.sum() - a) / after_n
+                    pb = (b.sum() - b) / after_n
+                    scale = np.sqrt((pa * (1 - pa) + pb * (1 - pb)) / 2)
+                    difference = pa - pb
+                    value = np.divide(
+                        difference, scale, out=np.full_like(difference, math.inf),
+                        where=scale != 0)
+                    value[(scale == 0) & (difference == 0)] = 0.0
+                    max_smd = np.maximum(max_smd, np.abs(value))
+
+        max_fine = np.zeros(n, dtype=float)
+        for field in config["matching"].get("fine_balance_fields", []):
+            left = negative[field].astype(str).to_numpy()
+            right = positive[field].astype(str).to_numpy()
+            for level in sorted(set(left) | set(right)):
+                a = (left == level).astype(float)
+                b = (right == level).astype(float)
+                difference = ((a.sum() - a) - (b.sum() - b)) / after_n
+                max_fine = np.maximum(max_fine, np.abs(difference))
+        return np.maximum(max_smd / threshold_smd, max_fine / threshold_fine)
+
+    current, removed = pairs.copy().reset_index(drop=True), 0
     report = balance_report(current, people, config)
-    while len(current) > minimum and objective(report) > 1:
-        # Deterministic greedy path. It stops at the first passing cohort, never below floor.
-        best = None
-        for index in current.index:
-            trial = current.drop(index).reset_index(drop=True)
-            trial_report = balance_report(trial, people, config)
-            key = (objective(trial_report), current.loc[index, "pair_id"])
-            if best is None or key < best[0]:
-                best = (key, trial, trial_report)
-        assert best is not None
-        _, current, report = best
+    while (len(current) > minimum and
+           (force_minimum or objective(report) > 1)):
+        objectives = removal_objectives(current)
+        index = min(range(len(current)),
+                    key=lambda i: (float(objectives[i]), str(current.loc[i, "pair_id"])))
+        current = current.drop(index).reset_index(drop=True)
         removed += 1
+        # v1 stops at the first passing cohort.  v2 follows the same objective to the frozen
+        # 100-pair endpoint, so only its final report is needed.
+        if not force_minimum:
+            report = balance_report(current, people, config)
+    if force_minimum:
+        report = balance_report(current, people, config)
     return current.reset_index(drop=True), report, removed
+
+
+def assign_match_first_development_splits(eligible: pd.DataFrame, matched_ids: set[str],
+                                          config: dict[str, Any]) -> pd.Series:
+    """Freeze target first, then split only the remaining participants label x cohort."""
+    protocol = config["protocol"]
+    cohort = str(protocol["cohort_field"])
+    salt = str(protocol.get(
+        "development_split_salt", "cambridge-match-first-v2-development"))
+    ratios = protocol.get("development_split_ratios", [0.70, 0.15, 0.15])
+    if len(ratios) != 3 or not math.isclose(sum(map(float, ratios)), 1.0, abs_tol=1e-12):
+        raise ValueError("development_split_ratios must contain three values summing to one")
+    train_ratio, validation_ratio, _ = map(float, ratios)
+    assignments = {pid: "matched_target" for pid in matched_ids}
+    remaining = eligible[~eligible.participant_identifier.isin(matched_ids)]
+    for _, group in remaining.groupby(["y", cohort], dropna=False, sort=True):
+        ordered = sorted(
+            group.participant_identifier.astype(str),
+            key=lambda pid: sha256_text(f"{salt}|{pid}"))
+        n = len(ordered)
+        n_train = int(train_ratio * n)
+        n_validation = int(validation_ratio * n)
+        for index, pid in enumerate(ordered):
+            assignments[pid] = ("train" if index < n_train else
+                                "validation" if index < n_train + n_validation else
+                                "test")
+    result = eligible.participant_identifier.map(assignments)
+    if result.isna().any():
+        raise AssertionError("match-first split did not assign every eligible participant")
+    return result
 
 
 def execute(config_file: str | Path) -> dict[str, Any]:
@@ -790,11 +900,20 @@ def execute(config_file: str | Path) -> dict[str, Any]:
     if eligible.empty:
         raise ValueError("no participant has both standardised metadata and passing cough audio")
 
-    # Frozen train/validation/test membership is immutable; target matching uses test only.
-    candidates = eligible[eligible.splits == "test"].copy()
+    strategy = str(config["protocol"].get("split_strategy", "provided_split_v1"))
+    if strategy not in {"provided_split_v1", "match_first_v2"}:
+        raise ValueError(f"unknown protocol.split_strategy: {strategy}")
+    # v1 preserves the supplied membership and matches test only.  The separately frozen v2
+    # sensitivity endpoint matches all eligible people first, then splits only the remainder.
+    candidates = (eligible.copy() if strategy == "match_first_v2" else
+                  eligible[eligible.splits == "test"].copy())
     pairs_initial = make_pairs(candidates, config)
-    pairs, balance, removed = trim_pairs(pairs_initial, eligible, config)
+    pairs, balance, removed = trim_pairs(
+        pairs_initial, eligible, config, force_minimum=(strategy == "match_first_v2"))
     matched_ids = set(pairs.negative_id) | set(pairs.positive_id)
+    if strategy == "match_first_v2":
+        eligible["splits"] = assign_match_first_development_splits(
+            eligible, matched_ids, config)
     eligible["in_matched_test"] = eligible.participant_identifier.isin(matched_ids)
     eligible["pair_id"] = MISSING
     pair_of = {row.negative_id: row.pair_id for row in pairs.itertuples()}
@@ -802,7 +921,9 @@ def execute(config_file: str | Path) -> dict[str, Any]:
     eligible["pair_id"] = eligible.participant_identifier.map(pair_of).fillna(MISSING)
 
     split_counts = {}
-    for split in ("train", "validation", "test"):
+    split_names = (["train", "validation", "test", "matched_target"]
+                   if strategy == "match_first_v2" else ["train", "validation", "test"])
+    for split in split_names:
         subset = eligible[eligible.splits == split]
         split_counts[split] = {"n": int(len(subset)), "negative": int((subset.y == 0).sum()),
                                "positive": int((subset.y == 1).sum())}
@@ -838,15 +959,36 @@ def execute(config_file: str | Path) -> dict[str, Any]:
         "exact_balance": all(value == 0 for value in balance["exact_mismatches"].values()),
         "split_disjoint": True,  # one canonical row per participant makes this structural
     }
+    if strategy == "match_first_v2":
+        gate_checks.update({
+            "matching_exact_size": len(pairs) == int(config["matching"]["min_pairs"]),
+            "validation_size": split_counts["validation"]["n"] >=
+                               int(config["protocol"].get("min_validation_n", 75)),
+            "source_test_size": split_counts["test"]["n"] >=
+                                int(config["protocol"].get("min_test_n", 75)),
+            "matched_target_class_size": min(
+                split_counts["matched_target"]["negative"],
+                split_counts["matched_target"]["positive"]) ==
+                int(config["matching"]["min_pairs"]),
+            "train_profile_diversity": len(profile_counts) >=
+                                       int(config["protocol"].get(
+                                           "min_train_unique_profiles", 100)),
+            "train_modal_profile_share": (
+                len(profile_counts) > 0 and
+                float(profile_counts.iloc[0] / profile_counts.sum()) <=
+                float(config["protocol"].get("max_train_modal_profile_share", 0.10))),
+        })
     verdict = "GO" if all(gate_checks.values()) else "NO_GO"
     split_origin = str(config["protocol"].get("split_origin", "provided participant CSV"))
     public = {
-        "format_version": "cambridge-external-gate-v1",
+        "format_version": ("cambridge-external-gate-v2" if strategy == "match_first_v2"
+                           else "cambridge-external-gate-v1"),
         "verdict": verdict,
         "model_outputs_read": False,
         "representations_generated": False,
         "n_standardised": int(len(people)), "n_audio_eligible": int(len(eligible)),
-        "split_origin": split_origin, "split_counts": split_counts, "audio_qc": audio_report,
+        "split_strategy": strategy, "split_origin": split_origin,
+        "split_counts": split_counts, "audio_qc": audio_report,
         "matching": {"n_initial_pairs": int(len(pairs_initial)),
                      "n_final_pairs": int(len(pairs)), "n_trimmed": removed,
                      "balance": balance},
@@ -880,13 +1022,19 @@ def execute(config_file: str | Path) -> dict[str, Any]:
         "# Cambridge COVID-19 Sounds external data gate",
         "", f"**Verdict: {verdict}**", "",
         f"- audio-eligible participants: {len(eligible)}",
-        f"- frozen train/validation/test ({split_origin}): {split_counts['train']['n']} / "
-        f"{split_counts['validation']['n']} / {split_counts['test']['n']}",
+        f"- frozen train/validation/source-test ({split_origin}): "
+        f"{split_counts['train']['n']} / {split_counts['validation']['n']} / "
+        f"{split_counts['test']['n']}",
+    ]
+    if strategy == "match_first_v2":
+        report_lines.append(
+            f"- matched target participants: {split_counts['matched_target']['n']}")
+    report_lines.extend([
         f"- matched pairs: {len(pairs)} (initial {len(pairs_initial)})",
         f"- max |SMD|: {balance['max_abs_smd']:.4f}",
         f"- max fine-balance difference: {balance['max_fine_difference']:.4f}",
         "", "No representation, prediction, AUROC or NLL was read by this stage.",
-    ]
+    ])
     (paths["public"] / "DATA_GATE_REPORT.md").write_text("\n".join(report_lines) + "\n")
     print(f"DATA GATE {verdict}: {len(eligible)} participants, {len(pairs)} matched pairs")
     print(f"public aggregate output: {paths['public']}")

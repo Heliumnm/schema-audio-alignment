@@ -112,10 +112,14 @@ def opera_recording(path: Path, model, preprocess, torch, device: str) -> np.nda
 
 def check_indices(table: pd.DataFrame, n: int = 24) -> list[int]:
     chosen = []
-    for split in ("train", "validation", "test"):
+    splits = ["train", "validation", "test"]
+    if "matched_target" in set(table.splits.astype(str)):
+        splits.append("matched_target")
+    per_cell = max(1, n // (2 * len(splits)))
+    for split in splits:
         for label in (0, 1):
             indices = table.index[(table.splits == split) & (table.y == label)].tolist()
-            chosen.extend(indices[:max(1, n // 6)])
+            chosen.extend(indices[:per_cell])
     return chosen[:n]
 
 
