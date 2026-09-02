@@ -56,6 +56,7 @@ if [[ "$STAGE" == "s1" ]]; then
       --out_dir "$OUTROOT/private/s1/$backbone" --seeds 0 --epochs 50 \
       --log_every 10 --device cuda
   done
+  python "$HERE/src/audit_s1.py" --config "$CONFIG"
   exit 0
 fi
 
