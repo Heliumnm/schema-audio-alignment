@@ -1,0 +1,115 @@
+Cambridge COVID-19 Sounds 正式实验：CSD3 一键运行说明
+====================================================
+
+数据门已经通过，正式实验所需的路径、Slurm资源、env_chao、模型下载与校验、配置填充、
+训练和结果打包都已经写入新版 run.sh。
+
+一、首次更新代码
+--------------
+
+因为之前目录里已有一个只跑数据门的旧 run.sh，请先将它改名，再拉取新版：
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+mv run.sh run_gate_old.sh
+
+cd /home/yl809/projects/covid
+git pull --ff-only origin main
+git rev-parse --short HEAD
+
+更新后 commit 应不早于：40399c0
+
+二、直接提交正式实验
+------------------
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+sbatch run.sh
+
+不需要手工再次运行数据门，不需要手工编辑 config.local.json，也不需要提前手工下载模型。
+
+run.sh 已经固定：
+
+- Git仓库：/home/yl809/projects/covid
+- 实验目录：/home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+- 数据目录：/home/yl809/rds/hpc-work/datasets/covid19
+- 数据门输出：/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output
+- Conda环境：env_chao
+- 模型缓存：/home/yl809/rds/hpc-work/models/schema_audio_alignment
+- Slurm account：MASCOLO-SL2-GPU
+- partition：ampere
+- 资源：1 GPU、8 CPU、64 GB、48小时
+
+脚本会自动完成：
+
+1. 复核数据门仍为 GO；
+2. 安装/检查正式实验依赖；
+3. 检查 torch、torchaudio 和 CUDA；
+4. 下载或复用 AST、固定 revision 的 Phi-2、OPERA 和 OPERA-CT；
+5. 校验 OPERA-CT checkpoint SHA-256；
+6. 只填写 config.local.json 中的模型路径和正式解锁口令；
+7. 断言 100 pairs、AST-6L、5 seeds、500 epochs 等冻结协议没有变化；
+8. 运行 Phi-2 文本缓存；
+9. 提取 AST-6L 和 OPERA-CT 表示；
+10. 运行 Correct / Within-label / Global 三臂，5 seeds × 500 epochs；
+11. 完成 retrieval、probe、COVID transfer 和 calibration 评测；
+12. 打包只含聚合统计的 PUBLIC_RESULTS.zip。
+
+三、查看任务和日志
+----------------
+
+查看队列：
+
+squeue -u yl809
+
+假设 sbatch 返回任务号 123456，查看正常输出：
+
+tail -f /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_formal_123456.out
+
+查看错误输出：
+
+tail -f /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_formal_123456.err
+
+第一次运行需要下载模型并安装缺少的依赖，所以启动阶段会比后续重跑慢。下载和训练产物均可
+复用；若任务因集群原因中断，确认没有同一任务仍在运行后，重新执行 sbatch run.sh 即可。
+
+如果 env_chao 中 torch 与 torchaudio 不匹配，脚本会在训练前停止并在 err/out 日志中明确
+写出版本，不会带着错误环境继续训练。此时请把完整日志和两个版本发回，不要自行更换模型
+或修改实验协议。
+
+四、任务完成后返回什么
+--------------------
+
+只需要返回：
+
+/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output/public/PUBLIC_RESULTS.zip
+
+同时请告知：
+
+- git commit SHA；
+- Python、torch、torchaudio、transformers、CUDA 和 GPU 版本；
+- Cambridge DTA 是否允许发表聚合结果表。
+
+请不要发送或提交：
+
+- cambridge_audit_output/private；
+- 原始音频；
+- 逐行 metadata；
+- participant manifest；
+- matched pairs；
+- embedding、checkpoint 或逐人 prediction。
+
+五、关于 csd3: 前缀
+-----------------
+
+在 CSD3 登录节点或 Slurm 作业内部，文件路径必须写成：
+
+/home/yl809/...
+
+只有从个人电脑运行 ssh/scp/rsync 时才写成：
+
+csd3:/home/yl809/...
+
+例如项目负责人从个人电脑取回最终结果：
+
+scp csd3:/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output/public/PUBLIC_RESULTS.zip .
+
+不要把 csd3: 写进 config.local.json 或 run.sh 内部路径。
