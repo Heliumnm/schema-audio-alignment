@@ -32,7 +32,7 @@ run.sh 已经固定：
 - 实验目录：/home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 - 数据目录：/home/yl809/rds/hpc-work/datasets/covid19
 - 数据门输出：/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output
-- 基础Conda环境：env_chao（只复用Python/CUDA/PyTorch，不向其中安装新包）
+- 基础Conda环境：env_chao（只读取已验证的PyTorch版本和CUDA构建，不向其中安装新包）
 - 独立正式环境：/home/yl809/rds/hpc-work/venvs/cambridge_formal
 - 模型缓存：/home/yl809/rds/hpc-work/models/schema_audio_alignment
 - Slurm account：MASCOLO-SL2-GPU
@@ -42,17 +42,18 @@ run.sh 已经固定：
 脚本会自动完成：
 
 1. 复核数据门仍为 GO；
-2. 从env_chao创建独立RDS venv，并只在独立环境安装/检查正式实验依赖；
-3. 检查 torch、torchaudio 和 CUDA；
-4. 下载或复用 AST、固定 revision 的 Phi-2、OPERA 和 OPERA-CT；
-5. 校验 OPERA-CT checkpoint SHA-256；
-6. 只填写 config.local.json 中的模型路径和正式解锁口令；
-7. 断言 100 pairs、AST-6L、5 seeds、500 epochs 等冻结协议没有变化；
-8. 运行 Phi-2 文本缓存；
-9. 提取 AST-6L 和 OPERA-CT 表示；
-10. 运行 Correct / Within-label / Global 三臂，5 seeds × 500 epochs；
-11. 完成 retrieval、probe、COVID transfer 和 calibration 评测；
-12. 打包只含聚合统计的 PUBLIC_RESULTS.zip。
+2. 从env_chao读取已验证的torch版本和CUDA构建，创建不共享site-packages的独立RDS venv；
+3. 在独立venv中安装相同版本/相同CUDA系列的torch和torchaudio；
+4. 检查 torch、torchaudio 和 CUDA；
+5. 下载或复用 AST、固定 revision 的 Phi-2、OPERA 和 OPERA-CT；
+6. 校验 OPERA-CT checkpoint SHA-256；
+7. 只填写 config.local.json 中的模型路径和正式解锁口令；
+8. 断言 100 pairs、AST-6L、5 seeds、500 epochs 等冻结协议没有变化；
+9. 运行 Phi-2 文本缓存；
+10. 提取 AST-6L 和 OPERA-CT 表示；
+11. 运行 Correct / Within-label / Global 三臂，5 seeds × 500 epochs；
+12. 完成 retrieval、probe、COVID transfer 和 calibration 评测；
+13. 打包只含聚合统计的 PUBLIC_RESULTS.zip。
 
 三、查看任务和日志
 ----------------
@@ -78,8 +79,9 @@ backbone可复用；如果在某个backbone的15个alignment runs中途超时，
 写出版本，不会带着错误环境继续训练。此时请把完整日志和两个版本发回，不要自行更换模型
 或修改实验协议。
 
-新版不会直接向env_chao安装package。env_chao只提供集群已经配置好的Python、CUDA、torch
-和torchaudio；pytorch-lightning、torchlibrosa等新增依赖全部进入上面的独立正式环境。
+新版不会直接向env_chao安装package。env_chao只提供已验证版本/CUDA构建作为选择依据；
+torch、torchaudio、pytorch-lightning、torchlibrosa等全部重新安装在独立正式环境中。独立
+环境不使用--system-site-packages，不会读取或修改env_chao的site-packages。
 
 四、任务完成后返回什么
 --------------------

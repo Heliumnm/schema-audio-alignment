@@ -12,9 +12,10 @@ sbatch run.sh
 `run.sh` 已固定项目、数据、数据门输出、模型缓存、`env_chao`、Slurm account/partition，
 并自动完成下面各节。以下长说明主要用于审计和排错，不需要逐条手工重复执行。
 
-新版只把`env_chao`作为CSD3已经验证的Python/CUDA/PyTorch基础，在
-`/home/yl809/rds/hpc-work/venvs/cambridge_formal`创建`--system-site-packages`独立环境；
-新增package只写入独立环境，不直接污染`env_chao`。
+新版只从`env_chao`读取CSD3已经验证的torch版本与CUDA构建，在
+`/home/yl809/rds/hpc-work/venvs/cambridge_formal`创建不共享site-packages的独立环境；
+相同版本/相同CUDA系列的torch和torchaudio以及全部新增package均安装在独立环境中，
+不直接污染`env_chao`。
 
 路径写法必须区分执行位置：
 
@@ -44,16 +45,20 @@ git rev-parse HEAD
 二、建立或复用一个 GPU Python 环境
 ---------------------------------
 
-推荐复用已经确认能在 Slurm GPU 节点使用 CUDA 的 Python 3.10 环境作为只读基础，再创建
-独立venv。PyTorch/CUDA的安装方式必须服从本集群module/conda规范，不要在不知道CUDA
-wheel的情况下盲目替换管理员提供的torch。
+推荐从已经确认能在Slurm GPU节点使用CUDA的Python 3.10环境读取torch版本与CUDA构建，
+再创建完全独立的venv并安装相同官方wheel。不要替换管理员提供的env_chao内torch。
 
 source ~/.bashrc
 conda activate env_chao
-python -m venv --system-site-packages /home/yl809/rds/hpc-work/venvs/cambridge_formal
+python -m venv /home/yl809/rds/hpc-work/venvs/cambridge_formal
 source /home/yl809/rds/hpc-work/venvs/cambridge_formal/bin/activate
 python -m pip install --upgrade pip
+python -m pip install --index-url https://download.pytorch.org/whl/cu124 \
+  torch==2.6.0 torchaudio==2.6.0
 python -m pip install -r /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/requirements.txt
+
+上面的`cu124`与`2.6.0`只是当前环境示例；一键`run.sh`会读取env_chao后自动选择
+`cu118/cu124/cu126/cpu`和实际torch版本，不依赖手工猜测。
 
 OPERA 源码在导入时还需要下列包：
 

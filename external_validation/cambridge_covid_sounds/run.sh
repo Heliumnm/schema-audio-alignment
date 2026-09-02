@@ -41,18 +41,56 @@ source "$HOME/.bashrc"
 conda activate env_chao
 cd "$HERE"
 
-# env_chao supplies the CSD3-tested Python/CUDA/PyTorch stack only.  All extra
-# audit/OPERA packages are installed into an isolated RDS venv, never directly
-# into env_chao.  --system-site-packages reuses its matching torch/torchaudio
-# without copying or replacing them.
+# env_chao is read only: use its already-tested torch/CUDA combination to select
+# the exact official PyTorch wheels, then install torch and every other package
+# into a fully isolated RDS venv. Nothing is pip-installed into env_chao.
 BASE_PYTHON=$(command -v python)
+BASE_TORCH_VERSION=$(python - <<'PY'
+import torch
+print(torch.__version__.split("+")[0])
+PY
+)
+BASE_TORCH_CUDA=$(python - <<'PY'
+import torch
+print(torch.version.cuda or "cpu")
+PY
+)
+
+case "$BASE_TORCH_CUDA" in
+  11.8*) TORCH_WHEEL_CHANNEL=cu118 ;;
+  12.4*) TORCH_WHEEL_CHANNEL=cu124 ;;
+  12.6*) TORCH_WHEEL_CHANNEL=cu126 ;;
+  cpu)   TORCH_WHEEL_CHANNEL=cpu ;;
+  *)
+    echo "Unsupported env_chao torch CUDA build: $BASE_TORCH_CUDA"
+    echo "Add an explicit official PyTorch wheel channel before changing any package."
+    exit 2
+    ;;
+esac
+
+mkdir -p "$(dirname "$FORMAL_VENV")"
+exec 8>"${FORMAL_VENV}.setup.lock"
+if command -v flock >/dev/null 2>&1; then
+  flock 8
+fi
+
+# The preceding revision used --system-site-packages. Preserve such an old venv
+# as a timestamped backup, then replace it with a genuinely isolated venv.
+if [[ -f "$FORMAL_VENV/pyvenv.cfg" ]] && \
+   grep -Eqi '^include-system-site-packages[[:space:]]*=[[:space:]]*true' \
+     "$FORMAL_VENV/pyvenv.cfg"; then
+  LEGACY_VENV="${FORMAL_VENV}.legacy_shared_$(date -u +%Y%m%dT%H%M%SZ)"
+  mv "$FORMAL_VENV" "$LEGACY_VENV"
+  echo "preserved_legacy_shared_venv=$LEGACY_VENV"
+fi
 if [[ ! -x "$FORMAL_VENV/bin/python" ]]; then
-  mkdir -p "$(dirname "$FORMAL_VENV")"
-  "$BASE_PYTHON" -m venv --system-site-packages "$FORMAL_VENV"
+  "$BASE_PYTHON" -m venv "$FORMAL_VENV"
 fi
 source "$FORMAL_VENV/bin/activate"
 set -u
 echo "base_python=$BASE_PYTHON"
+echo "base_torch=$BASE_TORCH_VERSION base_torch_cuda=$BASE_TORCH_CUDA"
+echo "official_torch_wheel_channel=$TORCH_WHEEL_CHANNEL"
 echo "isolated_formal_python=$(command -v python)"
 [[ "$(command -v python)" == "$FORMAL_VENV/bin/python" ]] || {
   echo "Failed to activate isolated formal venv: $FORMAL_VENV"; exit 2;
@@ -76,8 +114,14 @@ if gate.get("verdict") != "GO":
 print("REVIEWED DATA GATE GO")
 PY
 
-# Install only inside FORMAL_VENV. PyTorch and torchaudio are deliberately not
-# replaced: the isolated venv sees the matching builds supplied by env_chao.
+# Install torch and torchaudio explicitly inside FORMAL_VENV, using the version
+# and CUDA wheel family already known to work in env_chao on this cluster.
+python -m pip install --upgrade pip
+python -m pip install \
+  --index-url "https://download.pytorch.org/whl/$TORCH_WHEEL_CHANNEL" \
+  "torch==$BASE_TORCH_VERSION" "torchaudio==$BASE_TORCH_VERSION"
+
+# All remaining dependencies are also isolated inside FORMAL_VENV.
 python -m pip install -r requirements.txt
 python -m pip install \
   "huggingface_hub>=0.23" \
@@ -86,13 +130,13 @@ python -m pip install \
 python - <<'PY'
 import torch
 if not torch.cuda.is_available():
-    raise SystemExit("CUDA is unavailable after activating env_chao")
+    raise SystemExit("CUDA is unavailable inside the isolated Cambridge formal venv")
 try:
     import torchaudio
 except Exception as exc:
     raise SystemExit(
-        "torchaudio is missing or incompatible with torch. Install the CSD3 build "
-        "matching torch exactly; run.sh will not replace torch automatically. "
+        "torchaudio is missing or incompatible with torch after the isolated "
+        "installation. Check the selected PyTorch wheel channel and cluster network. "
         f"Original error: {exc!r}"
     )
 torch_mm = ".".join(torch.__version__.split("+")[0].split(".")[:2])
