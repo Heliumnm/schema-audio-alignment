@@ -20,10 +20,13 @@ confidence: target-domain recalibration removes the NLL gap without creating a d
 ranking gain.
 
 The controlled synthetic sweep learned correspondence but failed its preregistered
-mechanism gates, so it is not used as causal evidence. The Coswara and CODA TB external
-branches both stopped at their frozen data-balance gates before any model score. UKCOVID
-therefore remains a single-dataset discovery audit; the results do not establish that
-metadata alignment is universally harmful or ineffective.
+mechanism gates, so it is not used as causal evidence. Coswara stopped at its frozen data
+gate. CODA TB's original split-first gate also stopped, but a visibly versioned, model-blind
+secondary protocol selected the matched target before splitting the remainder and passed
+all frozen balance gates (100 pairs; max SMD 0.0819; max categorical difference 0.040).
+No CODA model score exists yet, so UKCOVID remains the only completed disease-transfer
+audit; the results do not establish that metadata alignment is universally harmful or
+ineffective.
 
 The remaining controlled-access route is Cambridge COVID-19 Sounds Task 2. Its package now
 accepts the official `uid/label/fold`, three-platform `covid19/metadata`, and Task-2 cough folder
@@ -39,6 +42,7 @@ Start with:
 - [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
 - [CODA TB model-blind data-gate outcome](docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
+- [CODA TB secondary match-first v2 GO](docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md)
 - [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
 
 ## Historical ICBHI/schema track

@@ -51,7 +51,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
-| CODA TB 外部确认 | 数据门 NO-GO | 9,772 条音频通过 QC，但 100 对匹配未达到平衡门；没有模型分数 |
+| CODA TB 外部敏感性 | v1 NO-GO；**match-first v2 数据门 GO** | v2 从全部1,081人先冻结100对，SMD 0.0819、level diff 0.040；模型尚未运行 |
 | Cambridge Task 2 外部确认 | 等待英国合作者数据门 | 官方原始 `uid/label/fold + covid19/metadata + cough` 已可四路径一键运行；尚无数据门或模型结果 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
@@ -155,11 +155,16 @@ alignment 必然越差”这一一般机制。它不得作为正文的正向机�
 Coswara 2,746 条录音完成 QC，2,646 条通过；冻结匹配在 100 对下限时最大 SMD 为 0.140，
 高于 0.12 门槛，因此 NO-GO。没有生成 Coswara 表征、分类器或模型分数。
 
-CODA TB 的 9,772 条 solicited cough 全部成功解码并通过 QC；1,081 名 participant 进入
-eligible cohort（TB+ 291、TB− 790）。冻结 split 和 matching 最终保留 100 对，但最大绝对
-SMD 为 0.276（门槛 0.12），最大分类水平比例差为 0.13（门槛 0.08），因此同样 NO-GO。
-没有运行 AST／OPERA、projector、retrieval 或 TB classifier。该结果是数据可行性 NO-GO，
-不是 CODA TB 模型负结果。
+CODA TB v1 的 9,772 条 solicited cough 全部成功解码并通过 QC；1,081 名 participant 进入
+eligible cohort（TB+ 291、TB− 790）。v1 先划分60/40、再在40% target candidate 中匹配，
+最终100对的最大绝对 SMD 为0.276、最大分类水平比例差为0.13，因此 NO-GO。
+
+在没有读取任何 CODA 模型输出的前提下，仓库另行冻结了 secondary match-first v2：匹配字段、
+距离、100对、0.12／0.08门槛和唯一删减路径全部不变，只把 matched target 的冻结放到
+development split 之前。v2 从全部1,081人得到278个初始配对，确定性删减到100对后，最大
+SMD为**0.0819**、最大分类比例差为**0.040**，全部数据门通过且两次运行输出哈希逐位一致。
+这允许另行预注册并运行 CODA 模型，但截至本文档更新时，AST／OPERA、projector、retrieval
+和TB classifier仍未运行。
 
 当前证据是：
 
@@ -168,7 +173,8 @@ SMD 为 0.276（门槛 0.12），最大分类水平比例差为 0.13（门槛 0.
 - 线性和固定 MLP 两种 readout；
 - retrieval、probe、fusion 和 calibration 的闭环；
 - 没有独立外部模型确认；
-- 两个受控外部数据集均在预注册平衡门停止，未通过 post-hoc 修改规则救回；
+- Coswara 在预注册平衡门停止；CODA v1 停止，但透明标记的 model-blind match-first v2 已通过
+  数据门，模型结果尚不存在；
 - synthetic 没有通过机制门。
 
 Cambridge COVID-19 Sounds 是仍开放的受限数据外部路线。仓库已提供官方 Task 2 原始发布格式
@@ -191,7 +197,7 @@ Cambridge COVID-19 Sounds 是仍开放的受限数据外部路线。仓库已提
 - probe 可解码性证明分类器因果使用了某属性；
 - matched evaluation 消除了所有 confounding；
 - synthetic 已证明一般机制；
-- Coswara 或 CODA TB 已完成外部复现。
+- Coswara 或 CODA TB 已完成外部模型复现。
 
 ## 10. 仓库位置
 
@@ -202,6 +208,8 @@ Cambridge COVID-19 Sounds 是仍开放的受限数据外部路线。仓库已提
 - 最终小型结果与 SHA-256：`results/route_a_final/`
 - Coswara 数据门结局：`docs/COSWARA_DATA_GATE_OUTCOME_ZH.md`
 - CODA TB 数据门结局：`docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md`
+- CODA TB match-first v2：`docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md`
+- CODA TB v2 公开摘要：`results/coda_tb_match_first_v2_summary.json`
 - CODA TB 公开聚合摘要：`results/coda_tb_data_gate_summary.json`
 - Cambridge 合作者一键外部验证包：`external_validation/cambridge_covid_sounds/`
 - 一次性执行器：`scripts/run_icassp_route_a_once.sh`

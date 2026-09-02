@@ -158,8 +158,9 @@ sensitivity 也不具正文资格。
 - probability transport：NLL 是 confidence mismatch；
 - MLP：不是简单线性 readout 限制；
 - OPERA：不是 AST 单一 backbone；
-- Coswara、CODA TB 数据门 NO-GO 与 synthetic gate failure；
-- 单数据集 discovery、test 参与过前期设计、无独立外部确认；
+- Coswara 与 CODA TB v1 数据门 NO-GO、CODA match-first v2 数据门 GO，以及 synthetic gate
+  failure；必须明确数据门 GO 不是模型确认；
+- 单个已完成 disease-transfer 数据集、test 参与过前期设计、尚无独立外部模型确认；
 - 结论与最低审计建议。
 
 ## Abstract 必须包含的五件事

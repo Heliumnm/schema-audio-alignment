@@ -38,6 +38,8 @@ MIN_VAL_OR_SOURCE = 75
 MIN_VAL_OR_SOURCE_PER_CLASS = 15
 MIN_UNIQUE_PROFILES = 100
 MAX_PROFILE_FRACTION = 0.10
+PROTOCOL_SPLIT_FIRST_V1 = "split-first-v1"
+PROTOCOL_MATCH_FIRST_V2 = "match-first-v2"
 
 EXACT_MATCH_FIELDS = ("country", "sex")
 CONTINUOUS_BALANCE_FIELDS = (
@@ -544,6 +546,77 @@ def trim_pairs(pairs: list[dict[str, object]]) -> tuple[list[dict[str, object]],
     return current, removed
 
 
+def trim_pairs_to_floor(
+    pairs: list[dict[str, object]],
+) -> tuple[list[dict[str, object]], list[str]]:
+    """Follow the v1 greedy path to exactly the frozen 100-pair target size.
+
+    Unlike v1, v2 does not stop when a larger set first passes the balance limits.  The
+    target size is fixed at the preregistered power floor so that target selection cannot
+    consume a result-dependent amount of the development cohort.
+    """
+    current = list(pairs)
+    removed: list[str] = []
+    while len(current) > MIN_MATCHED_PAIRS:
+        candidates: list[tuple[float, str, int]] = []
+        for index, pair in enumerate(current):
+            remaining = current[:index] + current[index + 1 :]
+            objective = balance_objective(balance(remaining))
+            candidates.append((objective, str(pair["pair_id"]), index))
+        _, pair_id, index = min(candidates)
+        removed.append(pair_id)
+        del current[index]
+    return current, removed
+
+
+def assign_splits_and_pairs(
+    participants: list[dict[str, object]], protocol: str
+) -> tuple[list[dict[str, object]], list[dict[str, object]], list[str]]:
+    """Apply one frozen split/matching protocol and mutate participant split fields."""
+    if protocol == PROTOCOL_SPLIT_FIRST_V1:
+        deterministic_outer_split(participants)
+        deterministic_development_split(participants)
+        pairs_before = initial_pairs(participants)
+        pairs, removed_pair_ids = trim_pairs(pairs_before)
+    elif protocol == PROTOCOL_MATCH_FIRST_V2:
+        # Every eligible participant is allowed to compete for the matched endpoint.  No
+        # development assignment exists until the endpoint is frozen.
+        for row in participants:
+            row["outer_split"] = "target_candidate"
+            row["split"] = "target_unmatched"
+        pairs_before = initial_pairs(participants)
+        pairs, removed_pair_ids = trim_pairs_to_floor(pairs_before)
+
+        matched_ids = {
+            str(identifier)
+            for pair in pairs
+            for identifier in (pair["negative_id"], pair["positive_id"])
+        }
+        for row in participants:
+            if str(row["participant"]) in matched_ids:
+                row["outer_split"] = "matched_target"
+                row["split"] = "matched_target"
+            else:
+                row["outer_split"] = "development"
+                row["split"] = ""
+        # Reuse the exact v1 development salt and 70/15/15 rule.  Matched rows have an
+        # outer_split value ignored by this function and therefore cannot flow back.
+        deterministic_development_split(participants)
+        return pairs_before, pairs, removed_pair_ids
+    else:
+        raise ValueError(f"unknown protocol: {protocol}")
+
+    matched_ids = {
+        str(identifier)
+        for pair in pairs
+        for identifier in (pair["negative_id"], pair["positive_id"])
+    }
+    for row in participants:
+        if str(row["participant"]) in matched_ids:
+            row["split"] = "matched_target"
+    return pairs_before, pairs, removed_pair_ids
+
+
 def class_counts(rows: Sequence[dict[str, object]], split: str) -> dict[str, int]:
     selected = [row for row in rows if row.get("split") == split]
     counts = Counter(int(row["label"]) for row in selected)
@@ -554,6 +627,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--protocol",
+        choices=(PROTOCOL_SPLIT_FIRST_V1, PROTOCOL_MATCH_FIRST_V2),
+        default=PROTOCOL_SPLIT_FIRST_V1,
+    )
     args = parser.parse_args()
 
     root = args.data_root.resolve()
@@ -618,19 +696,10 @@ def main() -> int:
             within_participant_duplicate_files_removed += len(items) - 1
 
     participants, excluded = prepare_participants(clinical, additional, retained_by_participant)
-    deterministic_outer_split(participants)
-    deterministic_development_split(participants)
-    pairs_before = initial_pairs(participants)
-    pairs, removed_pair_ids = trim_pairs(pairs_before)
+    pairs_before, pairs, removed_pair_ids = assign_splits_and_pairs(
+        participants, args.protocol
+    )
     pair_report = balance(pairs)
-    matched_ids = {
-        str(identifier)
-        for pair in pairs
-        for identifier in (pair["negative_id"], pair["positive_id"])
-    }
-    for row in participants:
-        if str(row["participant"]) in matched_ids:
-            row["split"] = "matched_target"
 
     profile_counts = Counter(str(row["profile_sha256"]) for row in participants)
     eligible_counts = Counter(int(row["label"]) for row in participants)
@@ -760,7 +829,12 @@ def main() -> int:
     )
 
     audit: dict[str, object] = {
-        "schema_version": "coda-tb-data-gate-v1",
+        "schema_version": (
+            "coda-tb-data-gate-match-first-v2"
+            if args.protocol == PROTOCOL_MATCH_FIRST_V2
+            else "coda-tb-data-gate-v1"
+        ),
+        "protocol": args.protocol,
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "data_root": str(root),
         "source": {"train_synapse_id": "syn39711065", "solicited_synapse_id": "syn40358494"},
@@ -819,6 +893,16 @@ def main() -> int:
         "split_overlap": split_overlap,
         "cross_split_pcm_groups": cross_split_pcm,
         "matching": {
+            "candidate_pool": (
+                "all eligible participants"
+                if args.protocol == PROTOCOL_MATCH_FIRST_V2
+                else "frozen 40% target candidate"
+            ),
+            "target_size_rule": (
+                f"exactly {MIN_MATCHED_PAIRS} pairs along the v1 greedy path"
+                if args.protocol == PROTOCOL_MATCH_FIRST_V2
+                else "first balanced set along the v1 greedy path, never below floor"
+            ),
             "initial_pairs": len(pairs_before),
             "removed_pairs": len(removed_pair_ids),
             "final": pair_report,

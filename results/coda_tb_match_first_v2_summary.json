@@ -1,0 +1,73 @@
+{
+  "audio_encoders_run": false,
+  "audio_qc": {
+    "decoded_and_passed": 9772,
+    "solicited_audio_mappings": 9772
+  },
+  "controlled_output_sha256": {
+    "audio_qc_csv": "b2df1c98bdcbbf5302d12a0f34b873b87e03e7cf3db3e5d4b5b9f16180004848",
+    "matched_pairs_csv": "f2587ffe9ac14102f73dc18c1b65186c23d38f5953be83e3fa5ac6836c43cea4",
+    "participant_manifest_csv": "f3a423d6dc2f09c1ec4a21af7ff45774cf7cb25fe3d84d3ed0285461e7781a6c"
+  },
+  "dataset": "CODA TB DREAM Challenge training data",
+  "decision": "GO",
+  "decision_stage": "model-blind secondary match-first-v2 data feasibility gate",
+  "eligible_cohort": {
+    "participants": 1081,
+    "tb_negative": 790,
+    "tb_positive": 291
+  },
+  "gates_all_passed": true,
+  "matching": {
+    "candidate_pool": "all 1081 eligible participants",
+    "exact_country_by_sex_balance": true,
+    "final_pairs": 100,
+    "initial_pairs": 278,
+    "max_absolute_smd": 0.08192596906219464,
+    "max_absolute_smd_limit": 0.12,
+    "max_categorical_level_difference": 0.040000000000000036,
+    "max_categorical_level_difference_limit": 0.08,
+    "removed_pairs": 178,
+    "target_size_rule": "exactly 100 pairs along the frozen v1 greedy path"
+  },
+  "model_outputs_read": false,
+  "projectors_trained": false,
+  "protocol": "match-first-v2",
+  "reproducibility": {
+    "controlled_output_hashes_identical": true,
+    "independent_runs": 2,
+    "matching_reports_identical": true,
+    "split_counts_identical": true
+  },
+  "run_date": "2026-09-03",
+  "source_sha256": {
+    "additional_metadata": "8ac6e15378fa8ba9d69f0276bd711353de36e7a6451af880b667e80b742cfa19",
+    "clinical_metadata": "2194c36368fa38711de94280c51041cd2efa90e7ec801ff86fe58d1e7fce9005",
+    "solicited_audio_map": "c043a8bb89e40d827d88f83a7301661fe7190b8b0dd978e6b233b16e14cabc9e"
+  },
+  "splits": {
+    "matched_target": {
+      "negative": 100,
+      "positive": 100,
+      "total": 200
+    },
+    "source_test": {
+      "negative": 116,
+      "positive": 40,
+      "total": 156
+    },
+    "train": {
+      "negative": 476,
+      "positive": 127,
+      "total": 603
+    },
+    "validation": {
+      "negative": 98,
+      "positive": 24,
+      "total": 122
+    }
+  },
+  "split_overlap": 0,
+  "tb_classifiers_trained": false,
+  "interpretation": "The model-blind match-first protocol can construct a balanced 100-pair CODA endpoint. This GO permits a separately preregistered model experiment; it is not a model result or the official challenge validation."
+}

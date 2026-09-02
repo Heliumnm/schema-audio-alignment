@@ -89,6 +89,34 @@ class DataGateTests(unittest.TestCase):
             self.assertEqual(pair["negative"]["country"], pair["positive"]["country"])
             self.assertEqual(pair["negative"]["sex"], pair["positive"]["sex"])
 
+    def test_match_first_v2_freezes_exactly_one_hundred_pairs_before_split(self):
+        rows = []
+        for index in range(130):
+            rows.append(participant(f"n{index:03d}", 0))
+            rows.append(participant(f"p{index:03d}", 1))
+        before, pairs, removed = gate.assign_splits_and_pairs(
+            rows, gate.PROTOCOL_MATCH_FIRST_V2
+        )
+        self.assertEqual(len(before), 130)
+        self.assertEqual(len(pairs), gate.MIN_MATCHED_PAIRS)
+        self.assertEqual(len(removed), 30)
+        self.assertEqual(sum(row["split"] == "matched_target" for row in rows), 200)
+        self.assertEqual(sum(row["outer_split"] == "matched_target" for row in rows), 200)
+        self.assertFalse(
+            {row["participant"] for row in rows if row["split"] == "matched_target"}
+            & {row["participant"] for row in rows if row["split"] == "train"}
+        )
+
+    def test_v1_remains_the_default_protocol(self):
+        rows = [participant(f"x{index:03d}", index % 2) for index in range(240)]
+        before, pairs, _ = gate.assign_splits_and_pairs(
+            rows, gate.PROTOCOL_SPLIT_FIRST_V1
+        )
+        self.assertLess(len(before), 120)
+        self.assertLessEqual(len(pairs), len(before))
+        self.assertEqual(set(row["outer_split"] for row in rows),
+                         {"development", "target_candidate"})
+
 
 if __name__ == "__main__":
     unittest.main()

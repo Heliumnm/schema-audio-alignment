@@ -1,6 +1,14 @@
 # CODA TB external transfer audit
 
-> **Outcome (2026-08-29): NO-GO at the frozen model-blind balance gate.** All 9,772
+> **Secondary v2 update (2026-09-03): model-blind GO.** Match-first v2 selected the
+> frozen 100-pair target from all 1,081 eligible participants before splitting the
+> remainder. Maximum absolute SMD was 0.0819 (limit 0.12) and maximum categorical level
+> difference was 0.040 (limit 0.08); every frozen data gate passed in two bit-identical
+> runs. This permits a separately preregistered model experiment but is not itself a model
+> result. See [`PREREGISTRATION_MATCH_FIRST_V2_ZH.md`](PREREGISTRATION_MATCH_FIRST_V2_ZH.md)
+> and [`../../docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md`](../../docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md).
+
+> **Original v1 outcome (2026-08-29): NO-GO at the frozen model-blind balance gate.** All 9,772
 > solicited-cough WAV files passed objective QC, but the final 100 matched pairs had maximum
 > absolute SMD 0.276 (limit 0.12) and maximum categorical level difference 0.13 (limit
 > 0.08). No representation, projector, classifier, or model score was produced. See
@@ -37,6 +45,26 @@ Formal AST/OPERA extraction and Correct/Within-label/Global alignment are forbid
 the aggregate gate has been reviewed and the controlled manifests have been hashed and
 frozen. The formal gate has now been reviewed and returned NO-GO, so those model stages
 remain closed under this preregistration.
+
+## Secondary match-first v2
+
+After the aggregate v1 gate was inspected—but before any CODA representation or model score
+was produced—a single model-blind sensitivity analysis was frozen. It changes only the order:
+the 100-pair matched target is selected from all eligible participants before the remaining
+participants are divided into train/validation/source-test. All matching fields, costs,
+thresholds and power requirements remain unchanged.
+
+See [`PREREGISTRATION_MATCH_FIRST_V2_ZH.md`](PREREGISTRATION_MATCH_FIRST_V2_ZH.md). Run it in
+a new controlled output directory so the v1 record is never overwritten:
+
+```bash
+bash external_validation/coda_tb/run_match_first_v2.sh \
+  /mnt/hd/data_heliu/resp_datasets/CODA_TB/raw \
+  /mnt/hd/data_heliu/resp_datasets/CODA_TB/audit_match_first_v2
+```
+
+This is a secondary external sensitivity analysis, not a replacement for the v1
+preregistration and not the official CODA challenge validation.
 
 ## Frozen data assumptions
 

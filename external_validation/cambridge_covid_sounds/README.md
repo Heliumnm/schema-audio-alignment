@@ -52,6 +52,22 @@ bash run_reconstructed_gate.sh \
 选择 70/10/20 是因为官方论文使用这个比例；不是为了复原已经缺失的官方成员关系。输出会明确
 标记 `official_split_reproduced: false`，论文中必须称为 *reconstructed cohort*。
 
+#### 只有 Task-2 UID 列表时先做什么
+
+先把 UID 列表与三平台 metadata 私下连接：
+
+```bash
+python src/match_task2_uid_metadata.py \
+  --uid-list /private/UID.txt \
+  --metadata-root /private/all_metadata \
+  --output-root output/task2_uid_metadata_audit
+```
+
+逐行结果只写入 git-ignored 的 `output/.../private/`，可分享的聚合计数写入
+`output/.../public/`。UID 列表只能确认 Task-2 成员；对多次填写问卷的参与者，它不能确定
+Task-2 音频属于哪个采集时间。因此在冻结标签和 split 前，仍需 `UID + Folder Name`，或者让
+重建脚本直接对 Task-2 音频树执行精确 session linkage。UID 和私有连接表不得提交 GitHub。
+
 ### 如果以后找到官方 Task 2 CSV：官方成员与 split 路径
 
 当前研究问题是 COVID-19 disease transfer，因此使用 **Task 2**，不是用于“是否有呼吸症状”的

@@ -198,7 +198,7 @@ transported to matched, the (C-W) NLL difference becomes +0.00013
 unchanged and uncertain. The source-calibrated penalty therefore mainly reflects confidence
 scale mismatch; recalibration removes the penalty but does not create disease ranking.
 
-### 3.5 Prespecified mechanism and external gates did not pass
+### 3.5 Prespecified mechanism and external feasibility gates
 
 A 3-by-3 confounding/shortcut grid with ten seeds per cell learned correspondence, but
 failed its preregistered high-confounding, dose-trend, and zero-confounding boundary gates.
@@ -213,6 +213,15 @@ or model score was produced. A second model-blind gate on CODA TB successfully d
 matched TB-positive/TB-negative pairs had maximum absolute SMD 0.276 and maximum categorical
 level difference 0.13, exceeding the frozen limits of 0.12 and 0.08. It also returned
 NO-GO before any representation or model score.
+
+After inspecting only that aggregate gate—and still before producing any CODA model
+output—we visibly preregistered a secondary match-first sensitivity. All matching fields,
+costs, thresholds and the deterministic trimming path were unchanged; the 100-pair target
+was selected from all 1,081 eligible participants before the remaining participants were
+split for development. The resulting target had maximum absolute SMD 0.0819 and maximum
+categorical level difference 0.040, and passed every frozen v2 data gate in two identical
+runs. This establishes endpoint feasibility, not external model confirmation; model
+execution was not part of this version of the manuscript.
 
 ## 4. Discussion
 

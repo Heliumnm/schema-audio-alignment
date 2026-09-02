@@ -13,6 +13,14 @@ Date frozen: 2026-08-19
 > representation or model score was produced. The next controlled-access execution route
 > is the frozen Cambridge COVID-19 Sounds collaborator package.
 
+> **Transparent secondary update (2026-09-03).** Before any CODA representation or model
+> score was produced, a separately preregistered match-first sensitivity changed only the
+> order of target selection and development splitting. It selected exactly 100 pairs from
+> all 1,081 eligible participants along the original deterministic matching path. Maximum
+> absolute SMD was 0.0819 and maximum categorical level difference was 0.040, so every
+> frozen v2 data gate passed. The original v1 NO-GO remains visible. CODA model execution
+> requires a separate frozen protocol and has not begun.
+
 ## Purpose
 
 The UKCOVID metadata-alignment results are a discovery audit, not a confirmatory result.
