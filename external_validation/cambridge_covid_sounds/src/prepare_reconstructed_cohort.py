@@ -284,7 +284,6 @@ def write_config(audio_root: Path, output_root: Path, destination: Path,
         (output_root / "private" / "reconstructed_audio_manifest.csv").resolve())
     template["inputs"]["audio_root"] = str(audio_root.resolve())
     if split_strategy == "match_first_v2":
-        template["format_version"] = "cambridge-external-v2"
         template["protocol"].update({
             "split_strategy": "match_first_v2",
             "split_origin": ("model-blind target-first matching; remaining participants split "

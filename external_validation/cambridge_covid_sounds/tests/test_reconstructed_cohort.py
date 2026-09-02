@@ -110,6 +110,7 @@ class ReconstructedCohortTest(unittest.TestCase):
             v2_config_path = root / "out1/config.match_first_v2.json"
             write_config(audio_root, root / "out1", v2_config_path, "match_first_v2")
             v2_config = json.loads(v2_config_path.read_text())
+            self.assertEqual(v2_config["format_version"], "cambridge-external-v1")
             self.assertEqual(v2_config["protocol"]["split_strategy"], "match_first_v2")
             self.assertEqual(v2_config["protocol"]["development_split_ratios"],
                              [0.70, 0.15, 0.15])
