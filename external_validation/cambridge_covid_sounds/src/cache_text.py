@@ -63,7 +63,10 @@ def execute(config_file: str) -> Path:
         raise RuntimeError(
             f"max schema length {max(lengths)} exceeds frozen max_length {maximum}; "
             "do not truncate or change this after model execution")
-    model = AutoModel.from_pretrained(model_path, dtype=dtype).eval().to(device)
+    # ``dtype=`` is the current Transformers spelling, while the frozen server runtime
+    # (4.49) still accepts only ``torch_dtype=``.  The latter remains backwards-compatible
+    # and preserves the exact requested weight dtype.
+    model = AutoModel.from_pretrained(model_path, torch_dtype=dtype).eval().to(device)
     for parameter in model.parameters():
         parameter.requires_grad_(False)
 
@@ -105,6 +108,7 @@ def execute(config_file: str) -> Path:
         "shape": list(embeddings.shape), "pooling": "mask_aware_mean",
         "padding": "right-fixed-length", "dtype": dtype_name,
         "model_revision": revision,
+        "transformers_version": __import__("transformers").__version__,
         "cache_bit_identical_under_shuffle": True,
         "embedding_values_sha16": sha16_array(embeddings),
         "cohort_sha256": sha256_file(manifest_path),
