@@ -1,11 +1,13 @@
 import importlib.util
 from pathlib import Path
+import sys
 
 import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[3]
 EXTRACT = ROOT / "external_validation" / "cambridge_covid_sounds" / "src" / "extract_embeddings.py"
+sys.path.insert(0, str(EXTRACT.parent))
 SPEC = importlib.util.spec_from_file_location("shared_extract_embeddings", EXTRACT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
