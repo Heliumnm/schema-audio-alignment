@@ -36,6 +36,9 @@ Projector 仍为 `input_dim -> 1024 -> 2560`，两层之后均为 LayerNorm + Re
 
 - 官方模型：`google/hear`，revision
   `9b2eb2853c426676255cc6ac5804b7f1fe8e563f`，本地 SavedModel；
+- 推理固定使用独立 TensorFlow 2.18 环境，与 Google 当前 HeAR 支持仓库一致。TensorFlow 2.15
+  虽能读取 SavedModel signature，但实际前向因 VHLO/StableHLO 版本不兼容而失败；本修正发生
+  在任何 embedding 生成之前，不改变样本、窗口、聚合或评测协议；
 - encoder 完全冻结，官方输出为每个 2 秒片段一个 512 维 embedding；
 - 输入为 16 kHz mono float waveform，不做逐文件峰值归一化；
 - 短于 2 秒：右侧补零至 32,000 samples；
@@ -73,4 +76,3 @@ pairing 均不得提交 GitHub。
   population 上得到正迁移；
 - matched target 已在前两个 backbone 中读取过，因此 HeAR 的所有 matched 结果都是探索性，
   需要新的 untouched 数据才能确认。
-

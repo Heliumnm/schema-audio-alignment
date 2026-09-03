@@ -30,6 +30,9 @@ HeAR 的 512 维输入直接接到 `512 -> 1024 -> 2560` projector；除第一�
 
 - 官方 `google/hear` SavedModel，revision
   `9b2eb2853c426676255cc6ac5804b7f1fe8e563f`，encoder 全冻结；
+- 推理固定使用独立 TensorFlow 2.18 环境，与 Google 当前 HeAR 支持仓库一致。TensorFlow 2.15
+  虽能读取 SavedModel signature，但实际前向因 VHLO/StableHLO 版本不兼容而失败；本修正发生
+  在任何 embedding 生成之前，不改变样本、窗口、聚合或评测协议；
 - 16 kHz mono float waveform，不做逐文件峰值归一化；
 - 短音频右补零至 2 秒/32,000 samples；
 - 长音频使用 `ceil(duration/2s)` 个均匀起点窗口，首窗从 0 开始、末窗贴住末尾，完整覆盖；
@@ -62,4 +65,3 @@ TensorFlow HeAR 提取使用独立环境；PyTorch alignment/评测沿用原环�
 - 不允许用 HeAR 结果替换、重定义或平均掉原来的主结论；
 - matched 集已在先前研究中读取，所有 HeAR matched 数字均为探索性；新的确认仍需要未触碰
   外部数据。
-

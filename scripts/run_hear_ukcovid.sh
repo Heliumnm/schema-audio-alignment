@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT=${1:-/mnt/hd/data_heliu/audio_provenance}
 STAGE=${2:-all}
-HEAR_PYTHON=${HEAR_PYTHON:-/mnt/hd/data_heliu/venvs/hear_tf215/bin/python}
+HEAR_PYTHON=${HEAR_PYTHON:-/mnt/hd/data_heliu/venvs/hear_tf218/bin/python}
 ALIGN_PYTHON=${ALIGN_PYTHON:-/home/heliu/anaconda3/bin/python}
 HEAR_MODEL=${HEAR_MODEL:-/mnt/hd/data_heliu/hf_models/google_hear_9b2eb285}
 UKCOVID_AUDIO=${UKCOVID_AUDIO:-/mnt/hd/data_heliu/resp_datasets/ukcovid/audio/audio}
@@ -94,4 +94,3 @@ case "$STAGE" in
   evaluate) run_evaluate ;;
   all) run_extract; run_train; run_evaluate ;;
 esac
-
