@@ -108,11 +108,17 @@ echo "isolated_formal_python=$(command -v python)"
 [[ -f "$OUTPUT_ROOT/public/reconstruction_report.json" ]] || {
   echo "Missing reconstruction report: $OUTPUT_ROOT/public/reconstruction_report.json"; exit 2;
 }
+[[ -f "$OUTPUT_ROOT/public/overlap_report.json" ]] || {
+  echo "Missing reviewed pre-training overlap report: $OUTPUT_ROOT/public/overlap_report.json"; exit 2;
+}
 
-python - "$OUTPUT_ROOT/public/data_gate.json" "$OUTPUT_ROOT/public/reconstruction_report.json" <<'PY'
-import json, sys
+python - "$OUTPUT_ROOT/public/data_gate.json" "$OUTPUT_ROOT/public/reconstruction_report.json" \
+  "$OUTPUT_ROOT/public/overlap_report.json" "$OUTPUT_ROOT/private/participant_manifest.csv" \
+  "$OUTPUT_ROOT/private/audio_qc_manifest.csv" <<'PY'
+import hashlib, json, sys
 gate = json.load(open(sys.argv[1]))
 reconstruction = json.load(open(sys.argv[2]))
+overlap = json.load(open(sys.argv[3]))
 if reconstruction.get("format_version") != "cambridge-reconstruction-v2":
     raise SystemExit(
         "Formal execution forbidden: this is the superseded Web-collapsed Cambridge gate. "
@@ -121,7 +127,24 @@ if reconstruction.get("format_version") != "cambridge-reconstruction-v2":
     )
 if gate.get("verdict") != "GO":
     raise SystemExit(f"Formal execution forbidden: data gate is {gate.get('verdict')!r}, not GO")
-print("REVIEWED DATA GATE GO")
+if overlap.get("format_version") != "cambridge-overlap-report-v1":
+    raise SystemExit("Formal execution forbidden: missing current overlap-audit format")
+if not overlap.get("formal_training_permitted_by_overlap_audit"):
+    raise SystemExit("Formal execution forbidden: pre-training overlap audit did not pass")
+
+def digest(path):
+    value = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for block in iter(lambda: handle.read(4 << 20), b""):
+            value.update(block)
+    return value.hexdigest()
+
+expected = overlap["manifest_hashes"]
+if digest(sys.argv[4]) != expected["participant_manifest_sha256"]:
+    raise SystemExit("Formal execution forbidden: participant manifest changed after overlap audit")
+if digest(sys.argv[5]) != expected["audio_qc_manifest_sha256"]:
+    raise SystemExit("Formal execution forbidden: audio-QC manifest changed after overlap audit")
+print("REVIEWED DATA GATE AND OVERLAP AUDIT PASS")
 PY
 
 # Install torch and torchaudio explicitly inside FORMAL_VENV, using the version

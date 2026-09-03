@@ -47,6 +47,31 @@ Web:           participant = Folder Name
 - target先冻结，其余participant按`label × platform`划分70/15/15；
 - AST-6L／OPERA-CT、Phi-2、5 seeds、500 epochs与readout协议。
 
+## 纵向采集与多录音规则
+
+- participant单位使用上述稳定namespace；同一participant最终只保留一行；
+- endpoint只接纳`last14`／`positiveLast14`和`negativeNever`，不另行推算检测日期窗口；
+- 同一稳定participant若在可连接采集中同时出现两种严格endpoint标签，整名participant排除；
+- 同标签的多个合格submission由固定的label-blind `participant + folder` hash选一个；
+- 被选submission内若有多条cough，分别编码后作participant-level算术平均；
+- 原始COVID状态是否随时间变化、严格标签冲突数和实际排除数均进入聚合overlap报告。
+
+## 正式训练前overlap报告
+
+合作者必须同时提供Task-1音频子集路径。Task 1只做目录inventory，不参与训练、选择或匹配。
+当前脚本在真实WAV数据门后生成`public/overlap_report.json`，至少报告：
+
+1. Task-2 unique UID和unique submission数量；
+2. 每UID recording数量与Android／iOS／Web人数；
+3. Task-1∩Task-2的UID和`UID/submission-folder`交集；
+4. train／validation／matched-target的逐对UID交集；
+5. decoded PCM及raw-file hash的跨split重复；
+6. 稳定UID内的原始状态变化与严格endpoint标签冲突。
+
+Task-1／Task-2可以有描述性重叠，因为Task 1完全不进入拟合；但Task-2必须完整展开为1,000个
+UID和1,486个submission，开发／target UID交集与跨split音频hash必须均为0。报告不包含任何
+UID、路径或逐人信息。
+
 ## 运行前已经知道的信息
 
 只用目录和metadata、未读取模型输出时已经知道：
@@ -69,7 +94,8 @@ Web:           participant = Folder Name
 3. 真实WAV QC／duplicate checks通过；
 4. matched target恰好100对；
 5. 所有旧v2阈值继续通过；
-6. 新aggregate输出经项目负责人人工复核。
+6. `overlap_report.formal_training_permitted_by_overlap_audit == true`；
+7. 新aggregate输出经项目负责人人工复核。
 
 任一条件失败即`NO_GO`；不回退到旧975人cohort，也不删除或覆盖旧结果。
 

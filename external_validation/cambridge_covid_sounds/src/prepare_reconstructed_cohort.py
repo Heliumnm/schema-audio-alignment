@@ -144,12 +144,19 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
     web = metadata.platform.map(canonical_string).str.casefold() == "web"
     metadata.loc[web, "participant_id"] = metadata.loc[web, "folder"]
 
+    valid_identity = metadata.participant_id != MISSING
+    raw_status_counts = metadata[valid_identity].groupby("participant_id").label.nunique()
+    n_uids_with_multiple_raw_statuses = int((raw_status_counts > 1).sum())
+
     exclusions["non_english_session"] = int((~metadata.language.map(_is_english)).sum())
     metadata = metadata[metadata.language.map(_is_english)].copy()
     metadata["y"] = metadata.label.map(_strict_label)
     exclusions["non_strict_covid_status"] = int(metadata.y.isna().sum())
     metadata = metadata[metadata.y.notna()].copy()
     metadata["y"] = metadata.y.astype(int)
+    strict_label_counts = metadata[metadata.participant_id != MISSING].groupby(
+        "participant_id").y.nunique()
+    n_uids_with_both_strict_labels = int((strict_label_counts > 1).sum())
     exclusions["missing_uid_or_folder"] = int(((metadata.participant_id == MISSING) |
                                                 (metadata.folder == MISSING)).sum())
     metadata = metadata[(metadata.participant_id != MISSING) &
@@ -257,6 +264,13 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
             for split in ("train", "validation", "test")
         },
         "exclusions": dict(sorted(exclusions.items())),
+        "longitudinal_label_diagnostics": {
+            "uids_with_multiple_raw_covid_statuses": n_uids_with_multiple_raw_statuses,
+            "uids_with_both_strict_endpoint_labels_before_audio_linkage":
+                n_uids_with_both_strict_labels,
+            "strict_conflicting_audio_linked_uids_excluded": int(
+                exclusions["participant_observed_under_both_labels"]),
+        },
         "metadata_bundle_sha256": sha256_text("\n".join(
             f"{name}\t{digest}" for name, digest in hashes)),
         "private_manifest_hashes": {

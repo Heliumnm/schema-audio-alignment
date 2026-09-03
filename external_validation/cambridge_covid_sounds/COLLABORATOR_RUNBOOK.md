@@ -27,7 +27,8 @@ describe a new random split as the official benchmark. Run:
 bash run_reconstructed_match_first_v2.sh \
   /DTA/covid19/metadata \
   /DTA/test2 \
-  /DTA/cambridge_match_first_v2
+  /DTA/cambridge_match_first_v2 \
+  /DTA/task1
 ```
 
 The second argument must be the Task-2-only audio tree and must retain
@@ -35,8 +36,11 @@ The second argument must be the Task-2-only audio tree and must retain
 `positiveLast14/last14` versus `negativeNever` sessions, excludes participants observed under
 both labels, and selects one audio-linked session per participant by a fixed label-blind hash.
 It first freezes exactly 100 matched positive/negative pairs, then splits only the remaining
-participants 70/15/15 within label x platform into train, validation and source-test. It is a
-versioned secondary sensitivity endpoint, not an official split reproduction or an untouched
+participants 70/15/15 within label x platform into train, validation and source-test. The
+Task-1 path is inventory-only: no Task-1 audio enters fitting. The command also creates a
+public identifier-free overlap report and refuses formal training if participant splits or audio
+hashes cross evaluation populations. This is a versioned secondary sensitivity endpoint, not an
+official split reproduction or an untouched
 confirmation.
 
 If `public/data_gate.json` says `NO_GO`, return the public bundle and stop. Do not change the

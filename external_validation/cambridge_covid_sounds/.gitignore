@@ -1,6 +1,6 @@
 config.local.json
 output/*
 !output/.gitkeep
-cambridge_audit_output/
+cambridge_audit_output*/
 **/__pycache__/
 *.pyc

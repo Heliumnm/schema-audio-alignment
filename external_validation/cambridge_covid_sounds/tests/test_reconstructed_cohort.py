@@ -131,6 +131,12 @@ class ReconstructedCohortTest(unittest.TestCase):
             self.assertEqual(audio.uid.nunique(), 40)
             self.assertNotIn(conflict_uid, set(people1.uid))
             self.assertEqual(first["exclusions"]["participant_observed_under_both_labels"], 1)
+            self.assertEqual(
+                first["longitudinal_label_diagnostics"]
+                ["uids_with_both_strict_endpoint_labels_before_audio_linkage"], 1)
+            self.assertEqual(
+                first["longitudinal_label_diagnostics"]
+                ["strict_conflicting_audio_linked_uids_excluded"], 1)
             self.assertFalse(first["official_split_reproduced"])
 
             config_path = root / "out1/config.local.json"

@@ -65,10 +65,12 @@ decode、时长、finite/nonzero、PCM duplicate 等波形 QC。英国合作者�
 bash run_reconstructed_match_first_v2.sh \
   /DATA/covid19/metadata \
   /DATA/test2 \
-  /DATA/cambridge_match_first_v2
+  /DATA/cambridge_match_first_v2 \
+  /DATA/task1
 ```
 
-只有返回的 `public/data_gate.json` 为 `GO`，才允许人工审阅并另行解锁模型阶段。
+只有返回的 `public/data_gate.json` 为 `GO`，且 `public/overlap_report.json` 的正式训练许可为
+`true`，才允许人工审阅并另行解锁模型阶段。Task 1 只用于报告跨任务重叠，不进入训练。
 
 ## 解释边界
 
