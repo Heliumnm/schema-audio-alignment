@@ -24,3 +24,7 @@ def test_unsafe_value_fails():
         pass
     else:
         raise AssertionError("unsafe schema value was accepted")
+
+
+def test_legacy_lowercase_missing_is_canonicalised():
+    assert safe("[missing]") == "[MISSING]"

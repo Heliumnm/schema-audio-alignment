@@ -40,8 +40,8 @@ def safe(value: object) -> str:
     if pd.isna(value) or str(value).strip() == "":
         return "[MISSING]"
     text = str(value).strip()
-    if text == "[MISSING]":
-        return text
+    if text.casefold() == "[missing]":
+        return "[MISSING]"
     if any(char in text for char in "[]\n\r\x00"):
         raise ValueError(f"unsafe schema value: {text!r}")
     return text
