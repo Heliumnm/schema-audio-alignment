@@ -2,7 +2,7 @@
 
 > 中文完整故事版：[docs/项目完整故事_中文.md](docs/项目完整故事_中文.md)
 
-## Current ICASSP audit extension (UKCOVID + CODA TB, September 2026)
+## Current ICASSP audit extension (UKCOVID + CODA TB + Cambridge, September 2026)
 
 The Route-A audit is complete. It asks whether correct audio--metadata pairing learns
 portable disease evidence or participant/cohort correspondence. The controlled arms are
@@ -40,8 +40,15 @@ is zero. The current endpoint is a custom, cough-only strict-COVID reconstructio
 official Task-2 split CSV is missing. This audit exposed a Web-identity bug in the earlier gate:
 18 Web submissions had been collapsed into one `form-app-users` participant. The old 975-person
 gate is therefore superseded; the corrected strict cohort has 989 subjects (500 negative, 489
-positive) before real-WAV QC. No Cambridge model score exists, and formal training is blocked
-until the collaborator reruns and the team reviews the corrected gate.
+positive). The corrected real-WAV gate independently reproduced on the GPU server with 100
+perfectly balanced matched pairs, after which AST-6L, OPERA-CT and HeAR were run under the same
+five-seed pairing audit. Correct-minus-Within profile MRR was +0.0433 [0.0151, 0.0799] for AST,
++0.0298 [−0.0011, 0.0638] for OPERA and +0.0457 [0.0203, 0.0763] for HeAR. The corresponding
+matched COVID delta AUROCs were −0.0448, +0.0077 and −0.0512, all with intervals spanning zero,
+while sex-probe deltas were consistently positive and significant (+0.132, +0.123, +0.128).
+Thus Cambridge reproduces the correspondence-versus-transfer separation across three backbones,
+but remains a reconstructed-split external sensitivity rather than an official benchmark
+replication or untouched confirmation.
 
 Start with:
 
@@ -57,6 +64,7 @@ Start with:
 - [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
 - [Cambridge Task-2 identity audit and corrected namespace](external_validation/cambridge_covid_sounds/CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md)
 - [Cambridge match-first v2.1 identity-fix preregistration](external_validation/cambridge_covid_sounds/PREREGISTRATION_MATCH_FIRST_V2_1_IDENTITY_FIX_ZH.md)
+- [Cambridge Task-2 three-backbone formal result](docs/CAMBRIDGE_TASK2_FORMAL_RESULTS_ZH.md)
 
 ## Historical ICBHI/schema track
 

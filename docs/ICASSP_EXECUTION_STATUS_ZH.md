@@ -2,8 +2,8 @@
 
 日期：2026-09-03
 
-状态：**UKCOVID Route-A 与 CODA TB secondary external sensitivity 已执行；Cambridge 正式模型
-因 Web participant namespace 修正而暂停，等待合作者重跑数据门；新 mitigation 方法尚未执行。**
+状态：**UKCOVID Route-A、CODA TB secondary external sensitivity 与 Cambridge Task-2
+重建外部敏感性已执行；Coswara 三骨干 post-hoc stress test 正在评估；新 mitigation 方法尚未执行。**
 
 ## 一句话结论
 
@@ -53,7 +53,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干 post-hoc stress test 协议已冻结；尚未运行模型分数 |
 | CODA TB 外部敏感性 | **正式模型已完成** | 两个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
-| Cambridge Task-2-subset 外部敏感性 | **旧v2 gate superseded；修正版待重跑** | 身份核对确认是Cambridge官方Task-2音频子集上的custom strict-COVID cough endpoint；旧代码合并了Web subjects，模型未运行 |
+| Cambridge Task-2-subset 外部敏感性 | **修正版数据门与三骨干正式模型已完成** | Correct 增强 profile retrieval 与性别信息，但三个 backbone 均无 matched COVID transfer 增益 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
 ## 3. Alignment 是否真的学会了 correspondence？
@@ -192,7 +192,7 @@ correspondence。matched-target 上的 TB Correct−Within 结果为：
 - retrieval、probe、fusion 和 calibration 的闭环；
 - 一个完成的 CODA TB secondary external sensitivity：重复 correspondence／transfer 分离，
   但 matched disease endpoint 为 inconclusive，不是 untouched confirmatory replication；
-- Coswara 原贪心门停止；透明标记的全局约束二次门已通过，模型结果尚未产生；CODA v1
+- Coswara 原贪心门停止；透明标记的全局约束二次门已通过，三骨干模型已训练且正在评估；CODA v1
   停止，其透明标记的 match-first v2 与正式模型历史均完整保留；
 - synthetic 没有通过机制门。
 
@@ -204,8 +204,16 @@ participant identifier精确／忽略大小写重叠均为0。
 
 身份审计同时发现旧重建代码把18个Web submission合并成一个`form-app-users` participant。
 正确严格队列为989人（500阴性、489阳性），而不是旧gate的975人。旧v2 gate、split、100对
-target和config均已标记superseded；好消息是Cambridge模型从未启动，所以没有模型结果需要撤回。
-合作者须用修正版本重跑真实WAV数据门，人工复核新的aggregate `GO`后才可解锁模型。
+target和config均已标记superseded。修正后在Mac与服务器独立复现为989人、100对、最大SMD与
+fine-balance difference均为0，随后完成AST-6L、OPERA-CT和HeAR正式实验。
+
+Cambridge profile retrieval 的Correct−Within MRR为AST **+0.0433 [0.0151,0.0799]**、
+OPERA **+0.0298 [−0.0011,0.0638]**、HeAR **+0.0457 [0.0203,0.0763]**。matched COVID
+ΔAUROC则为AST **−0.0448 [−0.1181,0.0300]**、OPERA **+0.0077
+[−0.0869,0.1132]**、HeAR **−0.0512 [−0.1186,0.0161]**；三者均无正向迁移证据。
+性别probe的Correct−Within为+0.1318、+0.1233、+0.1282，三个区间均排除0。因此Cambridge
+跨三个backbone重复了“patient correspondence成立、disease transfer不成立”的主形状；
+但它仍是自定义重建split的外部敏感性，不是官方benchmark复现或untouched confirmation。
 
 ## 9. 当前可以与不能说的话
 
@@ -244,5 +252,9 @@ target和config均已标记superseded；好消息是Cambridge模型从未启动�
 - Cambridge v2聚合预检查：`results/cambridge_task2_match_first_precheck.json`
 - Cambridge Task-2身份核对：`external_validation/cambridge_covid_sounds/CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md`
 - Cambridge身份核对机器可读汇总：`results/cambridge_task2_identity_audit.json`
+- Cambridge三骨干正式结果：`docs/CAMBRIDGE_TASK2_FORMAL_RESULTS_ZH.md`、
+  `results/cambridge_task2_formal_results_ast.json`、
+  `results/cambridge_task2_formal_results_opera_ct.json`、
+  `results/cambridge_task2_formal_results_hear.json`
 - 一次性执行器：`scripts/run_icassp_route_a_once.sh`
 - 下一阶段方法设计（未执行）：`docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md`
