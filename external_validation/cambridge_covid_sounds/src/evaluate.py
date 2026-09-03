@@ -12,6 +12,7 @@ from typing import Callable
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold
 
 from common import (REPO_ROOT, atomic_json, load_config, output_paths, sha16_array,
                     sha256_file)
@@ -24,7 +25,8 @@ from eval_metadata_alignment import (fit_disease_head, fit_probe, hierarchical_c
 
 ARMS = ("raw_audio", "correct", "within_label", "global")
 CONTEXT_ARMS = ("metadata_only", "raw_audio_plus_metadata")
-EVALUATION_ARMS = ARMS + CONTEXT_ARMS
+ALIGNED_CONTEXT_ARMS = ("metadata_plus_correct", "metadata_plus_within",
+                        "metadata_plus_global")
 
 
 def mean_nll(y: np.ndarray, probability: np.ndarray) -> float:
@@ -83,6 +85,28 @@ def pair_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
             "n_seeds": int(len(A))}
 
 
+def group_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
+                     group_id: np.ndarray, fn: Callable, boot: int, seed: int) -> dict:
+    """Paired participant × seed interval resampling all rows in a matched stratum."""
+    unique = np.unique(group_id.astype(str))
+    groups = {group: np.where(group_id.astype(str) == group)[0] for group in unique}
+    if any(len(indices) < 2 for indices in groups.values()):
+        raise RuntimeError("matched-stratum bootstrap found a singleton stratum")
+    per_seed = np.asarray([fn(y, A[k]) - fn(y, B[k]) for k in range(len(A))])
+    rng, values = np.random.RandomState(seed), []
+    for _ in range(boot):
+        sampled = rng.choice(unique, len(unique), replace=True)
+        indices = np.concatenate([groups[group] for group in sampled])
+        sampled_seeds = rng.choice(len(A), len(A), replace=True)
+        values.append(float(np.mean([
+            fn(y[indices], A[s, indices]) - fn(y[indices], B[s, indices])
+            for s in sampled_seeds])))
+    return {"observed": float(np.mean(per_seed)),
+            "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
+            "per_seed": per_seed.tolist(), "n_groups": int(len(unique)),
+            "n_seeds": int(len(A)), "cluster": "exact_matching_stratum"}
+
+
 def absolute_metrics(probability: np.ndarray, y: np.ndarray, boot: int, seed: int) -> dict:
     result = {}
     for offset, (name, fn) in enumerate((("auroc", auroc), ("nll", mean_nll),
@@ -128,8 +152,15 @@ def retrieval_summary(representations: dict[str, np.ndarray], table: pd.DataFram
             value, reciprocal = profile_mrr(
                 representations[arm][seed_index], query, text_id, embeddings)
             values.append(value); rows.append(reciprocal)
-        scores[arm] = {"macro_profile_mrr": float(np.mean(values)), "per_seed": values}
-        row_rr[arm] = np.stack(rows)
+        stacked = np.stack(rows)
+        scores[arm] = {
+            "macro_profile_mrr": float(np.mean(values)),
+            "micro_mrr": float(stacked.mean()),
+            "r_at_1": float(np.mean(stacked == 1.0)),
+            "r_at_10": float(np.mean(stacked >= 0.1)),
+            "per_seed": values,
+        }
+        row_rr[arm] = stacked
 
     profiles = np.unique(text_id[query])
     by_profile = {
@@ -161,6 +192,19 @@ def make_probe_target(table: pd.DataFrame, spec: dict) -> pd.Series:
         return result.where(observed)
     positive = {str(value).strip().casefold() for value in spec["positive_values"]}
     return values.astype(str).str.strip().str.casefold().isin(positive).where(observed)
+
+
+def probe_validation_folds(target: pd.Series, validation: np.ndarray) -> np.ndarray:
+    observed = target.notna().to_numpy()
+    indices = np.where(validation & observed)[0]
+    values = target.iloc[indices].astype(int).to_numpy()
+    folds = np.full(len(target), -1, dtype=np.int16)
+    if len(np.unique(values)) < 2 or np.min(np.bincount(values, minlength=2)) < 5:
+        return folds
+    splitter = StratifiedKFold(5, shuffle=True, random_state=20260903)
+    for fold, (_, held) in enumerate(splitter.split(indices, values)):
+        folds[indices[held]] = fold
+    return folds
 
 
 def metadata_matrix(table: pd.DataFrame, fields: list[str], train: np.ndarray) \
@@ -203,6 +247,8 @@ def execute(config_file: str, backbone: str) -> Path:
     seeds = list(map(int, settings["seeds"]))
     boot = int(config["protocol"].get("bootstrap", 2000))
     representations = load_representations(paths, table, backbone, seeds)
+    full_fusion = bool(config["protocol"].get("full_fusion", False))
+    evaluation_arms = ARMS + CONTEXT_ARMS + (ALIGNED_CONTEXT_ARMS if full_fusion else ())
 
     metadata, metadata_features = metadata_matrix(
         table, list(config["protocol"]["schema_fields"]), train)
@@ -211,11 +257,18 @@ def execute(config_file: str, backbone: str) -> Path:
     representations["raw_audio_plus_metadata"] = np.repeat(
         np.concatenate([representations["raw_audio"][0], metadata], axis=1)[None, :, :],
         len(seeds), axis=0)
+    if full_fusion:
+        for audio_arm, fusion_arm in zip(
+                ("correct", "within_label", "global"), ALIGNED_CONTEXT_ARMS):
+            representations[fusion_arm] = np.stack([
+                np.concatenate([representations[audio_arm][seed], metadata], axis=1)
+                for seed in range(len(seeds))])
 
     probabilities, logits, fits = {}, {}, {}
-    for arm in EVALUATION_ARMS:
+    deterministic_arms = ("raw_audio", *CONTEXT_ARMS)
+    for arm in evaluation_arms:
         arm_probability, arm_logits, arm_fits = [], [], []
-        fit_indices = [0] if arm in ("raw_audio", *CONTEXT_ARMS) else range(len(seeds))
+        fit_indices = [0] if arm in deterministic_arms else range(len(seeds))
         for seed_index in fit_indices:
             head = fit_disease_head(
                 representations[arm][seed_index], y, train, validation, folds,
@@ -228,7 +281,7 @@ def execute(config_file: str, backbone: str) -> Path:
                              "calibrator_intercept": head.calibrator_intercept,
                              "representation_sha16": sha16_array(
                                  representations[arm][seed_index])})
-        if arm in ("raw_audio", *CONTEXT_ARMS):
+        if arm in deterministic_arms:
             arm_probability *= len(seeds); arm_logits *= len(seeds)
             arm_fits = [{**arm_fits[0], "seed": seed,
                          "replicated_deterministic_reference": True} for seed in seeds]
@@ -244,19 +297,33 @@ def execute(config_file: str, backbone: str) -> Path:
                         ("correct", "raw_audio", "C-R"),
                         ("raw_audio_plus_metadata", "metadata_only", "RM-M"))
     for population, mask in populations.items():
-        for arm in EVALUATION_ARMS:
+        for arm in evaluation_arms:
             metrics[population][arm] = absolute_metrics(
                 probabilities[arm][:, mask], y[mask], boot, 20260825)
-        for left, right, name in comparison_pairs:
+        active_comparisons = list(comparison_pairs)
+        if full_fusion:
+            active_comparisons.extend((
+                ("metadata_plus_correct", "metadata_plus_within", "MC-MW"),
+                ("metadata_plus_within", "metadata_plus_global", "MW-MG"),
+                ("metadata_plus_correct", "raw_audio_plus_metadata", "MC-MR"),
+            ))
+        for left, right, name in active_comparisons:
             comparisons[population][name] = {}
             for metric_name, fn in (("delta_auroc", auroc),
                                     ("delta_neg_nll", lambda yy, pp: -mean_nll(yy, pp)),
                                     ("delta_neg_brier", lambda yy, pp: -brier(yy, pp))):
                 if population == "matched":
-                    result = pair_cluster_ci(
-                        probabilities[left][:, mask], probabilities[right][:, mask],
-                        y[mask], table.loc[mask, "pair_id"].astype(str).to_numpy(),
-                        fn, boot, 20260825)
+                    cluster = config["protocol"].get("matched_bootstrap_cluster", "pair_id")
+                    if cluster == "exact_stratum":
+                        result = group_cluster_ci(
+                            probabilities[left][:, mask], probabilities[right][:, mask],
+                            y[mask], table.loc[mask, "exact_stratum"].astype(str).to_numpy(),
+                            fn, boot, 20260825)
+                    else:
+                        result = pair_cluster_ci(
+                            probabilities[left][:, mask], probabilities[right][:, mask],
+                            y[mask], table.loc[mask, "pair_id"].astype(str).to_numpy(),
+                            fn, boot, 20260825)
                 else:
                     result = paired_hierarchical_ci(
                         probabilities[left][:, mask], probabilities[right][:, mask],
@@ -275,13 +342,17 @@ def execute(config_file: str, backbone: str) -> Path:
                 np.unique(target_y[validation & observed]).size < 2:
             probes[probe_name] = {"status": "not_estimable_in_source"}
             continue
+        probe_folds = probe_validation_folds(target, validation)
+        if np.any(probe_folds[validation & observed] < 0):
+            probes[probe_name] = {"status": "not_estimable_in_source"}
+            continue
         probe_logits = {}
         for arm in ARMS:
             values = []
             fit_indices = [0] if arm == "raw_audio" else range(len(seeds))
             for seed_index in fit_indices:
                 value, _, _, _ = fit_probe(
-                    representations[arm][seed_index], target, train, folds,
+                    representations[arm][seed_index], target, train, probe_folds,
                     seeds[seed_index])
                 values.append(value)
             if arm == "raw_audio":
@@ -293,10 +364,19 @@ def execute(config_file: str, backbone: str) -> Path:
             continue
         probes[probe_name] = {"status": "ok", "matched": {}}
         for left, right, name in comparison_pairs[:3]:
-            probes[probe_name]["matched"][name] = pair_cluster_ci(
-                probe_logits[left][:, probe_mask], probe_logits[right][:, probe_mask],
-                target_y[probe_mask], table.loc[probe_mask, "pair_id"].astype(str).to_numpy(),
-                auroc, boot, 20260825)
+            cluster = config["protocol"].get("matched_bootstrap_cluster", "pair_id")
+            if cluster == "exact_stratum":
+                probes[probe_name]["matched"][name] = group_cluster_ci(
+                    probe_logits[left][:, probe_mask], probe_logits[right][:, probe_mask],
+                    target_y[probe_mask],
+                    table.loc[probe_mask, "exact_stratum"].astype(str).to_numpy(),
+                    auroc, boot, 20260825)
+            else:
+                probes[probe_name]["matched"][name] = pair_cluster_ci(
+                    probe_logits[left][:, probe_mask], probe_logits[right][:, probe_mask],
+                    target_y[probe_mask],
+                    table.loc[probe_mask, "pair_id"].astype(str).to_numpy(),
+                    auroc, boot, 20260825)
 
     correspondence_ci = retrieval["correct_minus_within"]["ci"]
     transfer_auc = comparisons["matched"]["C-W"]["delta_auroc"]
@@ -320,7 +400,8 @@ def execute(config_file: str, backbone: str) -> Path:
     public = {
         "format_version": "cambridge-external-results-v1",
         "dataset": config.get("dataset"), "backbone": backbone,
-        "standing": "controlled-access external audit; interpret according to frozen branches",
+        "standing": config["protocol"].get(
+            "standing", "controlled-access external audit; interpret according to frozen branches"),
         "n": {"all": len(table), "train": int(train.sum()),
               "validation": int(validation.sum()), "standard_test": int(standard.sum()),
               "matched_test": int(matched.sum()), "matched_pairs": int(matched.sum() // 2)},
@@ -349,7 +430,7 @@ def execute(config_file: str, backbone: str) -> Path:
     private = paths["private"] / f"predictions_{backbone}.npz"
     arrays = {"participants": table.participant_identifier.astype(str).to_numpy(),
               "y": y, "seeds": np.asarray(seeds)}
-    for arm in EVALUATION_ARMS:
+    for arm in evaluation_arms:
         arrays[f"{arm}__calibrated"] = probabilities[arm]
         arrays[f"{arm}__logits"] = logits[arm]
     np.savez_compressed(private, **arrays)
@@ -360,7 +441,7 @@ def execute(config_file: str, backbone: str) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
-    parser.add_argument("--backbone", choices=("ast", "opera_ct"), required=True)
+    parser.add_argument("--backbone", choices=("ast", "opera_ct", "hear"), required=True)
     args = parser.parse_args()
     execute(args.config, args.backbone)
 

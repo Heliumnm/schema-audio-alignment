@@ -23,6 +23,8 @@
       "diarrhoea", "loss_of_smell", "vaccination", "mask_use"
     ],
     "bootstrap": 10000,
+    "full_fusion": true,
+    "matched_bootstrap_cluster": "exact_stratum",
     "auroc_equivalence_margin": 0.02,
     "nll_equivalence_margin": 0.01,
     "probes": {
