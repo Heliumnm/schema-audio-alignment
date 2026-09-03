@@ -65,6 +65,18 @@ class EvaluateHelperTest(unittest.TestCase):
         self.assertEqual(result["cluster"], "exact_matching_stratum")
         self.assertGreater(result["observed"], 0)
 
+    def test_stratum_bootstrap_accepts_singleton_probe_groups(self):
+        y = np.asarray([1, 0, 0, 0])
+        group = np.asarray(["a", "b", "b", "c"])
+        strong = np.tile(np.asarray([0.9, 0.1, 0.2, 0.3]), (2, 1))
+        weak = np.tile(np.asarray([0.6, 0.5, 0.4, 0.3]), (2, 1))
+
+        from audio_baselines_v2 import auroc
+        result = group_cluster_ci(strong, weak, y, group, auroc, 500, 7)
+        self.assertEqual(result["n_singleton_groups"], 2)
+        self.assertGreater(result["n_boot_valid"], 0)
+        self.assertGreater(result["n_boot_discarded_one_class"], 0)
+
     def test_probe_folds_follow_probe_target_and_exclude_missing(self):
         target = pd.Series(([False] * 10 + [True] * 10 + [None] * 5), dtype="boolean")
         mask = np.ones(len(target), dtype=bool)

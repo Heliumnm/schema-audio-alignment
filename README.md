@@ -27,9 +27,10 @@ gate also stopped, but a visibly versioned, model-blind
 secondary protocol selected the matched target before splitting the remainder and passed
 all frozen balance gates (100 pairs; max SMD 0.0819; max categorical difference 0.040).
 Its subsequently preregistered model audit is now complete. Correct pairing significantly
-improves profile retrieval for both AST-6L and OPERA-CT and retains age/sex information, but
-matched TB transfer is inconclusive and changes direction across backbones (Correct-minus-
-Within delta AUROC +0.034 [−0.022, 0.092] for AST; −0.026 [−0.087, 0.035] for OPERA).
+improves profile retrieval for AST-6L, OPERA-CT and HeAR and retains participant demographic
+information, but matched TB transfer is inconclusive and changes direction across backbones
+(Correct-minus-Within delta AUROC +0.034 [−0.022, 0.092] for AST; −0.026 [−0.087, 0.035]
+for OPERA; −0.013 [−0.092, 0.063] for HeAR).
 This secondary result extends the correspondence-versus-transfer ambiguity beyond UKCOVID;
 it does not establish that metadata alignment is universally harmful or ineffective.
 
@@ -145,8 +146,8 @@ patient-level disease tasks (3 of 4, with COPD the one counterexample).
 **Use AST's first 6 layers** — better than the full model on most tasks at half the
 compute, and far above the domain-specific alternatives.
 
-*Not claimed:* that OPERA is wrong in general. Four encoders, two corpora; HeAR, CLAP
-and AudioMAE were never tested, and OPERA reports 19 tasks.
+*Not claimed:* that OPERA or any tested backbone is wrong in general. The tested encoders and
+corpora remain limited; CLAP, AudioMAE and other model families remain open.
 
 ## Grounding: a claimed positive, retracted
 

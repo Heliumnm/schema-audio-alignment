@@ -51,8 +51,8 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
 | 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
-| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干 post-hoc stress test 协议已冻结；尚未运行模型分数 |
-| CODA TB 外部敏感性 | **正式模型已完成** | 两个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
+| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干模型训练完成；aggregate 评测正在重跑稀有 probe 的 bootstrap 汇总 |
+| CODA TB 外部敏感性 | **三骨干正式模型已完成** | 三个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
 | Cambridge Task-2-subset 外部敏感性 | **修正版数据门与三骨干正式模型已完成** | Correct 增强 profile retrieval 与性别信息，但三个 backbone 均无 matched COVID transfer 增益 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
@@ -167,20 +167,21 @@ eligible cohort（TB+ 291、TB− 790）。v1 先划分60/40、再在40% target 
 距离、100对、0.12／0.08门槛和唯一删减路径全部不变，只把 matched target 的冻结放到
 development split 之前。v2 从全部1,081人得到278个初始配对，确定性删减到100对后，最大
 SMD为**0.0819**、最大分类比例差为**0.040**，全部数据门通过且两次运行输出哈希逐位一致。
-随后在读取任何表示或模型分数前冻结正式协议，并完成 AST-6L 与 OPERA-CT 的
+随后在读取任何表示或模型分数前冻结正式协议，并完成 AST-6L、OPERA-CT 与 HeAR 的
 Correct／Within-label／Global × 5 seeds × 500 epochs。
 
 CODA profile retrieval 的 Correct−Within MRR 在 AST 为 **+0.0667 [0.0349, 0.1021]**，
-OPERA 为 **+0.0302 [0.0064, 0.0555]**，所以两个 backbone 都明确建立了 participant
+OPERA 为 **+0.0302 [0.0064, 0.0555]**，HeAR 为 **+0.0646 [0.0320, 0.1014]**，所以三个 backbone 都明确建立了 participant
 correspondence。matched-target 上的 TB Correct−Within 结果为：
 
 | backbone | ΔAUROC，95% CI | Δ(−NLL)，95% CI |
 |---|---:|---:|
 | AST-6L | +0.0341 [−0.0221, 0.0916] | +0.0198 [−0.0227, 0.0631] |
 | OPERA-CT | −0.0256 [−0.0872, 0.0346] | −0.0070 [−0.0596, 0.0406] |
+| HeAR | −0.0127 [−0.0916, 0.0631] | −0.0278 [−0.0816, 0.0206] |
 
-两个 backbone 的 sex 与 age≥45 Correct−Within probes 均显著为正，但 matched TB transfer
-的共同主指标均未通过，方向也不一致。冻结解释分支是
+三个 backbone 的 sex Correct−Within probe 均显著为正；age≥45 在 AST／OPERA 显著，HeAR
+方向为正但区间跨0。matched TB transfer 的共同主指标均未通过，方向也不一致。冻结解释分支是
 `correspondence_gain_but_matched_transfer_inconclusive`：不是正向 transfer，也不能因 CI
 较宽而写成已证明零效应。完整边界见 `docs/CODA_TB_FORMAL_RESULTS_ZH.md`。
 
@@ -190,7 +191,7 @@ correspondence。matched-target 上的 TB Correct−Within 结果为：
 - 两个 frozen audio backbone；
 - 线性和固定 MLP 两种 readout；
 - retrieval、probe、fusion 和 calibration 的闭环；
-- 一个完成的 CODA TB secondary external sensitivity：重复 correspondence／transfer 分离，
+- 一个完成的三骨干 CODA TB secondary external sensitivity：重复 correspondence／transfer 分离，
   但 matched disease endpoint 为 inconclusive，不是 untouched confirmatory replication；
 - Coswara 原贪心门停止；透明标记的全局约束二次门已通过，三骨干模型已训练且正在评估；CODA v1
   停止，其透明标记的 match-first v2 与正式模型历史均完整保留；
@@ -246,7 +247,8 @@ OPERA **+0.0298 [−0.0011,0.0638]**、HeAR **+0.0457 [0.0203,0.0763]**。matche
 - CODA TB v2 公开摘要：`results/coda_tb_match_first_v2_summary.json`
 - CODA TB 公开聚合摘要：`results/coda_tb_data_gate_summary.json`
 - CODA TB 正式 aggregate JSON：`results/coda_tb_formal_results_ast.json`、
-  `results/coda_tb_formal_results_opera_ct.json`、`results/coda_tb_formal_training_audit.json`
+  `results/coda_tb_formal_results_opera_ct.json`、`results/coda_tb_formal_results_hear.json`、
+  `results/coda_tb_formal_training_audit.json`
 - Cambridge 合作者一键外部验证包：`external_validation/cambridge_covid_sounds/`
 - Cambridge Task-2结构与v2预检查：`external_validation/cambridge_covid_sounds/TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md`
 - Cambridge v2聚合预检查：`results/cambridge_task2_match_first_precheck.json`

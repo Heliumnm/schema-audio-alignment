@@ -99,8 +99,12 @@ def group_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
     """Paired participant × seed interval resampling all rows in a matched stratum."""
     unique = np.unique(group_id.astype(str))
     groups = {group: np.where(group_id.astype(str) == group)[0] for group in unique}
-    if any(len(indices) < 2 for indices in groups.values()):
-        raise RuntimeError("matched-stratum bootstrap found a singleton stratum")
+    # Unlike pair-cluster resampling, an exact matching stratum is not required
+    # to contain exactly two observed rows. Auxiliary probe missingness can leave
+    # one observed participant in an otherwise valid stratum. The participant
+    # remains a legitimate one-row cluster; undefined one-class AUROC draws are
+    # discarded below rather than aborting the complete evaluation.
+    n_singletons = sum(len(indices) == 1 for indices in groups.values())
     per_seed = np.asarray([fn(y, A[k]) - fn(y, B[k]) for k in range(len(A))])
     rng, values = np.random.RandomState(seed), []
     for _ in range(boot):
@@ -117,6 +121,7 @@ def group_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
     return {"observed": float(np.mean(per_seed)),
             "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
             "per_seed": per_seed.tolist(), "n_groups": int(len(unique)),
+            "n_singleton_groups": int(n_singletons),
             "n_seeds": int(len(A)), "cluster": "exact_matching_stratum",
             "n_boot_requested": int(boot), "n_boot_valid": int(len(values)),
             "n_boot_discarded_one_class": int(boot - len(values))}
