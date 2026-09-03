@@ -2,8 +2,8 @@
 # One-command model-blind Task-2 reconstruction and target-first matching sensitivity gate.
 set -euo pipefail
 
-if [[ $# -ne 4 ]]; then
-  echo "Usage: bash run_reconstructed_match_first_v2.sh ALL_METADATA_DIR TASK2_AUDIO_ROOT OUTPUT_DIR TASK1_AUDIO_ROOT"
+if [[ $# -lt 3 || $# -gt 4 ]]; then
+  echo "Usage: bash run_reconstructed_match_first_v2.sh ALL_METADATA_DIR TASK2_AUDIO_ROOT OUTPUT_DIR [TASK1_AUDIO_ROOT]"
   exit 2
 fi
 
@@ -24,8 +24,9 @@ bash "$HERE/run_once.sh" "$CONFIG" gate
 # This report is deliberately generated after the real-WAV data gate: it checks the frozen
 # train/validation/matched manifests and reuses the gate's decoded-PCM hashes. Task 1 is
 # inventoried only for cross-task provenance; it is never used for model fitting.
-python "$HERE/src/overlap_report.py" \
-  --task1-root "$4" \
-  --task2-root "$2" \
-  --output-root "$OUTPUT_DIR"
+OVERLAP_ARGS=(--task2-root "$2" --output-root "$OUTPUT_DIR")
+if [[ $# -eq 4 ]]; then
+  OVERLAP_ARGS+=(--task1-root "$4")
+fi
+python "$HERE/src/overlap_report.py" "${OVERLAP_ARGS[@]}"
 python "$HERE/src/package_results.py" --config "$CONFIG"

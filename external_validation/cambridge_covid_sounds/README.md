@@ -48,11 +48,11 @@ structure+metadata层得到989人（500阴性、489阳性）。旧975人数字�
 bash run_reconstructed_match_first_v2.sh \
   /DTA/covid19/metadata \
   /DTA/test2 \
-  /DTA/cambridge_match_first_v2 \
-  /DTA/task1
+  /DTA/cambridge_match_first_v2
 ```
 
-第四个参数只用于生成Task-1/Task-2 overlap provenance，不进入任何训练。程序先冻结恰好100对
+如果Task-1子集已经存在，可把它作为可选第四个参数加入，只用于跨任务provenance；本项目没有
+使用Task 1，因此其缺失记录为未测量且不阻塞。程序先冻结恰好100对
 `matched_target`，再把剩余人按`label × platform`固定划为70% train、15% validation、
 15% source-test；随后生成不含ID的`public/overlap_report.json`。全程不加载模型。
 

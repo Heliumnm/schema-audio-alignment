@@ -72,6 +72,16 @@ class OverlapReportTest(unittest.TestCase):
             self.assertTrue(report["formal_training_permitted_by_overlap_audit"])
             self.assertNotIn(uids[0], (public / "overlap_report.json").read_text())
 
+            without_task1 = execute(None, task2, output, expected_task2_uids=4,
+                                    expected_task2_samples=4)
+            self.assertFalse(without_task1["task1"]["available"])
+            self.assertEqual(without_task1["cross_task"]["status"],
+                             "NOT_MEASURED_TASK1_UNAVAILABLE")
+            self.assertIsNone(
+                without_task1["cross_task"]["task1_intersection_task2_uid_count"])
+            self.assertTrue(
+                without_task1["formal_training_permitted_by_overlap_audit"])
+
 
 if __name__ == "__main__":
     unittest.main()

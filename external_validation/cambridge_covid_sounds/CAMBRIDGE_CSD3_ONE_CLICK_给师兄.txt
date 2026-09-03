@@ -13,25 +13,20 @@ run_reconstructed_match_first_v2.sh在新输出目录重跑真实WAV数据门，
 cd /home/yl809/projects/covid
 git pull --ff-only origin main
 
-# 先定位已下载的官方Task-1音频子集；把下一行替换成真实目录。
-find /home/yl809/rds/hpc-work/datasets -maxdepth 4 -type d -iname '*task1*' -print
-TASK1_ROOT=/REPLACE/WITH/REAL/TASK1/AUDIO/ROOT
-test -d "$TASK1_ROOT" || { echo "Task-1目录不存在"; exit 2; }
-
 cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 bash run_reconstructed_match_first_v2.sh \
   /home/yl809/rds/hpc-work/datasets/covid19/metadata \
   /home/yl809/rds/hpc-work/datasets/covid19 \
-  /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2 \
-  "$TASK1_ROOT"
+  /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2
 
 完成后先返回：
 
 /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2/public/
 
 这一步会额外生成public/overlap_report.json：包含Task-2 UID/submission/平台计数、每UID录音数、
-Task-1∩Task-2 UID与sample计数、train/validation/matched交集、跨split音频hash和纵向标签冲突。
-Task-1只做inventory，不进入训练。项目负责人明确复核新gate为GO且overlap report通过之前，
+train/validation/matched交集、跨split音频hash和纵向标签冲突。Task-1未下载，因此跨任务重叠
+明确记录为未测量；Task-1从未进入任何训练或选择，所以不阻塞。项目负责人明确复核新gate
+为GO且overlap report通过之前，
 不要执行后面的sbatch run.sh。
 
 旧数据门曾通过但现已作废。正式实验所需的路径、Slurm资源、env_chao、模型下载与校验、

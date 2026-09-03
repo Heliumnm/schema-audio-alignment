@@ -27,8 +27,7 @@ describe a new random split as the official benchmark. Run:
 bash run_reconstructed_match_first_v2.sh \
   /DTA/covid19/metadata \
   /DTA/test2 \
-  /DTA/cambridge_match_first_v2 \
-  /DTA/task1
+  /DTA/cambridge_match_first_v2
 ```
 
 The second argument must be the Task-2-only audio tree and must retain
@@ -36,10 +35,12 @@ The second argument must be the Task-2-only audio tree and must retain
 `positiveLast14/last14` versus `negativeNever` sessions, excludes participants observed under
 both labels, and selects one audio-linked session per participant by a fixed label-blind hash.
 It first freezes exactly 100 matched positive/negative pairs, then splits only the remaining
-participants 70/15/15 within label x platform into train, validation and source-test. The
-Task-1 path is inventory-only: no Task-1 audio enters fitting. The command also creates a
-public identifier-free overlap report and refuses formal training if participant splits or audio
-hashes cross evaluation populations. This is a versioned secondary sensitivity endpoint, not an
+participants 70/15/15 within label x platform into train, validation and source-test. An
+already-available Task-1 root may be supplied as an optional fourth argument for descriptive
+cross-task provenance. Task 1 is never used for fitting, so an unavailable Task-1 subset is
+reported as not measured and does not block training. The command creates a public identifier-free
+overlap report and refuses formal training if Task-2 participant splits or audio hashes cross
+evaluation populations. This is a versioned secondary sensitivity endpoint, not an
 official split reproduction or an untouched
 confirmation.
 

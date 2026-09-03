@@ -9,8 +9,8 @@
 
 set -euo pipefail
 
-if [[ $# -ne 4 ]]; then
-  echo "Usage: sbatch submit_reconstructed_match_first_v2.slurm ALL_METADATA_DIR TASK2_AUDIO_ROOT OUTPUT_DIR TASK1_AUDIO_ROOT"
+if [[ $# -lt 3 || $# -gt 4 ]]; then
+  echo "Usage: sbatch submit_reconstructed_match_first_v2.slurm ALL_METADATA_DIR TASK2_AUDIO_ROOT OUTPUT_DIR [TASK1_AUDIO_ROOT]"
   exit 2
 fi
 
@@ -24,4 +24,4 @@ fi
 source "$HERE/.venv/bin/activate"
 cd "$HERE"
 
-bash run_reconstructed_match_first_v2.sh "$1" "$2" "$3" "$4"
+bash run_reconstructed_match_first_v2.sh "$@"

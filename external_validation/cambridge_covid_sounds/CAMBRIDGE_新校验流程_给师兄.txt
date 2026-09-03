@@ -14,7 +14,7 @@ cd /home/yl809/projects/covid
 git pull --ff-only origin main
 git rev-parse --short HEAD
 
-二、确认四个路径
+二、确认三个路径
 ----------------
 
 1. metadata：
@@ -31,17 +31,9 @@ git rev-parse --short HEAD
 
 /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2
 
-4. Task-1音频根目录：请先定位真实路径：
-
-find /home/yl809/rds/hpc-work/datasets -maxdepth 5 -type d -iname '*task1*' -print
-
-然后设置，例如：
-
-TASK1_ROOT=/REPLACE/WITH/REAL/TASK1/AUDIO/ROOT
-test -d "$TASK1_ROOT" || { echo "Task-1目录不存在，请先确认路径"; exit 2; }
-
-Task 1只用于统计Task-1/Task-2重叠，不参与训练、matching或模型选择。如果目前没有下载
-Task-1子集，请先停止并回复Task-1目录不可用，不要拿完整母数据或Task-2目录冒充Task 1。
+Task-1音频子集没有下载，因此本次不要求Task-1路径。Task-1/Task-2 overlap会在报告中明确记为
+`NOT_MEASURED_TASK1_UNAVAILABLE`，而不是填写0或猜测。Task 1从未用于训练、matching、模型选择
+或预训练，所以这项缺失不构成split leakage，也不阻塞正式实验。
 
 三、提交CPU校验任务
 ------------------
@@ -51,8 +43,7 @@ cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 sbatch submit_reconstructed_match_first_v2.slurm \
   /home/yl809/rds/hpc-work/datasets/covid19/metadata \
   /home/yl809/rds/hpc-work/datasets/covid19 \
-  /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2 \
-  "$TASK1_ROOT"
+  /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2
 
 该任务不申请GPU；默认2小时、2 CPU、16 GB。它会：
 
@@ -62,7 +53,7 @@ sbatch submit_reconstructed_match_first_v2.slurm \
 4. 排除跨participant重复音频；
 5. 从所有合格participant中先冻结100对matched target；
 6. 只把剩余participant按label×platform划分70/15/15；
-7. 生成不含任何ID和路径的overlap report；
+7. 生成不含任何ID和路径的Task-2 split/audio overlap report；
 8. 重新打包public/PUBLIC_RESULTS.zip。
 
 四、查看进度
@@ -85,14 +76,14 @@ public/overlap_report.json应当报告：
 2. Task-2 unique sample/submission count = 1486；
 3. 每UID recording数量分布；
 4. Android / iOS / Web UID = 300 / 682 / 18；
-5. Task-1 ∩ Task-2 UID count；
-6. Task-1 ∩ Task-2 sample-ID count；
+5. Task-1 ∩ Task-2 UID = 未测量（Task-1未下载）；
+6. Task-1 ∩ Task-2 sample-ID = 未测量（Task-1未下载）；
 7. train ∩ validation UID = 0；
 8. train ∩ matched-target UID = 0；
 9. validation ∩ matched-target UID = 0；
 10. 跨split decoded PCM hash = 0，跨split raw-file hash = 0。
 
-Task-1/Task-2重叠只作描述，不要求必须为0，因为Task 1不进入任何拟合。第7--10项必须为0。
+Task-1/Task-2重叠只作描述，本次明确记为未测量；不能写成0。第7--10项必须为0。
 
 纵向标签还要报告：
 

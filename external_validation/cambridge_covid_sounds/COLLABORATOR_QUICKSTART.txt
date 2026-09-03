@@ -77,13 +77,12 @@ pip install -r requirements-gate.txt
 四、运行模型盲态 match-first v2 数据门
 --------------------------------------
 
-把下面四个示例路径替换为本地绝对路径：
+把下面三个示例路径替换为本地绝对路径：
 
 bash run_reconstructed_match_first_v2.sh \
   /DATA/covid19/metadata \
   /DATA/test2 \
-  /DATA/cambridge_match_first_v2 \
-  /DATA/task1
+  /DATA/cambridge_match_first_v2
 
 如果 Task 2 音频子集实际位于别处，只替换第二个路径。它必须保持：
 
@@ -91,8 +90,9 @@ bash run_reconstructed_match_first_v2.sh \
 
 该v2先在全部可用参与者中冻结恰好100对matched target，再把剩余人按
 label × platform固定分成70% train、15% validation、15% source-test。
-第四个参数只做Task-1/Task-2聚合overlap检查，不用于训练。不要改回
-run_reconstructed_gate.sh；后者是已记录为NO_GO的历史v1。
+如果Task-1已经下载，可追加其路径作为可选第四参数做跨任务聚合overlap；未下载则明确记为
+未测量，不阻塞，因为Task 1不进入拟合。不要改回run_reconstructed_gate.sh；后者是已记录为
+NO_GO的历史v1。
 
 
 五、查看数据门结果

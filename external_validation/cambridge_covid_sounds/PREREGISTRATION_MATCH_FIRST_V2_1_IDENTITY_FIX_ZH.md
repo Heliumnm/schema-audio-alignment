@@ -58,12 +58,13 @@ Web:           participant = Folder Name
 
 ## 正式训练前overlap报告
 
-合作者必须同时提供Task-1音频子集路径。Task 1只做目录inventory，不参与训练、选择或匹配。
-当前脚本在真实WAV数据门后生成`public/overlap_report.json`，至少报告：
+Task 1只做可选目录inventory，不参与训练、选择或匹配。由于它没有下载，本次跨任务overlap
+预注册为`NOT_MEASURED_TASK1_UNAVAILABLE`，不得填0或推断；这不阻塞Task-2正式实验。当前
+脚本在真实WAV数据门后生成`public/overlap_report.json`，至少报告：
 
 1. Task-2 unique UID和unique submission数量；
 2. 每UID recording数量与Android／iOS／Web人数；
-3. Task-1∩Task-2的UID和`UID/submission-folder`交集；
+3. Task-1可用时报告Task-1∩Task-2的UID和`UID/submission-folder`交集，否则报告未测量；
 4. train／validation／matched-target的逐对UID交集；
 5. decoded PCM及raw-file hash的跨split重复；
 6. 稳定UID内的原始状态变化与严格endpoint标签冲突。

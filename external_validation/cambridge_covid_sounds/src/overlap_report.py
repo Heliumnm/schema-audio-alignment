@@ -154,7 +154,7 @@ def split_and_hash_audit(output_root: Path) -> tuple[dict[str, Any], dict[str, s
     return split_overlaps, hashes
 
 
-def execute(task1_root: Path, task2_root: Path, output_root: Path,
+def execute(task1_root: Path | None, task2_root: Path, output_root: Path,
             expected_task2_uids: int = 1000,
             expected_task2_samples: int = 1486) -> dict[str, Any]:
     public = output_root / "public"
@@ -169,13 +169,23 @@ def execute(task1_root: Path, task2_root: Path, output_root: Path,
     if gate.get("identity_namespace_version") != "cambridge-task2-official-loader-v1":
         raise ValueError("overlap audit requires the corrected Task-2 participant namespace")
 
-    task1, task1_uids, task1_samples = inventory_release(task1_root)
     task2, task2_uids, task2_samples = inventory_release(task2_root)
+    if task1_root is None:
+        task1 = {
+            "available": False,
+            "reason": "Task-1 audio subset was not downloaded and is not used by this audit",
+        }
+        task1_uid_overlap = None
+        task1_sample_overlap = None
+    else:
+        task1, task1_uids, task1_samples = inventory_release(task1_root)
+        task1["available"] = True
+        task1_uid_overlap = len(task1_uids & task2_uids)
+        task1_sample_overlap = len(task1_samples & task2_samples)
     split_overlaps, manifest_hashes = split_and_hash_audit(output_root)
     longitudinal = reconstruction.get("longitudinal_label_diagnostics", {})
     exclusions = reconstruction.get("exclusions", {})
     checks = {
-        "task1_inventory_available": task1["unique_uid_count"] > 0,
         "task2_expected_unique_uids": task2["unique_uid_count"] == expected_task2_uids,
         "task2_expected_unique_samples":
             task2["unique_sample_submission_count"] == expected_task2_samples,
@@ -200,9 +210,10 @@ def execute(task1_root: Path, task2_root: Path, output_root: Path,
         "task1": task1,
         "task2": task2,
         "cross_task": {
-            "task1_intersection_task2_uid_count": len(task1_uids & task2_uids),
-            "task1_intersection_task2_sample_id_count": len(task1_samples & task2_samples),
+            "task1_intersection_task2_uid_count": task1_uid_overlap,
+            "task1_intersection_task2_sample_id_count": task1_sample_overlap,
             "sample_id_definition": "stable-subject-id/released-submission-folder",
+            "status": "MEASURED" if task1_root is not None else "NOT_MEASURED_TASK1_UNAVAILABLE",
         },
         "split_and_audio_overlap": split_overlaps,
         "longitudinal_labels": {
@@ -229,7 +240,8 @@ def execute(task1_root: Path, task2_root: Path, output_root: Path,
         "required_checks": checks,
         "formal_training_permitted_by_overlap_audit": all(checks.values()),
         "interpretation": (
-            "Task-1/Task-2 overlap is descriptive because Task 1 is not used for model fitting. "
+            "Task-1/Task-2 overlap is optional and descriptive because Task 1 is not used for "
+            "model fitting; an unavailable Task-1 subset is recorded rather than imputed. "
             "The blocking checks are complete Task-2 identity, participant-disjoint evaluation, "
             "no cross-split audio hash, and exclusion of strict longitudinal label conflicts."
         ),
@@ -245,7 +257,7 @@ def execute(task1_root: Path, task2_root: Path, output_root: Path,
         f"{task2['platform_uid_counts']['IOS']} / "
         f"{task2['platform_uid_counts']['WEB']}",
         f"- Task 1 intersection Task 2 UIDs / samples: "
-        f"{len(task1_uids & task2_uids)} / {len(task1_samples & task2_samples)}",
+        f"{task1_uid_overlap} / {task1_sample_overlap}",
         f"- train intersection validation / matched: "
         f"{split_overlaps['train_intersection_validation_uid']} / "
         f"{split_overlaps['train_intersection_matched_uid']}",
@@ -265,13 +277,13 @@ def execute(task1_root: Path, task2_root: Path, output_root: Path,
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task1-root", required=True)
+    parser.add_argument("--task1-root")
     parser.add_argument("--task2-root", required=True)
     parser.add_argument("--output-root", required=True)
     parser.add_argument("--expected-task2-uids", type=int, default=1000)
     parser.add_argument("--expected-task2-samples", type=int, default=1486)
     args = parser.parse_args()
-    execute(Path(args.task1_root).expanduser().resolve(),
+    execute(Path(args.task1_root).expanduser().resolve() if args.task1_root else None,
             Path(args.task2_root).expanduser().resolve(),
             Path(args.output_root).expanduser().resolve(),
             args.expected_task2_uids, args.expected_task2_samples)
