@@ -13,7 +13,9 @@
 准备好的 `/home/yl809/rds/hpc-work/env_audit` 和 RDS 模型缓存，一次完成正式阶段。脚本不再
 读取 shell 启动文件、不依赖隐式 home 路径，也不会在作业中安装或替换 package。OPERA 的
 顶层包名恰好也叫 `src`；当前代码会清除同名缓存、把 OPERA 根目录置于首位并验证实际导入
-位置，避免把本项目的 `src` 误当成 OPERA。`csd3:` 前缀只用于从其他机器执行 scp/rsync，
+位置，避免把本项目的 `src` 误当成 OPERA。内部 runner 同样要求显式的 `PYTHON_BIN` 绝对
+路径，所有 Python 脚本都由该解释器通过绝对路径调用，不再依赖裸 `python` 或继承的
+`PYTHONPATH`。`csd3:` 前缀只用于从其他机器执行 scp/rsync，
 不能写进 Slurm 内部文件路径。
 
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge

@@ -235,7 +235,7 @@ PY
 # packages only aggregate public results.  Completed text/extraction/full-backbone
 # artefacts are reusable; an alignment backbone interrupted before its final
 # manifest is written restarts that backbone's 15 runs.
-PATH="$ENV_AUDIT/bin:$PATH" bash run_once.sh "$CONFIG" formal
+PYTHON_BIN="$PYTHON" /bin/bash "$HERE/run_once.sh" "$CONFIG" formal
 
 echo "completed_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "Return only: $OUTPUT_ROOT/public/PUBLIC_RESULTS.zip"

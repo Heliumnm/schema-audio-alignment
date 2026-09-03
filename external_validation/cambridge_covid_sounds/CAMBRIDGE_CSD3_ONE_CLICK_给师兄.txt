@@ -108,7 +108,8 @@ backbone可复用；如果在某个backbone的15个alignment runs中途超时，
 新版不会安装package，也不会新建环境；它只使用
 `/home/yl809/rds/hpc-work/env_audit/bin/python`。另外，OPERA和本项目都有一个名为`src`的
 包，代码现在会主动清除错误缓存并断言`src`来自OPERA根目录；不再让师兄手工调整
-PYTHONPATH顺序。
+PYTHONPATH顺序。内部run_once也必须接收该Python的绝对路径，所有脚本使用绝对路径执行，
+不再调用PATH里碰巧排在前面的裸`python`。
 
 四、任务完成后返回什么
 --------------------
