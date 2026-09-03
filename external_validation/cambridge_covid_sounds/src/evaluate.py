@@ -233,7 +233,18 @@ def execute(config_file: str, backbone: str) -> Path:
         raise RuntimeError("data gate is not GO; formal evaluation is forbidden")
     table_path = paths["private"] / "participant_manifest.csv"
     table = pd.read_csv(table_path)
-    table["recruitment_source"] = table[config["protocol"]["cohort_field"]].astype(str)
+    cohort_field = config["protocol"]["cohort_field"]
+    if cohort_field == "country_group" and cohort_field not in table:
+        required = {"country", "test_status", "y"}
+        if not required <= set(table):
+            raise RuntimeError("cannot reconstruct frozen Coswara country_group")
+        candidate = ((table.y == 1) & table.test_status.astype(str).eq("p")) | \
+                    ((table.y == 0) & table.test_status.astype(str).eq("n"))
+        counts = table.loc[candidate, "country"].astype(str).value_counts()
+        retained = set(counts[counts >= 10].index)
+        table[cohort_field] = table.country.astype(str).where(
+            table.country.astype(str).isin(retained), "OTHER")
+    table["recruitment_source"] = table[cohort_field].astype(str)
     train = (table.splits == "train").to_numpy()
     validation = (table.splits == "validation").to_numpy()
     standard = (table.splits == "test").to_numpy()

@@ -40,11 +40,15 @@
       "smoker": {"field": "smoker", "kind": "category", "positive_values": ["YES"]},
       "diarrhoea": {"field": "diarrhoea", "kind": "category", "positive_values": ["YES"]},
       "loss_of_smell": {"field": "loss_of_smell", "kind": "category", "positive_values": ["YES"]},
+      "country_india": {"field": "country_group", "kind": "category", "positive_values": ["India"]},
+      "country_united_states": {"field": "country_group", "kind": "category", "positive_values": ["United States"]},
+      "country_other": {"field": "country_group", "kind": "category", "positive_values": ["OTHER"]},
       "late_period": {"field": "halfyear", "kind": "category", "positive_values": ["2021-H1", "2021-H2", "2022-H1", "2022-H2"]},
       "long_recording": {"field": "duration_s", "kind": "threshold", "threshold": 6.0},
       "loud_recording": {"field": "rms", "kind": "threshold", "threshold": 0.1},
       "clipped": {"field": "clip_fraction", "kind": "threshold", "threshold": 0.000001},
-      "high_silence": {"field": "silence_fraction", "kind": "threshold", "threshold": 0.5}
+      "high_silence": {"field": "silence_fraction", "kind": "threshold", "threshold": 0.5},
+      "high_manual_quality": {"field": "manual_quality", "kind": "category", "positive_values": ["2"]}
     }
   },
   "models": {
