@@ -30,8 +30,10 @@ from freeze_coswara_external_split import (
     atomic_json,
     balance_report,
     country_groups,
+    development_split,
     exact_stratum,
     match_rows,
+    metadata_hash,
     prepare_rows,
     sha256_file,
 )
@@ -203,7 +205,10 @@ def solve_selection(
     return selected, solver
 
 
-def execute(qc: Path, pairs_out: Path, report_out: Path, time_limit_s: float) -> dict:
+def execute(
+    qc: Path, manifest_out: Path, pairs_out: Path, report_out: Path,
+    time_limit_s: float,
+) -> dict:
     rows, excluded = prepare_rows(qc)
     candidates = [
         row for row in rows
@@ -218,11 +223,57 @@ def execute(qc: Path, pairs_out: Path, report_out: Path, time_limit_s: float) ->
     pairs = match_rows(selected, "global_constrained_primary") if selected else []
     balance = balance_report(pairs, by_id)
     passed = len(pairs) == TARGET_PAIRS and bool(balance.get("passes", False))
-    verdict = "SECONDARY_GO" if passed else (
-        "INCONCLUSIVE" if solver["status"] == 1 else "NO_FEASIBLE_STRICT_SOLUTION"
-    )
     pair_fields = ["set", "pair_id", "stratum", "negative_id", "positive_id", "cost"]
     atomic_csv(pairs_out, pairs, pair_fields)
+
+    pair_by_id = {
+        str(pair[field]): str(pair["pair_id"])
+        for pair in pairs for field in ("negative_id", "positive_id")
+    }
+    development = [row for row in rows if str(row["participant_id"]) not in pair_by_id]
+    split_assignment = development_split(development)
+    manifest_rows = []
+    for row in sorted(rows, key=lambda item: str(item["participant_id"])):
+        participant = str(row["participant_id"])
+        pair_id = pair_by_id.get(participant, "")
+        manifest_rows.append({
+            "participant_id": participant,
+            "split": "external_evaluation" if pair_id else split_assignment[participant],
+            "label": row["label"],
+            "relative_path": row["relative_path"],
+            "raw_sha256": row["raw_sha256"],
+            "pcm_sha256": row["pcm_sha256"],
+            "metadata_sha256": metadata_hash(row),
+            "primary_pair_id": pair_id,
+            "quality_pair_id": "",
+            "testtype_pair_id": "",
+            "excellent_pair_id": "",
+            "exact_stratum": "|".join(exact_stratum(row)),
+            "manual_quality": row["manual_quality"],
+            "test_status": row["test_status"],
+            "test_type": row["test_type"],
+        })
+    atomic_csv(manifest_out, manifest_rows, list(manifest_rows[0]))
+    split_counts = {}
+    for split in ("train", "validation", "source_test", "external_evaluation"):
+        subset = [row for row in manifest_rows if row["split"] == split]
+        split_counts[split] = {
+            "n": len(subset),
+            "negative": sum(int(row["label"]) == 0 for row in subset),
+            "positive": sum(int(row["label"]) == 1 for row in subset),
+        }
+    development_gate = (
+        split_counts["train"]["n"] >= 900
+        and min(split_counts["train"]["negative"], split_counts["train"]["positive"]) >= 250
+        and split_counts["validation"]["n"] >= 200
+        and min(split_counts["validation"]["negative"], split_counts["validation"]["positive"]) >= 50
+        and split_counts["source_test"]["n"] >= 200
+        and min(split_counts["source_test"]["negative"], split_counts["source_test"]["positive"]) >= 50
+    )
+    formal_secondary_gate = passed and development_gate
+    verdict = "SECONDARY_GO" if formal_secondary_gate else (
+        "INCONCLUSIVE" if solver["status"] == 1 else "NO_FEASIBLE_STRICT_SOLUTION"
+    )
     report = {
         "format_version": "coswara-global-gate-sensitivity-v1",
         "created_utc": datetime.now(timezone.utc).isoformat(),
@@ -237,6 +288,10 @@ def execute(qc: Path, pairs_out: Path, report_out: Path, time_limit_s: float) ->
         "excluded": excluded,
         "solver": solver,
         "balance": balance,
+        "split_counts": split_counts,
+        "development_size_gate": development_gate,
+        "formal_secondary_gate": formal_secondary_gate,
+        "manifest_sha256": sha256_file(manifest_out),
         "pairs_sha256": sha256_file(pairs_out),
         "interpretation": (
             "A passing cohort permits only a post-hoc external stress test; it does not "
@@ -250,11 +305,14 @@ def execute(qc: Path, pairs_out: Path, report_out: Path, time_limit_s: float) ->
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--qc", type=Path, required=True)
+    parser.add_argument("--manifest-out", type=Path, required=True)
     parser.add_argument("--pairs-out", type=Path, required=True)
     parser.add_argument("--report-out", type=Path, required=True)
     parser.add_argument("--time-limit-s", type=float, default=600.0)
     args = parser.parse_args()
-    report = execute(args.qc, args.pairs_out, args.report_out, args.time_limit_s)
+    report = execute(
+        args.qc, args.manifest_out, args.pairs_out, args.report_out, args.time_limit_s
+    )
     print(json.dumps(report, indent=2, sort_keys=True))
     if report["verdict"] != "SECONDARY_GO":
         raise SystemExit(3)

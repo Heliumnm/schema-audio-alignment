@@ -1,7 +1,21 @@
 # Coswara 全局约束匹配：二次数据门敏感性协议
 
 冻结日期：2026-09-03  
-状态：**在读取任何 Coswara 模型表示或预测之前冻结**
+状态：**已执行，`SECONDARY_GO`；仍未读取任何 Coswara 模型表示或预测**
+
+## 执行结果
+
+- 求解器：HiGHS，全局可行性求解成功；
+- 100 对（正负各 100 人）；
+- 年龄 SMD：`0.0000`；
+- 最大分类 SMD：`0.1034 <= 0.12`；
+- 最大层级比例差：`0.0700 <= 0.08`；
+- 剩余开发集：train 1,041、validation 217、source-test 243，规模门通过；
+- pair manifest SHA-256：`ffa995b61c34bd0f83e83b401686380d25b94a11301d129863fba9c7f279efd7`；
+- participant manifest SHA-256：`4f998a6bb7b1370b9b3f2905023ec170dd148a61a1767973d7d1c510fed92bea`。
+
+结论只升级为：Coswara 值得进行一次 **post-hoc external stress test**。原预注册贪心门的
+`NO-GO` 仍然保留；本结果不能称为 untouched external confirmation。
 
 ## 为什么允许再检查一次
 

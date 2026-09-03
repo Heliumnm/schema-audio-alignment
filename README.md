@@ -20,8 +20,10 @@ confidence: target-domain recalibration removes the NLL gap without creating a d
 ranking gain.
 
 The controlled synthetic sweep learned correspondence but failed its preregistered
-mechanism gates, so it is not used as causal evidence. Coswara stopped at its frozen data
-gate. CODA TB's original split-first gate also stopped, but a visibly versioned, model-blind
+mechanism gates, so it is not used as causal evidence. Coswara's preregistered greedy gate
+stopped; a separately frozen, model-blind global-constraint sensitivity later found a balanced
+100-pair cohort and therefore permits only a post-hoc stress test. CODA TB's original split-first
+gate also stopped, but a visibly versioned, model-blind
 secondary protocol selected the matched target before splitting the remainder and passed
 all frozen balance gates (100 pairs; max SMD 0.0819; max categorical difference 0.040).
 Its subsequently preregistered model audit is now complete. Correct pairing significantly

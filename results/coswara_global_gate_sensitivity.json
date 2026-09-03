@@ -1,0 +1,132 @@
+{
+  "balance": {
+    "age_smd": 0.0,
+    "categorical_smd": {
+      "asthma": {
+        "NO": 0.0
+      },
+      "diarrhoea": {
+        "NO": -0.08233869695926187,
+        "YES": 0.08233869695926183
+      },
+      "loss_of_smell": {
+        "NO": -0.08428995039221752,
+        "YES": 0.08428995039221794
+      },
+      "other_respiratory": {
+        "NO": 0.0
+      },
+      "smoker": {
+        "NO": -0.10341753799900393,
+        "YES": 0.03410963400644342,
+        "[MISSING]": 0.08917559241354192
+      }
+    },
+    "exact_mismatches": {
+      "age_decade": 0,
+      "asthma": 0,
+      "breathing_difficulty": 0,
+      "cough": 0,
+      "fatigue": 0,
+      "fever": 0,
+      "other_respiratory": 0,
+      "sex": 0,
+      "sore_throat": 0
+    },
+    "max_abs_categorical_smd": 0.10341753799900393,
+    "max_abs_proportion_difference": 0.07,
+    "n_pairs": 100,
+    "passes": true,
+    "proportion_differences": {
+      "country_group": {
+        "India": 0.06999999999999995,
+        "OTHER": -0.049999999999999996,
+        "United States": -0.019999999999999997
+      },
+      "halfyear": {
+        "2020-H2": -0.04000000000000001,
+        "2021-H1": -0.050000000000000044,
+        "2021-H2": 0.03,
+        "2022-H1": 0.06
+      },
+      "manual_quality": {
+        "0": 0.019999999999999997,
+        "1": 0.019999999999999997,
+        "2": -0.06999999999999995,
+        "[MISSING]": 0.02999999999999997
+      },
+      "mask_use": {
+        "n": -0.06999999999999995,
+        "y": 0.07
+      },
+      "province_group": {
+        "Karnataka": 0.06,
+        "Tamil Nadu": 0.07,
+        "non-India": -0.06999999999999999,
+        "other India": -0.06
+      },
+      "quality_available": {
+        "NO": 0.02999999999999997,
+        "YES": -0.030000000000000027
+      },
+      "vaccination": {
+        "[missing]": 0.010000000000000009,
+        "n": 0.07,
+        "p": -0.07,
+        "y": -0.009999999999999953
+      }
+    }
+  },
+  "created_utc": "2026-09-03T11:34:23.814030+00:00",
+  "development_size_gate": true,
+  "excluded": {
+    "age_outside_15_90": 30,
+    "nonbinary_status": 205,
+    "not_known_nonreturning": 710,
+    "objective_audio_qc": 100
+  },
+  "formal_secondary_gate": true,
+  "format_version": "coswara-global-gate-sensitivity-v1",
+  "interpretation": "A passing cohort permits only a post-hoc external stress test; it does not replace the preregistered Coswara NO-GO or establish external confirmation.",
+  "manifest_sha256": "4f998a6bb7b1370b9b3f2905023ec170dd148a61a1767973d7d1c510fed92bea",
+  "model_scores_read": false,
+  "n_eligible": 1701,
+  "n_strict_candidates": 760,
+  "pairs_sha256": "ffa995b61c34bd0f83e83b401686380d25b94a11301d129863fba9c7f279efd7",
+  "post_hoc_data_only_sensitivity": true,
+  "qc_manifest": "/mnt/hd/data_heliu/resp_datasets/Coswara_zenodo_v1/formal_results/coswara_audio_qc.csv",
+  "qc_manifest_sha256": "e9d9c3578a8fdb0e14ffaaf73e2fe64cec1f01877a583b4ee4e9591f545bf4d7",
+  "solver": {
+    "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "n_candidate_participants": 760,
+    "n_constraints": 368,
+    "n_variables": 2949,
+    "status": 0,
+    "success": true,
+    "time_limit_s": 600.0
+  },
+  "split_counts": {
+    "external_evaluation": {
+      "n": 200,
+      "negative": 100,
+      "positive": 100
+    },
+    "source_test": {
+      "n": 243,
+      "negative": 152,
+      "positive": 91
+    },
+    "train": {
+      "n": 1041,
+      "negative": 669,
+      "positive": 372
+    },
+    "validation": {
+      "n": 217,
+      "negative": 141,
+      "positive": 76
+    }
+  },
+  "target_pairs": 100,
+  "verdict": "SECONDARY_GO"
+}

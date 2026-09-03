@@ -51,7 +51,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
 | 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
-| Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
+| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 允许启动 post-hoc 外部 stress test；尚未运行模型分数 |
 | CODA TB 外部敏感性 | **正式模型已完成** | 两个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
 | Cambridge Task-2-subset 外部敏感性 | **旧v2 gate superseded；修正版待重跑** | 身份核对确认是Cambridge官方Task-2音频子集上的custom strict-COVID cough endpoint；旧代码合并了Web subjects，模型未运行 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
@@ -153,8 +153,11 @@ alignment 必然越差”这一一般机制。它不得作为正文的正向机�
 
 ## 8. 外部确认与论文边界
 
-Coswara 2,746 条录音完成 QC，2,646 条通过；冻结匹配在 100 对下限时最大 SMD 为 0.140，
-高于 0.12 门槛，因此 NO-GO。没有生成 Coswara 表征、分类器或模型分数。
+Coswara 2,746 条录音完成 QC，2,646 条通过；原冻结贪心匹配在 100 对下限时最大 SMD 为
+0.140，高于 0.12 门槛，因此原数据门 NO-GO。随后在仍未读取模型分数时，单独冻结的全局
+约束敏感性求解找到了 100 对可行集合：年龄 SMD 0、最大分类 SMD 0.1034、最大层级比例差
+0.07，开发集规模门也通过。它只允许一次 post-hoc external stress test，不构成 untouched
+external confirmation。
 
 CODA TB v1 的 9,772 条 solicited cough 全部成功解码并通过 QC；1,081 名 participant 进入
 eligible cohort（TB+ 291、TB− 790）。v1 先划分60/40、再在40% target candidate 中匹配，
@@ -189,8 +192,8 @@ correspondence。matched-target 上的 TB Correct−Within 结果为：
 - retrieval、probe、fusion 和 calibration 的闭环；
 - 一个完成的 CODA TB secondary external sensitivity：重复 correspondence／transfer 分离，
   但 matched disease endpoint 为 inconclusive，不是 untouched confirmatory replication；
-- Coswara 在预注册平衡门停止；CODA v1 停止，其透明标记的 match-first v2 与正式模型历史均
-  完整保留；
+- Coswara 原贪心门停止；透明标记的全局约束二次门已通过，模型结果尚未产生；CODA v1
+  停止，其透明标记的 match-first v2 与正式模型历史均完整保留；
 - synthetic 没有通过机制门。
 
 Cambridge身份审计现已钉死：它是Cambridge COVID-19 Sounds NeurIPS的官方Task-2音频子集，
