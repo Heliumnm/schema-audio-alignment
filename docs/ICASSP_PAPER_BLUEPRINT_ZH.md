@@ -147,7 +147,7 @@ sensitivity 也不具正文资格。
 - macro-profile retrieval；
 - taxonomy probes、matched evaluation、paired bootstrap。
 
-### 第 3 页：学到了什么，是否 transfer
+### 第 3 页：UKCOVID 学到了什么，是否 transfer
 
 - 先报 retrieval `correct > within > global`，证明训练有效；
 - 再报 probe taxonomy；
@@ -155,12 +155,13 @@ sensitivity 也不具正文资格。
 
 ### 第 4 页：替代解释与限制
 
-- probability transport：NLL 是 confidence mismatch；
-- MLP：不是简单线性 readout 限制；
-- OPERA：不是 AST 单一 backbone；
-- Coswara 与 CODA TB v1 数据门 NO-GO、CODA match-first v2 数据门 GO，以及 synthetic gate
-  failure；必须明确数据门 GO 不是模型确认；
-- 单个已完成 disease-transfer 数据集、test 参与过前期设计、尚无独立外部模型确认；
+- CODA TB secondary sensitivity：两个 backbone 的 correspondence 均成立，sex/age 增强，
+  matched TB transfer inconclusive 且方向不一致；
+- probability transport：UKCOVID NLL 是 confidence mismatch；MLP 排除简单线性 readout 限制；
+- Coswara 数据门 NO-GO、CODA v1 NO-GO 与透明版本化的 match-first v2 历史、synthetic gate
+  failure；
+- UKCOVID test 参与过前期设计；CODA 是 training release 内部 secondary analysis，不是 hidden
+  challenge confirmation；Cambridge 模型结果尚不存在；
 - 结论与最低审计建议。
 
 ## Abstract 必须包含的五件事
@@ -169,7 +170,8 @@ sensitivity 也不具正文资格。
 2. correct／within-label／global；
 3. retrieval 证明两个 backbone 都学到了真实 correspondence；
 4. sex correspondence 强、COVID transfer 不稳定、correct 不胜 raw；
-5. source NLL 的主要问题是 unsupported confidence，并明确单数据集 discovery 限制。
+5. CODA 重复 correspondence／transfer ambiguity，但 matched TB endpoint 是 inconclusive；同时
+   明确 UKCOVID discovery 与 CODA secondary-analysis 限制。
 
 ## 最终 claim ladder
 
@@ -180,6 +182,8 @@ sensitivity 也不具正文资格。
 - matched COVID `C-W` 没有稳定跨 backbone/readout 增量；
 - correct 没有超过 raw audio；
 - source-calibrated NLL gap 可被 target calibration 基本消除。
+- CODA AST／OPERA 均建立 participant correspondence，并稳定增强 age/sex；matched TB transfer
+  没有跨 backbone 一致方向或显著性。
 
 ### 只支持为边界条件
 
@@ -191,7 +195,7 @@ sensitivity 也不具正文资格。
 
 - metadata alignment 普遍失败／普遍有害；
 - 一般性的 confounding causal mechanism；
-- 外部跨数据集确认；
+- 已完成 untouched external confirmation，或证明 metadata alignment 存在普遍负效应；
 - reasoning captions 或 audible-report alignment 有效；
 - disease-invariant positive-pair 方法有效。
 

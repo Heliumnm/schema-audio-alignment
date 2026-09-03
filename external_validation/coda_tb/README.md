@@ -1,5 +1,16 @@
 # CODA TB external transfer audit
 
+> **Formal model outcome (2026-09-03): correspondence established; matched TB transfer
+> inconclusive.** Correct-minus-Within profile MRR was +0.0667 [0.0349, 0.1021] for
+> AST-6L and +0.0302 [0.0064, 0.0555] for OPERA-CT. On the frozen 100-pair matched
+> target, Correct-minus-Within delta AUROC was +0.0341 [−0.0221, 0.0916] for AST and
+> −0.0256 [−0.0872, 0.0346] for OPERA; the corresponding delta(-NLL) intervals also
+> crossed zero. Both backbones retained significantly more age and sex information under
+> Correct pairing. The preregistered branch is
+> `correspondence_gain_but_matched_transfer_inconclusive`, not a positive transfer result
+> and not proof of zero effect. See
+> [`../../docs/CODA_TB_FORMAL_RESULTS_ZH.md`](../../docs/CODA_TB_FORMAL_RESULTS_ZH.md).
+
 > **Secondary v2 update (2026-09-03): model-blind GO.** Match-first v2 selected the
 > frozen 100-pair target from all 1,081 eligible participants before splitting the
 > remainder. Maximum absolute SMD was 0.0819 (limit 0.12) and maximum categorical level
@@ -100,6 +111,15 @@ the private participant table without changing row membership. `s0` is synthetic
 correctness. `s1` is a 500-update train-only rehearsal. Only `evaluate` reads source-test
 and matched-target outcomes. See
 [`PREREGISTRATION_FORMAL_MODELS_V1_ZH.md`](PREREGISTRATION_FORMAL_MODELS_V1_ZH.md).
+
+The completed disclosure-checked aggregate outputs are committed as:
+
+- `../../results/coda_tb_formal_training_audit.json`;
+- `../../results/coda_tb_formal_results_ast.json`;
+- `../../results/coda_tb_formal_results_opera_ct.json`.
+
+No participant-level prediction, representation, pairing, checkpoint, metadata, or audio is
+included in those public files.
 
 ## Frozen data assumptions
 

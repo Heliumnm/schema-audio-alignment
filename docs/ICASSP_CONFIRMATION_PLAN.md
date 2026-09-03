@@ -19,7 +19,16 @@ Date frozen: 2026-08-19
 > all 1,081 eligible participants along the original deterministic matching path. Maximum
 > absolute SMD was 0.0819 and maximum categorical level difference was 0.040, so every
 > frozen v2 data gate passed. The original v1 NO-GO remains visible. CODA model execution
-> requires a separate frozen protocol and has not begun.
+> required a separate frozen protocol.
+
+> **Formal CODA outcome update (2026-09-03).** That separate protocol was frozen before
+> representation/model scores and has now completed. Correct-minus-Within profile MRR is
+> significantly positive for both AST-6L and OPERA-CT; age and sex decodability also
+> increase under Correct pairing. On the frozen 100-pair matched target, however,
+> Correct-minus-Within delta AUROC is +0.0341 [−0.0221, 0.0916] for AST and −0.0256
+> [−0.0872, 0.0346] for OPERA, with both delta(-NLL) intervals crossing zero. The frozen
+> branch is correspondence gain with inconclusive matched transfer. This is a secondary
+> sensitivity inside the CODA training release, not hidden-challenge confirmation.
 
 ## Purpose
 

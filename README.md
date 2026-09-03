@@ -2,7 +2,7 @@
 
 > 中文完整故事版：[docs/项目完整故事_中文.md](docs/项目完整故事_中文.md)
 
-## Current ICASSP audit extension (final Route-A run, August 2026)
+## Current ICASSP audit extension (UKCOVID + CODA TB, September 2026)
 
 The Route-A audit is complete. It asks whether correct audio--metadata pairing learns
 portable disease evidence or participant/cohort correspondence. The controlled arms are
@@ -24,16 +24,19 @@ mechanism gates, so it is not used as causal evidence. Coswara stopped at its fr
 gate. CODA TB's original split-first gate also stopped, but a visibly versioned, model-blind
 secondary protocol selected the matched target before splitting the remainder and passed
 all frozen balance gates (100 pairs; max SMD 0.0819; max categorical difference 0.040).
-No CODA model score exists yet, so UKCOVID remains the only completed disease-transfer
-audit; the results do not establish that metadata alignment is universally harmful or
-ineffective.
+Its subsequently preregistered model audit is now complete. Correct pairing significantly
+improves profile retrieval for both AST-6L and OPERA-CT and retains age/sex information, but
+matched TB transfer is inconclusive and changes direction across backbones (Correct-minus-
+Within delta AUROC +0.034 [−0.022, 0.092] for AST; −0.026 [−0.087, 0.035] for OPERA).
+This secondary result extends the correspondence-versus-transfer ambiguity beyond UKCOVID;
+it does not establish that metadata alignment is universally harmful or ineffective.
 
 Cambridge COVID-19 Sounds Task 2 is now structurally resolved: the released subset contains
 983 participants and 1,486 cough sessions, with 975 participants eligible after exact
-session-to-metadata linkage.  The original split-first gate remains NO-GO.  A visibly versioned
-model-blind match-first v2 precheck can freeze 100 balanced pairs (final max SMD and categorical
-difference both 0.000), but remains PROVISIONAL until the authorised collaborator reruns waveform
-QC.  No Cambridge model score exists.
+session-to-metadata linkage. The original split-first gate remains NO-GO. The authorised
+collaborator has rerun the visibly versioned match-first v2 gate on the real WAV files: all 975
+eligible coughs passed QC and the frozen 100-pair target has maximum SMD and categorical
+difference both 0.000. No Cambridge model score exists yet.
 
 Start with:
 
@@ -45,6 +48,7 @@ Start with:
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
 - [CODA TB model-blind data-gate outcome](docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
 - [CODA TB secondary match-first v2 GO](docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md)
+- [CODA TB formal model result](docs/CODA_TB_FORMAL_RESULTS_ZH.md)
 - [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
 
 ## Historical ICBHI/schema track

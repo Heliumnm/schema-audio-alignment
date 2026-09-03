@@ -1,10 +1,11 @@
 # Pairing-Controlled Auditing of Clinical Audio--Metadata Alignment:
 # Separating Participant Correspondence from Transferable Disease Evidence
 
-> **Draft status (2026-08-29).** The frozen Route-A audit is complete. UKCOVID is a
-> discovery dataset because its official test sets informed earlier protocol development.
-> Preregistered Coswara and CODA TB data-feasibility gates failed before any external model score.
-> Compact final JSON outputs and hashes are stored in `results/route_a_final/`.
+> **Draft status (2026-09-03).** The frozen UKCOVID Route-A audit and a preregistered
+> secondary CODA TB sensitivity are complete. UKCOVID remains a discovery dataset because
+> its official test sets informed earlier protocol development. CODA's original split-first
+> gate failed; its visibly versioned match-first sensitivity passed and was executed without
+> changing the frozen endpoint. Compact aggregate outputs and hashes are stored in `results/`.
 
 ## Abstract
 
@@ -21,8 +22,11 @@ learns participant correspondence. Correct pairing strongly retains sex informat
 uncertain (+0.006 and -0.002). Disease gains are not robust across backbones, linear and
 nonlinear readouts, or raw-audio comparisons. Target-domain recalibration removes the
 adverse negative-log-likelihood gap without creating a ranking gain, identifying unsupported
-confidence rather than established ranking loss. These results show why correspondence
-success and transferable disease evidence require separate evaluation.
+confidence rather than established ranking loss. In a secondary seven-country CODA TB
+sensitivity, correct pairing again improved profile retrieval with both backbones and
+retained age/sex information, while matched TB transfer was inconclusive and changed
+direction across backbones. These results show why correspondence success and transferable
+disease evidence require separate evaluation.
 
 ## 1. Introduction
 
@@ -198,7 +202,7 @@ transported to matched, the (C-W) NLL difference becomes +0.00013
 unchanged and uncertain. The source-calibrated penalty therefore mainly reflects confidence
 scale mismatch; recalibration removes the penalty but does not create disease ranking.
 
-### 3.5 Prespecified mechanism and external feasibility gates
+### 3.5 Prespecified mechanism and external sensitivity
 
 A 3-by-3 confounding/shortcut grid with ten seeds per cell learned correspondence, but
 failed its preregistered high-confounding, dose-trend, and zero-confounding boundary gates.
@@ -220,8 +224,18 @@ costs, thresholds and the deterministic trimming path were unchanged; the 100-pa
 was selected from all 1,081 eligible participants before the remaining participants were
 split for development. The resulting target had maximum absolute SMD 0.0819 and maximum
 categorical level difference 0.040, and passed every frozen v2 data gate in two identical
-runs. This establishes endpoint feasibility, not external model confirmation; model
-execution was not part of this version of the manuscript.
+runs. We then froze the full model protocol before reading a CODA representation or model
+score and ran AST-6L and OPERA-CT with the same Correct/Within/Global decomposition, five
+seeds, and 500 epochs.
+
+On 122 unique validation profiles, Correct-minus-Within MRR was +0.0667
+[0.0349, 0.1021] for AST and +0.0302 [0.0064, 0.0555] for OPERA, establishing
+participant correspondence for both backbones. On the frozen 100-pair matched target,
+Correct-minus-Within delta AUROC was +0.0341 [-0.0221, 0.0916] for AST and -0.0256
+[-0.0872, 0.0346] for OPERA; delta(-NLL) was +0.0198 [-0.0227, 0.0631] and -0.0070
+[-0.0596, 0.0406], respectively. Both backbones significantly increased age and sex
+decodability under Correct pairing. The preregistered branch is therefore correspondence
+gain with inconclusive matched transfer, not positive transfer or demonstrated equivalence.
 
 ## 4. Discussion
 
@@ -242,18 +256,29 @@ evidence that correct alignment necessarily destroys disease ranking. It reflect
 learned under the source cohort that is unsupported after matching. Target recalibration
 removes the NLL gap but leaves no robust ranking gain.
 
-This study has important limits. It is a single-dataset discovery audit in an unusually
-confounded cohort; the official tests informed earlier protocol development. Matched
-evaluation balances measured covariates but does not remove all confounding. Probe
+The CODA sensitivity makes the evaluation ambiguity less dataset-specific. It changes the
+disease, countries, acquisition setting, reference standard, and audio population, yet
+again shows strong correspondence without a robust cross-backbone matched disease gain.
+Notably, source-test AUROC favoured Correct over Within for both CODA backbones, whereas the
+matched result changed direction. Source-domain improvement therefore cannot substitute for
+the balanced transfer endpoint.
+
+This study has important limits. UKCOVID is a discovery audit in an unusually confounded
+cohort; the official tests informed earlier protocol development. CODA is a secondary
+analysis inside the released training set, not its hidden challenge validation: match-first
+v2 was frozen after the aggregate v1 data-gate failure, and its matched transfer intervals
+remain wide. Matched evaluation balances measured covariates but does not remove all
+confounding. Probe
 decodability does not prove causal model use. We test one Stage-1-style projector, two
 frozen audio backbones, and linear/fixed-MLP readouts rather than the full downstream
-RespiraMFM system. Both external data gates failed, and the synthetic model did not establish
-a general mechanism.
+RespiraMFM system. Coswara failed its data gate, Cambridge model results are pending, and
+the synthetic model did not establish a general mechanism.
 
 ## 5. Conclusion
 
-Correct audio--metadata pairing can learn measurable participant correspondence without
-yielding a robust disease-transfer gain. Clinical audio--metadata studies should minimally
+Across UKCOVID and a secondary CODA TB sensitivity, correct audio--metadata pairing learned
+measurable participant correspondence without yielding a robust cross-backbone matched
+disease-transfer gain. Clinical audio--metadata studies should minimally
 include a within-label pairing control, a raw-audio reference, and cohort-balanced transfer
 and calibration evaluation. Otherwise, correspondence and source-cohort confidence may be
 mistaken for portable disease evidence.

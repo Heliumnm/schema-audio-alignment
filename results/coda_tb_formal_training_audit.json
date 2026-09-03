@@ -1,0 +1,291 @@
+{
+  "backbones": {
+    "ast": {
+      "manifest_runs": 15,
+      "runs": {
+        "correct_seed0": {
+          "archive_sha16": "fbe8f5b2926e910f",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.1070777515866865,
+          "loss_last": 3.439608586961357,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed1": {
+          "archive_sha16": "56a9bd99de50877a",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.105953893455897,
+          "loss_last": 3.4386397621920257,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed2": {
+          "archive_sha16": "963a2b804f096888",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.108383608892387,
+          "loss_last": 3.4365914037967005,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed3": {
+          "archive_sha16": "8ab2f6733dfce872",
+          "checkpoint_bytes": 41048810,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.107616989964474,
+          "loss_last": 3.436034285211642,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed4": {
+          "archive_sha16": "3393e7c787a2e480",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.108968433060654,
+          "loss_last": 3.437732522562764,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "global_seed0": {
+          "archive_sha16": "9ea6943d594f6460",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120768188046381,
+          "loss_last": 3.439408622570892,
+          "pairing_hash": "cd457b6c8cd3898b"
+        },
+        "global_seed1": {
+          "archive_sha16": "202b97bbe031ac47",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120138072651219,
+          "loss_last": 3.4371298589121246,
+          "pairing_hash": "4524dda2cec551cf"
+        },
+        "global_seed2": {
+          "archive_sha16": "786c00b6a78e2493",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120230036193063,
+          "loss_last": 3.4384657221647044,
+          "pairing_hash": "89a636259022a58e"
+        },
+        "global_seed3": {
+          "archive_sha16": "ecd2a4f96d4fa052",
+          "checkpoint_bytes": 41048708,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120527584161332,
+          "loss_last": 3.4359049251423546,
+          "pairing_hash": "cb48bf9ca46cf0ba"
+        },
+        "global_seed4": {
+          "archive_sha16": "b9d582746c0833c2",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120487628291495,
+          "loss_last": 3.439029903158817,
+          "pairing_hash": "c1246eb491b83dd3"
+        },
+        "within_label_seed0": {
+          "archive_sha16": "36e27529e5eb38f0",
+          "checkpoint_bytes": 41049128,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120373279498782,
+          "loss_last": 3.437579137966605,
+          "pairing_hash": "8bc7b1633065f83c"
+        },
+        "within_label_seed1": {
+          "archive_sha16": "68568d637cc4183d",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120736303614147,
+          "loss_last": 3.438148532143082,
+          "pairing_hash": "944bec66fec704ed"
+        },
+        "within_label_seed2": {
+          "archive_sha16": "aa0fc1658d577140",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120387104217883,
+          "loss_last": 3.4380986204194786,
+          "pairing_hash": "f5be6b93d03b8e06"
+        },
+        "within_label_seed3": {
+          "archive_sha16": "dcb6966f5c2c1496",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.118768817354395,
+          "loss_last": 3.4371226790730236,
+          "pairing_hash": "c287ec9156efe418"
+        },
+        "within_label_seed4": {
+          "archive_sha16": "396369ee9a1f6c39",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.119692805592298,
+          "loss_last": 3.4371529922358826,
+          "pairing_hash": "0a0ea4284de678f1"
+        }
+      },
+      "schedule": {
+        "arms": [
+          "correct",
+          "within_label",
+          "global"
+        ],
+        "epochs": 500,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    "opera_ct": {
+      "manifest_runs": 15,
+      "runs": {
+        "correct_seed0": {
+          "archive_sha16": "0bf037b897209781",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.08406753168375,
+          "loss_last": 3.452638329162724,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed1": {
+          "archive_sha16": "5af6307057113e8c",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.086562730779695,
+          "loss_last": 3.4546077895915728,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed2": {
+          "archive_sha16": "16ffc640370830da",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.091768560520254,
+          "loss_last": 3.450301614764516,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed3": {
+          "archive_sha16": "c979ca831613dce3",
+          "checkpoint_bytes": 41048810,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.088737745980916,
+          "loss_last": 3.451890606192214,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "correct_seed4": {
+          "archive_sha16": "16086c032612f40f",
+          "checkpoint_bytes": 41048874,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.090560588077526,
+          "loss_last": 3.4538201368467925,
+          "pairing_hash": "6ab9e17824325318"
+        },
+        "global_seed0": {
+          "archive_sha16": "b57bf616da3bcb6b",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.121160506411374,
+          "loss_last": 3.4528639893824384,
+          "pairing_hash": "cd457b6c8cd3898b"
+        },
+        "global_seed1": {
+          "archive_sha16": "311cd556245f43ac",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120610786710015,
+          "loss_last": 3.4511491868824113,
+          "pairing_hash": "4524dda2cec551cf"
+        },
+        "global_seed2": {
+          "archive_sha16": "4e364583e60bc7e5",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120760426987858,
+          "loss_last": 3.4526750005497466,
+          "pairing_hash": "89a636259022a58e"
+        },
+        "global_seed3": {
+          "archive_sha16": "e5cf8a0c0ea2186c",
+          "checkpoint_bytes": 41048708,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.1213408603794734,
+          "loss_last": 3.4514279729295922,
+          "pairing_hash": "cb48bf9ca46cf0ba"
+        },
+        "global_seed4": {
+          "archive_sha16": "4558cfdddf24cd91",
+          "checkpoint_bytes": 41048772,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120775759714357,
+          "loss_last": 3.4530063889315277,
+          "pairing_hash": "c1246eb491b83dd3"
+        },
+        "within_label_seed0": {
+          "archive_sha16": "5746a8e628bbf6dd",
+          "checkpoint_bytes": 41049128,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120280150750383,
+          "loss_last": 3.4524831297385754,
+          "pairing_hash": "8bc7b1633065f83c"
+        },
+        "within_label_seed1": {
+          "archive_sha16": "9d0eb7152fad3a8c",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120537706473178,
+          "loss_last": 3.452265669457355,
+          "pairing_hash": "944bec66fec704ed"
+        },
+        "within_label_seed2": {
+          "archive_sha16": "6a78dd03eb1e005f",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.120671918340781,
+          "loss_last": 3.4505182886202737,
+          "pairing_hash": "f5be6b93d03b8e06"
+        },
+        "within_label_seed3": {
+          "archive_sha16": "e849936da4f96ed8",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.119417522281754,
+          "loss_last": 3.4520562667751786,
+          "pairing_hash": "c287ec9156efe418"
+        },
+        "within_label_seed4": {
+          "archive_sha16": "80433e62a25e1c85",
+          "checkpoint_bytes": 41049064,
+          "finite_nonzero_unit_normalized": true,
+          "loss_first": 4.121282160776369,
+          "loss_last": 3.4498481734672786,
+          "pairing_hash": "0a0ea4284de678f1"
+        }
+      },
+      "schedule": {
+        "arms": [
+          "correct",
+          "within_label",
+          "global"
+        ],
+        "epochs": 500,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    }
+  },
+  "failures": [],
+  "format_version": "coda-formal-training-audit-v1",
+  "n_participants": 1081,
+  "n_train": 603,
+  "scientific_scores_computed": false,
+  "target_read": false,
+  "technical_pass": true
+}
