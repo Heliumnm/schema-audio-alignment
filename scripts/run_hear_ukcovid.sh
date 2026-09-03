@@ -9,6 +9,7 @@ ALIGN_PYTHON=${ALIGN_PYTHON:-/home/heliu/anaconda3/bin/python}
 HEAR_MODEL=${HEAR_MODEL:-/mnt/hd/data_heliu/hf_models/google_hear_9b2eb285}
 UKCOVID_AUDIO=${UKCOVID_AUDIO:-/mnt/hd/data_heliu/resp_datasets/ukcovid/audio/audio}
 N_SHARDS=${N_SHARDS:-6}
+HEAR_GPUS=${HEAR_GPUS:-"0 1 2 3 4 5"}
 HEAR_CUDNN_LIB=${HEAR_CUDNN_LIB:-/mnt/hd/data_heliu/venvs/hear_tf218/lib/python3.11/site-packages/nvidia/cudnn/lib}
 if [[ -d "$HEAR_CUDNN_LIB" ]]; then
   export LD_LIBRARY_PATH="$HEAR_CUDNN_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
@@ -30,15 +31,18 @@ for REQUIRED in \
 done
 
 run_extract() {
+  local gpu_ids=()
+  read -r -a gpu_ids <<<"$HEAR_GPUS"
+  [[ "${#gpu_ids[@]}" -gt 0 ]] || { echo "HEAR_GPUS is empty" >&2; return 2; }
   "$HEAR_PYTHON" src/extract_hear_ukcovid.py --self-test
-  CUDA_VISIBLE_DEVICES=0 "$HEAR_PYTHON" src/extract_hear_ukcovid.py \
+  CUDA_VISIBLE_DEVICES="${gpu_ids[0]}" "$HEAR_PYTHON" src/extract_hear_ukcovid.py \
     --preflight --cohort results/ukcovid_audio_cohort.csv \
     --audio-root "$UKCOVID_AUDIO" --model "$HEAR_MODEL" \
     --preflight-out results/hear_preflight.json
   local pids=()
   local shard gpu
   for shard in $(seq 0 $((N_SHARDS - 1))); do
-    gpu=$((shard % 6))
+    gpu=${gpu_ids[$((shard % ${#gpu_ids[@]}))]}
     CUDA_VISIBLE_DEVICES="$gpu" "$HEAR_PYTHON" src/extract_hear_ukcovid.py \
       --extract-shard --cohort results/ukcovid_audio_cohort.csv \
       --audio-root "$UKCOVID_AUDIO" --model "$HEAR_MODEL" \
