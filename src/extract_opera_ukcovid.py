@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import fcntl
 import hashlib
+import importlib
 import json
 import math
 import os
@@ -75,11 +76,42 @@ def window_starts(n_samples: int) -> list[int]:
     return starts
 
 
-def configure_opera(opera_root: Path, checkpoint: Path, device: str):
+def activate_opera_namespace(opera_root: Path) -> None:
+    """Make ``src`` resolve to OPERA, even when another project owns that name.
+
+    OPERA uses the generic top-level package name ``src``.  The external audit also has
+    a directory named ``src`` and Slurm launches from inside that directory, so changing
+    ``PYTHONPATH`` alone is insufficient once the wrong package has entered
+    ``sys.modules``.  Clear only that ambiguous namespace, put the verified OPERA root
+    first, then assert the imported package actually came from OPERA.
+    """
+
     import sys
+
+    root = Path(opera_root).expanduser().resolve()
+    sentinel = root / "src" / "model" / "models_cola.py"
+    utility = root / "src" / "util.py"
+    if not sentinel.is_file() or not utility.is_file():
+        raise FileNotFoundError(
+            f"OPERA source layout is incomplete: expected {sentinel} and {utility}")
+    for name in list(sys.modules):
+        if name == "src" or name.startswith("src."):
+            del sys.modules[name]
+    root_string = str(root)
+    sys.path[:] = [root_string] + [entry for entry in sys.path if entry != root_string]
+    importlib.invalidate_caches()
+    package = importlib.import_module("src")
+    locations = [Path(item).resolve() for item in getattr(package, "__path__", [])]
+    expected = (root / "src").resolve()
+    if expected not in locations:
+        raise ImportError(
+            f"src resolved outside OPERA: expected {expected}, got {locations}")
+
+
+def configure_opera(opera_root: Path, checkpoint: Path, device: str):
     import torch
 
-    sys.path.insert(0, str(opera_root))
+    activate_opera_namespace(opera_root)
     from src.model.models_cola import Cola
     from src.util import get_entire_signal_librosa
 

@@ -20,8 +20,10 @@ threshold、arm、seed和epoch保持冻结，但participant manifest、split、t
 cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 sbatch run.sh
 
-`run.sh` 会激活 `env_chao`、准备/校验模型、只填充私有模型路径和解锁口令，再执行本文件
-余下的冻结流程。下面保留手工步骤作为排错和审计说明。
+`run.sh` 会直接使用合作者已经准备好的绝对环境
+`/home/yl809/rds/hpc-work/env_audit/bin/python`，准备/校验模型、只填充私有模型路径和解锁
+口令，再执行本文件余下的冻结流程。它不读取shell启动文件，也不在作业里安装package。
+下面保留手工步骤作为排错和审计说明。
 
 一、更新代码
 ------------
@@ -56,20 +58,15 @@ models.text.model_path
 
 "format_version": "cambridge-external-v1"
 
-三、准备正式环境
-----------------
+三、正式环境
+------------
 
-完整的模型下载、OPERA附加依赖、版本检查和配置示例见：
+当前固定使用：
 
-CAMBRIDGE_MODEL_ENV_SETUP_ZH.txt
+/home/yl809/rds/hpc-work/env_audit/bin/python
 
-cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
-source .venv/bin/activate
-pip install -r requirements.txt
-
-如正式环境不是这里的.venv，提交前设置：
-
-export CAMBRIDGE_VENV=/你的正式Python环境路径
+`run.sh` 会先检查该解释器、CUDA、torch、torchaudio及OPERA依赖。不要再source其他环境，
+不要在作业中pip install。若检查失败，返回完整日志，不要临时改package版本。
 
 四、提交GPU任务
 ---------------

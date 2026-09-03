@@ -9,11 +9,12 @@
 
 当前 `run.sh` 已增加identity-version guard；旧975人config会在加载模型前被明确拒绝。只有
 修正数据门重新运行并经人工复核为`GO`后，英国合作者才可在本目录运行 `sbatch run.sh`。脚本使用
-`/home/yl809/rds/hpc-work/datasets/covid19`、新 `cambridge_audit_output_webfix_v2`、`env_chao` 和
-RDS 模型缓存，一次完成正式阶段。新增依赖只安装到RDS上的隔离venv；`env_chao`仅提供
-已验证的torch版本/CUDA构建供脚本选择；torch、torchaudio及其余依赖均安装进不共享
-site-packages的隔离venv，`env_chao`不被直接安装package。`csd3:` 前缀只用于从其他机器执行
-scp/rsync，不能写进Slurm内部文件路径。
+`/home/yl809/rds/hpc-work/datasets/covid19`、新 `cambridge_audit_output_webfix_v2`、合作者已经
+准备好的 `/home/yl809/rds/hpc-work/env_audit` 和 RDS 模型缓存，一次完成正式阶段。脚本不再
+读取 shell 启动文件、不依赖隐式 home 路径，也不会在作业中安装或替换 package。OPERA 的
+顶层包名恰好也叫 `src`；当前代码会清除同名缓存、把 OPERA 根目录置于首位并验证实际导入
+位置，避免把本项目的 `src` 误当成 OPERA。`csd3:` 前缀只用于从其他机器执行 scp/rsync，
+不能写进 Slurm 内部文件路径。
 
 这个文件夹把 UKCOVID 的 Pairing-Controlled Transfer Audit 移植到 Cambridge
 COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridge 数据。
