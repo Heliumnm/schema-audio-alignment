@@ -9,6 +9,13 @@ CONFIG=${1:?usage: run_hear_extension.sh CONFIG [extract|s1|train|audit|evaluate
 STAGE=${2:-all}
 HEAR_PYTHON=${HEAR_PYTHON:-python}
 ALIGN_PYTHON=${ALIGN_PYTHON:-python}
+HEAR_CUDNN_LIB=${HEAR_CUDNN_LIB:-$(dirname "$(dirname "$HEAR_PYTHON")")/lib/python3.11/site-packages/nvidia/cudnn/lib}
+
+# HeAR's TensorFlow 2.18 wheel requires cuDNN >= 9.3.  Prefer the cuDNN
+# installed inside the isolated HeAR environment over an older system copy.
+if [[ -d "$HEAR_CUDNN_LIB" ]]; then
+  export LD_LIBRARY_PATH="$HEAR_CUDNN_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
 
 case "$STAGE" in
   extract|s1|train|audit|evaluate|all) ;;
@@ -81,4 +88,3 @@ case "$STAGE" in
     run_evaluate
     ;;
 esac
-

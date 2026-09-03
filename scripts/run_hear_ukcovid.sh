@@ -9,6 +9,10 @@ ALIGN_PYTHON=${ALIGN_PYTHON:-/home/heliu/anaconda3/bin/python}
 HEAR_MODEL=${HEAR_MODEL:-/mnt/hd/data_heliu/hf_models/google_hear_9b2eb285}
 UKCOVID_AUDIO=${UKCOVID_AUDIO:-/mnt/hd/data_heliu/resp_datasets/ukcovid/audio/audio}
 N_SHARDS=${N_SHARDS:-6}
+HEAR_CUDNN_LIB=${HEAR_CUDNN_LIB:-/mnt/hd/data_heliu/venvs/hear_tf218/lib/python3.11/site-packages/nvidia/cudnn/lib}
+if [[ -d "$HEAR_CUDNN_LIB" ]]; then
+  export LD_LIBRARY_PATH="$HEAR_CUDNN_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
 cd "$ROOT"
 mkdir -p results/hear_logs results/hear_shards
 

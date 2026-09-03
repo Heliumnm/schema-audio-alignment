@@ -39,6 +39,9 @@ Projector 仍为 `input_dim -> 1024 -> 2560`，两层之后均为 LayerNorm + Re
 - 推理固定使用独立 TensorFlow 2.18 环境，与 Google 当前 HeAR 支持仓库一致。TensorFlow 2.15
   虽能读取 SavedModel signature，但实际前向因 VHLO/StableHLO 版本不兼容而失败；本修正发生
   在任何 embedding 生成之前，不改变样本、窗口、聚合或评测协议；
+- 该 TensorFlow wheel 编译要求 cuDNN 9.3；服务器系统 cuDNN 9.1 无法执行卷积，因此在同一
+  隔离环境安装 `nvidia-cudnn-cu12==9.3.0.75`，运行脚本显式把这份动态库置于搜索路径首位。
+  真实 2 秒零波形前向已验证输出为有限的 `(1, 512)`，此为纯运行时兼容修复；
 - encoder 完全冻结，官方输出为每个 2 秒片段一个 512 维 embedding；
 - 输入为 16 kHz mono float waveform，不做逐文件峰值归一化；
 - 短于 2 秒：右侧补零至 32,000 samples；
