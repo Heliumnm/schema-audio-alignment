@@ -39,6 +39,18 @@ class EvaluateHelperTest(unittest.TestCase):
         self.assertEqual(result["n_pairs"], 2)
         self.assertEqual(result["observed"], 0.5)
 
+    def test_pair_cluster_bootstrap_discards_one_class_probe_draws(self):
+        y = np.asarray([1, 0, 0, 0, 0, 0])
+        pair = np.asarray(["a", "a", "b", "b", "c", "c"])
+        strong = np.tile(np.asarray([0.9, 0.1, 0.2, 0.3, 0.4, 0.5]), (2, 1))
+        weak = np.tile(np.asarray([0.6, 0.5, 0.4, 0.3, 0.2, 0.1]), (2, 1))
+
+        from audio_baselines_v2 import auroc
+        result = pair_cluster_ci(strong, weak, y, pair, auroc, 500, 7)
+        self.assertGreater(result["n_boot_valid"], 0)
+        self.assertGreater(result["n_boot_discarded_one_class"], 0)
+        self.assertEqual(result["n_boot_requested"], 500)
+
     def test_stratum_bootstrap_keeps_all_rows_in_group(self):
         y = np.asarray([0, 1, 0, 1, 0, 1])
         group = np.asarray(["a", "a", "a", "a", "b", "b"])

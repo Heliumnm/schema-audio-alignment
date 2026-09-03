@@ -75,14 +75,23 @@ def pair_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
     for _ in range(boot):
         sampled_pairs = rng.choice(unique, len(unique), replace=True)
         indices = np.concatenate([groups[pair] for pair in sampled_pairs])
+        # Disease labels are balanced within each matched pair, but auxiliary
+        # probe targets need not be. A cluster-bootstrap draw can therefore
+        # contain only one probe class, for which AUROC is undefined.
+        if np.unique(y[indices]).size < 2:
+            continue
         sampled_seeds = rng.choice(len(A), len(A), replace=True)
         values.append(float(np.mean([
             fn(y[indices], A[s, indices]) - fn(y[indices], B[s, indices])
             for s in sampled_seeds])))
+    if not values:
+        raise RuntimeError("matched-pair bootstrap produced no two-class replicate")
     return {"observed": float(np.mean(per_seed)),
             "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
             "per_seed": per_seed.tolist(), "n_pairs": int(len(unique)),
-            "n_seeds": int(len(A))}
+            "n_seeds": int(len(A)), "n_boot_requested": int(boot),
+            "n_boot_valid": int(len(values)),
+            "n_boot_discarded_one_class": int(boot - len(values))}
 
 
 def group_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
@@ -97,14 +106,20 @@ def group_cluster_ci(A: np.ndarray, B: np.ndarray, y: np.ndarray,
     for _ in range(boot):
         sampled = rng.choice(unique, len(unique), replace=True)
         indices = np.concatenate([groups[group] for group in sampled])
+        if np.unique(y[indices]).size < 2:
+            continue
         sampled_seeds = rng.choice(len(A), len(A), replace=True)
         values.append(float(np.mean([
             fn(y[indices], A[s, indices]) - fn(y[indices], B[s, indices])
             for s in sampled_seeds])))
+    if not values:
+        raise RuntimeError("matched-stratum bootstrap produced no two-class replicate")
     return {"observed": float(np.mean(per_seed)),
             "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
             "per_seed": per_seed.tolist(), "n_groups": int(len(unique)),
-            "n_seeds": int(len(A)), "cluster": "exact_matching_stratum"}
+            "n_seeds": int(len(A)), "cluster": "exact_matching_stratum",
+            "n_boot_requested": int(boot), "n_boot_valid": int(len(values)),
+            "n_boot_discarded_one_class": int(boot - len(values))}
 
 
 def absolute_metrics(probability: np.ndarray, y: np.ndarray, boot: int, seed: int) -> dict:
