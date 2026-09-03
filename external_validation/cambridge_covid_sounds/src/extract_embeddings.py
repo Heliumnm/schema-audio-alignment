@@ -21,6 +21,9 @@ SR = 16_000
 AST_WINDOW_S = 10.24
 AST_WINDOW_SAMPLES = int(SR * AST_WINDOW_S)
 AST_PATCH, AST_STRIDE, AST_FREQ, AST_TIME = 16, 10, 12, 101
+HEAR_WINDOW_S = 2.0
+HEAR_WINDOW_SAMPLES = int(SR * HEAR_WINDOW_S)
+HEAR_OUTPUT_DIM = 512
 
 
 def window_starts(n_samples: int, window: int) -> list[int]:
@@ -45,6 +48,22 @@ def load_audio(path: Path) -> np.ndarray:
     if len(waveform) == 0 or not np.isfinite(waveform).all():
         raise ValueError(f"invalid waveform {path}")
     return waveform
+
+
+def fixed_windows(waveform: np.ndarray, window_samples: int) -> np.ndarray:
+    """Return deterministic, full-coverage windows with right-zero padding.
+
+    Long recordings use ``ceil(duration/window)`` evenly spaced starts including
+    both the first and last possible start.  This is deliberately content blind:
+    no cough detector, energy selection or peak normalisation is applied.
+    """
+    windows = []
+    for start in window_starts(len(waveform), window_samples):
+        segment = waveform[start:start + window_samples]
+        if len(segment) < window_samples:
+            segment = np.pad(segment, (0, window_samples - len(segment)))
+        windows.append(np.asarray(segment, dtype=np.float32))
+    return np.stack(windows)
 
 
 def ast_recording(path: Path, model, feature_extractor, torch, device: str) -> np.ndarray:
@@ -110,6 +129,64 @@ def opera_recording(path: Path, model, preprocess, torch, device: str) -> np.nda
     return features.mean(axis=0).astype(np.float32)
 
 
+def _model_file_hash(path: Path) -> str:
+    """Hash the SavedModel graph and variables, independent of cache metadata."""
+    candidates = [path / "fingerprint.pb", path / "saved_model.pb",
+                  path / "variables" / "variables.index",
+                  path / "variables" / "variables.data-00000-of-00001"]
+    missing = [str(candidate) for candidate in candidates if not candidate.is_file()]
+    if missing:
+        raise FileNotFoundError(f"incomplete HeAR SavedModel: {missing}")
+    digest = hashlib.sha256()
+    for candidate in candidates:
+        digest.update(str(candidate.relative_to(path)).encode("utf-8"))
+        digest.update(sha256_file(candidate).encode("ascii"))
+    return digest.hexdigest()
+
+
+def configure_hear(config: dict, config_path: Path):
+    import tensorflow as tf
+
+    settings = config["models"]["hear"]
+    path = resolve_path(config_path, settings["model_path"])
+    if path is None:
+        raise ValueError("models.hear.model_path is required")
+    for gpu in tf.config.list_physical_devices("GPU"):
+        try:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        except RuntimeError:
+            pass
+    try:
+        tf.config.experimental.enable_op_determinism()
+    except (AttributeError, RuntimeError):
+        pass
+    tf.random.set_seed(20260903)
+    model = tf.saved_model.load(str(path))
+    if "serving_default" not in model.signatures:
+        raise RuntimeError("HeAR SavedModel lacks serving_default signature")
+    signature = model.signatures["serving_default"]
+    return tf, model, signature, _model_file_hash(path)
+
+
+def hear_recording(path: Path, signature, tf, batch_size: int = 64,
+                   input_key: str = "x", output_key: str = "output_0") -> np.ndarray:
+    windows = fixed_windows(load_audio(path), HEAR_WINDOW_SAMPLES)
+    outputs = []
+    for start in range(0, len(windows), batch_size):
+        batch = tf.convert_to_tensor(windows[start:start + batch_size], dtype=tf.float32)
+        result = signature(**{input_key: batch})
+        if output_key not in result:
+            raise RuntimeError(
+                f"HeAR output {output_key!r} absent; available={sorted(result)}")
+        outputs.append(np.asarray(result[output_key].numpy(), dtype=np.float32))
+    matrix = np.concatenate(outputs, axis=0)
+    if matrix.shape != (len(windows), HEAR_OUTPUT_DIM):
+        raise RuntimeError(f"unexpected HeAR output shape {matrix.shape}")
+    if not np.isfinite(matrix).all() or np.any(np.linalg.norm(matrix, axis=1) == 0):
+        raise RuntimeError(f"invalid HeAR embedding for {path}")
+    return matrix.mean(axis=0).astype(np.float32)
+
+
 def check_indices(table: pd.DataFrame, n: int = 28) -> list[int]:
     """Deterministic split/label coverage plus CODA recording-count/duration extremes."""
     chosen, seen = [], set()
@@ -160,6 +237,16 @@ def execute(config_file: str, backbone: str) -> Path:
             config, config_path, device)
         encode = lambda path: opera_recording(path, model, preprocessing, torch, device)
         spec = "OPERA-CT|participant-equal-recording-mean"
+    elif backbone == "hear":
+        tf, model, signature, checkpoint_hash = configure_hear(config, config_path)
+        settings = config["models"]["hear"]
+        encode = lambda path: hear_recording(
+            path, signature, tf, int(settings.get("batch_size", 64)),
+            str(settings.get("input_key", "x")),
+            str(settings.get("output_key", "output_0")))
+        revision = str(settings.get("revision", "unknown"))
+        spec = (f"HeAR-1.0.0@{revision}|16k-mono|2s|ceil-full-coverage|"
+                "right-zero-pad|window-mean|participant-equal-recording-mean")
     else:
         raise ValueError(backbone)
 
@@ -221,7 +308,7 @@ def execute(config_file: str, backbone: str) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
-    parser.add_argument("--backbone", choices=("ast", "opera_ct"), required=True)
+    parser.add_argument("--backbone", choices=("ast", "opera_ct", "hear"), required=True)
     args = parser.parse_args()
     execute(args.config, args.backbone)
 

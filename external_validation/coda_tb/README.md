@@ -121,6 +121,26 @@ The completed disclosure-checked aggregate outputs are committed as:
 No participant-level prediction, representation, pairing, checkpoint, metadata, or audio is
 included in those public files.
 
+## Post-hoc HeAR backbone extension
+
+After the AST/OPERA results were complete, HeAR was added as a separately labelled
+third-backbone robustness extension. Its scientific standing, frozen two-second windowing,
+unchanged pairing/evaluation protocol and interpretation limits are recorded in
+[`HEAR_EXTENSION_PROTOCOL_ZH.md`](HEAR_EXTENSION_PROTOCOL_ZH.md). It is not a new
+confirmatory analysis and does not modify the two primary backbone results.
+
+HeAR extraction must use an isolated TensorFlow environment; alignment and evaluation use
+the existing PyTorch environment. With a private config containing `models.hear.model_path`:
+
+```bash
+HEAR_PYTHON=/absolute/hear-env/bin/python \
+ALIGN_PYTHON=/absolute/pytorch-env/bin/python \
+bash external_validation/coda_tb/run_hear_extension.sh /private/config.json all
+```
+
+The runner refuses to start unless the existing AST result, OPERA result, primary training
+audit, frozen participant manifest and Phi-2 cache are all present.
+
 ## Frozen data assumptions
 
 - Synapse Train folder: `syn39711065`;

@@ -69,7 +69,12 @@ def train_one(A, X_all, pair, tr, seed, epochs, hashes, log_every, out_dir, arm,
     torch.manual_seed(seed)                       # seeds CPU and all CUDA generators
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
-    model = ContrastiveProjectionHead().to(device)
+    # AST and OPERA-CT are 768-D, while HeAR is 512-D.  The projector source
+    # architecture is unchanged apart from the input width required by the frozen
+    # backbone.  Inferring it from the audited cache avoids a silent hard-coded
+    # adapter or zero-padding step.
+    audio_input_dim = int(A.shape[1])
+    model = ContrastiveProjectionHead(in_dim=audio_input_dim).to(device)
     opt = make_optimizer(model)
     model.train()
     brng = np.random.RandomState(50_000 + seed)   # shared epoch permutations across arms
@@ -118,7 +123,7 @@ def train_one(A, X_all, pair, tr, seed, epochs, hashes, log_every, out_dir, arm,
                        else None),
           "batch_rng": brng.get_state(),
           "pairing": pair, "input_hashes": hashes, "source_commit": SOURCE_COMMIT,
-          "seed": seed, "arm": arm}
+          "seed": seed, "arm": arm, "audio_input_dim": audio_input_dim}
     if save_ckpt:
         torch.save(ck, os.path.join(out_dir, f"{arm}_seed{seed}_epoch{epochs}.pt"))
     return model, hist, ck
@@ -161,16 +166,18 @@ def main():
                 assert not np.any(j == np.arange(n)), f"{arm} s{s_} has a fixed point"
     print(f"pairing check: {len(args.seeds)} seeds x {len(ARMS)} arms are legal bijections")
 
+    audio_input_dim = int(A.shape[1])
     manifest = {"source_commit": SOURCE_COMMIT, "n_train": int(n), "batch": BATCH,
                 "epochs": args.epochs, "seeds": args.seeds, "input_hashes": hashes,
-                "runs": {}}
+                "audio_input_dim": audio_input_dim, "runs": {}}
     for s_ in args.seeds:
         init_hash = None
         for arm in ARMS:
             j = build_pairing(y, MODE[arm], s_)
             torch.manual_seed(s_)
             ih = sha(np.concatenate([p.detach().numpy().ravel()
-                                     for p in ContrastiveProjectionHead().parameters()]))
+                                     for p in ContrastiveProjectionHead(
+                                         in_dim=audio_input_dim).parameters()]))
             if init_hash is None:
                 init_hash = ih
             assert ih == init_hash, "arms do not share initialisation within a seed"

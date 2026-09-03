@@ -283,7 +283,7 @@ def execute(config_file: str, backbone: str) -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(); parser.add_argument("--config", required=True)
-    parser.add_argument("--backbone", choices=("ast", "opera_ct"), required=True)
+    parser.add_argument("--backbone", choices=("ast", "opera_ct", "hear"), required=True)
     args = parser.parse_args(); execute(args.config, args.backbone)
 
 

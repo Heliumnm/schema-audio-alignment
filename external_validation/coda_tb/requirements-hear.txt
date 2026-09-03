@@ -1,0 +1,7 @@
+# Isolated extraction environment only.  PyTorch alignment/evaluation uses the existing env.
+tensorflow==2.15.1
+numpy>=1.24,<2
+pandas>=2,<3
+soundfile>=0.12,<1
+librosa>=0.10,<1
+
