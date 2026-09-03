@@ -1,0 +1,56 @@
+{
+  "format_version": "cambridge-external-v1",
+  "dataset": "Coswara Zenodo v1.0 global-gate post-hoc stress test",
+  "output_root": "/REPLACE/Coswara/formal_global_stress_v1",
+  "inputs": {
+    "participant_manifest": "/REPLACE/Coswara/formal_results/global_gate_sensitivity_v1/manifest.csv",
+    "matched_pairs": "/REPLACE/Coswara/formal_results/global_gate_sensitivity_v1/pairs.csv",
+    "audio_qc": "/REPLACE/Coswara/formal_results/coswara_audio_qc.csv",
+    "audio_root": "/REPLACE/Coswara/cough_heavy",
+    "expected_sha256": {
+      "participant_manifest": "4f998a6bb7b1370b9b3f2905023ec170dd148a61a1767973d7d1c510fed92bea",
+      "matched_pairs": "ffa995b61c34bd0f83e83b401686380d25b94a11301d129863fba9c7f279efd7",
+      "audio_qc": "e9d9c3578a8fdb0e14ffaaf73e2fe64cec1f01877a583b4ee4e9591f545bf4d7"
+    }
+  },
+  "protocol": {
+    "formal_unlock": "FROZEN_PROTOCOL_AND_DATA_GATE_GO",
+    "standing": "post-hoc external stress test; original greedy gate remains NO-GO",
+    "cohort_field": "country_group",
+    "schema_fields": [
+      "age", "sex", "cough", "fever", "fatigue", "sore_throat",
+      "breathing_difficulty", "asthma", "other_respiratory", "smoker",
+      "diarrhoea", "loss_of_smell", "vaccination", "mask_use"
+    ],
+    "bootstrap": 10000,
+    "auroc_equivalence_margin": 0.02,
+    "nll_equivalence_margin": 0.01,
+    "probes": {
+      "sex_female": {"field": "sex", "kind": "category", "positive_values": ["female"]},
+      "age_45plus": {"field": "age", "kind": "threshold", "threshold": 45},
+      "cough": {"field": "cough", "kind": "category", "positive_values": ["YES"]},
+      "fever": {"field": "fever", "kind": "category", "positive_values": ["YES"]},
+      "fatigue": {"field": "fatigue", "kind": "category", "positive_values": ["YES"]},
+      "sore_throat": {"field": "sore_throat", "kind": "category", "positive_values": ["YES"]},
+      "breathing_difficulty": {"field": "breathing_difficulty", "kind": "category", "positive_values": ["YES"]},
+      "asthma": {"field": "asthma", "kind": "category", "positive_values": ["YES"]},
+      "other_respiratory": {"field": "other_respiratory", "kind": "category", "positive_values": ["YES"]},
+      "smoker": {"field": "smoker", "kind": "category", "positive_values": ["YES"]},
+      "diarrhoea": {"field": "diarrhoea", "kind": "category", "positive_values": ["YES"]},
+      "loss_of_smell": {"field": "loss_of_smell", "kind": "category", "positive_values": ["YES"]},
+      "late_period": {"field": "halfyear", "kind": "category", "positive_values": ["2021-H1", "2021-H2", "2022-H1", "2022-H2"]},
+      "long_recording": {"field": "duration_s", "kind": "threshold", "threshold": 6.0},
+      "loud_recording": {"field": "rms", "kind": "threshold", "threshold": 0.1},
+      "clipped": {"field": "clip_fraction", "kind": "threshold", "threshold": 0.000001},
+      "high_silence": {"field": "silence_fraction", "kind": "threshold", "threshold": 0.5}
+    }
+  },
+  "models": {
+    "device": "cuda",
+    "ast": {"enabled": true, "model_path": "/REPLACE/hf_models/ast-finetuned-audioset-10-10-0.4593", "layers": 6},
+    "opera_ct": {"enabled": true, "opera_root": "/REPLACE/OPERA", "checkpoint_path": "/REPLACE/OPERA/cks/model/encoder-operaCT.ckpt"},
+    "hear": {"enabled": true, "model_path": "/REPLACE/hf_models/google_hear_9b2eb285", "revision": "9b2eb2853c426676255cc6ac5804b7f1fe8e563f", "batch_size": 64, "input_key": "x", "output_key": "output_0"},
+    "text": {"model_path": "/REPLACE/hf_models/phi-2", "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0", "max_length": 256, "batch_size": 16, "dtype": "bfloat16"},
+    "alignment": {"seeds": [0, 1, 2, 3, 4], "epochs": 500, "device": "cuda"}
+  }
+}
