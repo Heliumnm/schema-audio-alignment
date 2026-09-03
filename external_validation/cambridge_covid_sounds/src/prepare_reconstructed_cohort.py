@@ -80,6 +80,7 @@ def _session_audio(audio_root: Path, uid: str, folder: str,
                 found.append(named.resolve())
         for path in session_root.glob("*"):
             if (path.is_file() and path.suffix.casefold() in AUDIO_SUFFIXES and
+                    not path.name.startswith("._") and
                     "cough" in path.name.casefold()):
                 found.append(path.resolve())
     return sorted(set(found))

@@ -4,6 +4,14 @@
 状态：在修正后的真实WAV数据门运行前冻结；Cambridge模型从未启动  
 性质：对v2 participant namespace bug的单变量修正，不是看模型结果后的新分析
 
+本地 macOS/exFAT 副本可能额外包含 `._*.wav` AppleDouble 资源叉；它们不是 released 音频
+样本，扫描器按文件名固定排除。该运行时兼容修复不改变 WAV 内容、participant、submission、
+标签、matching 或阈值。
+
+本地 macOS/exFAT 副本可能额外包含 `._*.wav` AppleDouble 资源叉；它们不是 released 音频
+样本，扫描器按文件名固定排除。该运行时兼容修复不改变 WAV 内容、participant、submission、
+标签、matching 或阈值。
+
 ## 为什么必须建立v2.1？
 
 v2把三平台metadata里的原始`Uid`直接当participant ID。Android和iOS可这样做；Web不行：

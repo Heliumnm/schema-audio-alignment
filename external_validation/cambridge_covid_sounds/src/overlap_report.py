@@ -40,7 +40,8 @@ def inventory_release(root: Path) -> tuple[dict[str, Any], set[str], set[str]]:
     unparsed = 0
 
     for path in sorted(root.rglob("*")):
-        if not path.is_file() or path.suffix.casefold() not in AUDIO_SUFFIXES:
+        if (not path.is_file() or path.suffix.casefold() not in AUDIO_SUFFIXES or
+                path.name.startswith("._")):
             continue
         parts = path.relative_to(root).parts
         directories = parts[:-1]

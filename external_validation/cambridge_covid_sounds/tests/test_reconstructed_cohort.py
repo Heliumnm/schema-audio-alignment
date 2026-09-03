@@ -51,6 +51,8 @@ class ReconstructedCohortTest(unittest.TestCase):
                     })
                     write_wave(audio_root / "form-app-users" / folder /
                                "audio_file_cough.wav", 300 + label * 30 + index)
+                    (audio_root / "form-app-users" / folder /
+                     "._audio_file_cough.wav").write_bytes(b"appledouble-not-audio")
             pd.DataFrame(rows).to_csv(metadata_root / "web.csv", sep=";", index=True)
 
             report = build(metadata_root, audio_root, root / "out")
@@ -61,6 +63,7 @@ class ReconstructedCohortTest(unittest.TestCase):
             self.assertEqual(report["n_reconstructed_participants"], 6)
             self.assertEqual(set(people.uid), set(folders))
             self.assertEqual(audio.uid.nunique(), 6)
+            self.assertFalse(audio.path.str.contains("/\\._", regex=True).any())
             self.assertEqual(set(people.platform), {"WEB"})
             self.assertNotIn("form-app-users", set(people.uid))
 

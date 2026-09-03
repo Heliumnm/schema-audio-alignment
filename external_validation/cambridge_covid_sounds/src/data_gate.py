@@ -532,6 +532,7 @@ def scan_audio(config: dict[str, Any], config_path: Path,
         for pid, participant_root in participant_roots:
             for path in sorted(participant_root.rglob("*")):
                 if (path.is_file() and path.suffix.casefold() in AUDIO_SUFFIXES and
+                        not path.name.startswith("._") and
                         "cough" in path.name.casefold()):
                     rows.append({"participant_identifier": pid,
                                  "audio_path": str(path.resolve()), "modality": "cough"})

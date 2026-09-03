@@ -19,6 +19,7 @@ def add_submission(root: Path, uid: str, sample: str) -> None:
     folder.mkdir(parents=True, exist_ok=True)
     for name in ("audio_file_cough.wav", "audio_file_breathe.wav", "audio_file_read.wav"):
         (folder / name).write_bytes(b"inventory-only")
+        (folder / f"._{name}").write_bytes(b"appledouble-not-audio")
 
 
 class OverlapReportTest(unittest.TestCase):
