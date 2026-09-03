@@ -11,8 +11,13 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 OUTPUT_DIR=$(mkdir -p "$3" && cd "$3" && pwd)
 CONFIG="$OUTPUT_DIR/config.local.json"
 export PYTHONPATH="$HERE/src${PYTHONPATH:+:$PYTHONPATH}"
+PYTHON_BIN=${PYTHON_BIN:?set PYTHON_BIN to the absolute Python executable}
+if [[ "$PYTHON_BIN" != /* || ! -x "$PYTHON_BIN" ]]; then
+  echo "PYTHON_BIN must be an executable absolute path: $PYTHON_BIN" >&2
+  exit 2
+fi
 
-python "$HERE/src/prepare_reconstructed_cohort.py" \
+"$PYTHON_BIN" "$HERE/src/prepare_reconstructed_cohort.py" \
   --metadata-root "$1" \
   --audio-root "$2" \
   --output-root "$OUTPUT_DIR" \
@@ -28,5 +33,5 @@ OVERLAP_ARGS=(--task2-root "$2" --output-root "$OUTPUT_DIR")
 if [[ $# -eq 4 ]]; then
   OVERLAP_ARGS+=(--task1-root "$4")
 fi
-python "$HERE/src/overlap_report.py" "${OVERLAP_ARGS[@]}"
-python "$HERE/src/package_results.py" --config "$CONFIG"
+"$PYTHON_BIN" "$HERE/src/overlap_report.py" "${OVERLAP_ARGS[@]}"
+"$PYTHON_BIN" "$HERE/src/package_results.py" --config "$CONFIG"
