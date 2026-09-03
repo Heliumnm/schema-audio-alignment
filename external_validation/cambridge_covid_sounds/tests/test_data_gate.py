@@ -220,6 +220,7 @@ class DataGateTest(unittest.TestCase):
             payload = json.loads(config_path.read_text())
             payload["protocol"].update({
                 "split_strategy": "match_first_v2",
+                "identity_namespace_version": "cambridge-task2-official-loader-v1",
                 "split_origin": "synthetic target-first test",
                 "development_split_salt": "cambridge-match-first-v2-development",
                 "development_split_ratios": [0.70, 0.15, 0.15],

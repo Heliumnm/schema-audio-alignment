@@ -161,7 +161,8 @@ sensitivity 也不具正文资格。
 - Coswara 数据门 NO-GO、CODA v1 NO-GO 与透明版本化的 match-first v2 历史、synthetic gate
   failure；
 - UKCOVID test 参与过前期设计；CODA 是 training release 内部 secondary analysis，不是 hidden
-  challenge confirmation；Cambridge 模型结果尚不存在；
+  challenge confirmation；Cambridge 已确认是独立Task-2音频子集上的custom strict-COVID
+  cough endpoint，但旧Web-collapsed gate已作废、模型结果尚不存在；
 - 结论与最低审计建议。
 
 ## Abstract 必须包含的五件事

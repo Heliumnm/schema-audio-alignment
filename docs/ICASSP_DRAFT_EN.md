@@ -271,8 +271,12 @@ remain wide. Matched evaluation balances measured covariates but does not remove
 confounding. Probe
 decodability does not prove causal model use. We test one Stage-1-style projector, two
 frozen audio backbones, and linear/fixed-MLP readouts rather than the full downstream
-RespiraMFM system. Coswara failed its data gate, Cambridge model results are pending, and
-the synthetic model did not establish a general mechanism.
+RespiraMFM system. Coswara failed its data gate. Cambridge was verified to be the official
+COVID-19 Sounds Task-2 audio subset with zero participant-identifier overlap with UKCOVID,
+but its current endpoint is a custom strict-COVID cough reconstruction because the official
+split file is unavailable. A pre-model identity audit found that an earlier gate had collapsed
+18 Web submissions into one subject; that gate was superseded and no Cambridge model result
+was produced. The synthetic model did not establish a general mechanism.
 
 ## 5. Conclusion
 

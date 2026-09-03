@@ -1,5 +1,10 @@
 # Cambridge Task-2 reconstructed cohort：match-first v2 数据门
 
+> **2026-09-03 superseded notice：** 后续身份审计发现本版本把 Web metadata 中恒定的
+> `Uid=form-app-users`误当成一个 participant；官方 Task-2 loader 实际以 Web `Folder Name`
+> 为subject key。本文保留为当时冻结的历史记录，但由此产生的975人数据门与target均已作废。
+> 修正依据见 `CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md`；任何正式模型不得使用旧config。
+
 冻结日期：2026-09-03
 定位：model-blind secondary external sensitivity analysis
 

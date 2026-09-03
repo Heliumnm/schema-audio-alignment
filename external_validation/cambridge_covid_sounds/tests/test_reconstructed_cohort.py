@@ -30,6 +30,40 @@ def write_wave(path: Path, frequency: float = 220.0) -> None:
 
 
 class ReconstructedCohortTest(unittest.TestCase):
+    def test_web_folder_is_the_released_subject_namespace(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            metadata_root = root / "metadata"
+            audio_root = root / "covid19"
+            metadata_root.mkdir()
+            rows = []
+            folders = []
+            for label in (0, 1):
+                for index in range(3):
+                    folder = f"2021-05-{label * 3 + index + 1:02d}_12_00_00_000000"
+                    folders.append(folder)
+                    rows.append({
+                        "Uid": "form-app-users", "Folder Name": folder, "Language": "en",
+                        "Covid-Tested": "positiveLast14" if label else "negativeNever",
+                        "Age": "20-29", "Sex": "female" if index % 2 else "male",
+                        "Smoking": "never", "Symptoms": "drycough",
+                        "Medhistory": "none", "Cough filename": "audio_file_cough.wav",
+                    })
+                    write_wave(audio_root / "form-app-users" / folder /
+                               "audio_file_cough.wav", 300 + label * 30 + index)
+            pd.DataFrame(rows).to_csv(metadata_root / "web.csv", sep=";", index=True)
+
+            report = build(metadata_root, audio_root, root / "out")
+            people = pd.read_csv(root / "out/private/reconstructed_participants.csv")
+            audio = pd.read_csv(root / "out/private/reconstructed_audio_manifest.csv")
+
+            self.assertEqual(report["format_version"], "cambridge-reconstruction-v2")
+            self.assertEqual(report["n_reconstructed_participants"], 6)
+            self.assertEqual(set(people.uid), set(folders))
+            self.assertEqual(audio.uid.nunique(), 6)
+            self.assertEqual(set(people.platform), {"WEB"})
+            self.assertNotIn("form-app-users", set(people.uid))
+
     def test_session_linkage_strict_labels_conflicts_and_deterministic_split(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

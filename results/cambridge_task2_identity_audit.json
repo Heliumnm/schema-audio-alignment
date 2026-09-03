@@ -1,0 +1,73 @@
+{
+  "audit_date": "2026-09-03",
+  "model_outputs_read": false,
+  "verdict": {
+    "dataset_family": "Cambridge COVID-19 Sounds NeurIPS 2021",
+    "released_source_subset": "official Task 2 audio subset",
+    "official_task_definition": "COVID-19 positive versus tested negative",
+    "current_endpoint": "custom reconstructed strict COVID endpoint within the Task 2 subset",
+    "not_ukhsa_ukcovid": true,
+    "not_task1_symptom_prediction": true,
+    "official_task2_split_reproduced": false
+  },
+  "release_layout": {
+    "structure_root_name": "test2",
+    "collaborator_mount_root": "/home/yl809/rds/hpc-work/datasets/covid19",
+    "full_release_sibling_directories": [
+      "all_metadata",
+      "covid-19data",
+      "task1",
+      "task2"
+    ]
+  },
+  "task2_structure": {
+    "subjects": 1000,
+    "android_uid_subjects": 300,
+    "ios_uid_subjects": 682,
+    "web_folder_name_subjects": 18,
+    "collection_sessions": 1486,
+    "sessions_with_breath_cough_and_voice_read": 1486,
+    "uid_txt_raw_root_entries": 984,
+    "uid_txt_is_not_a_canonical_subject_list": true,
+    "ignored_non_subject_root_directory": "metadata"
+  },
+  "metadata_linkage": {
+    "all_platform_rows": 53449,
+    "exact_session_links": 1482,
+    "task2_sessions": 1486,
+    "strict_english_recent_positive_or_never_positive_negative_subjects": 989,
+    "strict_negative": 500,
+    "strict_positive": 489,
+    "strict_label_conflicts": 0,
+    "old_web_collapsed_subjects": 975,
+    "old_web_collapsed_negative": 500,
+    "old_web_collapsed_positive": 475,
+    "old_gate_superseded": true
+  },
+  "ukcovid_overlap": {
+    "ukcovid_participants": 72999,
+    "exact_identifier_overlap": 0,
+    "casefold_identifier_overlap": 0,
+    "ukcovid_identifier_pattern": "P followed by seven digits",
+    "cambridge_identifier_namespace": "Android 10-character Uid; iOS 12-character Uid; Web Folder Name"
+  },
+  "current_audit_modality": {
+    "official_subset_contains": [
+      "breath",
+      "cough",
+      "voice/read"
+    ],
+    "audit_primary_modality": "cough",
+    "audit_audio_per_subject": "one label-blind selected eligible cough session"
+  },
+  "strict_label_mapping": {
+    "positive": [
+      "last14",
+      "positiveLast14"
+    ],
+    "negative": [
+      "negativeNever"
+    ],
+    "other_covid_statuses": "excluded"
+  }
+}

@@ -76,6 +76,13 @@ Correct 相对 Raw 同样没有明确优势：AST ΔAUROC +0.0078 [−0.0524, 0.
 
 ## 4. 为什么 source-test 看起来更好？
 
+source-test 绝对 AUROC（括号内为95% CI）：
+
+| backbone | Raw | Correct | Within | Global |
+|---|---:|---:|---:|---:|
+| AST-6L | 0.6463 [0.5447, 0.7453] | 0.6383 [0.5360, 0.7383] | 0.5628 [0.4728, 0.6512] | 0.5602 [0.4727, 0.6505] |
+| OPERA-CT | 0.6409 [0.5434, 0.7346] | 0.6681 [0.5713, 0.7615] | 0.5631 [0.4739, 0.6507] | 0.5983 [0.5060, 0.6870] |
+
 source-test 上的 Correct−Within AUROC：
 
 | backbone | ΔAUROC，95% CI | Δ(−NLL)，95% CI |
@@ -86,6 +93,10 @@ source-test 上的 Correct−Within AUROC：
 两个 backbone 的5个 seed 在 source-test 的 AUROC 方向都为正，OPERA 的 AUROC CI 排除0；
 但 NLL 未通过，而且进入 matched-target 后方向不一致。这一形状与论文的核心审计问题一致：
 源分布中的 apparent gain 不能替代协变量平衡后的 transfer 证据。
+
+相对冻结 Raw，source-test 上同样没有明确优势：AST 的 Correct−Raw ΔAUROC 为 −0.0080
+[−0.0917, 0.0737]，OPERA-CT 为 +0.0272 [−0.0603, 0.1183]。因此 source-test 的主要
+可见差异是 Correct 相对打乱配对，而不是 Correct 稳定超过未经对齐的音频表示。
 
 ## 5. Correct pairing 主要保留了什么？
 

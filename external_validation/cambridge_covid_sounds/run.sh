@@ -23,7 +23,7 @@ set -eo pipefail
 REPO_ROOT=/home/yl809/projects/covid
 HERE=$REPO_ROOT/external_validation/cambridge_covid_sounds
 DATA_ROOT=/home/yl809/rds/hpc-work/datasets/covid19
-OUTPUT_ROOT=$HERE/cambridge_audit_output
+OUTPUT_ROOT=$HERE/cambridge_audit_output_webfix_v2
 CONFIG=$OUTPUT_ROOT/config.local.json
 MODEL_ROOT=/home/yl809/rds/hpc-work/models/schema_audio_alignment
 FORMAL_VENV=/home/yl809/rds/hpc-work/venvs/cambridge_formal
@@ -105,10 +105,20 @@ echo "isolated_formal_python=$(command -v python)"
 [[ -f "$OUTPUT_ROOT/public/data_gate.json" ]] || {
   echo "Missing reviewed data gate: $OUTPUT_ROOT/public/data_gate.json"; exit 2;
 }
+[[ -f "$OUTPUT_ROOT/public/reconstruction_report.json" ]] || {
+  echo "Missing reconstruction report: $OUTPUT_ROOT/public/reconstruction_report.json"; exit 2;
+}
 
-python - "$OUTPUT_ROOT/public/data_gate.json" <<'PY'
+python - "$OUTPUT_ROOT/public/data_gate.json" "$OUTPUT_ROOT/public/reconstruction_report.json" <<'PY'
 import json, sys
 gate = json.load(open(sys.argv[1]))
+reconstruction = json.load(open(sys.argv[2]))
+if reconstruction.get("format_version") != "cambridge-reconstruction-v2":
+    raise SystemExit(
+        "Formal execution forbidden: this is the superseded Web-collapsed Cambridge gate. "
+        "Re-run run_reconstructed_match_first_v2.sh with the current code and review its "
+        "new aggregate output before formal training."
+    )
 if gate.get("verdict") != "GO":
     raise SystemExit(f"Formal execution forbidden: data gate is {gate.get('verdict')!r}, not GO")
 print("REVIEWED DATA GATE GO")
@@ -233,6 +243,8 @@ assert config["models"]["ast"]["layers"] == 6
 assert config["models"]["alignment"]["seeds"] == [0, 1, 2, 3, 4]
 assert config["models"]["alignment"]["epochs"] == 500
 assert str(config["models"]["text"]["revision"]) == phi_revision
+assert config["protocol"]["identity_namespace_version"] == \
+    "cambridge-task2-official-loader-v1"
 
 config["models"]["device"] = "cuda"
 config["models"]["ast"]["model_path"] = ast_root

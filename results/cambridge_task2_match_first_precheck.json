@@ -1,5 +1,8 @@
 {
-  "decision": "PROVISIONAL_GO",
+  "decision": "SUPERSEDED",
+  "historical_decision": "PROVISIONAL_GO",
+  "superseded_reason": "Web Folder Name subjects were collapsed into one form-app-users participant",
+  "replacement": "results/cambridge_task2_identity_audit.json",
   "stage": "structure-and-metadata model-blind precheck; waveform QC not rerun locally",
   "model_outputs_read": false,
   "representations_generated": false,

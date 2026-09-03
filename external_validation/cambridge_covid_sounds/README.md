@@ -1,12 +1,15 @@
 # Cambridge COVID-19 Sounds：一键受限数据外部验证包
 
-> **当前状态（2026-09-03）：英国合作者已用真实WAV完成Task-2 match-first v2数据门，正式
-> 判定为`GO`；模型尚未运行。** v1 split-first结果永久保留为`NO_GO`；v2是显式版本化的
-> secondary sensitivity analysis，不冒充官方split或untouched confirmation。正式聚合数字见
-> [CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md](CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md)。
+> **当前状态（2026-09-03）：旧match-first v2数据门已superseded；正式模型暂停。** 身份审计
+> 发现旧代码把18个Web submission的恒定`Uid=form-app-users`合并为一人。正确Task-2结构为
+> 1,000个subject，严格队列应为989人（500阴性、489阳性），不是旧gate的975人。模型尚未
+> 运行，因此没有模型结果被污染。先看
+> [CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md](CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md)，再由合作者用
+> 修正版本重跑真实WAV数据门。
 
-当前英国合作者的 CSD3 固定布局可在本目录直接运行 `sbatch run.sh`；脚本会使用
-`/home/yl809/rds/hpc-work/datasets/covid19`、既有 `cambridge_audit_output`、`env_chao` 和
+当前 `run.sh` 已增加identity-version guard；旧975人config会在加载模型前被明确拒绝。只有
+修正数据门重新运行并经人工复核为`GO`后，英国合作者才可在本目录运行 `sbatch run.sh`。脚本使用
+`/home/yl809/rds/hpc-work/datasets/covid19`、新 `cambridge_audit_output_webfix_v2`、`env_chao` 和
 RDS 模型缓存，一次完成正式阶段。新增依赖只安装到RDS上的隔离venv；`env_chao`仅提供
 已验证的torch版本/CUDA构建供脚本选择；torch、torchaudio及其余依赖均安装进不共享
 site-packages的隔离venv，`env_chao`不被直接安装package。`csd3:` 前缀只用于从其他机器执行
@@ -34,12 +37,12 @@ COVID-19 Sounds DTA 数据。它不包含、下载或重新分发任何 Cambridg
 
 ## 合作者最快使用方式
 
-### 当前推荐：Task-2 match-first v2（先匹配target，再划开发集）
+### 当前推荐：修正Web namespace后重跑Task-2 match-first（先匹配target，再划开发集）
 
-`structure.json` 已确认 Task 2 含983名参与者、1,486次cough session。按
-`UID + Folder Name` 精确连接并执行严格英语/标签规则后，得到975名可分析参与者
-（500阴性、475阳性）。真实WAV审计发现975条cough全部通过QC；正式数据门从241个初始匹配
-中冻结平衡的100对target，并将其余人固定为539 train、114 validation和122 source-test。
+`structure.json` 正确展开为300个Android UID、682个iOS UID和18个Web Folder Name，共
+1,000个subject、1,486次采集；每次均含breath、cough和voice/read。严格英语/标签规则在
+structure+metadata层得到989人（500阴性、489阳性）。旧975人数字来自Web identity bug，
+旧target与split不得复用。
 
 ```bash
 bash run_reconstructed_match_first_v2.sh \
@@ -52,9 +55,13 @@ bash run_reconstructed_match_first_v2.sh \
 `matched_target`，再把剩余人按`label × platform`固定划为70% train、15% validation、
 15% source-test；全程不加载模型。
 
-结果与边界见
-[TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md](TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md) 和
-[PREREGISTRATION_MATCH_FIRST_V2_ZH.md](PREREGISTRATION_MATCH_FIRST_V2_ZH.md)。
+新运行必须保留相同标签、matching字段、100对门槛、SMD 0.12与fine-balance 0.08；唯一修正
+是Web participant namespace。结果与边界见
+[CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md](CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md) 与冻结的
+[PREREGISTRATION_MATCH_FIRST_V2_1_IDENTITY_FIX_ZH.md](PREREGISTRATION_MATCH_FIRST_V2_1_IDENTITY_FIX_ZH.md)。旧
+[PREREGISTRATION_MATCH_FIRST_V2_ZH.md](PREREGISTRATION_MATCH_FIRST_V2_ZH.md) 与
+[CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md](CAMBRIDGE_MATCH_FIRST_V2_GATE_OUTCOME_ZH.md)
+保留为superseded历史。
 
 ### 历史v1：先随机划分，再只在test匹配
 

@@ -55,30 +55,33 @@ def _is_english(value: Any) -> bool:
     return canonical_string(value).casefold() in {"en", "english"}
 
 
-def _candidate_participant_roots(audio_root: Path, uid: str) -> list[Path]:
-    candidates = [audio_root / uid, audio_root / "form-app-users" / uid]
-    return [path for path in candidates if path.is_dir()]
-
-
 def _session_audio(audio_root: Path, uid: str, folder: str,
-                   cough_filename: str) -> list[Path]:
+                   cough_filename: str, platform: str) -> list[Path]:
+    # The official Task-2 loader uses the collection folder as the Web sample key and reads
+    # form-app-users/<folder> directly.  In the all-metadata export every Web row instead has
+    # the constant Uid "form-app-users".  Treating that constant as a participant would merge
+    # every Web submission into one person, so reconstruction must use Folder Name as the
+    # only released Web subject namespace.
+    if platform.casefold() == "web":
+        session_root = audio_root / "form-app-users" / folder
+        session_roots = [session_root] if session_root.is_dir() else []
+    else:
+        participant_root = audio_root / uid
+        session_root = participant_root / folder
+        session_roots = [session_root] if session_root.is_dir() else []
+
     found: list[Path] = []
-    for participant_root in _candidate_participant_roots(audio_root, uid):
-        # Exact collection-folder linkage is mandatory. A flattened Task-2 directory without
-        # collection identity is insufficient for a session-level label reconstruction.
-        session_roots = ([participant_root / folder]
-                         if folder != MISSING and (participant_root / folder).is_dir() else [])
-        for session_root in session_roots:
-            if cough_filename != MISSING:
-                named = session_root / Path(cough_filename).name
-                if named.is_file() and "cough" in named.name.casefold():
-                    found.append(named.resolve())
-            for path in session_root.glob("*"):
-                if (path.is_file() and path.suffix.casefold() in AUDIO_SUFFIXES and
-                        "cough" in path.name.casefold()):
-                    found.append(path.resolve())
-        if found:
-            break
+    # Exact collection-folder linkage is mandatory. A flattened Task-2 directory without
+    # collection identity is insufficient for a session-level label reconstruction.
+    for session_root in session_roots:
+        if cough_filename != MISSING:
+            named = session_root / Path(cough_filename).name
+            if named.is_file() and "cough" in named.name.casefold():
+                found.append(named.resolve())
+        for path in session_root.glob("*"):
+            if (path.is_file() and path.suffix.casefold() in AUDIO_SUFFIXES and
+                    "cough" in path.name.casefold()):
+                found.append(path.resolve())
     return sorted(set(found))
 
 
@@ -138,6 +141,8 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
     metadata = pd.concat(frames, ignore_index=True)
     for field in ("participant_id", "folder", "label", "language", "cough_filename"):
         metadata[field] = metadata[field].map(canonical_string)
+    web = metadata.platform.map(canonical_string).str.casefold() == "web"
+    metadata.loc[web, "participant_id"] = metadata.loc[web, "folder"]
 
     exclusions["non_english_session"] = int((~metadata.language.map(_is_english)).sum())
     metadata = metadata[metadata.language.map(_is_english)].copy()
@@ -156,14 +161,16 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
         if group.y.nunique() != 1:
             exclusions["conflicting_label_within_session"] += 1
             continue
+        platform = canonical_string(group.platform.iloc[0])
         audio_files = _session_audio(audio_root, uid, folder,
-                                     canonical_string(group.cough_filename.iloc[0]))
+                                     canonical_string(group.cough_filename.iloc[0]),
+                                     platform)
         if not audio_files:
             exclusions["session_without_linked_cough"] += 1
             continue
         sessions.append({"uid": uid, "folder": folder, "label": int(group.y.iloc[0]),
                          "group": group, "audio_files": audio_files,
-                         "platform": canonical_string(group.platform.iloc[0])})
+                         "platform": platform})
 
     by_uid: dict[str, list[dict[str, Any]]] = {}
     for session in sessions:
@@ -226,7 +233,7 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
     split_table = pd.crosstab(participants.fold, participants.label).reindex(
         ["train", "validation", "test"], fill_value=0)
     report = {
-        "format_version": "cambridge-reconstruction-v1",
+        "format_version": "cambridge-reconstruction-v2",
         "model_outputs_read": False,
         "representations_generated": False,
         "cohort_definition": {
@@ -234,6 +241,9 @@ def build(metadata_root: Path, audio_root: Path, output_root: Path) -> dict[str,
             "positive": sorted(POSITIVE_VALUES),
             "negative": sorted(NEGATIVE_VALUES),
             "participant_conflict": "exclude participant if both labels are observed",
+            "participant_namespace": (
+                "Android/iOS Uid; Web Folder Name, matching the official Task-2 loader"
+            ),
             "index_session": "one audio-linked eligible session per participant by fixed hash",
             "split": "participant-level 70/10/20, stratified by label and platform",
             "split_salt_sha256": sha256_text(SPLIT_SALT),
@@ -286,6 +296,7 @@ def write_config(audio_root: Path, output_root: Path, destination: Path,
     if split_strategy == "match_first_v2":
         template["protocol"].update({
             "split_strategy": "match_first_v2",
+            "identity_namespace_version": "cambridge-task2-official-loader-v1",
             "split_origin": ("model-blind target-first matching; remaining participants split "
                              "70/15/15 by label x platform"),
             "development_split_salt": "cambridge-match-first-v2-development",

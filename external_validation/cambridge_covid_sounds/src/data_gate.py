@@ -903,6 +903,13 @@ def execute(config_file: str | Path) -> dict[str, Any]:
     strategy = str(config["protocol"].get("split_strategy", "provided_split_v1"))
     if strategy not in {"provided_split_v1", "match_first_v2"}:
         raise ValueError(f"unknown protocol.split_strategy: {strategy}")
+    identity_namespace_version = config["protocol"].get("identity_namespace_version")
+    if (strategy == "match_first_v2" and
+            identity_namespace_version != "cambridge-task2-official-loader-v1"):
+        raise ValueError(
+            "match_first_v2 requires the corrected Cambridge Web subject namespace; "
+            "rebuild the cohort with the current prepare_reconstructed_cohort.py"
+        )
     # v1 preserves the supplied membership and matches test only.  The separately frozen v2
     # sensitivity endpoint matches all eligible people first, then splits only the remainder.
     candidates = (eligible.copy() if strategy == "match_first_v2" else
@@ -988,6 +995,7 @@ def execute(config_file: str | Path) -> dict[str, Any]:
         "representations_generated": False,
         "n_standardised": int(len(people)), "n_audio_eligible": int(len(eligible)),
         "split_strategy": strategy, "split_origin": split_origin,
+        "identity_namespace_version": identity_namespace_version,
         "split_counts": split_counts, "audio_qc": audio_report,
         "matching": {"n_initial_pairs": int(len(pairs_initial)),
                      "n_final_pairs": int(len(pairs)), "n_trimmed": removed,

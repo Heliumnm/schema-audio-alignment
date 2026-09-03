@@ -11,7 +11,9 @@ Date frozen: 2026-08-19
 > 9,772 solicited coughs passed QC, but the final 100 matched pairs exceeded both frozen
 > balance limits (max absolute SMD 0.276; max categorical level difference 0.13). No CODA
 > representation or model score was produced. The next controlled-access execution route
-> is the frozen Cambridge COVID-19 Sounds collaborator package.
+> is the Cambridge COVID-19 Sounds collaborator package. A later model-blind identity audit
+> found that its first reconstructed gate collapsed the Web namespace; that gate is superseded
+> and formal execution is blocked until the corrected real-WAV gate is reviewed.
 
 > **Transparent secondary update (2026-09-03).** Before any CODA representation or model
 > score was produced, a separately preregistered match-first sensitivity changed only the

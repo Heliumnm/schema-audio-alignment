@@ -1,5 +1,10 @@
 # Cambridge Task 2 文件结构与 match-first v2 预检查
 
+> **2026-09-03 correction：** 最初把根目录中的`metadata`误算为participant，同时把
+> `form-app-users`误算为一个participant。正确展开为300个Android UID、682个iOS UID和
+> 18个Web Folder Name，共1,000个Task-2 subject。完整更正见
+> `CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md`。本文以下975人预检查已superseded。
+
 日期：2026-09-03
 性质：仅使用目录结构和 metadata 的模型盲态预检查；不是正式波形数据门，也不是模型结果。
 

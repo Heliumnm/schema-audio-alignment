@@ -67,6 +67,7 @@
   },
   "protocol": {
     "formal_unlock": "REVIEW_GATE_BEFORE_SETTING_THIS",
+    "identity_namespace_version": "cambridge-task2-official-loader-v1",
     "split_origin": "reconstructed model-blind 70/10/20 participant split",
     "schema_fields": ["age_band", "sex", "smoker", "cough", "fever", "sore_throat", "shortness_of_breath", "asthma", "other_respiratory"],
     "cohort_field": "platform",

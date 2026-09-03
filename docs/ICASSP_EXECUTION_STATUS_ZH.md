@@ -3,7 +3,7 @@
 日期：2026-09-03
 
 状态：**UKCOVID Route-A 与 CODA TB secondary external sensitivity 已执行；Cambridge 正式模型
-仍在等待合作者运行，新 mitigation 方法尚未执行。**
+因 Web participant namespace 修正而暂停，等待合作者重跑数据门；新 mitigation 方法尚未执行。**
 
 ## 一句话结论
 
@@ -53,7 +53,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 数据门 NO-GO | 没有运行任何外部模型分数 |
 | CODA TB 外部敏感性 | **正式模型已完成** | 两个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
-| Cambridge Task 2 外部敏感性 | v1 NO-GO；**match-first v2正式数据门GO** | 英国合作者已用真实WAV复核：975人/975条cough全部通过QC，冻结100对平衡target；模型尚未运行 |
+| Cambridge Task-2-subset 外部敏感性 | **旧v2 gate superseded；修正版待重跑** | 身份核对确认是Cambridge官方Task-2音频子集上的custom strict-COVID cough endpoint；旧代码合并了Web subjects，模型未运行 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
 
 ## 3. Alignment 是否真的学会了 correspondence？
@@ -193,12 +193,16 @@ correspondence。matched-target 上的 TB Correct−Within 结果为：
   完整保留；
 - synthetic 没有通过机制门。
 
-Cambridge Task 2 的 `structure.json` 已确认983名参与者和1,486次cough采集；通过
-`UID + Folder Name` 精确连接并执行英语／严格标签筛选后为975人（500阴性、475阳性）。历史
-split-first v1只得到26对，保持NO-GO。英国合作者随后在DTA环境中用真实WAV运行单独版本化的
-match-first v2：975条入组cough全部通过QC，从241个初始匹配中冻结恰好100对平衡target
-（max SMD与fine-balance difference均为0），剩余人为539 train／114 validation／122
-source-test。因此正式数据门为`GO`；Cambridge模型结果仍不存在。
+Cambridge身份审计现已钉死：它是Cambridge COVID-19 Sounds NeurIPS的官方Task-2音频子集，
+不是UKCOVID，也不是Task-1症状任务；当前endpoint因官方Task-2 split CSV缺失而属于custom
+strict-COVID reconstruction，并固定为cough-only。正确目录解释为300个Android UID、682个
+iOS UID和18个Web Folder Name，共1,000个subject、1,486次三模态采集；与UKCOVID的72,999个
+participant identifier精确／忽略大小写重叠均为0。
+
+身份审计同时发现旧重建代码把18个Web submission合并成一个`form-app-users` participant。
+正确严格队列为989人（500阴性、489阳性），而不是旧gate的975人。旧v2 gate、split、100对
+target和config均已标记superseded；好消息是Cambridge模型从未启动，所以没有模型结果需要撤回。
+合作者须用修正版本重跑真实WAV数据门，人工复核新的aggregate `GO`后才可解锁模型。
 
 ## 9. 当前可以与不能说的话
 
@@ -235,5 +239,7 @@ source-test。因此正式数据门为`GO`；Cambridge模型结果仍不存在�
 - Cambridge 合作者一键外部验证包：`external_validation/cambridge_covid_sounds/`
 - Cambridge Task-2结构与v2预检查：`external_validation/cambridge_covid_sounds/TASK2_STRUCTURE_MATCH_FIRST_PRECHECK_ZH.md`
 - Cambridge v2聚合预检查：`results/cambridge_task2_match_first_precheck.json`
+- Cambridge Task-2身份核对：`external_validation/cambridge_covid_sounds/CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md`
+- Cambridge身份核对机器可读汇总：`results/cambridge_task2_identity_audit.json`
 - 一次性执行器：`scripts/run_icassp_route_a_once.sh`
 - 下一阶段方法设计（未执行）：`docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md`

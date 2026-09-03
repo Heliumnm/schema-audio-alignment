@@ -1,14 +1,21 @@
 CAMBRIDGE MATCH-FIRST V2：数据门GO后的正式模型步骤
-===================================================
+====================================================
 
-当前冻结状态
-------------
+暂停通知（2026-09-03）
+----------------------
+旧975人数据门因Web participant namespace合并错误已作废。不要按本文启动正式模型，也不要
+复用旧config。请先更新代码，并按CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md重跑真实WAV数据门；
+只有新的aggregate gate经人工复核为GO后，本文其余正式步骤才重新生效。
+以下内容为旧gate通过后写成的正式运行说明。目前只有在修正数据门重新通过并经人工复核后，
+才可继续使用其中的环境与模型步骤；旧participant、split和target不得恢复。
 
-真实WAV数据门已GO：975人、975条通过QC的cough；matched target为100对；
-train/validation/source-test为539/114/122。不要再修改participant、split、matching、schema、
-threshold、arm、seed或epoch。
+历史冻结状态（已作废）
+----------------------
 
-本次 CSD3 的固定目录已经写入仓库内 `run.sh`。更新代码后，正常情况只需：
+旧WAV数据门曾报告975人和100对target；该participant namespace已作废。matching、schema、
+threshold、arm、seed和epoch保持冻结，但participant manifest、split、target与config必须重建。
+
+新数据门复核通过后，CSD3的固定目录仍由仓库内`run.sh`使用。届时才运行：
 
 cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
 sbatch run.sh

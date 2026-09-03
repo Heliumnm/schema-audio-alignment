@@ -31,12 +31,15 @@ Within delta AUROC +0.034 [−0.022, 0.092] for AST; −0.026 [−0.087, 0.035] 
 This secondary result extends the correspondence-versus-transfer ambiguity beyond UKCOVID;
 it does not establish that metadata alignment is universally harmful or ineffective.
 
-Cambridge COVID-19 Sounds Task 2 is now structurally resolved: the released subset contains
-983 participants and 1,486 cough sessions, with 975 participants eligible after exact
-session-to-metadata linkage. The original split-first gate remains NO-GO. The authorised
-collaborator has rerun the visibly versioned match-first v2 gate on the real WAV files: all 975
-eligible coughs passed QC and the frozen 100-pair target has maximum SMD and categorical
-difference both 0.000. No Cambridge model score exists yet.
+Cambridge identity is now resolved: this is the Cambridge COVID-19 Sounds NeurIPS Task-2
+audio subset, not UKCOVID and not the Task-1 symptom endpoint. Its 1,000 released subject
+keys comprise 300 Android UIDs, 682 iOS UIDs, and 18 Web Folder Names; the UKCOVID ID overlap
+is zero. The current endpoint is a custom, cough-only strict-COVID reconstruction because the
+official Task-2 split CSV is missing. This audit exposed a Web-identity bug in the earlier gate:
+18 Web submissions had been collapsed into one `form-app-users` participant. The old 975-person
+gate is therefore superseded; the corrected strict cohort has 989 subjects (500 negative, 489
+positive) before real-WAV QC. No Cambridge model score exists, and formal training is blocked
+until the collaborator reruns and the team reviews the corrected gate.
 
 Start with:
 
@@ -50,6 +53,8 @@ Start with:
 - [CODA TB secondary match-first v2 GO](docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md)
 - [CODA TB formal model result](docs/CODA_TB_FORMAL_RESULTS_ZH.md)
 - [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
+- [Cambridge Task-2 identity audit and corrected namespace](external_validation/cambridge_covid_sounds/CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md)
+- [Cambridge match-first v2.1 identity-fix preregistration](external_validation/cambridge_covid_sounds/PREREGISTRATION_MATCH_FIRST_V2_1_IDENTITY_FIX_ZH.md)
 
 ## Historical ICBHI/schema track
 
