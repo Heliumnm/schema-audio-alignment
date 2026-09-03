@@ -51,7 +51,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
 | 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
-| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 允许启动 post-hoc 外部 stress test；尚未运行模型分数 |
+| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干 post-hoc stress test 协议已冻结；尚未运行模型分数 |
 | CODA TB 外部敏感性 | **正式模型已完成** | 两个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
 | Cambridge Task-2-subset 外部敏感性 | **旧v2 gate superseded；修正版待重跑** | 身份核对确认是Cambridge官方Task-2音频子集上的custom strict-COVID cough endpoint；旧代码合并了Web subjects，模型未运行 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
