@@ -2,7 +2,7 @@
 #SBATCH --job-name=cambridge_match_v2
 #SBATCH --output=cambridge_match_v2_%j.out
 #SBATCH --error=cambridge_match_v2_%j.err
-#SBATCH --time=08:00:00
+#SBATCH --time=02:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=16G

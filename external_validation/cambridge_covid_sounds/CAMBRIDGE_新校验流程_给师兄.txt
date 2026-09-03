@@ -1,0 +1,139 @@
+Cambridge COVID-19 Sounds：正式训练前的新校验流程
+=================================================
+
+目的
+----
+
+这一步只重新生成修复Web身份后的数据门和overlap report，不训练AST/OPERA，不下载模型，
+也不读取任何embedding、prediction、AUROC或NLL。旧975人、旧100对target和旧GO已经作废。
+
+一、更新代码
+------------
+
+cd /home/yl809/projects/covid
+git pull --ff-only origin main
+git rev-parse --short HEAD
+
+二、确认四个路径
+----------------
+
+1. metadata：
+
+/home/yl809/rds/hpc-work/datasets/covid19/metadata
+
+2. Task-2音频根目录（当前已知）：
+
+/home/yl809/rds/hpc-work/datasets/covid19
+
+其下面应当是Android/iOS UID目录，以及form-app-users/<Web Folder Name>。
+
+3. 新输出目录：
+
+/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2
+
+4. Task-1音频根目录：请先定位真实路径：
+
+find /home/yl809/rds/hpc-work/datasets -maxdepth 5 -type d -iname '*task1*' -print
+
+然后设置，例如：
+
+TASK1_ROOT=/REPLACE/WITH/REAL/TASK1/AUDIO/ROOT
+test -d "$TASK1_ROOT" || { echo "Task-1目录不存在，请先确认路径"; exit 2; }
+
+Task 1只用于统计Task-1/Task-2重叠，不参与训练、matching或模型选择。如果目前没有下载
+Task-1子集，请先停止并回复Task-1目录不可用，不要拿完整母数据或Task-2目录冒充Task 1。
+
+三、提交CPU校验任务
+------------------
+
+cd /home/yl809/projects/covid/external_validation/cambridge_covid_sounds
+
+sbatch submit_reconstructed_match_first_v2.slurm \
+  /home/yl809/rds/hpc-work/datasets/covid19/metadata \
+  /home/yl809/rds/hpc-work/datasets/covid19 \
+  /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2 \
+  "$TASK1_ROOT"
+
+该任务不申请GPU；默认2小时、2 CPU、16 GB。它会：
+
+1. 用Android/iOS Uid和Web Folder Name重建稳定participant；
+2. 按UID+submission folder精确连接metadata与cough；
+3. 执行真实WAV解码、时长、finite/nonzero、raw hash与PCM hash检查；
+4. 排除跨participant重复音频；
+5. 从所有合格participant中先冻结100对matched target；
+6. 只把剩余participant按label×platform划分70/15/15；
+7. 生成不含任何ID和路径的overlap report；
+8. 重新打包public/PUBLIC_RESULTS.zip。
+
+四、查看进度
+------------
+
+squeue -u yl809
+
+假设任务号为123456：
+
+tail -f /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_match_v2_123456.out
+
+tail -f /home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_match_v2_123456.err
+
+五、必须核对的结果
+----------------
+
+public/overlap_report.json应当报告：
+
+1. Task-2 unique UID count = 1000；
+2. Task-2 unique sample/submission count = 1486；
+3. 每UID recording数量分布；
+4. Android / iOS / Web UID = 300 / 682 / 18；
+5. Task-1 ∩ Task-2 UID count；
+6. Task-1 ∩ Task-2 sample-ID count；
+7. train ∩ validation UID = 0；
+8. train ∩ matched-target UID = 0；
+9. validation ∩ matched-target UID = 0；
+10. 跨split decoded PCM hash = 0，跨split raw-file hash = 0。
+
+Task-1/Task-2重叠只作描述，不要求必须为0，因为Task 1不进入任何拟合。第7--10项必须为0。
+
+纵向标签还要报告：
+
+- 同一稳定UID出现多个原始COVID状态的人数；
+- 同时出现两种严格endpoint标签的人数；
+- 因严格标签冲突而被排除的人数；
+- 最终保留的严格标签冲突人数必须为0。
+
+冻结规则是：positive仅为positiveLast14/last14；negative仅为negativeNever；其他状态先排除；
+若同一稳定UID同时出现两种严格标签，整名participant排除；同标签多次submission用固定、
+label-blind的UID+folder hash只选一次；选中submission内若有多条cough，分别编码后在participant
+层面作算术平均；不额外推算检测日期窗口。
+
+public/data_gate.json还必须满足：
+
+- verdict = GO；
+- identity_namespace_version = cambridge-task2-official-loader-v1；
+- matched target = 100对；
+- max absolute SMD <= 0.12；
+- max fine-balance difference <= 0.08；
+- 所有split与profile gate通过。
+
+六、请返回什么
+--------------
+
+只返回以下公开聚合文件：
+
+/home/yl809/projects/covid/external_validation/cambridge_covid_sounds/cambridge_audit_output_webfix_v2/public/PUBLIC_RESULTS.zip
+
+并同时告诉我：
+
+- git commit SHA；
+- Slurm job ID；
+- data_gate verdict；
+- overlap_report中的formal_training_permitted_by_overlap_audit值。
+
+请不要返回private目录、UID列表、逐人metadata、audio path、matched pair或原始音频。
+
+七、现在不要运行正式模型
+----------------------
+
+完成上述校验后先停止，不要执行sbatch run.sh。项目负责人审核data_gate.json和
+overlap_report.json并明确回复可以训练后，才启动正式AST/OPERA实验。run.sh也有硬保护：
+overlap report缺失、未通过，或者manifest在审核后发生变化，都会在下载模型和GPU训练前停止。
