@@ -6,9 +6,14 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 CONFIG=${1:-$HERE/config.local.json}
 STAGE=${2:-all}
 PYTHON_BIN=${PYTHON_BIN:?set PYTHON_BIN to the absolute formal Python executable}
+HEAR_PYTHON=${HEAR_PYTHON:-$PYTHON_BIN}
 
 if [[ "$PYTHON_BIN" != /* || ! -x "$PYTHON_BIN" ]]; then
   echo "PYTHON_BIN must be an executable absolute path: $PYTHON_BIN" >&2
+  exit 2
+fi
+if [[ "$HEAR_PYTHON" != /* || ! -x "$HEAR_PYTHON" ]]; then
+  echo "HEAR_PYTHON must be an executable absolute path: $HEAR_PYTHON" >&2
   exit 2
 fi
 CONFIG=$("$PYTHON_BIN" -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).expanduser().resolve())' "$CONFIG")
@@ -49,10 +54,16 @@ if [[ "$STAGE" == "gate" ]]; then
 fi
 
 "$PYTHON_BIN" "$HERE/src/cache_text.py" --config "$CONFIG"
-for BACKBONE in ast opera_ct; do
-  ENABLED=$("$PYTHON_BIN" -c 'import json,sys; c=json.load(open(sys.argv[1])); print(str(c["models"][sys.argv[2]].get("enabled",False)).lower())' "$CONFIG" "$BACKBONE")
+for BACKBONE in ast opera_ct hear; do
+  ENABLED=$("$PYTHON_BIN" -c 'import json,sys; c=json.load(open(sys.argv[1])); print(str(c.get("models",{}).get(sys.argv[2],{}).get("enabled",False)).lower())' "$CONFIG" "$BACKBONE")
   [[ "$ENABLED" == "true" ]] || continue
-  "$PYTHON_BIN" "$HERE/src/extract_embeddings.py" --config "$CONFIG" --backbone "$BACKBONE"
+  if [[ "$BACKBONE" == "hear" ]]; then
+    HEAR_CUDNN_LIB=${HEAR_CUDNN_LIB:-$("$HEAR_PYTHON" -c 'import sys; print(sys.prefix + "/lib/python3.11/site-packages/nvidia/cudnn/lib")')}
+    env LD_LIBRARY_PATH="$HEAR_CUDNN_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+      "$HEAR_PYTHON" "$HERE/src/extract_embeddings.py" --config "$CONFIG" --backbone "$BACKBONE"
+  else
+    "$PYTHON_BIN" "$HERE/src/extract_embeddings.py" --config "$CONFIG" --backbone "$BACKBONE"
+  fi
   "$PYTHON_BIN" "$HERE/src/train_alignment.py" --config "$CONFIG" --backbone "$BACKBONE"
   "$PYTHON_BIN" "$HERE/src/evaluate.py" --config "$CONFIG" --backbone "$BACKBONE"
 done

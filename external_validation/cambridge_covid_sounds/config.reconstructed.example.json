@@ -90,6 +90,7 @@
     "device": "cuda",
     "ast": {"enabled": true, "model_path": "/REPLACE/hf_models/ast-finetuned-audioset-10-10-0.4593", "layers": 6},
     "opera_ct": {"enabled": true, "opera_root": "/REPLACE/OPERA", "checkpoint_path": "/REPLACE/OPERA/cks/model/encoder-operaCT.ckpt"},
+    "hear": {"enabled": true, "model_path": "/REPLACE/hf_models/google_hear_9b2eb285", "revision": "9b2eb2853c426676255cc6ac5804b7f1fe8e563f", "batch_size": 64, "input_key": "x", "output_key": "output_0"},
     "text": {"model_path": "/REPLACE/hf_models/phi-2", "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0", "max_length": 256, "batch_size": 16, "dtype": "bfloat16"},
     "alignment": {"seeds": [0, 1, 2, 3, 4], "epochs": 500, "device": "cuda"}
   }

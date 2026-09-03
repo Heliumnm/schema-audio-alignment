@@ -207,7 +207,7 @@ Slurm 提交入口为 `submit_formal.slurm`；模型、环境和私有配置的�
 ```text
 固定Phi-2文本缓存
         ↓
-AST-6L / OPERA-CT 患者级表示
+AST-6L / OPERA-CT / HeAR 患者级表示
         ↓
 Correct / Within-label / Global
         × 5 seeds × 500 epochs
