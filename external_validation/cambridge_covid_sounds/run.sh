@@ -113,8 +113,8 @@ try:
     import torchaudio
 except Exception as exc:
     raise SystemExit(
-        "torchaudio is missing or incompatible with torch after the isolated "
-        "installation. Check the selected PyTorch wheel channel and cluster network. "
+        "torchaudio is missing or incompatible with torch in env_audit. "
+        "Do not modify the environment inside this job; return the recorded versions. "
         f"Original error: {exc!r}"
     )
 torch_mm = ".".join(torch.__version__.split("+")[0].split(".")[:2])
@@ -130,6 +130,8 @@ PY
 mkdir -p "$MODEL_ROOT"
 export HF_HOME=$MODEL_ROOT/.hf_cache
 export TOKENIZERS_PARALLELISM=false
+export HF_HUB_ENABLE_HF_TRANSFER=0
+export HF_HUB_DOWNLOAD_TIMEOUT=60
 
 # Hugging Face downloads are resumable.  Ignore duplicate legacy weight formats
 # and cache only the safetensors/config/tokenizer files needed by Transformers.
