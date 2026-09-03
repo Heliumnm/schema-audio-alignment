@@ -168,9 +168,8 @@ def configure_hear(config: dict, config_path: Path):
     return tf, model, signature, _model_file_hash(path)
 
 
-def hear_recording(path: Path, signature, tf, batch_size: int = 64,
-                   input_key: str = "x", output_key: str = "output_0") -> np.ndarray:
-    windows = fixed_windows(load_audio(path), HEAR_WINDOW_SAMPLES)
+def _hear_window_embeddings(windows: np.ndarray, signature, tf, batch_size: int,
+                            input_key: str, output_key: str) -> np.ndarray:
     outputs = []
     for start in range(0, len(windows), batch_size):
         batch = tf.convert_to_tensor(windows[start:start + batch_size], dtype=tf.float32)
@@ -183,8 +182,33 @@ def hear_recording(path: Path, signature, tf, batch_size: int = 64,
     if matrix.shape != (len(windows), HEAR_OUTPUT_DIM):
         raise RuntimeError(f"unexpected HeAR output shape {matrix.shape}")
     if not np.isfinite(matrix).all() or np.any(np.linalg.norm(matrix, axis=1) == 0):
-        raise RuntimeError(f"invalid HeAR embedding for {path}")
+        raise RuntimeError("invalid HeAR window embedding")
+    return matrix
+
+
+def hear_recording(path: Path, signature, tf, batch_size: int = 64,
+                   input_key: str = "x", output_key: str = "output_0") -> np.ndarray:
+    windows = fixed_windows(load_audio(path), HEAR_WINDOW_SAMPLES)
+    matrix = _hear_window_embeddings(
+        windows, signature, tf, batch_size, input_key, output_key)
     return matrix.mean(axis=0).astype(np.float32)
+
+
+def hear_participant(paths: list[Path], signature, tf, batch_size: int = 64,
+                     input_key: str = "x", output_key: str = "output_0") -> np.ndarray:
+    """Batch all windows for one participant, then preserve equal recording weight."""
+    recording_windows = [fixed_windows(load_audio(path), HEAR_WINDOW_SAMPLES)
+                         for path in paths]
+    counts = [len(value) for value in recording_windows]
+    matrix = _hear_window_embeddings(
+        np.concatenate(recording_windows, axis=0), signature, tf, batch_size,
+        input_key, output_key)
+    cursor, recordings = 0, []
+    for count in counts:
+        recordings.append(matrix[cursor:cursor + count].mean(axis=0))
+        cursor += count
+    assert cursor == len(matrix)
+    return np.stack(recordings).mean(axis=0).astype(np.float32)
 
 
 def check_indices(table: pd.DataFrame, n: int = 28) -> list[int]:
@@ -231,17 +255,19 @@ def execute(config_file: str, backbone: str) -> Path:
         model, preprocessing, torch, checkpoint_hash, layers = configure_ast(
             config, config_path, device)
         encode = lambda path: ast_recording(path, model, preprocessing, torch, device)
+        encode_participant = lambda paths: np.mean([encode(path) for path in paths], axis=0)
         spec = f"AST-first-{layers}-layers|participant-equal-recording-mean"
     elif backbone == "opera_ct":
         torch, model, preprocessing, checkpoint_hash = configure_opera(
             config, config_path, device)
         encode = lambda path: opera_recording(path, model, preprocessing, torch, device)
+        encode_participant = lambda paths: np.mean([encode(path) for path in paths], axis=0)
         spec = "OPERA-CT|participant-equal-recording-mean"
     elif backbone == "hear":
         tf, model, signature, checkpoint_hash = configure_hear(config, config_path)
         settings = config["models"]["hear"]
-        encode = lambda path: hear_recording(
-            path, signature, tf, int(settings.get("batch_size", 64)),
+        encode_participant = lambda paths: hear_participant(
+            paths, signature, tf, int(settings.get("batch_size", 64)),
             str(settings.get("input_key", "x")),
             str(settings.get("output_key", "output_0")))
         revision = str(settings.get("revision", "unknown"))
@@ -252,8 +278,8 @@ def execute(config_file: str, backbone: str) -> Path:
 
     failures = []
     for index in check_indices(table):
-        first = np.mean([encode(path) for path in files[index]], axis=0)
-        second = np.mean([encode(path) for path in files[index]], axis=0)
+        first = encode_participant(files[index])
+        second = encode_participant(files[index])
         if not np.array_equal(first, second) or not np.isfinite(first).all() or not np.any(first):
             failures.append({"split": table.loc[index, "splits"],
                              "label": int(table.loc[index, "y"])})
@@ -276,7 +302,7 @@ def execute(config_file: str, backbone: str) -> Path:
 
     embeddings, counts = [], []
     for index, participant_files in enumerate(files):
-        representation = np.mean([encode(path) for path in participant_files], axis=0)
+        representation = encode_participant(participant_files)
         embeddings.append(representation)
         counts.append(len(participant_files))
         if (index + 1) % 250 == 0:
