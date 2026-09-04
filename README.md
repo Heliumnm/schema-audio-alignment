@@ -1,6 +1,9 @@
 # Contrastive audio–text alignment for respiratory sound
 
 > 中文完整故事版：[docs/项目完整故事_中文.md](docs/项目完整故事_中文.md)
+>
+> - 论文与研究报告入口：[report/README.md](report/README.md)
+> - 第一篇论文中文母稿：[report/ICASSP_DRAFT_ZH.md](report/ICASSP_DRAFT_ZH.md)
 
 ## Current ICASSP audit extension (UKCOVID + CODA TB + Cambridge, September 2026)
 
