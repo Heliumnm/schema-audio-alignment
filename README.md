@@ -22,7 +22,11 @@ ranking gain.
 The controlled synthetic sweep learned correspondence but failed its preregistered
 mechanism gates, so it is not used as causal evidence. Coswara's preregistered greedy gate
 stopped; a separately frozen, model-blind global-constraint sensitivity later found a balanced
-100-pair cohort and therefore permits only a post-hoc stress test. CODA TB's original split-first
+100-pair cohort and therefore permits only a post-hoc stress test. That three-backbone stress
+test is complete: Correct-minus-Within profile MRR was significantly positive for AST, OPERA-CT
+and HeAR (+0.0183, +0.0243, +0.0406), whereas matched COVID delta AUROC was +0.0028, −0.0115
+and +0.0037, respectively, with all intervals spanning zero. Sex-probe deltas were positive and
+significant across all three backbones. CODA TB's original split-first
 gate also stopped, but a visibly versioned, model-blind
 secondary protocol selected the matched target before splitting the remainder and passed
 all frozen balance gates (100 pairs; max SMD 0.0819; max categorical difference 0.040).
@@ -62,6 +66,7 @@ Start with:
 - [CODA TB model-blind data-gate outcome](docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
 - [CODA TB secondary match-first v2 GO](docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md)
 - [CODA TB formal model result](docs/CODA_TB_FORMAL_RESULTS_ZH.md)
+- [Coswara three-backbone post-hoc stress-test result](docs/COSWARA_FORMAL_RESULTS_ZH.md)
 - [Cambridge COVID-19 Sounds controlled-access external validation package](external_validation/cambridge_covid_sounds/README.md)
 - [Cambridge Task-2 identity audit and corrected namespace](external_validation/cambridge_covid_sounds/CAMBRIDGE_TASK2_IDENTITY_AUDIT_ZH.md)
 - [Cambridge match-first v2.1 identity-fix preregistration](external_validation/cambridge_covid_sounds/PREREGISTRATION_MATCH_FIRST_V2_1_IDENTITY_FIX_ZH.md)

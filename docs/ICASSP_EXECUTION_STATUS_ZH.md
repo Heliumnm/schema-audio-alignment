@@ -2,8 +2,9 @@
 
 日期：2026-09-03
 
-状态：**UKCOVID Route-A、CODA TB secondary external sensitivity 与 Cambridge Task-2
-重建外部敏感性已执行；Coswara 三骨干 post-hoc stress test 正在评估；新 mitigation 方法尚未执行。**
+状态：**UKCOVID Route-A、CODA TB secondary external sensitivity、Cambridge Task-2
+重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 正在完成最后的
+信息通道打分；新 mitigation 方法尚未执行。**
 
 ## 一句话结论
 
@@ -51,7 +52,7 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
 | 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
-| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干模型训练完成；aggregate 评测正在重跑稀有 probe 的 bootstrap 汇总 |
+| Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干 post-hoc stress test 完成；均建立 correspondence，均无 matched COVID transfer 增益 |
 | CODA TB 外部敏感性 | **三骨干正式模型已完成** | 三个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
 | Cambridge Task-2-subset 外部敏感性 | **修正版数据门与三骨干正式模型已完成** | Correct 增强 profile retrieval 与性别信息，但三个 backbone 均无 matched COVID transfer 增益 |
 | Disease-invariant positive-pair 新方法 | **未执行** | 只作为下一阶段设计，不属于当前结果 |
@@ -156,8 +157,12 @@ alignment 必然越差”这一一般机制。它不得作为正文的正向机�
 Coswara 2,746 条录音完成 QC，2,646 条通过；原冻结贪心匹配在 100 对下限时最大 SMD 为
 0.140，高于 0.12 门槛，因此原数据门 NO-GO。随后在仍未读取模型分数时，单独冻结的全局
 约束敏感性求解找到了 100 对可行集合：年龄 SMD 0、最大分类 SMD 0.1034、最大层级比例差
-0.07，开发集规模门也通过。它只允许一次 post-hoc external stress test，不构成 untouched
-external confirmation。
+0.07，开发集规模门也通过。三骨干正式压力测试现已完成：profile retrieval 的
+Correct−Within MRR 为 AST **+0.0183 [0.0028,0.0365]**、OPERA **+0.0243
+[0.0050,0.0452]**、HeAR **+0.0406 [0.0226,0.0619]**；matched COVID ΔAUROC 分别为
++0.0028 [−0.0450,0.0464]、−0.0115 [−0.0750,0.0444]、+0.0037
+[−0.0646,0.0724]。三骨干性别 probe 均显著为正。它只是一项 post-hoc external stress test，
+不构成 untouched external confirmation。
 
 CODA TB v1 的 9,772 条 solicited cough 全部成功解码并通过 QC；1,081 名 participant 进入
 eligible cohort（TB+ 291、TB− 790）。v1 先划分60/40、再在40% target candidate 中匹配，
@@ -193,7 +198,7 @@ correspondence。matched-target 上的 TB Correct−Within 结果为：
 - retrieval、probe、fusion 和 calibration 的闭环；
 - 一个完成的三骨干 CODA TB secondary external sensitivity：重复 correspondence／transfer 分离，
   但 matched disease endpoint 为 inconclusive，不是 untouched confirmatory replication；
-- Coswara 原贪心门停止；透明标记的全局约束二次门已通过，三骨干模型已训练且正在评估；CODA v1
+- Coswara 原贪心门停止；透明标记的全局约束二次门与三骨干压力测试已完成；CODA v1
   停止，其透明标记的 match-first v2 与正式模型历史均完整保留；
 - synthetic 没有通过机制门。
 
@@ -241,6 +246,9 @@ OPERA **+0.0298 [−0.0011,0.0638]**、HeAR **+0.0457 [0.0203,0.0763]**。matche
 - 英文草稿：`docs/ICASSP_DRAFT_EN.md`
 - 最终小型结果与 SHA-256：`results/route_a_final/`
 - Coswara 数据门结局：`docs/COSWARA_DATA_GATE_OUTCOME_ZH.md`
+- Coswara 三骨干正式压力测试：`docs/COSWARA_FORMAL_RESULTS_ZH.md`、
+  `results/coswara_formal_results_ast.json`、`results/coswara_formal_results_opera_ct.json`、
+  `results/coswara_formal_results_hear.json`
 - CODA TB 数据门结局：`docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md`
 - CODA TB match-first v2：`docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md`
 - CODA TB 正式结果：`docs/CODA_TB_FORMAL_RESULTS_ZH.md`
