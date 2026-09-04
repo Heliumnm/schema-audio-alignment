@@ -1,0 +1,169 @@
+{
+  "candidate_rule": {
+    "negative_exact": [
+      "platform",
+      "age_band",
+      "sex",
+      "cough",
+      "fever",
+      "sore_throat",
+      "shortness_of_breath",
+      "asthma",
+      "other_respiratory"
+    ],
+    "positive": "same COVID label, different platform, different participant",
+    "smoker": "reported diagnostically; not an exact eligibility field"
+  },
+  "coverage_by_label": {
+    "0": {
+      "fraction_joint_eligible": 0.5535714285714286,
+      "fraction_negative_ok": 0.5535714285714286,
+      "fraction_positive_ok": 1.0,
+      "n": 280,
+      "n_joint_eligible": 155,
+      "n_negative_ok": 155,
+      "n_positive_ok": 280,
+      "positive_count_quantiles": {
+        "max": 224.0,
+        "median": 56.0,
+        "min": 56.0,
+        "n_finite": 280,
+        "q25": 56.0,
+        "q75": 56.0
+      },
+      "strict_negative_count_quantiles": {
+        "max": 6.0,
+        "median": 1.0,
+        "min": 0.0,
+        "n_finite": 280,
+        "q25": 0.0,
+        "q75": 2.0
+      }
+    },
+    "1": {
+      "fraction_joint_eligible": 0.3505535055350554,
+      "fraction_negative_ok": 0.3505535055350554,
+      "fraction_positive_ok": 1.0,
+      "n": 271,
+      "n_joint_eligible": 95,
+      "n_negative_ok": 95,
+      "n_positive_ok": 271,
+      "positive_count_quantiles": {
+        "max": 261.0,
+        "median": 105.0,
+        "min": 105.0,
+        "n_finite": 271,
+        "q25": 105.0,
+        "q75": 176.0
+      },
+      "strict_negative_count_quantiles": {
+        "max": 18.0,
+        "median": 0.0,
+        "min": 0.0,
+        "n_finite": 271,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    }
+  },
+  "coverage_overall": {
+    "fraction_joint_eligible": 0.4537205081669691,
+    "fraction_negative_ok": 0.4537205081669691,
+    "fraction_positive_ok": 1.0,
+    "n": 551,
+    "n_joint_eligible": 250,
+    "n_negative_ok": 250,
+    "n_positive_ok": 551,
+    "positive_count_quantiles": {
+      "max": 261.0,
+      "median": 105.0,
+      "min": 56.0,
+      "n_finite": 551,
+      "q25": 56.0,
+      "q75": 176.0
+    },
+    "strict_negative_count_quantiles": {
+      "max": 18.0,
+      "median": 0.0,
+      "min": 0.0,
+      "n_finite": 551,
+      "q25": 0.0,
+      "q75": 1.0
+    }
+  },
+  "dataset": "Cambridge Task 2",
+  "decision": "NO_GO",
+  "domain_field": "platform",
+  "domain_has_both_labels": {
+    "ANDROID": true,
+    "IOS": true,
+    "WEB": false
+  },
+  "domain_label_contingency": [
+    {
+      "disease_label": 0,
+      "domain": "ANDROID",
+      "n": 56
+    },
+    {
+      "disease_label": 1,
+      "domain": "ANDROID",
+      "n": 95
+    },
+    {
+      "disease_label": 0,
+      "domain": "IOS",
+      "n": 224
+    },
+    {
+      "disease_label": 1,
+      "domain": "IOS",
+      "n": 166
+    },
+    {
+      "disease_label": 1,
+      "domain": "WEB",
+      "n": 10
+    }
+  ],
+  "gate_checks": {
+    "candidate_pool_source_train_only": true,
+    "each_domain_contains_both_labels": false,
+    "each_label_joint_coverage_ge_0_80": false,
+    "overall_joint_coverage_ge_0_80": false,
+    "participant_identifiers_unique": true,
+    "self_pairing_count": 0,
+    "target_participants_used": 0
+  },
+  "matching_quality": {
+    "nearest_exact_field_mismatches": {
+      "max": 4.0,
+      "median": 1.0,
+      "min": 0.0,
+      "n_finite": 541,
+      "q25": 0.0,
+      "q75": 1.0
+    },
+    "strict_negative_same_smoker_fraction": {
+      "max": 1.0,
+      "median": 0.25,
+      "min": 0.0,
+      "n_finite": 250,
+      "q25": 0.0,
+      "q75": 1.0
+    }
+  },
+  "model_blindness": "Only source-train participant IDs, labels, domains, and frozen nuisance fields were opened. No audio, representation, checkpoint, prediction, retrieval metric, target model score, or target participant was used.",
+  "provenance": {
+    "manifest_filename": "participant_manifest.csv",
+    "manifest_sha256": "9d5a048f865d6262913a16b21760816966623df000cb4050c705875ad56868d2",
+    "preregistration": "docs/TRANSFER_REPAIR_V2_EXTERNAL_GATE_PREREG_ZH.md",
+    "script_sha256": "23e898d77f76587f473a97dc15db8941c898eafde79b6653953cdb448b0f143d"
+  },
+  "source_train_n": 551,
+  "thresholds": {
+    "minimum_cross_domain_same_label_positives": 2,
+    "minimum_joint_coverage_overall_and_per_label": 0.8,
+    "minimum_strict_same_domain_opposite_label_negatives": 1
+  }
+}

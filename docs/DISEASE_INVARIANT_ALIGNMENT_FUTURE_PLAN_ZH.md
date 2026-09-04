@@ -2,7 +2,7 @@
 
 日期：2026-08-23
 
-状态：**方法设计；尚未实现、尚未训练、没有结果。**
+状态：**方法设计；三数据集 model-blind pair-support gate 已运行且均 NO_GO；尚未训练模型。**
 
 与当前 ICASSP audit 的关系：作为 Discussion/Future Work，不得混入已完成结果。
 
@@ -158,3 +158,16 @@ AUROC 升但 nuisance 不降，则不能归因于 invariance。
 4. 才运行新 positive-pair 方法。
 
 因此目前仓库中的准确状态是：**audit 完成；mitigation 有设计、无实验。**
+
+## 9. 2026-09-04 pair-support gate 更新
+
+在没有读取任何 Repair embedding、prediction 或 matched-target model score 的情况下，仓库先后
+对 UKCOVID、CODA TB 和 Cambridge source train 运行了预注册 pair-support gate。三者 joint
+eligible coverage 分别为 **0.246%**、**67.50%** 和 **45.37%**，均未达到总体及逐标签80%。
+
+CODA 与 Cambridge 的 cross-domain same-label positive coverage 都是100%；真正不足的是同环境、
+异标签、协变量可比的 negative coverage。由此单数据集 mitigation 分支停止，未运行 S0／S1、
+projector 或 target scoring。完整规则与结果见：
+
+- `docs/TRANSFER_REPAIR_V2_EXTERNAL_GATE_PREREG_ZH.md`
+- `docs/TRANSFER_REPAIR_V2_EXTERNAL_GATE_OUTCOME_ZH.md`

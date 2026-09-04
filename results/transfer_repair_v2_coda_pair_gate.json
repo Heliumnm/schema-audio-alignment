@@ -1,0 +1,229 @@
+{
+  "candidate_rule": {
+    "negative_age_caliper_years": 10.0,
+    "negative_clinical_hamming_fields": [
+      "tb_prior",
+      "hemoptysis",
+      "weight_loss",
+      "smoke_lweek",
+      "fever",
+      "night_sweats",
+      "hiv_status"
+    ],
+    "negative_exact": [
+      "country",
+      "sex"
+    ],
+    "negative_max_clinical_hamming": 2,
+    "positive": "same TB label, different country, different participant"
+  },
+  "coverage_by_label": {
+    "0": {
+      "fraction_joint_eligible": 0.6050420168067226,
+      "fraction_negative_ok": 0.6050420168067226,
+      "fraction_positive_ok": 1.0,
+      "n": 476,
+      "n_joint_eligible": 288,
+      "n_negative_ok": 288,
+      "n_positive_ok": 476,
+      "positive_count_quantiles": {
+        "max": 436.0,
+        "median": 406.0,
+        "min": 362.0,
+        "n_finite": 476,
+        "q25": 381.0,
+        "q75": 430.0
+      },
+      "strict_negative_count_quantiles": {
+        "max": 22.0,
+        "median": 1.0,
+        "min": 0.0,
+        "n_finite": 476,
+        "q25": 0.0,
+        "q75": 2.0
+      }
+    },
+    "1": {
+      "fraction_joint_eligible": 0.937007874015748,
+      "fraction_negative_ok": 0.937007874015748,
+      "fraction_positive_ok": 1.0,
+      "n": 127,
+      "n_joint_eligible": 119,
+      "n_negative_ok": 119,
+      "n_positive_ok": 127,
+      "positive_count_quantiles": {
+        "max": 123.0,
+        "median": 92.0,
+        "min": 87.0,
+        "n_finite": 127,
+        "q25": 87.0,
+        "q75": 103.0
+      },
+      "strict_negative_count_quantiles": {
+        "max": 21.0,
+        "median": 6.0,
+        "min": 0.0,
+        "n_finite": 127,
+        "q25": 2.0,
+        "q75": 12.0
+      }
+    }
+  },
+  "coverage_overall": {
+    "fraction_joint_eligible": 0.6749585406301825,
+    "fraction_negative_ok": 0.6749585406301825,
+    "fraction_positive_ok": 1.0,
+    "n": 603,
+    "n_joint_eligible": 407,
+    "n_negative_ok": 407,
+    "n_positive_ok": 603,
+    "positive_count_quantiles": {
+      "max": 436.0,
+      "median": 381.0,
+      "min": 87.0,
+      "n_finite": 603,
+      "q25": 362.0,
+      "q75": 410.0
+    },
+    "strict_negative_count_quantiles": {
+      "max": 22.0,
+      "median": 1.0,
+      "min": 0.0,
+      "n_finite": 603,
+      "q25": 0.0,
+      "q75": 4.0
+    }
+  },
+  "dataset": "CODA TB",
+  "decision": "NO_GO",
+  "domain_field": "country",
+  "domain_has_both_labels": {
+    "IN": true,
+    "MG": true,
+    "PH": true,
+    "SA": true,
+    "TZ": true,
+    "UG": true,
+    "VN": true
+  },
+  "domain_label_contingency": [
+    {
+      "disease_label": 0,
+      "domain": "IN",
+      "n": 70
+    },
+    {
+      "disease_label": 1,
+      "domain": "IN",
+      "n": 6
+    },
+    {
+      "disease_label": 0,
+      "domain": "MG",
+      "n": 40
+    },
+    {
+      "disease_label": 1,
+      "domain": "MG",
+      "n": 35
+    },
+    {
+      "disease_label": 0,
+      "domain": "PH",
+      "n": 114
+    },
+    {
+      "disease_label": 1,
+      "domain": "PH",
+      "n": 7
+    },
+    {
+      "disease_label": 0,
+      "domain": "SA",
+      "n": 66
+    },
+    {
+      "disease_label": 1,
+      "domain": "SA",
+      "n": 11
+    },
+    {
+      "disease_label": 0,
+      "domain": "TZ",
+      "n": 45
+    },
+    {
+      "disease_label": 1,
+      "domain": "TZ",
+      "n": 4
+    },
+    {
+      "disease_label": 0,
+      "domain": "UG",
+      "n": 95
+    },
+    {
+      "disease_label": 1,
+      "domain": "UG",
+      "n": 40
+    },
+    {
+      "disease_label": 0,
+      "domain": "VN",
+      "n": 46
+    },
+    {
+      "disease_label": 1,
+      "domain": "VN",
+      "n": 24
+    }
+  ],
+  "gate_checks": {
+    "candidate_pool_source_train_only": true,
+    "each_domain_contains_both_labels": true,
+    "each_label_joint_coverage_ge_0_80": false,
+    "overall_joint_coverage_ge_0_80": false,
+    "participant_identifiers_unique": true,
+    "self_pairing_count": 0,
+    "target_participants_used": 0
+  },
+  "matching_quality": {
+    "nearest_age_gap_years": {
+      "max": 42.0,
+      "median": 5.5,
+      "min": 0.0,
+      "n_finite": 578,
+      "q25": 2.0,
+      "q75": 11.0
+    },
+    "nearest_clinical_hamming": {
+      "max": 5.0,
+      "median": 1.0,
+      "min": 0.0,
+      "n_finite": 578,
+      "q25": 0.0,
+      "q75": 2.0
+    },
+    "nearest_total_distance": {
+      "max": 6.5,
+      "median": 1.9,
+      "min": 0.0,
+      "n_finite": 578,
+      "q25": 1.1,
+      "q75": 2.775
+    }
+  },
+  "model_blindness": "Only source-train participant IDs, labels, domains, and frozen nuisance fields were opened. No audio, representation, checkpoint, prediction, retrieval metric, target model score, or target participant was used.",
+  "provenance": {
+    "manifest_filename": "participant_manifest.csv",
+    "manifest_sha256": "40a21a4a3f73f7269dc290c122a0e5e146a1a180f7b38ec7500fbf1696005cc3",
+    "preregistration": "docs/TRANSFER_REPAIR_V2_EXTERNAL_GATE_PREREG_ZH.md",
+    "script_sha256": "23e898d77f76587f473a97dc15db8941c898eafde79b6653953cdb448b0f143d"
+  },
+  "source_train_n": 603,
+  "thresholds": {
+    "minimum_cross_domain_same_label_positives": 2,
+    "minimum_joint_coverage_overall_and_per_label": 0.8,
+    "minimum_strict_same_domain_opposite_label_negatives": 1
+  }
+}

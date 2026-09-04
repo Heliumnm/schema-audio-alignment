@@ -221,6 +221,13 @@ OPERA **+0.0298 [−0.0011,0.0638]**、HeAR **+0.0457 [0.0203,0.0763]**。matche
 跨三个backbone重复了“patient correspondence成立、disease transfer不成立”的主形状；
 但它仍是自定义重建split的外部敏感性，不是官方benchmark复现或untouched confirmation。
 
+在 audit 完成后，仓库另行预注册了一个不使用 target score 的 Transfer Repair v2 数据可行性门。
+UKCOVID、CODA TB、Cambridge source train 的 joint eligible coverage 分别为 **0.246%**、
+**67.50%**、**45.37%**，均未达到冻结的总体及逐标签80%。CODA／Cambridge 的跨环境同标签
+positive coverage 都是100%，但同环境、异标签、协变量可比的 negative coverage只有67.50%和
+45.37%。因此三套单数据集 Repair v2 均在训练前停止；这是一项 data-support NO_GO，不是方法
+效果实验。
+
 ## 9. 当前可以与不能说的话
 
 可以说：
@@ -266,5 +273,9 @@ OPERA **+0.0298 [−0.0011,0.0638]**、HeAR **+0.0457 [0.0203,0.0763]**。matche
   `results/cambridge_task2_formal_results_ast.json`、
   `results/cambridge_task2_formal_results_opera_ct.json`、
   `results/cambridge_task2_formal_results_hear.json`
+- Transfer Repair v2 外部数据门：`docs/TRANSFER_REPAIR_V2_EXTERNAL_GATE_PREREG_ZH.md`、
+  `docs/TRANSFER_REPAIR_V2_EXTERNAL_GATE_OUTCOME_ZH.md`、
+  `results/transfer_repair_v2_coda_pair_gate.json`、
+  `results/transfer_repair_v2_cambridge_pair_gate.json`
 - 一次性执行器：`scripts/run_icassp_route_a_once.sh`
 - 下一阶段方法设计（未执行）：`docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md`
