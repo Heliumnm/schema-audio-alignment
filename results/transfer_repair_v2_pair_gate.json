@@ -1,0 +1,129 @@
+{
+  "coverage_by_disease_label": {
+    "0": {
+      "cross_positive_count_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fraction_eligible_both": 0.0,
+      "fraction_negative_ok": 0.43106312292358806,
+      "fraction_positive_ok": 0.0,
+      "n": 13244,
+      "n_eligible_both": 0,
+      "n_negative_ok": 5709,
+      "n_positive_ok": 0,
+      "strict_negative_count_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        10.0
+      ]
+    },
+    "1": {
+      "cross_positive_count_quantiles": [
+        51.0,
+        51.0,
+        51.0,
+        51.0,
+        7419.0
+      ],
+      "fraction_eligible_both": 0.006827309236947791,
+      "fraction_negative_ok": 0.006827309236947791,
+      "fraction_positive_ok": 1.0,
+      "n": 7470,
+      "n_eligible_both": 51,
+      "n_negative_ok": 51,
+      "n_positive_ok": 7470,
+      "strict_negative_count_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2791.0
+      ]
+    }
+  },
+  "coverage_overall": {
+    "cross_positive_count_quantiles": [
+      0.0,
+      0.0,
+      0.0,
+      51.0,
+      7419.0
+    ],
+    "fraction_eligible_both": 0.002462102925557594,
+    "fraction_negative_ok": 0.27807280100415177,
+    "fraction_positive_ok": 0.36062566380225936,
+    "n": 20714,
+    "n_eligible_both": 51,
+    "n_negative_ok": 5760,
+    "n_positive_ok": 7470,
+    "strict_negative_count_quantiles": [
+      0.0,
+      0.0,
+      0.0,
+      2.0,
+      2791.0
+    ]
+  },
+  "decision": "NO_GO",
+  "frozen_thresholds": {
+    "minimum_cross_source_positives_per_anchor": 2,
+    "minimum_eligible_fraction_overall_and_per_label": 0.8,
+    "minimum_strict_matched_negatives_per_anchor": 1,
+    "strict_negative_match_keys": [
+      "recruitment_source",
+      "gender",
+      "age",
+      "symptom_cough_any",
+      "symptom_none"
+    ]
+  },
+  "gate_checks": {
+    "candidate_pool_is_standard_train_only": true,
+    "each_label_eligible_fraction_ge_0_80": false,
+    "each_source_contains_both_labels": false,
+    "overall_eligible_fraction_ge_0_80": false,
+    "self_pairing_is_impossible_by_definition": true
+  },
+  "model_blindness": "No audio embedding, projector, prediction, retrieval metric, validation metric, matched metric, or matched-long metric was opened.",
+  "n_standard_train": 20714,
+  "provenance": {
+    "cohort_path": "results/ukcovid_audio_cohort.csv",
+    "cohort_sha256": "974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128",
+    "metadata_path": "/mnt/hd/data_heliu/resp_datasets/ukcovid/participant_metadata.csv",
+    "metadata_sha256": "29a8080d80cee667b813ccd3f9a9b307867c3b3454fa4a2f9f8d95d8721ce5e4",
+    "script_sha256": "3472e8235900964de0ce28ab51e89f6a4566e8ecb600ae39e25d433e868f2a16"
+  },
+  "relaxed_diagnostics_not_used_for_gate": {
+    "fraction_with_any_same_disease_other_participant": 1.0,
+    "fraction_with_any_same_source_opposite_label": 0.6418364391232982,
+    "note": "These relaxed counts are diagnostic only and cannot substitute for the frozen cross-source-positive plus strict-matched-negative gate."
+  },
+  "source_has_both_labels": {
+    "REACT": true,
+    "Test and Trace": false
+  },
+  "source_label_contingency": [
+    {
+      "disease_label": 0,
+      "n": 13244,
+      "recruitment_source": "REACT"
+    },
+    {
+      "disease_label": 1,
+      "n": 51,
+      "recruitment_source": "REACT"
+    },
+    {
+      "disease_label": 1,
+      "n": 7419,
+      "recruitment_source": "Test and Trace"
+    }
+  ],
+  "standing": "model-blind Transfer Repair v2 pair-feasibility gate"
+}
