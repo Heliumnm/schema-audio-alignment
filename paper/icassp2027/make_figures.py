@@ -12,6 +12,7 @@ from pathlib import Path
 
 from reportlab.lib.colors import Color, HexColor, black, white
 from reportlab.lib.pagesizes import inch
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfgen import canvas
 
 
@@ -52,6 +53,28 @@ def arrow(c: canvas.Canvas, x1: float, y: float, x2: float) -> None:
     c.line(x2, y, x2 - 5, y - 3)
 
 
+def delta_term(c: canvas.Canvas, center_x: float, y: float,
+               suffix: str, contrast: str) -> None:
+    """Draw a vector Delta followed by a readable, compact contrast label."""
+    size = 6.9
+    tail = f"{suffix} = {contrast}"
+    delta_w = 7.0
+    tail_w = stringWidth(tail, "Helvetica-Bold", size)
+    gap = 0.7
+    x = center_x - (delta_w + gap + tail_w) / 2
+    c.setFillColor(black)
+    c.setStrokeColor(black)
+    c.setLineWidth(0.7)
+    path = c.beginPath()
+    path.moveTo(x, y)
+    path.lineTo(x + delta_w / 2, y + size)
+    path.lineTo(x + delta_w, y)
+    path.close()
+    c.drawPath(path, stroke=1, fill=0)
+    c.setFont("Helvetica-Bold", size)
+    c.drawString(x + delta_w + gap, y, tail)
+
+
 def pairing_figure() -> None:
     width, height = 7.05 * inch, 1.34 * inch
     c = canvas.Canvas(str(OUT / "pairing_audit.pdf"), pagesize=(width, height))
@@ -76,10 +99,12 @@ def pairing_figure() -> None:
         "THREE QUESTIONS",
         ["1. Pairing?  Retrieval", "2. Retained?  Probes", "3. Transfer?  Matched disease"],
     )
+    delta_term(c, 122, 11, "pair", "C-W")
+    delta_term(c, 305, 11, "label", "W-G")
     c.setFillColor(black)
-    c.setFont("Helvetica-Bold", 6.9)
-    c.drawCentredString(122, 10, "C-W: exact profile increment")
-    c.drawCentredString(305, 10, "W-G: label-conditioned association")
+    c.setFont("Helvetica", 5.8)
+    c.drawCentredString(122, 3, "Exact-pairing increment")
+    c.drawCentredString(305, 3, "Label-conditioned association")
     c.showPage()
     c.save()
 
