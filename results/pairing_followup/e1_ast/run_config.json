@@ -1,0 +1,315 @@
+{
+ "backbone": "AST-6L",
+ "standing": "post-hoc Standard-validation conditional-retrieval diagnostic",
+ "n_cohort": 72458,
+ "n_standard_validation_queries": 5179,
+ "n_candidate_profiles": 1871,
+ "candidate_bank_sha256": "f8f5e90f4742dd9fc428b9567d763fae1ad489e09f4a42e7a10ea20eeed12672",
+ "text_id_sha16": "9f009fbf7dc825ed",
+ "unique_text_embedding_sha16": "31eee607c3a24b73",
+ "n_unique_profiles_global": 12992,
+ "alignment_manifest_sha256": "7c73517a98c782084428f7b6350adbe3092def36af9bf2aba8424ef34a19e838",
+ "training_input_hashes": {
+  "audio": "c3b7e6c988827b7c",
+  "text_unique": "31eee607c3a24b73",
+  "text_id": "9f009fbf7dc825ed"
+ },
+ "script_sha256": "b33e7487d9c71d5caa952aeca8f1d3934806d76dec6744ae635ca6def74a4a26",
+ "metadata_texts_sha256": "f295553bd65165037fa90e75b681cb50e6c08fbef6ad06435b9139308ae7e585",
+ "text_embedding_file_sha256": "30c92f550b2fcedd1a9ffb5268c602eee5757eca97158f86ff09016aa8167590",
+ "representations": {
+  "correct": {
+   "0": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "06b145af7ba79008",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "1": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "b89520158545262b",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "2": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "8d983e3a82eb00ac",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "3": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "27c435d57d7f2e4c",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "4": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "a62eb14d96c7cfd7",
+    "finite": true,
+    "nonzero_rows": 72458
+   }
+  },
+  "within_label": {
+   "0": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "9d945369c5d25c8d",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "1": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "d18ab685b1ff5b0e",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "2": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "2a9d37eb96dc34e3",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "3": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "0e42f17853d68ff7",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "4": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "3b1e0f19701f1cfb",
+    "finite": true,
+    "nonzero_rows": 72458
+   }
+  },
+  "global": {
+   "0": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "a8a1b462bb2aeacc",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "1": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "abf2ab8ab07b3eaa",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "2": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "c3f6ab5491d4ab28",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "3": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "c4c7c9db22b257e1",
+    "finite": true,
+    "nonzero_rows": 72458
+   },
+   "4": {
+    "shape": [
+     72458,
+     2560
+    ],
+    "sha16": "88bf1d25d71dc511",
+    "finite": true,
+    "nonzero_rows": 72458
+   }
+  }
+ },
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "expected_epochs": 500,
+ "conditions": [
+  "unrestricted",
+  "same_sex",
+  "same_label",
+  "same_label_and_sex"
+ ],
+ "condition_definitions": {
+  "unrestricted": "all unique validation profiles",
+  "same_sex": "profile occurs for at least one validation participant with query sex",
+  "same_label": "profile occurs for at least one validation participant with query label",
+  "same_label_and_sex": "profile occurs for at least one validation participant with both"
+ },
+ "level_audit": {
+  "disease_levels": [
+   "0",
+   "1"
+  ],
+  "recorded_sex_levels": [
+   "FEMALE",
+   "MALE"
+  ],
+  "joint_levels": [
+   "0|FEMALE",
+   "0|MALE",
+   "1|FEMALE",
+   "1|MALE"
+  ]
+ },
+ "condition_audit": {
+  "unrestricted": {
+   "n_queries": 5179,
+   "n_true_profiles": 1871,
+   "true_profile_coverage": 1.0,
+   "candidate_count": {
+    "min": 1871.0,
+    "q25": 1871.0,
+    "median": 1871.0,
+    "q75": 1871.0,
+    "max": 1871.0,
+    "mean": 1871.0
+   },
+   "analytic_random_ranking": {
+    "mrr": {
+     "macro_profile": 0.004335495031609967,
+     "micro_participant": 0.004335495031609966
+    },
+    "r1": {
+     "macro_profile": 0.0005344735435595938,
+     "micro_participant": 0.0005344735435595938
+    },
+    "r10": {
+     "macro_profile": 0.005344735435595938,
+     "micro_participant": 0.005344735435595938
+    }
+   }
+  },
+  "same_sex": {
+   "n_queries": 5179,
+   "n_true_profiles": 1871,
+   "true_profile_coverage": 1.0,
+   "candidate_count": {
+    "min": 725.0,
+    "q25": 725.0,
+    "median": 1146.0,
+    "q75": 1146.0,
+    "max": 1146.0,
+    "mean": 973.3404132071829
+   },
+   "analytic_random_ranking": {
+    "mrr": {
+     "macro_profile": 0.007902598404748988,
+     "micro_participant": 0.007975693534069217
+    },
+    "r1": {
+     "macro_profile": 0.0010689470871191875,
+     "micro_participant": 0.0010804111293167447
+    },
+    "r10": {
+     "macro_profile": 0.010689470871191877,
+     "micro_participant": 0.010804111293167447
+    }
+   }
+  },
+  "same_label": {
+   "n_queries": 5179,
+   "n_true_profiles": 1871,
+   "true_profile_coverage": 1.0,
+   "candidate_count": {
+    "min": 476.0,
+    "q25": 476.0,
+    "median": 476.0,
+    "q75": 1507.0,
+    "max": 1507.0,
+    "mean": 856.0307009075111
+   },
+   "analytic_random_ranking": {
+    "mrr": {
+     "macro_profile": 0.007292774631342154,
+     "micro_participant": 0.010876419098627504
+    },
+    "r1": {
+     "macro_profile": 0.0009941605366616268,
+     "micro_participant": 0.0015710567757920863
+    },
+    "r10": {
+     "macro_profile": 0.00994160536661627,
+     "micro_participant": 0.015710567757920863
+    }
+   }
+  },
+  "same_label_and_sex": {
+   "n_queries": 5179,
+   "n_true_profiles": 1871,
+   "true_profile_coverage": 1.0,
+   "candidate_count": {
+    "min": 206.0,
+    "q25": 206.0,
+    "median": 270.0,
+    "q75": 564.0,
+    "max": 943.0,
+    "mean": 449.5512647229195
+   },
+   "analytic_random_ranking": {
+    "mrr": {
+     "macro_profile": 0.013167929762364593,
+     "micro_participant": 0.01953681011056595
+    },
+    "r1": {
+     "macro_profile": 0.00198887812967886,
+     "micro_participant": 0.0031425105089480723
+    },
+    "r10": {
+     "macro_profile": 0.019888781296788605,
+     "micro_participant": 0.03142510508948073
+    }
+   }
+  }
+ },
+ "cohort_sha256": "974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128",
+ "rank_file": "results/pairing_followup/e1_ast/conditional_query_ranks.npz",
+ "rank_file_sha256": "f5f3b24820ecc258abeff5bd95ba54bdedbdb566d85e7b4d3376d570951bac2c",
+ "bootstrap": 10000,
+ "bootstrap_seed": 20260820,
+ "matched_or_test_labels_read": false
+}

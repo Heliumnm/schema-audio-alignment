@@ -2,12 +2,12 @@
 
 日期：2026-09-11
 
-> **2026-09-11 补充实验状态：** 已在任何新增结果产生前冻结三项定向诊断：条件化 profile
-> retrieval、标签与性别共同保持的 \(W_{y,s}\) 训练对照、以及 matched-long → matched 的
-> target-assisted readout。完整协议见
-> `docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md`。其中训练支持度审计确认
-> Standard train 的全部 `(label, recorded sex)` 实际层均至少有两人，因此 E2 可保持原
-> 20,714 人集合，只新增 10 个 projector。**E1--E3 均尚未运行，不属于下文已有结果。**
+> **2026-09-11 补充实验状态：** 三项定向诊断已在新增结果产生前冻结。E1 条件化 retrieval
+> 已完成：同标签限制后 Correct−Within 仍在两个 backbone 上稳定为正；同性别或同标签且同性别
+> 限制后效应缩小并跨零，说明原 retrieval 优势对候选库的性别结构高度敏感。E2 的
+> \(W_{y,s}\) 新训练臂正在按原 20,714 人集合执行，共新增 10 个 projector；E3 尚未运行。
+> 冻结协议见 `docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md`，E1 完整结果见
+> `docs/PAIRING_AUDIT_E1_CONDITIONAL_RETRIEVAL_OUTCOME_ZH.md`。
 
 状态：**UKCOVID Route-A、CODA TB secondary external sensitivity、Cambridge Task-2
 重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 正在完成最后的
@@ -54,6 +54,9 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | AST 三配对训练 | 完成 | 源域对应学会，matched 疾病收益不稳定 |
 | OPERA-CT 三配对训练 | 完成 | 重复 correspondence／transfer 分离的主方向 |
 | Unique-profile retrieval | 完成 | 两个 backbone 均为 `correct > within > global` |
+| E1 条件化 profile retrieval | **完成** | 同标签后差异保留；同性别后差异缩小且区间跨零 |
+| E2 标签＋性别保持的 Within 对照 | **正式训练中** | 10 个 projector；原 C/W/G 不重训 |
+| E3 target-assisted readout | 未运行 | 等 E2 完成后一次性覆盖 Raw/C/W/G/\(W_{y,s}\) |
 | Information-channel taxonomy | 完成 | correct 明显保留 sex；COVID `C-W` 不稳定 |
 | Metadata/direct/raw-preserving fusion | 完成 | raw audio 在 metadata 上增量不显著；correct 不胜 raw |
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |

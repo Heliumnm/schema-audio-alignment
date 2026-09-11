@@ -1,0 +1,16 @@
+AST-6L correct seed 0: all four conditions ranked
+AST-6L correct seed 1: all four conditions ranked
+AST-6L correct seed 2: all four conditions ranked
+AST-6L correct seed 3: all four conditions ranked
+AST-6L correct seed 4: all four conditions ranked
+AST-6L within_label seed 0: all four conditions ranked
+AST-6L within_label seed 1: all four conditions ranked
+AST-6L within_label seed 2: all four conditions ranked
+AST-6L within_label seed 3: all four conditions ranked
+AST-6L within_label seed 4: all four conditions ranked
+AST-6L global seed 0: all four conditions ranked
+AST-6L global seed 1: all four conditions ranked
+AST-6L global seed 2: all four conditions ranked
+AST-6L global seed 3: all four conditions ranked
+AST-6L global seed 4: all four conditions ranked
+wrote conditional retrieval ranks and metrics to results/pairing_followup/e1_ast

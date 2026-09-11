@@ -8,6 +8,10 @@ __pycache__/
 .DS_Store
 results/*.npz
 results/*.npy
+# Participant-level follow-up outputs stay local/private; publish aggregate JSON only.
+results/pairing_followup/**/conditional_query_ranks.npz
+results/pairing_followup/**/query_ranks.npz
+results/pairing_followup/**/predictions.npz
 wandb/
 results/schema_text.json
 results/*_index.json
