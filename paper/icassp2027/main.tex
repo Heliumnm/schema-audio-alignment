@@ -23,8 +23,8 @@ DISEASE TRANSFER: A PAIRING-CONTROLLED AUDIT}
 \maketitle
 
 \begin{abstract}
-Clinical audio models increasingly align recordings with participant metadata, but
-successful correspondence does not establish a transferable disease representation.
+Clinical audio models align recordings with participant metadata, but
+successful correspondence does not establish transferable disease representation.
 Metadata mixes disease-related information with demographics, symptoms, history, and
 cohort structure. We introduce a Pairing-Controlled Transfer Audit comparing correct pairs,
 metadata shuffled within disease labels, and globally shuffled metadata. On UKCOVID,
@@ -32,8 +32,9 @@ Correct pairing improved profile retrieval for AST-6L and OPERA-CT and increased
 decodability relative to Within-label (\dauc{} $+0.191$ and $+0.113$), showing that the pairing
 intervention produced a measurable representational difference. Matched COVID prediction
 changed by only $+0.006$ and $-0.002$.
-Across secondary analyses on CODA TB, Cambridge COVID-19 Sounds, and Coswara, retrieval and
-sex decodability increased consistently, whereas 0/11 dataset--backbone settings established
+Across a post-hoc UKCOVID HeAR extension and secondary analyses on CODA TB, Cambridge
+COVID-19 Sounds, and Coswara, retrieval and sex decodability increased consistently, whereas
+0/12 dataset--backbone settings established
 a positive matched-disease gain, and Correct did not consistently outperform frozen raw
 audio. Correspondence learning, retained participant information, and disease transfer are
 therefore distinct empirical claims requiring distinct controls.
@@ -139,8 +140,9 @@ selected using UKCOVID transfer performance.
 OPERA respiratory acoustic foundation-model family \cite{zhang2024opera}. Because its
 pretraining corpus includes UKCOVID training audio, we treat it as a domain-pretrained
 comparator rather than an independent pretraining condition; the present UKCOVID targets
-remain participant-disjoint from our training split. \textbf{HeAR} is added in the external
-analyses as a third frozen health-acoustic representation \cite{baur2024hear}.
+remain participant-disjoint from our training split. \textbf{HeAR} is added post hoc on
+UKCOVID and in the external analyses as a third frozen health-acoustic representation
+\cite{baur2024hear}; it is not promoted to a primary UKCOVID backbone.
 
 Recordings use each backbone's frozen preprocessing pipeline and are aggregated to one
 participant-level audio representation before alignment. A frozen Phi-2 encoder
@@ -213,6 +215,8 @@ assigned pairing.
 
 The strongest probe effect was sex. On UKCOVID matched participants, \dpair{} sex-probe
 \dauc{} was $+0.1912$ [0.1669, 0.2151] for AST and $+0.1125$ [0.0943, 0.1311] for OPERA.
+The post-hoc HeAR extension gave retrieval \dmrr{} $+0.00711$ [0.00476, 0.00971] and sex
+\dauc{} $+0.0862$ [0.0734, 0.0995].
 Age increased for AST but not OPERA; acquisition and cohort effects were less consistent.
 Raw audio generally had higher absolute demographic decodability than aligned
 representations, so alignment did not create demographic information absent from audio; it
@@ -221,10 +225,10 @@ selectively retained it relative to Within-label.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=0.98\textwidth]{cross_dataset_forest.pdf}
-  \caption{\dpair{} estimates with 95\% paired bootstrap intervals. The 11
-  settings comprise UKCOVID (discovery: AST, OPERA) and three external sensitivities
-  (AST, OPERA, HeAR each). Retrieval CIs excluded zero in 10/11 settings and sex-probe CIs
-  in 11/11, whereas no matched disease CI established a positive gain. Panel scales differ;
+  \caption{\dpair{} estimates with 95\% paired bootstrap intervals. The 12
+  settings comprise UKCOVID (primary: AST, OPERA; post-hoc: HeAR) and three external
+  sensitivities (AST, OPERA, HeAR each). Retrieval CIs excluded zero in 11/12 settings and
+  sex-probe CIs in 12/12, whereas no matched disease CI established a positive gain. Panel scales differ;
   estimates are not pooled because profile libraries, diseases, and evidence status differ.}
   \label{fig:forest}
 \end{figure*}
@@ -235,13 +239,15 @@ On UKCOVID matched, disease \dpair{} \dauc{} was $+0.0062$ [-0.0144, 0.0279] for
 $-0.0020$ [-0.0191, 0.0168] for OPERA. For AST, raw, Correct, and Within AUROC were 0.538,
 0.529, and 0.523; for OPERA they were 0.577, 0.555, and 0.557. A small AST fusion effect
 did not replicate with OPERA, and Correct fusion did not outperform metadata plus raw
-audio. A fixed MLP also failed to reveal a hidden effect: audio-only \dpair{} was $+0.0050$
+audio. Post-hoc HeAR raw, Correct, and Within AUROC were 0.542, 0.545, and 0.543, giving
+\dpair{} $+0.0029$ [-0.0115, 0.0165]. A fixed MLP also failed to reveal a hidden effect:
+audio-only \dpair{} was $+0.0050$
 [-0.0154, 0.0270] for AST and $-0.0052$ [-0.0208, 0.0110] for OPERA.
 
-Figure~\ref{fig:forest} summarizes the external result shape. Across all 11
-dataset--backbone settings, retrieval point estimates were positive (10/11 intervals
-excluded zero) and sex \dpair{} was positive with 11/11 intervals excluding zero. In contrast,
-matched disease \dpair{} produced five positive and six negative point estimates, and 0/11
+Figure~\ref{fig:forest} summarizes the result shape. Across all 12 dataset--backbone
+settings, retrieval point estimates were positive (11/12 intervals excluded zero) and sex
+\dpair{} was positive with 12/12 intervals excluding zero. In contrast, matched disease
+\dpair{} produced six positive and six negative point estimates, and 0/12
 intervals established a positive gain. This count is descriptive, not a meta-analysis:
 targets contain different diseases, MRR libraries differ, and external analyses have
 different evidence status. Correct likewise showed no consistent advantage over frozen raw

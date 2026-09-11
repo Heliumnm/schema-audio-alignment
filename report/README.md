@@ -10,6 +10,7 @@
 - [ICASSP 2027 正式 LaTeX 稿](../paper/icassp2027/main.tex)
 - [E1--E3 冻结补充实验协议](../docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md)
 - [E1 条件化 profile retrieval 正式结果](../docs/PAIRING_AUDIT_E1_CONDITIONAL_RETRIEVAL_OUTCOME_ZH.md)
+- [UKCOVID HeAR 第三骨干事后稳健性结果](../docs/HEAR_UKCOVID_EXTENSION_OUTCOME_ZH.md)
 
 该母稿已经按正式论文顺序组织：
 
@@ -25,6 +26,6 @@ Limitations
 Conclusion
 ```
 
-它整合了 UKCOVID discovery audit，以及 CODA TB、Cambridge Task-2 和 Coswara 的外部敏感性
-结果。英文稿已经按 ICASSP 的篇幅与证据边界重写；LaTeX 版本是当前投稿母稿，中文版本继续作为
-完整证据账本使用。
+它整合了 UKCOVID discovery audit、事后 HeAR 第三骨干稳健性分析，以及 CODA TB、Cambridge
+Task-2 和 Coswara 的外部敏感性结果。英文稿已经按 ICASSP 的篇幅与证据边界重写；LaTeX
+版本是当前投稿母稿，中文版本继续作为完整证据账本使用。

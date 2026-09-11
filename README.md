@@ -22,6 +22,12 @@ analysis further shows that the adverse source-calibrated NLL is mainly unsuppor
 confidence: target-domain recalibration removes the NLL gap without creating a disease
 ranking gain.
 
+A separately frozen post-hoc UKCOVID HeAR extension is also complete. It reproduced the
+same separation: Correct-minus-Within macro-profile MRR was +0.0071 [0.0048, 0.0097] and
+matched sex-probe delta AUROC was +0.0862 [0.0734, 0.0995], while matched COVID delta AUROC
+was only +0.0029 [-0.0115, 0.0165]. HeAR therefore strengthens backbone robustness without
+being promoted to a primary UKCOVID experiment.
+
 The controlled synthetic sweep learned correspondence but failed its preregistered
 mechanism gates, so it is not used as causal evidence. Coswara's preregistered greedy gate
 stopped; a separately frozen, model-blind global-constraint sensitivity later found a balanced
@@ -66,6 +72,7 @@ Start with:
 - [Frozen strict follow-up design](docs/ICASSP_STRICT_FOLLOWUP_PREREG_ZH.md)
 - [Frozen E1--E3 supplementary experiment protocol (not yet run)](docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md)
 - [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
+- [Post-hoc UKCOVID HeAR outcome and audit](docs/HEAR_UKCOVID_EXTENSION_OUTCOME_ZH.md)
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
 - [CODA TB model-blind data-gate outcome](docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
 - [CODA TB secondary match-first v2 GO](docs/CODA_TB_MATCH_FIRST_V2_OUTCOME_ZH.md)

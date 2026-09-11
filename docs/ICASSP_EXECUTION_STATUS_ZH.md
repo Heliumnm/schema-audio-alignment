@@ -1,17 +1,18 @@
 # ICASSP Route A 最终执行状态
 
-日期：2026-09-11
+日期：2026-09-12
 
 > **2026-09-11 补充实验状态：** 三项定向诊断已在新增结果产生前冻结。E1 条件化 retrieval
 > 已完成：同标签限制后 Correct−Within 仍在两个 backbone 上稳定为正；同性别或同标签且同性别
 > 限制后效应缩小并跨零，说明原 retrieval 优势对候选库的性别结构高度敏感。E2 的
-> \(W_{y,s}\) 新训练臂正在按原 20,714 人集合执行，共新增 10 个 projector；E3 尚未运行。
+> \(W_{y,s}\) 10 个新 projector 已完成，retrieval 已完成，冻结 readout 评估正在运行；E3 已
+> 排队并将在 E2 评分后执行。
 > 冻结协议见 `docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md`，E1 完整结果见
 > `docs/PAIRING_AUDIT_E1_CONDITIONAL_RETRIEVAL_OUTCOME_ZH.md`。
 
 状态：**UKCOVID Route-A、CODA TB secondary external sensitivity、Cambridge Task-2
-重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 正在完成最后的
-信息通道打分；新 mitigation 方法尚未执行。**
+重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 第三骨干事后
+稳健性分析已完成并通过最终审计；新 mitigation 方法尚未执行。**
 
 ## 一句话结论
 
@@ -43,8 +44,9 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 - `W-G = within-label - global`：标签／人群共现；
 - `C-R = correct - raw`：对齐相对冻结原始音频表征的改变。
 
-两个冻结音频编码器均完整执行：AST 前六层和 OPERA-CT。每个 alignment arm 使用五个 seed、
-500 epochs，只取最终 checkpoint；matched 结果不用于选择 epoch、loss、head 或 calibrator。
+两个预先确定的冻结音频编码器均完整执行：AST 前六层和 OPERA-CT。随后按独立冻结协议完成
+HeAR 事后第三骨干稳健性分析。每个 alignment arm 使用五个 seed、500 epochs，只取最终
+checkpoint；matched 结果不用于选择 epoch、loss、head 或 calibrator。
 
 ## 2. 当前完成度
 
@@ -53,10 +55,11 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 | UKCOVID 队列、split、伪影审计 | 完成 | 招募来源在 Standard train 几乎等于标签，在 matched 中被平衡 |
 | AST 三配对训练 | 完成 | 源域对应学会，matched 疾病收益不稳定 |
 | OPERA-CT 三配对训练 | 完成 | 重复 correspondence／transfer 分离的主方向 |
+| HeAR UKCOVID 事后第三骨干 | **完成并审计** | correspondence 与 sex probe 明确；matched COVID 增量不明确 |
 | Unique-profile retrieval | 完成 | 两个 backbone 均为 `correct > within > global` |
 | E1 条件化 profile retrieval | **完成** | 同标签后差异保留；同性别后差异缩小且区间跨零 |
-| E2 标签＋性别保持的 Within 对照 | **正式训练中** | 10 个 projector；原 C/W/G 不重训 |
-| E3 target-assisted readout | 未运行 | 等 E2 完成后一次性覆盖 Raw/C/W/G/\(W_{y,s}\) |
+| E2 标签＋性别保持的 Within 对照 | **训练与 retrieval 完成，readout 运行中** | 10 个 projector；原 C/W/G 不重训 |
+| E3 target-assisted readout | 已排队 | E2 后一次性覆盖 Raw/C/W/G/\(W_{y,s}\) |
 | Information-channel taxonomy | 完成 | correct 明显保留 sex；COVID `C-W` 不稳定 |
 | Metadata/direct/raw-preserving fusion | 完成 | raw audio 在 metadata 上增量不显著；correct 不胜 raw |
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
@@ -76,9 +79,11 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 |---|---:|---:|---:|---:|
 | AST-6L | 0.008910 | 0.005735 | 0.004188 | +0.003175 [0.001605, 0.004917] |
 | OPERA-CT | 0.008771 | 0.005542 | 0.004435 | +0.003229 [0.001545, 0.005000] |
+| HeAR（post-hoc） | 0.012774 | 0.005662 | 0.004535 | +0.007113 [0.004763, 0.009707] |
 
-两个 backbone 的五个 seed 均为正。绝对 MRR 很低，因为候选 profile 有 1,871 个且高度重复，
-但配对差异明确。因此不能把后续 matched null 解释成“projector 什么都没学到”。
+三个 backbone 的五个 seed 差值均为正；HeAR 为事后稳健性分析，不改变 AST／OPERA 的 primary
+地位。绝对 MRR 很低，因为候选 profile 有 1,871 个且高度重复，但配对差异明确。因此不能把
+后续 matched null 解释成“projector 什么都没学到”。
 
 ## 4. 学到的是哪类 correspondence？
 
@@ -98,7 +103,16 @@ positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此
 因此准确表述是：alignment **相对 within-label projector 选择性保留了患者对应信息**；不能说
 alignment 比 raw audio 编码了更多人口学信息。
 
+事后 HeAR 分析给出同样形状：matched sex `C-W` 为 **+0.0862 [0.0734, 0.0995]**，而
+COVID 为 **+0.0029 [−0.0115, 0.0165]**。完整审计见
+`docs/HEAR_UKCOVID_EXTENSION_OUTCOME_ZH.md`。
+
 ## 5. Correspondence 是否转化为 matched disease transfer？
+
+HeAR 的 matched disease 绝对 AUROC 为 Raw 0.5417、Correct 0.5455、Within 0.5426、Global
+0.5131；Correct−Within 为 +0.0029 [−0.0115, 0.0165]，Correct 也没有建立相对 Raw 的优势。
+由于它是事后第三骨干分析，未追加 fusion／MLP 选择，不与 AST／OPERA 的 primary robustness
+矩阵混为同一层证据。
 
 ### 5.1 Direct/raw-preserving fusion
 
@@ -203,7 +217,7 @@ correspondence。matched-target 上的 TB Correct−Within 结果为：
 当前证据是：
 
 - 一个 UKCOVID discovery audit；
-- 两个 frozen audio backbone；
+- 两个 primary frozen audio backbone，加一个事后 HeAR 第三骨干稳健性分析；
 - 线性和固定 MLP 两种 readout；
 - retrieval、probe、fusion 和 calibration 的闭环；
 - 一个完成的三骨干 CODA TB secondary external sensitivity：重复 correspondence／transfer 分离，

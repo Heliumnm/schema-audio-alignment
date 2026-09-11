@@ -22,6 +22,12 @@ against the server-side SHA-256 digests.
 | `mlp_readout/` | frozen nonlinear readout robustness | AST/OPERA results and score configs |
 | `synthetic/` | preregistered controlled mechanism sweep and Phi-2 sensitivity | grid and Phi-2 summaries |
 
+The later UKCOVID HeAR third-backbone robustness analysis is stored separately as
+`results/ukcovid_hear_disease_results.json` and
+`results/ukcovid_hear_profile_retrieval.json`, with its audit and evidence status documented
+in `docs/HEAR_UKCOVID_EXTENSION_OUTCOME_ZH.md`. It is post-hoc and does not replace the two
+primary UKCOVID backbones archived in this directory.
+
 Large participant-level predictions, fitted MLP archives, embeddings, and checkpoints remain
 on the server. They are intentionally not committed because they are large and may contain
 participant identifiers. The compact JSONs preserve observed effects, confidence intervals,
@@ -43,6 +49,9 @@ per-seed effects, configuration hashes, prediction hashes, and gate verdicts.
   OPERA does not reproduce, while both have adverse source-calibrated NLL.
 - Synthetic: correspondence gate passes, but high-confounding, dose-trend, and rho-zero
   boundary gates fail. `main_text_eligible=false`.
+- Post-hoc HeAR: retrieval `correct-within` MRR is +0.007113 [0.004763, 0.009707], matched
+  sex delta AUROC is +0.0862 [0.0734, 0.0995], and matched COVID delta AUROC is +0.0029
+  [-0.0115, 0.0165].
 
 ## MLP scoring technical correction
 

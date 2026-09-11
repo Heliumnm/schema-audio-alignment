@@ -16,9 +16,10 @@
 - [ ] Do not describe `Correct - Within-label` as a causal identity effect.
 - [ ] Do not claim equivalence or zero effect from confidence intervals that
       include zero.
-- [ ] Do not add the unaudited UKCOVID-HeAR result to the formal result count.
+- [ ] Keep UKCOVID-HeAR labelled as a post-hoc third-backbone robustness analysis,
+      not a primary UKCOVID backbone.
 - [ ] Keep the central count fixed unless the evidence ledger changes:
-      retrieval 10/11, sex probe 11/11, matched disease 0/11.
+      retrieval 11/12, sex probe 12/12, matched disease 0/12.
 
 ## Format checks
 
