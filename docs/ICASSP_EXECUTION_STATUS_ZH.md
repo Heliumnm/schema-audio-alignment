@@ -1,6 +1,13 @@
 # ICASSP Route A 最终执行状态
 
-日期：2026-09-03
+日期：2026-09-11
+
+> **2026-09-11 补充实验状态：** 已在任何新增结果产生前冻结三项定向诊断：条件化 profile
+> retrieval、标签与性别共同保持的 \(W_{y,s}\) 训练对照、以及 matched-long → matched 的
+> target-assisted readout。完整协议见
+> `docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md`。其中训练支持度审计确认
+> Standard train 的全部 `(label, recorded sex)` 实际层均至少有两人，因此 E2 可保持原
+> 20,714 人集合，只新增 10 个 projector。**E1--E3 均尚未运行，不属于下文已有结果。**
 
 状态：**UKCOVID Route-A、CODA TB secondary external sensitivity、Cambridge Task-2
 重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 正在完成最后的

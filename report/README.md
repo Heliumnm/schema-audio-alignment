@@ -8,6 +8,7 @@
 - [中文论文结构化母稿：对齐成功不等于疾病迁移](ICASSP_DRAFT_ZH.md)
 - [英文论文叙事稿](ICASSP_DRAFT_EN.md)
 - [ICASSP 2027 正式 LaTeX 稿](../paper/icassp2027/main.tex)
+- [E1--E3 冻结补充实验协议（尚未运行）](../docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md)
 
 该母稿已经按正式论文顺序组织：
 

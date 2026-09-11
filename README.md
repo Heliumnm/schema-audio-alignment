@@ -64,6 +64,7 @@ Start with:
 - [Chinese ICASSP paper blueprint](docs/ICASSP_PAPER_BLUEPRINT_ZH.md)
 - [English ICASSP draft](report/ICASSP_DRAFT_EN.md)
 - [Frozen strict follow-up design](docs/ICASSP_STRICT_FOLLOWUP_PREREG_ZH.md)
+- [Frozen E1--E3 supplementary experiment protocol (not yet run)](docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md)
 - [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)
 - [CODA TB model-blind data-gate outcome](docs/CODA_TB_DATA_GATE_OUTCOME_ZH.md)
