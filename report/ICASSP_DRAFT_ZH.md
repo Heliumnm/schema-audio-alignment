@@ -2,9 +2,9 @@
 
 英文暂定题目：
 
-> **Successful Clinical Audio--Metadata Alignment Does Not Guarantee Disease Transfer: A Pairing-Controlled Audit**
+> **Successful Clinical Audio--Metadata Alignment Does Not Imply Disease Transfer: A Pairing-Controlled Audit**
 
-版本：中文论文母稿，2026-09-05
+版本：中文论文母稿，2026-09-11
 
 用途：用于继续压缩成 ICASSP 四页正文和英文稿。
 
@@ -18,7 +18,7 @@
 
 在 UKCOVID 中，招募来源在训练集上几乎可以直接预测 COVID（AUROC 0.9966），而在 matched population 中降为 0.5000。AST-6L 和 OPERA-CT 的 Correct 配对均显著提高 profile retrieval，证明 alignment 的确学到了患者资料对应关系；Correct 相对 Within-label 明显保留性别信息（matched probe ΔAUROC 分别为 +0.1912 和 +0.1125），而 COVID 增量很小且不确定（+0.0062 和 −0.0020）。这种 correspondence 没有形成跨音频 backbone、跨线性／非线性 readout、且优于 raw audio 的稳定疾病迁移收益。目标域重新校准可以消除主要的 NLL 差距，却不会创造 AUROC 收益，说明额外误差主要来自目标人群不支持的置信度，而非已经证实的排序破坏。CODA TB、Cambridge COVID-19 Sounds 和 Coswara 的二次／事后敏感性分析重复了相同形状：患者 profile 与性别 correspondence 经常增强，而协变量平衡后的 COVID/TB 收益方向不一致且置信区间跨零。结果表明，临床音频—患者信息研究必须分别验证“是否学会配对”“学到了什么”以及“能否跨人群迁移”，不能用 alignment loss、检索成功或源域 AUROC 代替疾病迁移证据。
 
-**关键词：** clinical audio；audio--metadata alignment；contrastive learning；confounding；domain shift；auditing
+**关键词：** clinical audio；audio--metadata alignment；contrastive learning；confounding；domain shift
 
 ---
 

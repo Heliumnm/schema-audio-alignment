@@ -1,4 +1,4 @@
-# Pairing-Controlled Auditing of Clinical Audio-Metadata Alignment: Separating Participant Correspondence from Disease Transfer
+# Successful Clinical Audio–Metadata Alignment Does Not Imply Disease Transfer: A Pairing-Controlled Audit
 
 > This is the editable English narrative source. The submission-formatted version is
 > [`../paper/icassp2027/main.tex`](../paper/icassp2027/main.tex). The Chinese evidence
@@ -6,65 +6,63 @@
 
 ## Abstract
 
-Clinical audio models increasingly align recordings with patient metadata, implicitly
-treating successful correspondence as improved disease representation. Yet metadata mixes
-symptoms with demographic and cohort information. We introduce a Pairing-Controlled
-Transfer Audit comparing correct pairs, metadata shuffled within disease labels, and
-globally shuffled metadata. This separates exact participant-profile correspondence from
-label-conditioned association. In UKCOVID, correct pairing improved profile retrieval for
-AST-6L and OPERA-CT and strongly retained sex information (matched probe delta AUROC +0.191
-and +0.112), while COVID gains were small and uncertain (+0.006 and -0.002). Across
-UKCOVID and secondary analyses on CODA TB, Cambridge COVID-19 Sounds, and Coswara, 10/11
-retrieval and 11/11 sex-probe intervals excluded zero, but 0/11 matched disease intervals
-did. Correct alignment also failed to consistently outperform raw audio. Clinical
-audio-metadata studies should therefore evaluate correspondence, retained information, and
-disease transfer separately.
+Clinical audio models increasingly align recordings with participant metadata, but
+successful correspondence does not establish a transferable disease representation.
+Metadata mixes disease-related information with demographics, symptoms, history, and
+cohort structure. We introduce a Pairing-Controlled Transfer Audit comparing correct pairs,
+metadata shuffled within disease labels, and globally shuffled metadata. On UKCOVID,
+Correct pairing improved profile retrieval for AST-6L and OPERA-CT and retained more sex
+information than Within-label (delta AUROC +0.191 and +0.112), confirming that exact pairing
+changed the representation. Matched COVID prediction changed by only +0.006 and -0.002.
+Across secondary analyses on CODA TB, Cambridge COVID-19 Sounds, and Coswara, retrieval and
+sex decodability increased consistently, whereas 0/11 dataset-by-backbone settings
+established a positive matched-disease gain, and Correct did not consistently outperform
+frozen raw audio. Correspondence learning, retained participant information, and disease
+transfer are therefore distinct empirical claims requiring distinct controls.
 
 ## 1. Introduction
 
-Respiratory audio models increasingly combine cough, breathing, or lung sounds with age,
-sex, symptoms, smoking status, and medical history. Recent systems go beyond prediction-time
-fusion and explicitly align each recording with clinical text derived from the same
-participant. RespiraMFM, for example, freezes audio and text encoders and learns an
+Respiratory audio models increasingly combine cough, breathing, or lung sounds with patient
+information such as age, sex, symptoms, smoking status, and medical history. General-purpose
+representations including AST, OPERA, and HeAR provide strong audio encoders, while metadata
+has also been used as supervision for respiratory contrastive learning. More recent
+multimodal systems explicitly align each recording with clinical text from the same
+participant. RespiraMFM, for example, freezes audio and text encoders and trains an
 audio-side projector before downstream multimodal prediction.
 
-The premise is appealing: better audio-metadata correspondence should produce a more
-clinically useful representation. It is not guaranteed. Clinical metadata mixes
-disease-associated symptoms with demographic background, medical history, missingness, and
-variables correlated with recruitment. A contrastive loss cannot distinguish portable
-disease evidence from these alternatives; it rewards any feature that identifies the
-assigned positive pair. Improved alignment loss, retrieval, or source-cohort AUROC may
-therefore reflect three different abilities:
+This alignment creates an evaluation ambiguity. A contrastive objective rewards any audio
+feature that helps recover the assigned metadata profile. Clinical metadata contains not
+only disease-related information but also demographics, symptoms, medical history,
+missingness patterns, and variables associated with cohort composition. Successful
+alignment can therefore reflect participant-profile correspondence, label-conditioned
+population association, or disease information that remains useful after population shift.
+Alignment loss, profile retrieval, or source-cohort AUROC alone cannot distinguish them.
 
-1. exact participant-profile correspondence;
-2. label-conditioned population association; or
-3. transferable disease evidence.
+The missing control is the **pairing relation itself**. Comparing correctly paired metadata
+only with globally shuffled metadata changes both exact correspondence and label-conditioned
+statistics. We introduce a **Pairing-Controlled Transfer Audit** with three otherwise
+identical arms: Correct preserves the observed pair, Within-label assigns metadata from
+another participant with the same disease label, and Global removes systematic participant-
+and label-level pairing. Correct-minus-Within asks what exact profile pairing adds beyond
+label-conditioned association, whereas Within-minus-Global measures the latter. These
+contrasts are descriptive, not causal estimands.
 
-We introduce a **Pairing-Controlled Transfer Audit** to separate these claims. Three
-otherwise identical projectors receive correct metadata, metadata from another participant
-with the same disease label, or globally shuffled metadata. Duplicate-aware retrieval first
-checks whether exact pairing was learned; probes then identify retained information; and
-covariate-balanced targets test whether that information improves disease prediction. Raw
-audio, nonlinear readouts, and calibration transport address alternative explanations.
-
-Our contributions are:
-
-- a pairing intervention that separates exact profile correspondence from
-  label-conditioned association;
-- an audit sequence linking retrieval, information probes, raw references, and matched
-  transfer; and
-- a multi-dataset, multi-backbone study showing reproducible profile correspondence--most
-  consistently for sex--without a robust gain in covariate-balanced disease prediction.
-
-Our claim is not that metadata alignment is universally ineffective. Correspondence
-learning and disease transfer are distinct empirical claims.
+The audit asks three sequential questions: **Was pairing learned? What information was
+retained? Does that information transfer?** Duplicate-aware profile retrieval is a
+manipulation check; probes identify decodable channels; and participant-disjoint,
+covariate-balanced disease evaluation tests transfer against Within-label and frozen raw
+audio. Across four datasets, Correct repeatedly improves profile correspondence and, most
+consistently, sex decodability. Its disease effect is small, directionally inconsistent, and
+does not consistently exceed raw audio. Successful correspondence and transferable disease
+representation are therefore separate empirical claims.
 
 ## 2. Related Work
 
 AST, OPERA, and HeAR learn general-purpose representations from spectrograms or
 health-related audio. These methods ask whether respiratory recordings contain useful
 health information, but not what additional information is retained when audio is aligned
-with participant metadata.
+with participant metadata. Metadata has also been used directly as supervision for
+respiratory contrastive pretraining.
 
 Clinical multimodal systems combine respiratory audio with demographics, symptoms, and
 medical history. Explicit alignment methods go further by using clinical text as
@@ -93,7 +91,7 @@ Three external analyses test whether the result shape recurs:
 - **CODA TB:** 1,081 eligible participants and a frozen 200-participant matched target from
   the released training data;
 - **Cambridge COVID-19 Sounds:** 989 participants and a 200-participant target under a
-  custom strict-COVID reconstruction of its Task-2 cough subset; and
+  predefined strict-COVID reconstruction of its Task-2 cough subset; and
 - **Coswara:** 1,701 participants and a 200-participant target obtained through a
   model-blind secondary matching procedure.
 
@@ -115,8 +113,10 @@ leakage.
 
 Only the audio-side projector is trained. Each arm uses five seeds and 500 epochs, and only
 the final checkpoint is evaluated. Within each seed, the arms share initialization, audio
-batches, and dropout streams; only the pairing changes. Matched data select no epoch,
-projector, readout, or hyperparameter.
+batches, and dropout streams; only the pairing changes. Pair assignments remain fixed
+during training. Matched data select no epoch, projector, readout, or hyperparameter. The
+experiment audits a Stage-1-style alignment mechanism rather than reproducing the complete
+downstream RespiraMFM system.
 
 ### 3.3 Pairing-controlled intervention
 
@@ -132,15 +132,17 @@ Global:        a_i <-> m_k, where i != k
 retaining label-conditioned metadata statistics in expectation. It is not a pure identity
 effect or a causal estimand. `Within-label - Global` describes label-conditioned population
 association, and `Correct - Raw` tests whether alignment improves on the frozen audio
-representation.
+representation. Global removes systematic participant- and label-conditioned pairing,
+although accidental same-label or duplicate-profile matches can remain.
 
 ### 3.4 Audit endpoints
 
-- **Correspondence:** audio queries retrieve metadata profiles on source validation. We use
-  macro-profile MRR so repeated schemas do not dominate.
+- **Correspondence:** audio queries retrieve metadata profiles on source validation. Because
+  multiple participants can share a schema, identical profiles count as the same semantic
+  target. We use macro-profile MRR so frequent schemas do not dominate.
 - **Information:** identical regularized probes decode sex, age, symptoms, acquisition and
   cohort variables, and disease. Decodability establishes availability, not causal use.
-- **Transfer:** source validation selects and calibrates downstream readouts; paired AUROC,
+- **Transfer:** source data alone select and calibrate downstream readouts; paired AUROC,
   NLL, and Brier score are read once on matched targets.
 - **Alternative explanations:** frozen raw-audio and metadata-only references, a fixed MLP,
   and target calibration test simpler explanations for the result.

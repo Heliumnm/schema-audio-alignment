@@ -7,7 +7,7 @@ official ICASSP 2027 LaTeX kit. The paper is a scientific rewrite of
 ## Current status
 
 - The PDF builds successfully as four pages total and has been visually checked.
-- The abstract contains 140 words and the keyword list contains five items.
+- The abstract contains 138 words and the keyword list contains five items.
 - There are no unresolved citations or horizontal overflow warnings.
 - The figures are generated from `figure_results.csv` and are already included
   as PDF assets.
