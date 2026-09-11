@@ -1,5 +1,14 @@
 # ICASSP paper workspace
 
+## Current ICASSP 2027 package
+
+The current official-template manuscript is in [`icassp2027/`](icassp2027/).
+Its entry point is [`icassp2027/main.tex`](icassp2027/main.tex), and its verified
+PDF is written to `../output/pdf/icassp2027_pairing_audit.pdf`. Use this package
+for Overleaf and submission work.
+
+## Superseded layout test
+
 `icassp2027_draft.tex` is a layout-tested draft of the ICASSP paper. It currently uses
 the official ICASSP 2026 `spconf.sty` and `IEEEbib.bst` as a provisional typesetting kit.
 The ICASSP 2027 kit must replace those files when it is released or becomes downloadable.
@@ -11,7 +20,7 @@ under Abstract / Introduction / Related Work / Data / Method / Results / Discuss
 Limitations / Conclusion headings. The shorter English and LaTeX drafts should be updated
 from that source only after the claim and number audit is complete.
 
-The current PDF is intentionally **not submission-ready**:
+This older PDF is intentionally **not submission-ready**:
 
 - author names and affiliations are explicit placeholders;
 - UKCOVID is labelled a discovery audit because its official test sets informed earlier

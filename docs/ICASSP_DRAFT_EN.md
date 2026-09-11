@@ -1,6 +1,11 @@
 # Pairing-Controlled Auditing of Clinical Audio--Metadata Alignment:
 # Separating Participant Correspondence from Transferable Disease Evidence
 
+> **Superseded draft.** The maintained English narrative is now
+> [`../report/ICASSP_DRAFT_EN.md`](../report/ICASSP_DRAFT_EN.md), and the
+> submission-formatted source is [`../paper/icassp2027/main.tex`](../paper/icassp2027/main.tex).
+> This file is retained only as a visible record of the earlier UKCOVID/CODA-stage draft.
+
 > **Draft status (2026-09-03).** The frozen UKCOVID Route-A audit and a preregistered
 > secondary CODA TB sensitivity are complete. UKCOVID remains a discovery dataset because
 > its official test sets informed earlier protocol development. CODA's original split-first
