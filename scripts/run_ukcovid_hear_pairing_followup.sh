@@ -13,6 +13,9 @@ DATA_ROOT="${2:?UKCOVID data root required}"
 PY_BIN="${3:?Python executable required}"
 CPUSET="${FOLLOWUP_CPUSET:-0-39}"
 THREADS="${FOLLOWUP_THREADS:-40}"
+PARALLEL_CPUSET_A="${FOLLOWUP_PARALLEL_CPUSET_A:-0-31}"
+PARALLEL_CPUSET_B="${FOLLOWUP_PARALLEL_CPUSET_B:-32-63}"
+PARALLEL_THREADS="${FOLLOWUP_PARALLEL_THREADS:-32}"
 
 RESULT_ROOT="${REPO_ROOT}/results"
 FOLLOW_ROOT="${RESULT_ROOT}/pairing_followup"
@@ -27,6 +30,26 @@ export NUMEXPR_NUM_THREADS="${THREADS}"
 
 run_limited() {
   taskset -c "${CPUSET}" "${PY_BIN}" "$@"
+}
+
+run_parallel_limited() {
+  local cpuset="$1"
+  shift
+  taskset -c "${cpuset}" env \
+    OMP_NUM_THREADS="${PARALLEL_THREADS}" \
+    MKL_NUM_THREADS="${PARALLEL_THREADS}" \
+    OPENBLAS_NUM_THREADS="${PARALLEL_THREADS}" \
+    NUMEXPR_NUM_THREADS="${PARALLEL_THREADS}" \
+    "${PY_BIN}" "$@"
+}
+
+wait_both() {
+  local first_pid="$1"
+  local second_pid="$2"
+  local failed=0
+  if ! wait "${first_pid}"; then failed=1; fi
+  if ! wait "${second_pid}"; then failed=1; fi
+  return "${failed}"
 }
 
 # Code and pairing feasibility checks. These do not train or read matched/test labels.
@@ -76,7 +99,10 @@ run_limited "${REPO_ROOT}/src/eval_within_label_sex_retrieval.py" \
   --out-dir "${FOLLOW_ROOT}/e2_retrieval_hear" \
   > "${LOG_ROOT}/e2_retrieval_hear.log" 2>&1
 
-run_limited "${REPO_ROOT}/src/eval_within_label_sex_control.py" --fit \
+# E2 and E3 fits use the same frozen representations but are otherwise independent.
+# Run them on disjoint CPU sets; the combined hard cap is 64 logical CPUs.
+run_parallel_limited "${PARALLEL_CPUSET_A}" \
+  "${REPO_ROOT}/src/eval_within_label_sex_control.py" --fit \
   --data "${DATA_ROOT}" \
   --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
   --artefacts "${RESULT_ROOT}/artefact_features.csv" \
@@ -84,9 +110,25 @@ run_limited "${REPO_ROOT}/src/eval_within_label_sex_control.py" --fit \
   --original-predictions "${RESULT_ROOT}/information_channels_hear/predictions.npz" \
   --backbone HeAR \
   --out-dir "${FOLLOW_ROOT}/e2_eval_hear" \
-  > "${LOG_ROOT}/e2_eval_hear_fit.log" 2>&1
+  > "${LOG_ROOT}/e2_eval_hear_fit.log" 2>&1 &
+E2_FIT_PID=$!
 
-run_limited "${REPO_ROOT}/src/eval_within_label_sex_control.py" --score-tests \
+run_parallel_limited "${PARALLEL_CPUSET_B}" \
+  "${REPO_ROOT}/src/eval_target_assisted_readout.py" --fit \
+  --data "${DATA_ROOT}" \
+  --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
+  --ast-emb "${RESULT_ROOT}/hear_embeddings.npz" \
+  --alignment-dir "${RESULT_ROOT}/alignment_hear" \
+  --e2-alignment-dir "${FOLLOW_ROOT}/e2_alignment_hear" \
+  --backbone HeAR \
+  --out-dir "${FOLLOW_ROOT}/e3_target_hear" \
+  > "${LOG_ROOT}/e3_target_hear_fit.log" 2>&1 &
+E3_FIT_PID=$!
+
+wait_both "${E2_FIT_PID}" "${E3_FIT_PID}"
+
+run_parallel_limited "${PARALLEL_CPUSET_A}" \
+  "${REPO_ROOT}/src/eval_within_label_sex_control.py" --score-tests \
   --data "${DATA_ROOT}" \
   --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
   --artefacts "${RESULT_ROOT}/artefact_features.csv" \
@@ -94,9 +136,11 @@ run_limited "${REPO_ROOT}/src/eval_within_label_sex_control.py" --score-tests \
   --original-predictions "${RESULT_ROOT}/information_channels_hear/predictions.npz" \
   --backbone HeAR \
   --out-dir "${FOLLOW_ROOT}/e2_eval_hear" \
-  > "${LOG_ROOT}/e2_eval_hear_score.log" 2>&1
+  > "${LOG_ROOT}/e2_eval_hear_score.log" 2>&1 &
+E2_SCORE_PID=$!
 
-run_limited "${REPO_ROOT}/src/eval_target_assisted_readout.py" --fit \
+run_parallel_limited "${PARALLEL_CPUSET_B}" \
+  "${REPO_ROOT}/src/eval_target_assisted_readout.py" --score-tests \
   --data "${DATA_ROOT}" \
   --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
   --ast-emb "${RESULT_ROOT}/hear_embeddings.npz" \
@@ -104,17 +148,9 @@ run_limited "${REPO_ROOT}/src/eval_target_assisted_readout.py" --fit \
   --e2-alignment-dir "${FOLLOW_ROOT}/e2_alignment_hear" \
   --backbone HeAR \
   --out-dir "${FOLLOW_ROOT}/e3_target_hear" \
-  > "${LOG_ROOT}/e3_target_hear_fit.log" 2>&1
+  > "${LOG_ROOT}/e3_target_hear_score.log" 2>&1 &
+E3_SCORE_PID=$!
 
-run_limited "${REPO_ROOT}/src/eval_target_assisted_readout.py" --score-tests \
-  --data "${DATA_ROOT}" \
-  --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
-  --ast-emb "${RESULT_ROOT}/hear_embeddings.npz" \
-  --alignment-dir "${RESULT_ROOT}/alignment_hear" \
-  --e2-alignment-dir "${FOLLOW_ROOT}/e2_alignment_hear" \
-  --backbone HeAR \
-  --out-dir "${FOLLOW_ROOT}/e3_target_hear" \
-  > "${LOG_ROOT}/e3_target_hear_score.log" 2>&1
+wait_both "${E2_SCORE_PID}" "${E3_SCORE_PID}"
 
 date -u +%Y-%m-%dT%H:%M:%SZ > "${FOLLOW_ROOT}/HEAR_E1_E2_E3_COMPLETE.txt"
-
