@@ -128,21 +128,15 @@ covariates; it does not eliminate unmeasured confounding.
 
 \subsection{Audio representations and pairing interventions}
 
-We use two frozen audio backbones for the primary UKCOVID audit, chosen to represent
-complementary pretraining regimes. \textbf{AST-6L} retains the first six Transformer blocks
-of the 12-layer AudioSet-finetuned AST encoder \cite{gong2021ast}. This depth was fixed before
-the present audit from an independent respiratory-audio comparison: six blocks outperformed
-the full 12-layer model on both ICBHI wheeze and crackle detection while using about half the parameters, and
-the same comparison favored AST-6L on three of four patient-level KAUH tasks. It was not
-selected using UKCOVID transfer performance.
+We use two frozen primary UKCOVID backbones. \textbf{AST-6L} retains the first six blocks of
+the 12-layer AudioSet-finetuned AST \cite{gong2021ast}. Depth was fixed before this audit by
+independent ICBHI and KAUH comparisons favoring six over 12 blocks; no UKCOVID transfer
+result was used.
 
-\textbf{OPERA-CT} is the released frozen 768-dimensional contrastive Transformer from the
-OPERA respiratory acoustic foundation-model family \cite{zhang2024opera}. Because its
-pretraining corpus includes UKCOVID training audio, we treat it as a domain-pretrained
-comparator rather than an independent pretraining condition; the present UKCOVID targets
-remain participant-disjoint from our training split. \textbf{HeAR} is added post hoc on
-UKCOVID and in the external analyses as a third frozen health-acoustic representation
-\cite{baur2024hear}; it is not promoted to a primary UKCOVID backbone.
+\textbf{OPERA-CT} is the released frozen 768-dimensional respiratory contrastive Transformer
+\cite{zhang2024opera}. Its pretraining includes UKCOVID training audio, so it is a domain-
+pretrained comparator; our targets remain participant-disjoint. \textbf{HeAR} is a post-hoc
+third backbone \cite{baur2024hear}, not a primary UKCOVID condition.
 
 Recordings use each backbone's frozen preprocessing pipeline and are aggregated to one
 participant-level audio representation before alignment. A frozen Phi-2 encoder
@@ -201,6 +195,9 @@ Frozen raw-audio and metadata-only references check whether alignment improves o
 representations. A fixed MLP checks linear-readout limitation. Finally, a one-dimensional
 calibrator fitted on participant-disjoint matched-long and transported to matched separates
 confidence transport from ranking.
+Post-hoc diagnostics add $W_{y,s}$, which shuffles metadata within both disease label and
+recorded sex, and a target-assisted readout trained and selected only on matched-long before
+application to participant-disjoint matched. Neither diagnostic changes the source-only endpoint.
 
 \section{Results}
 \label{sec:results}
@@ -222,14 +219,19 @@ Raw audio generally had higher absolute demographic decodability than aligned
 representations, so alignment did not create demographic information absent from audio; it
 selectively retained it relative to Within-label.
 
+The sex-preserving $W_{y,s}$ control localized this effect. Sex $C-W_{y,s}$ was $-0.0004$,
+$+0.0067$, and $+0.0064$ for AST, OPERA, and HeAR, with all CIs spanning zero, whereas
+$W_{y,s}-W$ excluded zero for all three. Residual profile MRR was $+0.00164$, $+0.00099$,
+and $+0.00394$, with only AST and HeAR CIs excluding zero. Thus recorded-sex consistency
+explains the strongest probe effect, while a small backbone-dependent signal remains.
+
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.98\textwidth]{cross_dataset_forest.pdf}
-  \caption{\dpair{} estimates with 95\% paired bootstrap intervals. The 12
-  settings comprise UKCOVID (primary: AST, OPERA; post-hoc: HeAR) and three external
-  sensitivities (AST, OPERA, HeAR each). Retrieval CIs excluded zero in 11/12 settings and
-  sex-probe CIs in 12/12, whereas no matched disease CI established a positive gain. Panel scales differ;
-  estimates are not pooled because profile libraries, diseases, and evidence status differ.}
+  \includegraphics[width=0.88\textwidth]{cross_dataset_forest.pdf}
+  \caption{\dpair{} with 95\% paired intervals across 12 settings: UKCOVID
+  (AST/OPERA primary; HeAR post-hoc) and three external sensitivities. Retrieval and sex CIs
+  excluded zero in 11/12 and 12/12 settings; no matched disease CI established a gain.
+  Panel scales differ and estimates are not pooled.}
   \label{fig:forest}
 \end{figure*}
 
@@ -243,6 +245,9 @@ audio. Post-hoc HeAR raw, Correct, and Within AUROC were 0.542, 0.545, and 0.543
 \dpair{} $+0.0029$ [-0.0115, 0.0165]. A fixed MLP also failed to reveal a hidden effect:
 audio-only \dpair{} was $+0.0050$
 [-0.0154, 0.0270] for AST and $-0.0052$ [-0.0208, 0.0110] for OPERA.
+A target-assisted readout also failed to recover a stable effect: $C-W$ was $-0.0082$,
+$+0.0287$, and $+0.0047$ for AST, OPERA, and HeAR, with all CIs crossing zero and no
+established $C-R$ advantage.
 
 Figure~\ref{fig:forest} summarizes the result shape. Across all 12 dataset--backbone
 settings, retrieval point estimates were positive (11/12 intervals excluded zero) and sex
@@ -309,12 +314,12 @@ context asks whether the gain survives the intended population change. Pairing i
 a manipulation check, probes are representation diagnostics, and matched disease prediction
 is the transfer endpoint.
 
-The recurring sex result also requires careful wording. A probe shows that sex is decodable,
-not that the disease classifier causally relies on it. Moreover, raw audio often contains
-more demographic information than any aligned representation. Correct therefore appears to
-preserve this channel relative to a Within-label projector rather than create a new
-demographic attribute. This distinction prevents a large \dpair{} probe effect from being
-misread as participant identification or newly introduced bias.
+The recurring sex result also requires careful wording. A probe shows decodability, not
+causal classifier use. The $W_{y,s}$ intervention shows more specifically that the original
+exact-pair increment largely reflects preservation of recorded-sex consistency. Raw audio often contains
+still more demographic information, so alignment did not create a new attribute. Residual
+retrieval after sex control shows that sex is not the entire pairing signal, but its small and
+backbone-dependent size does not support participant identification.
 
 The evidence remains bounded. UKCOVID is a discovery audit; CODA, Cambridge, and Coswara
 are secondary or post-hoc sensitivities with 100-pair targets and wide intervals. Matching

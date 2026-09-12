@@ -3,6 +3,11 @@
 日期：2026-09-12  
 证据地位：**post-hoc third-backbone diagnostic extension；不是独立确认实验**
 
+> **执行结果（2026-09-12）：已完成。** 五个 `W_{y,s}` projector 均完成 500 epochs，
+> E1 条件检索、E2 retrieval/probe/disease readout 与 E3 target-assisted readout 均已运行并审计。
+> 结果未改变任何冻结的 arm、seed、epoch、readout、bootstrap 或报告规则。完整结果见
+> `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
+
 ## 1. 为什么补 HeAR
 
 UKCOVID 主分析预先确定的两个 backbone 是 AST-6L 与 OPERA-CT。HeAR 后来按独立冻结协议完成
@@ -54,3 +59,23 @@ E1--E3 机制诊断只覆盖前两个 backbone，本扩展把同一套诊断原�
 - target-assisted 仍无稳定优势：只能说固定线性诊断未找到隐藏收益，不能证明表示完全不含疾病信息；
 - 不跨 backbone 挑选有利结果，不进行 pooled causal inference。
 
+## 6. 冻结后的实际结局
+
+- E1：same-sex 后 HeAR 的 `C-W` macro-profile MRR 为
+  +0.00356 [0.00096, 0.00638]；same-label-and-sex 后为
+  +0.00451 [0.00115, 0.00813]。它仍为正，但小于 unrestricted 的
+  +0.00711 [0.00476, 0.00971]。
+- E2 sex：`C-W_{y,s}` 为 +0.0064 [−0.0011, 0.0136]，而
+  `W_{y,s}-W` 为 +0.0797 [0.0667, 0.0928]。因此原 sex 差异主要由
+  性别一致性解释。
+- E2 retrieval：`C-W_{y,s}` 为 +0.00394 [0.00175, 0.00637]，说明 HeAR
+  在性别之外仍保留小的 exact-profile correspondence。
+- E2 disease：`C-W_{y,s}` matched COVID ΔAUROC 为
+  +0.0130 [−0.0023, 0.0287]，Δ(−NLL) 为 −0.0034 [−0.0226, 0.0153]；
+  均未建立可靠疾病收益。
+- E3：target-assisted `C-W` 为 +0.0047 [−0.0278, 0.0408]，
+  `C-W_{y,s}` 为 +0.0114 [−0.0117, 0.0333]，`C-Raw` 为
+  +0.0071 [−0.0241, 0.0376]；所有区间覆盖 0。
+
+最终判读：HeAR 补充实验重复了“配对与性别／症状 correspondence 可学，但疾病 transfer
+不稳定”的形状；target-assisted 线性读出也没有揭示被 source readout 隐藏的稳定收益。

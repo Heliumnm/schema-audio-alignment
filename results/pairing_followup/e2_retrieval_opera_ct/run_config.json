@@ -1,0 +1,15 @@
+{
+ "standing": "post-hoc Standard-validation W_{y,s} retrieval diagnostic",
+ "backbone": "OPERA-CT",
+ "n_queries": 5179,
+ "n_candidate_profiles": 1871,
+ "candidate_bank_sha256": "f8f5e90f4742dd9fc428b9567d763fae1ad489e09f4a42e7a10ea20eeed12672",
+ "e1_rank_file_sha256": "b99b0cd88f01433d3b65f1ac58dc4edfe3c4e2e5a106efcde2e7e11441fa8488",
+ "e1_config_sha256": "65d6dc53b7ea516240528211028d4d745fdf211b126564911042d69ffd921bc0",
+ "e2_manifest_sha256": "e64aebedfead454840463b1cd82e0b5b3e6d269232787a395fd3aba04cab70f0",
+ "rank_file_sha256": "2219295f3ff787ad490b8e0b136fc60f9ae447afadf2696ef60ed9ee9e66c70b",
+ "script_sha256": "a741f86cd46991fc7b2df6f2d1380ec6b6505207d5b7e0f7b7fc7852d24db1a8",
+ "bootstrap": 10000,
+ "bootstrap_seed": 20260820,
+ "matched_or_test_labels_read": false
+}

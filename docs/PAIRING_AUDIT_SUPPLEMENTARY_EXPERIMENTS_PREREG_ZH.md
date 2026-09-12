@@ -1,7 +1,8 @@
 # Pairing-Controlled Audit 三项补充实验：冻结分析协议
 
 日期：2026-09-11  
-状态：**新增结果尚未产生；本文档在 E1--E3 执行前冻结。**
+状态：**本文档在 E1--E3 执行前冻结；实验现已完成，冻结原文保留。** 结果见
+`docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
 
 冻结基线 commit：`70e96794f8c0ea19b9bebdd94423c757a1f91199`  
 UKCOVID cohort SHA-256：`974662e152d3b4b56765e3bbfa925a5a500f49c6d35d96410c1f8041b786a128`  

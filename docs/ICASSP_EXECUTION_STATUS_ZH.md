@@ -2,13 +2,11 @@
 
 日期：2026-09-12
 
-> **2026-09-11 补充实验状态：** 三项定向诊断已在新增结果产生前冻结。E1 条件化 retrieval
-> 已完成：同标签限制后 Correct−Within 仍在两个 backbone 上稳定为正；同性别或同标签且同性别
-> 限制后效应缩小并跨零，说明原 retrieval 优势对候选库的性别结构高度敏感。E2 的
-> \(W_{y,s}\) 10 个新 projector 已完成，retrieval 已完成，冻结 readout 评估正在运行；E3 已
-> 排队并将在 E2 评分后执行。
-> 冻结协议见 `docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md`，E1 完整结果见
-> `docs/PAIRING_AUDIT_E1_CONDITIONAL_RETRIEVAL_OUTCOME_ZH.md`。
+> **2026-09-12 补充实验最终状态：E1--E3 全部完成。** AST-6L、OPERA-CT 与事后 HeAR
+> 均完成条件检索、标签＋性别保持的 `W_{y,s}` 对照和 target-assisted readout。新对照把三个
+> backbone 原有的 Correct−Within sex 差异降到区间覆盖 0；仍有很小、依赖 backbone 的 residual
+> profile retrieval，但 source-only 与 target-assisted 两套读出都没有建立稳定 matched COVID
+> 收益。完整结果见 `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
 
 状态：**UKCOVID Route-A、CODA TB secondary external sensitivity、Cambridge Task-2
 重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 第三骨干事后
@@ -57,9 +55,9 @@ checkpoint；matched 结果不用于选择 epoch、loss、head 或 calibrator。
 | OPERA-CT 三配对训练 | 完成 | 重复 correspondence／transfer 分离的主方向 |
 | HeAR UKCOVID 事后第三骨干 | **完成并审计** | correspondence 与 sex probe 明确；matched COVID 增量不明确 |
 | Unique-profile retrieval | 完成 | 两个 backbone 均为 `correct > within > global` |
-| E1 条件化 profile retrieval | **完成** | 同标签后差异保留；同性别后差异缩小且区间跨零 |
-| E2 标签＋性别保持的 Within 对照 | **训练与 retrieval 完成，readout 运行中** | 10 个 projector；原 C/W/G 不重训 |
-| E3 target-assisted readout | 已排队 | E2 后一次性覆盖 Raw/C/W/G/\(W_{y,s}\) |
+| E1 条件化 profile retrieval | **三骨干完成** | AST／OPERA 同性别后跨零；HeAR 缩小但仍为正 |
+| E2 标签＋性别保持的 Within 对照 | **三骨干完成并审计** | sex `C-Wys` 三骨干均跨零；疾病增量均不明确 |
+| E3 target-assisted readout | **三骨干完成并审计** | 未发现稳定 `C-W`、`C-Wys` 或 `C-Raw` 疾病优势 |
 | Information-channel taxonomy | 完成 | correct 明显保留 sex；COVID `C-W` 不稳定 |
 | Metadata/direct/raw-preserving fusion | 完成 | raw audio 在 metadata 上增量不显著；correct 不胜 raw |
 | Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
@@ -107,6 +105,21 @@ alignment 比 raw audio 编码了更多人口学信息。
 COVID 为 **+0.0029 [−0.0115, 0.0165]**。完整审计见
 `docs/HEAR_UKCOVID_EXTENSION_OUTCOME_ZH.md`。
 
+### 4.1 性别保持对照把原 sex 效应定位清楚
+
+新增 `W_{y,s}` 在同疾病标签打乱的同时保留记录性别。三个 backbone 的 matched sex
+`C-W_{y,s}` 均覆盖 0：AST −0.0004 [−0.0153, 0.0147]、OPERA +0.0067
+[−0.0054, 0.0192]、HeAR +0.0064 [−0.0011, 0.0136]；相反，`W_{y,s}-W` 分别为
++0.1916、+0.1058、+0.0797，区间都排除 0。因此原 `C-W` sex 结果主要是 correct pairing
+保留了性别一致性。
+
+控制性别后并非所有 correspondence 都消失。`C-W_{y,s}` retrieval MRR 为 AST +0.00164
+[0.00001, 0.00335]、OPERA +0.00099 [−0.00096, 0.00300]、HeAR +0.00394
+[0.00175, 0.00637]。剩余信号很小且不具三个 backbone 的一致明确性。
+
+对应的 matched COVID `C-W_{y,s}` 为 AST −0.0003、OPERA +0.0009、HeAR +0.0130，
+三个区间均覆盖 0。完整表见 `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
+
 ## 5. Correspondence 是否转化为 matched disease transfer？
 
 HeAR 的 matched disease 绝对 AUROC 为 Raw 0.5417、Correct 0.5455、Within 0.5426、Global
@@ -141,6 +154,19 @@ correct 没有超过 raw audio。因此不能把 AST 单独的 +0.0156 写成可
 
 结论不是“线性头太弱”。AST fusion 的小正向排序仍然存在，但没有 backbone robustness，
 而且没有胜过 raw audio；OPERA 的 correct audio 反而显著低于 raw。
+
+### 5.3 Target-assisted readout 没有救回疾病收益
+
+E3 只在 matched-long 上训练、选择和校准 logistic readout，再应用到 participant-disjoint
+matched。它是使用目标域标签的诊断，不能并入 source-only 主结果。其 `C-W` ΔAUROC 为：
+
+- AST −0.0082 [−0.0337, 0.0177]；
+- OPERA +0.0287 [−0.0017, 0.0626]；
+- HeAR +0.0047 [−0.0278, 0.0408]。
+
+`C-W_{y,s}` 与所有 Δ(−NLL) 区间同样覆盖 0；`C-Raw` 也没有正向证据，AST 反而为
+−0.0504 [−0.0843, −0.0182]。因此，源域 readout mismatch 不是当前 null transfer 的充分解释。
+这仍不等于证明表示中不存在任何疾病信息。
 
 ## 6. Calibration／probability transport 回答了什么？
 

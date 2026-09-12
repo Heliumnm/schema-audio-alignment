@@ -1,0 +1,15 @@
+{
+ "standing": "post-hoc Standard-validation W_{y,s} retrieval diagnostic",
+ "backbone": "AST-6L",
+ "n_queries": 5179,
+ "n_candidate_profiles": 1871,
+ "candidate_bank_sha256": "f8f5e90f4742dd9fc428b9567d763fae1ad489e09f4a42e7a10ea20eeed12672",
+ "e1_rank_file_sha256": "f5f3b24820ecc258abeff5bd95ba54bdedbdb566d85e7b4d3376d570951bac2c",
+ "e1_config_sha256": "c1094363e9240f17ab08ab211179f1f776fa7f012b9a469d38173ac8198a7594",
+ "e2_manifest_sha256": "eae90f3331458e8749182838e242988f6dd222a79b34c61ad5cd286f3bf31f31",
+ "rank_file_sha256": "ba92dd4887a1748c68c2f0bcf04fc2ccb652cf9efd11b7a38c894e1af55b6a05",
+ "script_sha256": "a741f86cd46991fc7b2df6f2d1380ec6b6505207d5b7e0f7b7fc7852d24db1a8",
+ "bootstrap": 10000,
+ "bootstrap_seed": 20260820,
+ "matched_or_test_labels_read": false
+}

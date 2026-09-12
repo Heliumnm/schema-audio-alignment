@@ -18,6 +18,10 @@
       include zero.
 - [ ] Keep UKCOVID-HeAR labelled as a post-hoc third-backbone robustness analysis,
       not a primary UKCOVID backbone.
+- [ ] Keep E1--E3 labelled as targeted post-hoc diagnostics; do not mix the
+      target-assisted readout with source-only transfer results.
+- [ ] Describe `W(y,s)` as a sex-preserving pairing control, not a causal
+      decomposition of participant identity.
 - [ ] Keep the central count fixed unless the evidence ledger changes:
       retrieval 11/12, sex probe 12/12, matched disease 0/12.
 

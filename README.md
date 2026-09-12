@@ -28,6 +28,15 @@ matched sex-probe delta AUROC was +0.0862 [0.0734, 0.0995], while matched COVID 
 was only +0.0029 [-0.0115, 0.0165]. HeAR therefore strengthens backbone robustness without
 being promoted to a primary UKCOVID experiment.
 
+Three targeted UKCOVID diagnostics are now complete for AST-6L, OPERA-CT, and post-hoc
+HeAR. A label-and-sex-preserving shuffled arm, W(y,s), reduced Correct-minus-W(y,s) sex
+effects to intervals spanning zero for all three backbones, showing that the original sex
+effect was largely the retained sex consistency of the assigned pair. Small residual profile
+retrieval remained, most clearly for HeAR, but Correct-minus-W(y,s) matched COVID effects
+were inconclusive for every backbone. A target-assisted readout trained on matched-long and
+tested on participant-disjoint matched likewise found no stable Correct-minus-Within or
+Correct-minus-Raw gain. These are post-hoc diagnostics, not new confirmatory endpoints.
+
 The controlled synthetic sweep learned correspondence but failed its preregistered
 mechanism gates, so it is not used as causal evidence. Coswara's preregistered greedy gate
 stopped; a separately frozen, model-blind global-constraint sensitivity later found a balanced
@@ -70,7 +79,8 @@ Start with:
 - [Chinese ICASSP paper blueprint](docs/ICASSP_PAPER_BLUEPRINT_ZH.md)
 - [English ICASSP draft](report/ICASSP_DRAFT_EN.md)
 - [Frozen strict follow-up design](docs/ICASSP_STRICT_FOLLOWUP_PREREG_ZH.md)
-- [Frozen E1--E3 supplementary experiment protocol (not yet run)](docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md)
+- [Frozen E1--E3 supplementary experiment protocol](docs/PAIRING_AUDIT_SUPPLEMENTARY_EXPERIMENTS_PREREG_ZH.md)
+- [Final E1--E3 outcome across AST, OPERA, and HeAR](docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md)
 - [Auditable final Route-A JSON results and hashes](results/route_a_final/README.md)
 - [Post-hoc UKCOVID HeAR outcome and audit](docs/HEAR_UKCOVID_EXTENSION_OUTCOME_ZH.md)
 - [Future disease-invariant positive-pair design (not run)](docs/DISEASE_INVARIANT_ALIGNMENT_FUTURE_PLAN_ZH.md)

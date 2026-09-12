@@ -54,8 +54,8 @@ Correct、Within-label、Global 以及五个 seed 之间逐位相同；相同 sc
 疾病标签的粗粒度候选结构不能解释原 retrieval 结果：限制为同标签候选后，两个 backbone 的
 Correct−Within 仍为稳定正值。
 
-性别条件则明显改变结论：限制为同性别以后，效应在两个 backbone 上都缩小且置信区间跨零；同时
-限制标签与性别时也没有得到跨 backbone 的稳定区间。因此，本诊断支持以下有限表述：
+性别条件则明显改变两个 primary backbone 的结论：限制为同性别以后，AST／OPERA 的效应都
+缩小且置信区间跨零；同时限制标签与性别时也没有得到二者稳定区间。因此，本诊断支持以下有限表述：
 
 > UKCOVID 中原有的 exact-pair profile-retrieval 优势对候选库的性别结构高度敏感；粗粒度疾病
 > 标签不足以解释该优势，但控制记录性别后，剩余优势不再稳定。
@@ -63,17 +63,34 @@ Correct−Within 仍为稳定正值。
 这与主分析中 Correct−Within 的 sex decodability 明显为正相互吻合，但不能证明疾病分类器在因果
 意义上使用了性别，也不能把缩小幅度解释为“性别贡献比例”。
 
-## 6. 对下一步的影响
+### 5.1 事后 HeAR 扩展
+
+按独立冻结的事后协议，HeAR 后续也完成 E1：
+
+| 候选条件 | Correct−Within macro-MRR，95% CI |
+|---|---:|
+| unrestricted | +0.00711 [0.00476, 0.00971] |
+| same sex | +0.00356 [0.00096, 0.00638] |
+| same label | +0.00923 [0.00623, 0.01240] |
+| same label + sex | +0.00451 [0.00115, 0.00813] |
+
+HeAR 在性别限制后同样缩小，但仍排除 0；因此 E1 最终说明结果对性别候选结构敏感，而不是说明
+它可以解释所有 backbone 的全部 retrieval 差异。HeAR 是事后稳健性诊断，不改变 AST／OPERA
+作为 primary backbones 的地位。
+
+## 6. 对下一步的影响（现已执行）
 
 E1 没有推翻“pairing intervention 产生可测表示差异”，但缩小了它的解释范围。按照事前顺序，下一步
-执行 (W_{y,s})：在训练时同时保留疾病标签与记录性别，再打乱 participant pairing。该实验比单纯
-改变检索候选库更直接地检验，原 Correct−Within 差异在控制性别配对后还剩多少。
+执行 (W_{y,s})：在训练时同时保留疾病标签与记录性别，再打乱 participant pairing。该实验现已在
+AST、OPERA 和事后 HeAR 上完成；三个 backbone 的 `C-W_{y,s}` sex probe 均跨零。完整 E2/E3
+结果见 `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
 
 ## 7. 可复现文件
 
 - 实现：`src/eval_conditional_profile_retrieval.py`
 - AST 聚合结果：`results/pairing_followup/e1_ast/metrics.json`
 - OPERA 聚合结果：`results/pairing_followup/e1_opera_ct/metrics.json`
+- HeAR 聚合结果：`results/pairing_followup/e1_hear/metrics.json`
 - 运行日志：`results/pairing_followup/logs/e1_ast.log`、`e1_opera_ct.log`
 - 含 participant ID 的逐 query rank 文件只保存在本地和服务器，不发布到公开仓库；其 SHA-256
   前 16 位为 AST `f5f3b24820ecc258`、OPERA `b99b0cd88f01433d`

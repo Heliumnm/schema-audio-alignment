@@ -75,3 +75,19 @@ HeAR 因而重复了 AST／OPERA 的核心形状：正确配对显著增强 prof
   `446cee851da0da7a921a04165ed52dcf60abcd4245c495adc95cab292d3a47d1`。
 
 两个文件只含聚合指标、per-seed 指标和审计字段，不含 participant identifier 或逐参与者预测。
+
+## 7. E1--E3 追加机制诊断
+
+2026-09-12 又按单独冻结的 post-hoc 协议完成了 HeAR 的 E1--E3：
+
+- 新的 sex-preserving shuffle `W_{y,s}` 吸收了原来的性别差异：
+  `C-W_{y,s}` sex ΔAUROC +0.0064 [−0.0011, 0.0136]，而
+  `W_{y,s}-W` +0.0797 [0.0667, 0.0928]；
+- 但 retrieval 仍留有 residual exact-pairing signal：`C-W_{y,s}` macro-profile MRR
+  +0.00394 [0.00175, 0.00637]；
+- matched COVID 的 `C-W_{y,s}` 为 +0.0130 [−0.0023, 0.0287]，未建立正向收益；
+- target-assisted readout 的 `C-W`、`C-W_{y,s}` 与 `C-Raw` 区间也全部覆盖 0。
+
+这把原来的“sex correspondence”进一步定位为**记录性别一致性**，同时说明仍有少量非性别
+profile correspondence；但两者都没有形成可靠的 COVID transfer。三个 backbone 的联合结果与
+完整审计见 `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。

@@ -1,0 +1,855 @@
+{
+ "standing": "post-hoc preregistered W_{y,s} diagnostic",
+ "backbone": "AST-6L",
+ "endpoint": "matched only; explicitly unlocked after durable predictions",
+ "comparisons": [
+  "correct_minus_within_label_sex",
+  "within_label_sex_minus_within_label"
+ ],
+ "bootstrap": 10000,
+ "bootstrap_seed": 20260820,
+ "original_results_are_referenced_not_recomputed": true,
+ "original_predictions_sha256": "ce13544ca11e2329323d7cf9d216220ebb5323811849123e55bf0b6665851e1e",
+ "predictions_sha256": "2086e7f8a0524bb1d017e57fa65d03133726aacfe4e7ecf48ba4c10918412af5",
+ "metrics": {
+  "arms": {
+   "long_recording": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.7799887663398692,
+     "auroc_ci": [
+      0.7625900221753503,
+      0.7972059733966167
+     ],
+     "per_seed_auroc": [
+      0.8005137819016495,
+      0.7789558531746033,
+      0.7667082457983193,
+      0.7686364476346094,
+      0.785129503190165
+     ]
+    }
+   },
+   "large_file": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.7777717999902624,
+     "auroc_ci": [
+      0.7618060016661974,
+      0.7932338461762835
+     ],
+     "per_seed_auroc": [
+      0.7882272749403573,
+      0.7790824772384244,
+      0.7689322751837968,
+      0.7688738497492575,
+      0.783743122839476
+     ]
+    }
+   },
+   "loud_recording": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.7302872263616406,
+     "auroc_ci": [
+      0.704992774642489,
+      0.7537318468427638
+     ],
+     "per_seed_auroc": [
+      0.7443207709213698,
+      0.7187268264852734,
+      0.756792779453499,
+      0.7329898002939332,
+      0.6986059546541276
+     ]
+    }
+   },
+   "clipped": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.6788038550006636,
+     "auroc_ci": [
+      0.6560069228092864,
+      0.7019974885013117
+     ],
+     "per_seed_auroc": [
+      0.674546324147388,
+      0.6643683372406778,
+      0.6836530167647189,
+      0.7100027093378158,
+      0.6614488875127174
+     ]
+    }
+   },
+   "sex_female": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.8120705320098734,
+     "auroc_ci": [
+      0.7938235340304307,
+      0.8293292128226606
+     ],
+     "per_seed_auroc": [
+      0.8177524814873168,
+      0.8101137020114489,
+      0.8151738354078042,
+      0.8079276298513733,
+      0.8093850112914237
+     ]
+    }
+   },
+   "age_65plus": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.6174236808505241,
+     "auroc_ci": [
+      0.5838291097481255,
+      0.6511943183122947
+     ],
+     "per_seed_auroc": [
+      0.6247812104522918,
+      0.6261228378237451,
+      0.6103051638561076,
+      0.6206097640032358,
+      0.6052994281172402
+     ]
+    }
+   },
+   "cough_any": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.6524034013739346,
+     "auroc_ci": [
+      0.6297367494212108,
+      0.6751994199052617
+     ],
+     "per_seed_auroc": [
+      0.6664936125819342,
+      0.6326053579513021,
+      0.6645326063421453,
+      0.6550142216010866,
+      0.643371208393205
+     ]
+    }
+   },
+   "no_symptoms": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.6452529800466442,
+     "auroc_ci": [
+      0.6219007445697265,
+      0.6683189197691032
+     ],
+     "per_seed_auroc": [
+      0.6591312516195906,
+      0.6334089142264835,
+      0.6457793469810831,
+      0.6414955299300337,
+      0.64644985747603
+     ]
+    }
+   },
+   "recruitment_source": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.5539860236023603,
+     "auroc_ci": [
+      0.5190955972027347,
+      0.5887583158104233
+     ],
+     "per_seed_auroc": [
+      0.5372724772477248,
+      0.5468609360936094,
+      0.5604529202920292,
+      0.5779327932793279,
+      0.54741099109911
+     ]
+    }
+   },
+   "covid": {
+    "within_label_sex": {
+     "n": 1814,
+     "auroc": 0.5291432919750708,
+     "auroc_ci": [
+      0.5036747885198759,
+      0.5535996592456938
+     ],
+     "per_seed_auroc": [
+      0.53670155801563,
+      0.5371561869035275,
+      0.49889077844864577,
+      0.5279991831267041,
+      0.5449687533808465
+     ],
+     "neg_nll": -0.7831146032323402,
+     "neg_nll_ci": [
+      -0.8094969052055627,
+      -0.7584702413030424
+     ],
+     "per_seed_nll": [
+      0.7703275194845052,
+      0.7690448933053475,
+      0.8094746921544594,
+      0.8022938934608189,
+      0.7644320177565701
+     ],
+     "calibration_per_seed": [
+      {
+       "slope": 0.14263502548167958,
+       "intercept": 0.058698091029756524,
+       "brier": 0.2799462375546437
+      },
+      {
+       "slope": 0.16096591762741697,
+       "intercept": 0.07274053158200872,
+       "brier": 0.2792784026037389
+      },
+      {
+       "slope": -0.01044883704777992,
+       "intercept": -0.004522498671682593,
+       "brier": 0.2951775891119305
+      },
+      {
+       "slope": 0.07825823811338825,
+       "intercept": 0.032708134703871905,
+       "brier": 0.289298450495628
+      },
+      {
+       "slope": 0.17640257330470221,
+       "intercept": 0.07611557665898326,
+       "brier": 0.277050059712381
+      }
+     ]
+    }
+   }
+  },
+  "comparisons": {
+   "long_recording": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.01739466619981327,
+       "ci": [
+        -0.0048549901840498335,
+        0.038483996056461765
+       ],
+       "per_seed": [
+        -0.00886048863990041,
+        0.030797735760971,
+        0.01406517468098345,
+        0.01796534586056653,
+        0.033005563336445776
+       ],
+       "seed_signs": [
+        -1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.013891563569872489,
+       "ci": [
+        -0.0351509943239955,
+        0.006993484366925463
+       ],
+       "per_seed": [
+        -0.004268547696856695,
+        -0.015137478602552101,
+        -0.038358572595705076,
+        -0.014798280423280463,
+        0.003105061469031889
+       ],
+       "seed_signs": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "large_file": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.011153658892838059,
+       "ci": [
+        -0.009072350084514683,
+        0.03216749148027088
+       ],
+       "per_seed": [
+        -0.006401236671697563,
+        0.030891231316032997,
+        0.008788159111933314,
+        0.0046886411217682555,
+        0.01780149958615329
+       ],
+       "seed_signs": [
+        -1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.014140172355031955,
+       "ci": [
+        -0.033302559497530325,
+        0.005661117532701838
+       ],
+       "per_seed": [
+        -0.020070353960757736,
+        -0.00973635522664218,
+        -0.025652417352354018,
+        -0.019652855543113135,
+        0.004411120307707295
+       ],
+       "seed_signs": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "loud_recording": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.003925707926059729,
+       "ci": [
+        -0.019951645773211523,
+        0.027643572030872615
+       ],
+       "per_seed": [
+        -0.012811632233954429,
+        0.01709602188251702,
+        -0.020416515485252695,
+        0.007176077786044566,
+        0.028584587680944185
+       ],
+       "seed_signs": [
+        -1,
+        1,
+        -1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.0003809160799605804,
+       "ci": [
+        -0.03459051528639505,
+        0.033399370787348615
+       ],
+       "per_seed": [
+        0.02319092349548535,
+        -0.015064388011527652,
+        0.04419383961698253,
+        0.00017225518689667485,
+        -0.050588049888034003
+       ],
+       "seed_signs": [
+        1,
+        -1,
+        1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "clipped": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.00033424381828643933,
+       "ci": [
+        -0.030597062450220893,
+        0.0282032490440239
+       ],
+       "per_seed": [
+        0.013669715132481053,
+        0.0019310943513070056,
+        0.002372052903967803,
+        -0.04328720086698823,
+        0.02364311938780017
+       ],
+       "seed_signs": [
+        1,
+        1,
+        1,
+        -1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.0028464634847612967,
+       "ci": [
+        -0.03366250629869973,
+        0.030573543180241424
+       ],
+       "per_seed": [
+        -0.028724510107488777,
+        -0.016958243022072716,
+        0.011365395673906264,
+        0.04450916751448675,
+        -0.024424127482638003
+       ],
+       "seed_signs": [
+        -1,
+        -1,
+        1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "sex_female": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.0003655270206396999,
+       "ci": [
+        -0.015325426117833447,
+        0.014716641634065927
+       ],
+       "per_seed": [
+        -0.015622866446090122,
+        0.014049944855837437,
+        -0.004625544876844745,
+        0.005469775747072081,
+        -0.0010989443831731505
+       ],
+       "seed_signs": [
+        -1,
+        1,
+        -1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.19156346830523607,
+       "ci": [
+        0.16829356545827842,
+        0.21417042095676406
+       ],
+       "per_seed": [
+        0.19909143427341003,
+        0.19127146683472507,
+        0.18922719394989762,
+        0.20531484690930102,
+        0.17291239955884663
+       ],
+       "seed_signs": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "age_65plus": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.039726262919505186,
+       "ci": [
+        0.00475427131984071,
+        0.07440857534845716
+       ],
+       "per_seed": [
+        0.025144239035155946,
+        0.04006279718032757,
+        0.035375557014935555,
+        0.031432412702618096,
+        0.06661630866448875
+       ],
+       "seed_signs": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.006716028782980543,
+       "ci": [
+        -0.02365270809923133,
+        0.03689176964539823
+       ],
+       "per_seed": [
+        0.016742156694184995,
+        0.03132248945159577,
+        -0.019760818279954795,
+        0.002232287559224777,
+        0.0030440284898519687
+       ],
+       "seed_signs": [
+        1,
+        1,
+        -1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "cough_any": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.00013434246009089713,
+       "ci": [
+        -0.02047558155528916,
+        0.02098561275499586
+       ],
+       "per_seed": [
+        0.004083174221994779,
+        0.004964027714898678,
+        -0.01880179320118902,
+        -0.004854536149440092,
+        0.015280839714190142
+       ],
+       "seed_signs": [
+        1,
+        1,
+        -1,
+        -1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.009638210341908992,
+       "ci": [
+        -0.013524784233417306,
+        0.03273407929409438
+       ],
+       "per_seed": [
+        0.026547398775662923,
+        -0.010519801980197974,
+        0.014343395075094079,
+        0.029998228451075803,
+        -0.012178168612089868
+       ],
+       "seed_signs": [
+        1,
+        -1,
+        1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "no_symptoms": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.010321974604819938,
+       "ci": [
+        -0.009659379701062468,
+        0.03084659253436163
+       ],
+       "per_seed": [
+        0.013939816014511552,
+        0.010703874060637553,
+        0.00182203938844272,
+        0.01437062710546777,
+        0.0107735164550401
+       ],
+       "seed_signs": [
+        1,
+        1,
+        1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.004822492873801432,
+       "ci": [
+        -0.02066545893363762,
+        0.030380114159215505
+       ],
+       "per_seed": [
+        0.032249287380150315,
+        -0.016390256543145965,
+        0.012665198237885367,
+        0.01122052345167135,
+        -0.01563228815755391
+       ],
+       "seed_signs": [
+        1,
+        -1,
+        1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "recruitment_source": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.021990324032403287,
+       "ci": [
+        -0.00892383086593513,
+        0.05338154633164849
+       ],
+       "per_seed": [
+        0.02214283928392846,
+        0.040007125712571256,
+        0.010901090109010969,
+        -0.00042191719171913444,
+        0.037322482248224875
+       ],
+       "seed_signs": [
+        1,
+        1,
+        1,
+        -1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.008164566456645673,
+       "ci": [
+        -0.038839844721023586,
+        0.02129151420614252
+       ],
+       "per_seed": [
+        -0.03404090409040905,
+        0.0035253525352536563,
+        -0.01020414541454151,
+        0.013688868886888583,
+        -0.013792004200420038
+       ],
+       "seed_signs": [
+        -1,
+        1,
+        -1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   },
+   "covid": {
+    "correct_minus_within_label_sex": {
+     "interpretation": "exact-pair increment after preserving label and recorded sex",
+     "matched": {
+      "delta_auroc": {
+       "observed": -0.00031240541227183226,
+       "ci": [
+        -0.02284470583746164,
+        0.024119907806801122
+       ],
+       "per_seed": [
+        -0.014703719326225384,
+        -0.013237723500545195,
+        0.031859274125416726,
+        0.0033878361245196498,
+        -0.008867694484524957
+       ],
+       "seed_signs": [
+        -1,
+        -1,
+        1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      },
+      "delta_neg_nll": {
+       "observed": -0.012053392097876748,
+       "ci": [
+        -0.03758081950219024,
+        0.01475908550528788
+       ],
+       "per_seed": [
+        -0.03063365255245265,
+        -0.037077549213939354,
+        0.017175075502908754,
+        0.017997314303300538,
+        -0.027728148529201024
+       ],
+       "seed_signs": [
+        -1,
+        -1,
+        1,
+        1,
+        -1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    },
+    "within_label_sex_minus_within_label": {
+     "interpretation": "increment from preserving recorded sex in shuffled pairs",
+     "matched": {
+      "delta_auroc": {
+       "observed": 0.006464725539081695,
+       "ci": [
+        -0.019695461446188653,
+        0.031250507312016076
+       ],
+       "per_seed": [
+        0.02617519744143615,
+        -0.005901666445835341,
+        -0.028679303080657748,
+        0.01540875877804515,
+        0.025320641002420263
+       ],
+       "seed_signs": [
+        1,
+        -1,
+        -1,
+        1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      },
+      "delta_neg_nll": {
+       "observed": -0.012833028474206244,
+       "ci": [
+        -0.03457600581190043,
+        0.007920316124068657
+       ],
+       "per_seed": [
+        0.004612468661115532,
+        -0.0141726305071177,
+        -0.03756276723000562,
+        -0.027197215403908293,
+        0.01015500210888487
+       ],
+       "seed_signs": [
+        1,
+        -1,
+        -1,
+        -1,
+        1
+       ],
+       "n_seeds": 5,
+       "n_participants": 1814
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -15,8 +15,9 @@ Correct pairing improved profile retrieval for AST-6L and OPERA-CT and increased
 decodability relative to Within-label (delta AUROC +0.191 and +0.113), showing that the
 pairing intervention produced a measurable representational difference. Matched COVID
 prediction changed by only +0.006 and -0.002.
-Across secondary analyses on CODA TB, Cambridge COVID-19 Sounds, and Coswara, retrieval and
-sex decodability increased consistently, whereas 0/11 dataset-by-backbone settings
+Across a post-hoc UKCOVID HeAR extension and secondary analyses on CODA TB, Cambridge
+COVID-19 Sounds, and Coswara, retrieval and sex decodability increased consistently,
+whereas 0/12 dataset-by-backbone settings
 established a positive matched-disease gain, and Correct did not consistently outperform
 frozen raw audio. Correspondence learning, retained participant information, and disease
 transfer are therefore distinct empirical claims requiring distinct controls.
@@ -186,18 +187,24 @@ backbones. `Delta_pair` was +0.00318 [0.00161, 0.00492] for AST and +0.00323
 manipulation check: later disease results cannot be explained simply by failure to learn the
 assigned pairing.
 
-Across the 11 formal dataset-by-backbone settings, all retrieval point estimates were
-positive and 10/11 confidence intervals excluded zero. We do not pool these effects because
+Across the 12 dataset-by-backbone settings, all retrieval point estimates were
+positive and 11/12 confidence intervals excluded zero. We do not pool these effects because
 profile libraries and evidence status differ across datasets.
 
 The strongest probe effect was sex. On UKCOVID matched participants, `Delta_pair` sex-probe
 AUROC was +0.1912 [0.1669, 0.2151] for AST and +0.1125 [0.0943, 0.1311] for OPERA. Age
 increased for AST but not OPERA; acquisition and cohort effects were less consistent.
 
-Sex `Delta_pair` intervals excluded zero in all 11 settings. Raw audio usually
+Sex `Delta_pair` intervals excluded zero in all 12 settings. Raw audio usually
 had higher absolute demographic decodability than aligned representations, so alignment did
 not create demographic information absent from audio. It selectively retained that channel
 relative to Within-label.
+
+A post-hoc label-and-sex-preserving shuffle, `W(y,s)`, localized the UKCOVID sex result.
+Correct-minus-`W(y,s)` sex effects were -0.0004 [-0.0153, 0.0147] for AST, +0.0067
+[-0.0054, 0.0192] for OPERA, and +0.0064 [-0.0011, 0.0136] for HeAR, while
+`W(y,s)`-minus-Within was clearly positive for all three. Residual profile MRR after this
+control was small and backbone dependent (+0.00164, +0.00099, and +0.00394).
 
 ### 4.2 Correspondence gains lack consistent disease-transfer gains
 
@@ -206,10 +213,16 @@ On UKCOVID matched, disease `Delta_pair` AUROC was +0.0062
 and Within AUROC were 0.538, 0.529, and 0.523; for OPERA they were 0.577, 0.555, and 0.557.
 A fixed MLP did not reveal a hidden effect.
 
-Across all 11 settings, matched disease point estimates were positive in five and negative
+Across all 12 settings, matched disease point estimates were positive in six and negative
 in six. No confidence interval established a positive gain. Correct also showed no
 consistent advantage over frozen raw audio. This is a descriptive recurrence, not a
 meta-analysis and not proof of exact equivalence.
+
+A target-assisted diagnostic trained and calibrated the fixed linear readout on matched-long
+before applying it to participant-disjoint matched. Correct-minus-Within AUROC was -0.0082
+[-0.0337, 0.0177], +0.0287 [-0.0017, 0.0626], and +0.0047 [-0.0278, 0.0408] for AST,
+OPERA, and HeAR. It therefore did not reveal a stable disease benefit hidden by the source
+readout and did not establish a Correct-minus-Raw advantage.
 
 ### 4.3 Label association, fusion, and calibration
 
@@ -251,12 +264,13 @@ population shift.
 The same correspondence-transfer separation appeared with both a general-audio AST
 representation and a respiratory-domain OPERA representation, reducing the likelihood that
 the finding is specific to one encoder family. This does not establish backbone independence;
-HeAR was used only in the secondary external analyses.
+HeAR was added to UKCOVID only as a separately frozen post-hoc robustness analysis.
 
-The sex result also requires careful wording. A probe shows that sex is decodable, not that
-the disease classifier causally relies on it. Moreover, raw audio often contains more
-demographic information than aligned representations. Correct therefore appears to preserve
-this channel relative to a Within-label projector rather than create a new attribute.
+The sex result also requires careful wording. A probe shows decodability, not causal disease-
+classifier use. The `W(y,s)` control shows more specifically that the original effect largely
+reflects retention of recorded-sex consistency. Raw audio often contains still more
+demographic information, so alignment did not create a new attribute. Small residual
+retrieval after sex control indicates that sex is not the complete pairing signal.
 
 The evidence remains bounded. UKCOVID is a discovery audit; CODA, Cambridge, and Coswara
 are secondary or post-hoc sensitivities with 100-pair targets and wide intervals. Matching
