@@ -13,6 +13,7 @@ DATA_ROOT="${2:?UKCOVID data root required}"
 PY_BIN="${3:?Python executable required}"
 CPUSET="${FOLLOWUP_CPUSET:-0-39}"
 THREADS="${FOLLOWUP_THREADS:-40}"
+DEVICE="${FOLLOWUP_DEVICE:-auto}"
 PARALLEL_CPUSET_A="${FOLLOWUP_PARALLEL_CPUSET_A:-0-31}"
 PARALLEL_CPUSET_B="${FOLLOWUP_PARALLEL_CPUSET_B:-32-63}"
 PARALLEL_THREADS="${FOLLOWUP_PARALLEL_THREADS:-32}"
@@ -27,6 +28,19 @@ export OMP_NUM_THREADS="${THREADS}"
 export MKL_NUM_THREADS="${THREADS}"
 export OPENBLAS_NUM_THREADS="${THREADS}"
 export NUMEXPR_NUM_THREADS="${THREADS}"
+
+if [[ "${DEVICE}" == "auto" ]]; then
+  if "${PY_BIN}" -c 'import torch; raise SystemExit(0 if torch.cuda.is_available() else 1)'; then
+    DEVICE=cuda
+  else
+    DEVICE=cpu
+  fi
+fi
+if [[ "${DEVICE}" != "cpu" && "${DEVICE}" != "cuda" ]]; then
+  echo "FOLLOWUP_DEVICE must be auto, cpu, or cuda" >&2
+  exit 2
+fi
+echo "selected_projector_device=${DEVICE}"
 
 run_limited() {
   taskset -c "${CPUSET}" "${PY_BIN}" "$@"
@@ -57,7 +71,7 @@ run_limited "${REPO_ROOT}/src/train_within_label_sex_control.py" --self-test
 run_limited "${REPO_ROOT}/src/eval_within_label_sex_retrieval.py" --self-test
 run_limited "${REPO_ROOT}/src/eval_within_label_sex_control.py" --self-test
 run_limited "${REPO_ROOT}/src/eval_target_assisted_readout.py" --self-test
-run_limited "${REPO_ROOT}/src/train_within_label_sex_control.py" --preflight --device cpu \
+run_limited "${REPO_ROOT}/src/train_within_label_sex_control.py" --preflight --device "${DEVICE}" \
   --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
   --texts "${RESULT_ROOT}/metadata_texts.csv" \
   --emb "${RESULT_ROOT}/hear_embeddings.npz" \
@@ -79,7 +93,7 @@ if [[ ! -s "${FOLLOW_ROOT}/e1_hear/metrics.json" ]]; then
 fi
 
 test ! -e "${FOLLOW_ROOT}/e2_alignment_hear/manifest.json"
-run_limited "${REPO_ROOT}/src/train_within_label_sex_control.py" --device cpu \
+run_limited "${REPO_ROOT}/src/train_within_label_sex_control.py" --device "${DEVICE}" \
   --cohort "${RESULT_ROOT}/ukcovid_audio_cohort.csv" \
   --texts "${RESULT_ROOT}/metadata_texts.csv" \
   --emb "${RESULT_ROOT}/hear_embeddings.npz" \
