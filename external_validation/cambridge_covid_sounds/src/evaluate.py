@@ -444,6 +444,7 @@ def execute(config_file: str, backbone: str) -> Path:
     public = {
         "format_version": "cambridge-external-results-v2",
         "dataset": config.get("dataset"), "backbone": backbone,
+        "rerun_protocol": config["protocol"].get("rerun_protocol"),
         "standing": config["protocol"].get(
             "standing", "controlled-access external audit; interpret according to frozen branches"),
         "n": {"all": len(table), "train": int(train.sum()),

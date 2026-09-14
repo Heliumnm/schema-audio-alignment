@@ -25,6 +25,23 @@ done
 [[ "$RUN_ROOT" == /* ]] || { echo "RUN_ROOT must be absolute" >&2; exit 2; }
 mkdir -p "$RUN_ROOT"
 
+"$ALIGN_PYTHON" - "$CODA_CONFIG" "$CAMBRIDGE_CONFIG" "$COSWARA_CONFIG" <<'PY'
+import json, pathlib, sys
+protocol = "locked-external-rerun-20260914-v2"
+for path_text in sys.argv[1:]:
+    path = pathlib.Path(path_text)
+    config = json.load(open(path))
+    if config.get("protocol", {}).get("rerun_protocol") != protocol:
+        raise SystemExit(f"{path}: protocol.rerun_protocol must be {protocol!r}")
+    alignment = config.get("models", {}).get("alignment", {})
+    if alignment.get("seeds") != [0, 1, 2, 3, 4] or alignment.get("epochs") != 500:
+        raise SystemExit(f"{path}: formal schedule must be seeds 0..4 and 500 epochs")
+    for backbone in ("ast", "opera_ct", "hear"):
+        if not config.get("models", {}).get(backbone, {}).get("enabled", False):
+            raise SystemExit(f"{path}: locked panel requires enabled backbone {backbone}")
+print("locked config preflight PASS")
+PY
+
 exec 9>"$RUN_ROOT/panel.lock"
 if command -v flock >/dev/null 2>&1; then
   flock -n 9 || { echo "another locked panel is using $RUN_ROOT" >&2; exit 3; }

@@ -8,7 +8,7 @@ of 42**, matching `DataLoader(..., batch_size=64, shuffle=True)` with `drop_last
 and every participant appears exactly once per epoch. That invariant is asserted, not hoped
 for.
 
-Within a seed the three arms share the initialisation, the epoch permutations and the
+Within a seed all active arms share the initialisation, the epoch permutations and the
 dropout stream, so the pairing is the only difference. Pairings are drawn once per seed,
 held fixed for all 500 epochs, and saved **in full**, not only as a hash.
 

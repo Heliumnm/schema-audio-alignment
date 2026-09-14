@@ -263,7 +263,10 @@ def execute(config_file: str, backbone: str) -> Path:
               "correspondence_gain_but_matched_transfer_inconclusive")
     result = {
         "format_version": "coda-formal-model-v2", "dataset": config["dataset"],
-        "backbone": backbone, "standing": "secondary internal external-sensitivity audit",
+        "backbone": backbone,
+        "rerun_protocol": config["protocol"].get("rerun_protocol"),
+        "standing": config["protocol"].get(
+            "standing", "locked external test; prior exploratory results archived"),
         "n": {"all": len(table), "train": int(train.sum()), "validation": int(val.sum()),
               "source_test": int(populations["source_test"].sum()),
               "matched_target": int(target_mask.sum()), "matched_pairs": 100},
