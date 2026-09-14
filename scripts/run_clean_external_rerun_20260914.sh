@@ -30,6 +30,11 @@ REPO_ROOT=$(cd "${SCRIPT_DIR}/.." && pwd)
 ALIGN_PYTHON="${ALIGN_PYTHON:-python}"
 HEAR_PYTHON="${HEAR_PYTHON:-$ALIGN_PYTHON}"
 
+if [[ "$ALIGN_PYTHON" == /* ]]; then
+  ALIGN_BIN_DIR=$(cd "$(dirname "$ALIGN_PYTHON")" && pwd)
+  export PATH="$ALIGN_BIN_DIR:$PATH"
+fi
+
 if [[ "$CONFIG" != /* ]]; then
   CONFIG=$(cd "$(dirname "$CONFIG")" && pwd)/$(basename "$CONFIG")
 fi
@@ -83,4 +88,3 @@ case "$DATASET:$STAGE" in
   cambridge:*) PYTHON_BIN="$ALIGN_PYTHON" HEAR_PYTHON="$HEAR_PYTHON" bash "${REPO_ROOT}/external_validation/cambridge_covid_sounds/run_once.sh" "$CONFIG" "$STAGE" ;;
   coswara:*) ALIGN_PYTHON="$ALIGN_PYTHON" HEAR_PYTHON="$HEAR_PYTHON" bash "${REPO_ROOT}/external_validation/coswara/run_formal_models.sh" "$CONFIG" "$STAGE" ;;
 esac
-
