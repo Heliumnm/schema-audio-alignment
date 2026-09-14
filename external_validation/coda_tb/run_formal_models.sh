@@ -7,6 +7,8 @@ REPO=$(cd "$HERE/../.." && pwd)
 ENGINE="$REPO/external_validation/cambridge_covid_sounds/src"
 CONFIG=${1:-$HERE/config.formal.local.json}
 STAGE=${2:-prepare}
+ALIGN_PYTHON=${ALIGN_PYTHON:-python}
+TEXT_PYTHON=${TEXT_PYTHON:-$ALIGN_PYTHON}
 
 if [[ ! -f "$CONFIG" ]]; then
   echo "Missing config: $CONFIG (copy config.formal.example.json and fill paths)" >&2
@@ -18,63 +20,63 @@ case "$STAGE" in
 esac
 
 export PYTHONPATH="$ENGINE${PYTHONPATH:+:$PYTHONPATH}"
-python -m py_compile "$HERE"/src/*.py "$ENGINE"/*.py
+"$ALIGN_PYTHON" -m py_compile "$HERE"/src/*.py "$ENGINE"/*.py
 
 if [[ "$STAGE" == "prepare" ]]; then
-  python "$HERE/src/prepare_formal_inputs.py" --config "$CONFIG"
+  "$ALIGN_PYTHON" "$HERE/src/prepare_formal_inputs.py" --config "$CONFIG"
   exit 0
 fi
 
-OUTROOT=$(python -c 'import json,pathlib,sys; p=pathlib.Path(sys.argv[1]).resolve(); c=json.load(open(p)); q=pathlib.Path(c["output_root"]); print(q if q.is_absolute() else (p.parent/q).resolve())' "$CONFIG")
+OUTROOT=$("$ALIGN_PYTHON" -c 'import json,pathlib,sys; p=pathlib.Path(sys.argv[1]).resolve(); c=json.load(open(p)); q=pathlib.Path(c["output_root"]); print(q if q.is_absolute() else (p.parent/q).resolve())' "$CONFIG")
 MANIFEST="$OUTROOT/private/participant_manifest.csv"
 [[ -f "$MANIFEST" ]] || { echo "Run prepare first" >&2; exit 3; }
 
 if [[ "$STAGE" == "text" ]]; then
-  python "$ENGINE/cache_text.py" --config "$CONFIG"
+  "$TEXT_PYTHON" "$ENGINE/cache_text.py" --config "$CONFIG"
   exit 0
 fi
 
 if [[ "$STAGE" == "extract" ]]; then
   for backbone in ast opera_ct; do
-    python "$ENGINE/extract_embeddings.py" --config "$CONFIG" --backbone "$backbone"
+    "$ALIGN_PYTHON" "$ENGINE/extract_embeddings.py" --config "$CONFIG" --backbone "$backbone"
   done
   exit 0
 fi
 
 if [[ "$STAGE" == "s0" ]]; then
-  python "$HERE/src/smoke_s0_coda.py" --config "$CONFIG"
+  "$ALIGN_PYTHON" "$HERE/src/smoke_s0_coda.py" --config "$CONFIG"
   exit 0
 fi
 
 if [[ "$STAGE" == "s1" ]]; then
   for backbone in ast opera_ct; do
     mkdir -p "$OUTROOT/private/s1/$backbone"
-    python "$REPO/src/train_metadata_alignment.py" \
+    "$ALIGN_PYTHON" "$REPO/src/train_metadata_alignment.py" \
       --cohort "$MANIFEST" --texts "$MANIFEST" \
       --emb "$OUTROOT/models/$backbone/raw_embeddings.npz" \
       --text_emb "$OUTROOT/models/text_embeddings.npz" \
       --out_dir "$OUTROOT/private/s1/$backbone" --seeds 0 --epochs 50 \
       --log_every 10 --device cuda --include-within-label-sex --sex-column sex
   done
-  python "$HERE/src/audit_s1.py" --config "$CONFIG"
+  "$ALIGN_PYTHON" "$HERE/src/audit_s1.py" --config "$CONFIG"
   exit 0
 fi
 
 if [[ "$STAGE" == "train" ]]; then
   for backbone in ast opera_ct; do
-    python "$ENGINE/train_alignment.py" --config "$CONFIG" --backbone "$backbone"
+    "$ALIGN_PYTHON" "$ENGINE/train_alignment.py" --config "$CONFIG" --backbone "$backbone"
   done
   exit 0
 fi
 
 if [[ "$STAGE" == "audit-train" ]]; then
-  python "$HERE/src/audit_formal_training.py" --config "$CONFIG"
+  "$ALIGN_PYTHON" "$HERE/src/audit_formal_training.py" --config "$CONFIG"
   exit 0
 fi
 
 if [[ "$STAGE" == "evaluate" ]]; then
   for backbone in ast opera_ct; do
-    python "$HERE/src/evaluate_formal.py" --config "$CONFIG" --backbone "$backbone"
+    "$ALIGN_PYTHON" "$HERE/src/evaluate_formal.py" --config "$CONFIG" --backbone "$backbone"
   done
   exit 0
 fi

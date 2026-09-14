@@ -17,7 +17,15 @@ CAMBRIDGE_CONFIG="$2"
 COSWARA_CONFIG="$3"
 RUN_ROOT="$4"
 ALIGN_PYTHON="${ALIGN_PYTHON:?set ALIGN_PYTHON to the absolute PyTorch Python executable}"
+TEXT_PYTHON="${TEXT_PYTHON:?set TEXT_PYTHON to the absolute frozen text-cache Python executable}"
 HEAR_PYTHON="${HEAR_PYTHON:?set HEAR_PYTHON to the absolute HeAR TensorFlow Python executable}"
+
+for executable in "$ALIGN_PYTHON" "$TEXT_PYTHON" "$HEAR_PYTHON"; do
+  [[ "$executable" == /* && -x "$executable" ]] || {
+    echo "required Python must be an executable absolute path: $executable" >&2
+    exit 2
+  }
+done
 
 for path in "$CODA_CONFIG" "$CAMBRIDGE_CONFIG" "$COSWARA_CONFIG"; do
   [[ "$path" == /* && -f "$path" ]] || { echo "missing absolute config: $path" >&2; exit 2; }
@@ -27,7 +35,7 @@ mkdir -p "$RUN_ROOT"
 
 "$ALIGN_PYTHON" - "$CODA_CONFIG" "$CAMBRIDGE_CONFIG" "$COSWARA_CONFIG" <<'PY'
 import json, pathlib, sys
-protocol = "locked-external-rerun-20260914-v2"
+protocol = "locked-external-rerun-20260914-v3"
 for path_text in sys.argv[1:]:
     path = pathlib.Path(path_text)
     config = json.load(open(path))
@@ -41,6 +49,12 @@ for path_text in sys.argv[1:]:
             raise SystemExit(f"{path}: locked panel requires enabled backbone {backbone}")
 print("locked config preflight PASS")
 PY
+
+TEXT_TRANSFORMERS_VERSION=$("$TEXT_PYTHON" -c 'import transformers; print(transformers.__version__)')
+if [[ "$TEXT_TRANSFORMERS_VERSION" != "4.56.0" ]]; then
+  echo "TEXT_PYTHON must use transformers 4.56.0; found $TEXT_TRANSFORMERS_VERSION" >&2
+  exit 2
+fi
 
 exec 9>"$RUN_ROOT/panel.lock"
 if command -v flock >/dev/null 2>&1; then
@@ -66,10 +80,14 @@ on_failure() {
 trap on_failure ERR
 
 {
-  echo "protocol=locked-external-rerun-20260914-v2"
+  echo "protocol=locked-external-rerun-20260914-v3"
   echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "repo_commit=$(git -C "$REPO_ROOT" rev-parse HEAD)"
   echo "dispatcher_sha256=$(sha256sum "$DISPATCHER" | awk '{print $1}')"
+  echo "alignment_python=$ALIGN_PYTHON"
+  echo "text_python=$TEXT_PYTHON"
+  echo "text_transformers_version=$TEXT_TRANSFORMERS_VERSION"
+  echo "hear_python=$HEAR_PYTHON"
   echo "coda_config_sha256=$(sha256sum "$CODA_CONFIG" | awk '{print $1}')"
   echo "cambridge_config_sha256=$(sha256sum "$CAMBRIDGE_CONFIG" | awk '{print $1}')"
   echo "coswara_config_sha256=$(sha256sum "$COSWARA_CONFIG" | awk '{print $1}')"
@@ -90,7 +108,7 @@ for dataset in coda cambridge coswara; do
     echo "dataset=$dataset"
     echo "started_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   } > "$RUN_ROOT/${dataset}.running"
-  ALIGN_PYTHON="$ALIGN_PYTHON" HEAR_PYTHON="$HEAR_PYTHON" \
+  ALIGN_PYTHON="$ALIGN_PYTHON" TEXT_PYTHON="$TEXT_PYTHON" HEAR_PYTHON="$HEAR_PYTHON" \
     bash "$DISPATCHER" "$dataset" "$config" all
   {
     echo "dataset=$dataset"

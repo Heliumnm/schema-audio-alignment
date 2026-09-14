@@ -8,6 +8,7 @@ ENGINE="$REPO/external_validation/cambridge_covid_sounds/src"
 CONFIG=${1:?usage: run_formal_models.sh CONFIG STAGE}
 STAGE=${2:-prepare}
 ALIGN_PYTHON=${ALIGN_PYTHON:-python}
+TEXT_PYTHON=${TEXT_PYTHON:-$ALIGN_PYTHON}
 HEAR_PYTHON=${HEAR_PYTHON:-python}
 HEAR_CUDNN_LIB=${HEAR_CUDNN_LIB:-$(dirname "$(dirname "$HEAR_PYTHON")")/lib/python3.11/site-packages/nvidia/cudnn/lib}
 if [[ -d "$HEAR_CUDNN_LIB" ]]; then
@@ -26,7 +27,7 @@ case "$STAGE" in
   prepare)
     "$ALIGN_PYTHON" "$HERE/src/prepare_formal_inputs.py" --config "$CONFIG" ;;
   text)
-    "$ALIGN_PYTHON" "$ENGINE/cache_text.py" --config "$CONFIG" ;;
+    "$TEXT_PYTHON" "$ENGINE/cache_text.py" --config "$CONFIG" ;;
   s0)
     "$ALIGN_PYTHON" "$REPO/external_validation/coda_tb/src/smoke_s0_coda.py" --config "$CONFIG" ;;
   extract-ast)

@@ -160,3 +160,19 @@ but matched disease C-Wys not consistently > 0
 
 不能反向修改 UKCOVID discovery 的历史状态。
 
+## 10. 执行环境修正记录
+
+第一次外部 panel 启动使用了错误的文本缓存环境：Phi-2 缓存由
+Transformers 4.49.0 生成，而 UKCOVID discovery 使用的是 4.56.0。该差异改变了
+文本 embedding 的哈希，因此该执行在任何新的 external matched endpoint 被读取前
+立即终止，归档为 `technical abort`，不构成科学结果，也不得与后续结果合并。
+
+正式执行协议升级为 `locked-external-rerun-20260914-v3`，并将环境职责分离：
+
+- `TEXT_PYTHON`：仅生成 Phi-2 文本缓存，强制 Transformers 4.56.0；
+- `ALIGN_PYTHON`：生成 AST/OPERA 表示、训练 projector 与运行 readout；
+- `HEAR_PYTHON`：仅生成 HeAR 表示。
+
+主运行器会在启动前 fail closed 检查文本环境版本，并把三个解释器路径、文本
+Transformers 版本、代码 commit 和配置哈希写入 run manifest。v3 的 arm、样本门、
+primary contrast、metric、seed、epoch 和 readout 均未因 v2 的技术中止而改变。

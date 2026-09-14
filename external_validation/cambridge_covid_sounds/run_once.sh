@@ -6,6 +6,7 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 CONFIG=${1:-$HERE/config.local.json}
 STAGE=${2:-all}
 PYTHON_BIN=${PYTHON_BIN:?set PYTHON_BIN to the absolute formal Python executable}
+TEXT_PYTHON=${TEXT_PYTHON:-$PYTHON_BIN}
 HEAR_PYTHON=${HEAR_PYTHON:-$PYTHON_BIN}
 
 if [[ "$PYTHON_BIN" != /* || ! -x "$PYTHON_BIN" ]]; then
@@ -14,6 +15,10 @@ if [[ "$PYTHON_BIN" != /* || ! -x "$PYTHON_BIN" ]]; then
 fi
 if [[ "$HEAR_PYTHON" != /* || ! -x "$HEAR_PYTHON" ]]; then
   echo "HEAR_PYTHON must be an executable absolute path: $HEAR_PYTHON" >&2
+  exit 2
+fi
+if [[ "$TEXT_PYTHON" != /* || ! -x "$TEXT_PYTHON" ]]; then
+  echo "TEXT_PYTHON must be an executable absolute path: $TEXT_PYTHON" >&2
   exit 2
 fi
 CONFIG=$("$PYTHON_BIN" -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).expanduser().resolve())' "$CONFIG")
@@ -53,7 +58,7 @@ if [[ "$STAGE" == "gate" ]]; then
   exit 0
 fi
 
-"$PYTHON_BIN" "$HERE/src/cache_text.py" --config "$CONFIG"
+"$TEXT_PYTHON" "$HERE/src/cache_text.py" --config "$CONFIG"
 for BACKBONE in ast opera_ct hear; do
   ENABLED=$("$PYTHON_BIN" -c 'import json,sys; c=json.load(open(sys.argv[1])); print(str(c.get("models",{}).get(sys.argv[2],{}).get("enabled",False)).lower())' "$CONFIG" "$BACKBONE")
   [[ "$ENABLED" == "true" ]] || continue
