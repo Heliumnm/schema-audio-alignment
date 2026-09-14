@@ -31,14 +31,15 @@ Clinical audio models increasingly align recordings with participant metadata
 or metadata-derived text. Such alignment can be interpreted as evidence of
 better clinical representation, although the paired metadata target also
 contains demographics, symptoms, missingness, and cohort structure. We introduce a
-Pairing-Controlled Transfer Audit that separates three endpoints: profile
-correspondence, attribute decodability, and disease prediction after covariate
-balancing. The audit compares correct participant pairs with global shuffling,
+Pairing-Controlled Transfer Audit that trains matched pairing trajectories and
+then freezes their endpoints for three evaluations: profile correspondence,
+attribute decodability, and disease prediction after covariate balancing. The
+audit compares correct participant pairs with global shuffling,
 disease-label-preserving shuffling, and a post-hoc control that also preserves
 recorded sex. In the UKCOVID discovery audit, Correct improves profile
 retrieval and sex decodability relative to label-only shuffling across AST-6L
 and OPERA-CT, showing that the pairing intervention produced a measurable
-representational difference. Preserving both label and recorded sex
+endpoint difference. Preserving both label and recorded sex
 substantially attenuates the sex-probe contrast across AST-6L, OPERA-CT, and
 HeAR, while residual retrieval differences remain. In contrast, source-only
 matched disease AUROC
@@ -101,14 +102,15 @@ restriction. A post-hoc control, \wys{}, additionally restricts donors to the
 same recorded sex. Disease labels construct these control pairings; they are not
 included in the metadata text.
 
-Our Pairing-Controlled Transfer Audit asks three separate questions. First, did
-the model learn the assigned pairing? Second, what attributes became more
-decodable? Third, did disease prediction improve after covariate balancing?
-This separation is important because probe accuracy alone need not imply task
-use \cite{ravichander2021probing}. We use profile retrieval as a manipulation
-check, attribute probes to characterize the representation, and
-participant-disjoint matched evaluation to test disease transfer against both
-shuffled controls and frozen raw audio. Here, transfer means evaluation on a
+Our Pairing-Controlled Transfer Audit follows this matched-trajectory logic.
+Frozen audio and metadata encoders are shared across arms; the projector
+initialization, audio order, optimizer schedule, and training duration are
+matched; only the metadata donor assigned to each audio example changes. The
+resulting endpoints are frozen and evaluated through three separate questions:
+did the assigned pairing affect profile retrieval, what attributes became more
+decodable, and did disease prediction improve after covariate balancing? This
+separation is important because probe accuracy alone need not imply task use
+\cite{ravichander2021probing}. Here, transfer means evaluation on a
 covariate-balanced target \emph{within each dataset}, not deployment of one
 model across datasets. The contribution is an audit of distinct empirical
 claims, not a claim that metadata alignment is generally ineffective or that
@@ -140,7 +142,7 @@ post-hoc stress test. These analyses have different evidence status and do
 not constitute independent confirmations of a null disease effect.
 Matching balances selected measured covariates, not all sources of bias.
 
-\subsection{Representations and pairing controls}
+\subsection{Frozen encoders and pairing-controlled trajectories}
 
 We evaluate three frozen UKCOVID audio backbones spanning different pretraining
 domains: AST-6L, derived from a general-audio AST; OPERA-CT, pretrained for
@@ -174,10 +176,12 @@ For arm $A$, $\pi_A(i)$ is the metadata donor assigned to audio participant $i$:
 \label{eq:pairing}
 \end{equation}
 Global imposes no label or sex restriction, although accidental matches can
-remain. We use \dpair{} for $C-W$ and \dlabel{} for $W-G$, evaluated separately
-for each endpoint. These contrasts test pairing constraints; they are not
-causal estimands or a decomposition into disjoint information components.
-$R$ denotes the corresponding frozen raw-audio representation.
+remain. These four assignments define matched training trajectories: the audio
+examples, optimizer, seeds, and training length are held fixed while
+$\pi_A$ changes. We use \dpair{} for $C-W$ and \dlabel{} for $W-G$, evaluated
+separately for each frozen endpoint. These contrasts test pairing constraints;
+they are not causal estimands or a decomposition into disjoint information
+components. $R$ denotes the corresponding frozen raw-audio representation.
 
 The \wys{} control uses the same 20,714 training participants and rejects
 self-pairs, singleton strata, and cross-stratum fallback. The five-participant
@@ -186,7 +190,7 @@ pairs retain identical metadata text in 6.35--6.61\% of \wys{} pairs and
 3.03--3.33\% of $W$ pairs. Thus, donor reassignment is not equivalent to
 changing every semantic target.
 
-\subsection{Alignment and downstream evaluation}
+\subsection{Projector training and frozen endpoint evaluation}
 
 Only the audio-side projector is trained. Let
 $t_i^A=e_{\mathrm{text}}(m_{\pi_A(i)})$ be its assigned frozen text target.
@@ -201,11 +205,12 @@ For a batch $\mathcal B$ of size $B$, the one-directional objective is
 where bars denote $\ell_2$ normalization. The projector is trained for five
 seeds and 500 epochs, using the final checkpoint without epoch selection.
 Within a seed, arms share initialization, audio batches, and dropout streams;
-pairing assignments are fixed, and only the metadata donor changes. This
-audits a paper-faithful Stage-1 alignment implementation, not the full
-RespiraMFM downstream Phi-2/LoRA system.
+pairing assignments are fixed, and only the metadata donor changes. The final
+checkpoint is then frozen for all downstream evaluations. This audits a
+paper-faithful Stage-1 alignment implementation, not the full RespiraMFM
+downstream Phi-2/LoRA system.
 
-\textbf{Correspondence.} Source-validation audio queries retrieve metadata
+\textbf{Endpoint 1: correspondence.} Source-validation audio queries retrieve metadata
 profiles. Identical schemas are one semantic target; macro-profile mean
 reciprocal rank (MRR) prevents frequent profiles from dominating the reported
 average. Separate post-hoc diagnostics restrict candidates by recorded sex,
@@ -213,12 +218,12 @@ or by disease label and recorded sex. These restrictions change the retrieval
 task, not the trained representation; labels define diagnostic candidate sets
 rather than encoder inputs.
 
-\textbf{Decodability.} Identically specified regularized probes predict
+\textbf{Endpoint 2: decodability.} Identically specified regularized probes predict
 recorded sex, age, symptoms, recording/cohort variables, and disease. Probe
 performance concerns the specified readout, not causal use by a disease
 classifier.
 
-\textbf{Disease prediction.} Endpoints are AUROC, negative log-likelihood
+\textbf{Endpoint 3: disease prediction.} Metrics are AUROC, negative log-likelihood
 (NLL), and Brier score. For the primary source-only endpoint, source data
 select and calibrate readouts before evaluation on matched targets.
 Matched splits do not select the projector or source-only readout.
@@ -294,7 +299,7 @@ Disease AUROC, $\wys{}-W$
 \end{tabular}
 \end{table*}
 
-\subsection{Why global shuffling is an incomplete control}
+\subsection{Label-conditioned trajectories differ from global shuffling}
 
 Within-label and Global differ even though neither preserves the original
 donor identity. For UKCOVID AST, source $W-G$ probe AUROC differences are
@@ -307,13 +312,14 @@ pairing. A $C-G$ comparison alone cannot distinguish this label-conditioned
 association from the additional $C-W$ contrast.
 
 
-\subsection{Sex-probe contrasts and profile correspondence}
+\subsection{Correct trajectories alter correspondence and sex decodability}
 
 Table~\ref{tab:contrasts} shows positive $C-W$ retrieval estimates across the
 three UKCOVID backbones; all five seed-level estimates are positive for each
-primary backbone. This confirms a detectable response to the pairing
-intervention, not complete learning of a clinical profile or exclusion of
-all alignment limitations.
+primary backbone. This is the manipulation check for the matched trajectories:
+changing only the assigned metadata donor produced a detectable frozen-endpoint
+difference. It does not imply complete learning of a clinical profile or
+exclude other alignment limitations.
 
 For sex decodability, the large $C-W$ contrasts become much smaller when $W$
 is replaced by \wys{}, while $\wys{}-W$ remains positive. The sex-probe
@@ -365,7 +371,7 @@ HeAR & 0.542 & 0.545 & 0.543 & \estci{0.532}{0.507}{0.557} \\
 \end{tabular}
 \end{table}
 
-\subsection{Disease prediction under both pairing controls}
+\subsection{Frozen disease endpoints do not show a consistent transfer gain}
 
 Table~\ref{tab:absolute} places the paired contrasts alongside absolute
 AUROC. $C-W$ disease differences vary in sign across the primary backbones,
@@ -403,7 +409,7 @@ that all disease effects are zero. Diseases, candidate libraries, and analysis
 histories differ, and the external targets remain small.
 
 
-\subsection{Fusion and probability-scale diagnostics}
+\subsection{Secondary fusion and probability-scale diagnostics}
 
 On UKCOVID matched, adding raw audio to metadata changes AUROC by
 $0.0028$ [$-0.0016$, $0.0073$] for AST and
