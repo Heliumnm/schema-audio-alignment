@@ -28,9 +28,9 @@ Yuan-Chao Li$^1$
 \maketitle
 \begin{abstract}
 Clinical audio models increasingly align recordings with participant metadata
-or metadata-derived text. Such alignment is often interpreted as evidence of
-better clinical representation, but the paired metadata target also contains
-demographics, symptoms, missingness, and cohort structure. We introduce a
+or metadata-derived text. Such alignment can be interpreted as evidence of
+better clinical representation, although the paired metadata target also
+contains demographics, symptoms, missingness, and cohort structure. We introduce a
 Pairing-Controlled Transfer Audit that separates three endpoints: profile
 correspondence, attribute decodability, and disease prediction after covariate
 balancing. The audit compares correct participant pairs with global shuffling,
@@ -47,8 +47,8 @@ $0.006$ [$-0.014$, $0.028$] for AST-6L and $-0.002$ [$-0.019$, $0.017$] for
 OPERA-CT. Disease comparisons with the sex-preserving control and
 target-assisted readouts also remain uncertain. Secondary analyses on CODA TB,
 Cambridge COVID-19 Sounds, and Coswara extend the descriptive pattern but do
-not establish a universal null effect. Successful profile alignment and
-improved disease transfer are therefore distinct empirical claims.
+not establish a universal null effect. A detectable profile-correspondence gain
+and improved disease transfer are therefore distinct empirical claims.
 \end{abstract}
 
 \begin{keywords}
@@ -85,14 +85,13 @@ solutions when the discrimination task can be solved by non-target features
 help or hurt depending on what information is shared across modalities
 \cite{fang2026align}.
 
-The missing control is the pairing relation itself. Related work has compared
-correct and shuffled audio-description trajectories, and clinical
-vision-language work has used pathology-matched candidates to distinguish
-instance-level linkage from broader diagnostic similarity
-\cite{min2026semantic,arasteh2026linkage}. These controls motivate our setting
-but do not resolve it: clinical metadata can retain strong label and demographic
-structure even after the observed participant pairing is broken. A global
-shuffle is therefore an incomplete control because it removes both the observed
+The remaining identification problem is how the pairing relation should be
+controlled when clinical metadata retains disease-label and demographic
+structure. Related work has compared correct and shuffled audio-description
+trajectories, and clinical vision-language work has used pathology-matched
+candidates to distinguish instance-level linkage from broader diagnostic
+similarity \cite{min2026semantic,arasteh2026linkage}. These controls motivate
+our setting but do not resolve it: a global shuffle removes both the observed
 participant pairing and the label-conditioned metadata association. We compare
 Correct ($C$), Within-label ($W$), and Global ($G$) pairing. Within-label assigns
 metadata from another participant with the same disease label, so $C-W$ asks
@@ -143,16 +142,17 @@ Matching balances selected measured covariates, not all sources of bias.
 
 \subsection{Representations and pairing controls}
 
-The primary UKCOVID backbones are frozen AST-6L and OPERA-CT.
-AST-6L retains six blocks of the 12-layer AudioSet-finetuned AST
-\cite{gong2021ast}; the depth was fixed before this audit from independent
-respiratory-audio comparisons and not from UKCOVID matched performance.
-OPERA-CT is the released 768-dimensional respiratory contrastive Transformer
-\cite{zhang2024opera}.
+We evaluate three frozen UKCOVID audio backbones spanning different pretraining
+domains: AST-6L, derived from a general-audio AST; OPERA-CT, pretrained for
+respiratory audio; and HeAR, pretrained for health acoustics. AST-6L retains
+six blocks of the 12-layer AudioSet-finetuned AST \cite{gong2021ast}; the
+depth was fixed before this audit from independent respiratory-audio
+comparisons and not from UKCOVID matched performance. OPERA-CT is the released
+768-dimensional respiratory contrastive Transformer \cite{zhang2024opera}.
 Its pretraining includes UKCOVID training audio, making it a domain-pretrained
 comparator. Participant-disjoint splits in this study do not by themselves
-verify exclusion from upstream pretraining. HeAR is a post-hoc third UKCOVID
-backbone, rather than an additional primary condition.
+verify exclusion from upstream pretraining. AST-6L and OPERA-CT define the
+original audit, whereas HeAR is reported as a post-hoc extension.
 
 Backbone-specific preprocessing produces one aggregated audio representation
 per participant. A frozen Phi-2 encoder \cite{javaheripi2023phi2} embeds a
@@ -316,10 +316,13 @@ intervention, not complete learning of a clinical profile or exclusion of
 all alignment limitations.
 
 For sex decodability, the large $C-W$ contrasts become much smaller when $W$
-is replaced by \wys{}, while $\wys{}-W$ remains positive. The interpretation
-is specific to this probe: recorded-sex consistency accounts for a substantial
-part of the sex-probe contrast. This neither establishes equivalence between
-$C$ and \wys{} nor shows that a disease classifier uses sex.
+is replaced by \wys{}, while $\wys{}-W$ remains positive. The sex-probe
+contrast is therefore highly sensitive to whether the pairing control preserves
+recorded-sex consistency. Because \wys{} also preserves correlated metadata
+structure and more frequently retains an unchanged semantic profile than $W$,
+we do not interpret this comparison as a sex-specific causal decomposition.
+It also neither establishes equivalence between $C$ and \wys{} nor shows that
+a disease classifier uses sex.
 Raw audio generally has higher absolute demographic decodability than aligned
 representations, so a positive $C-W$ contrast should not be read as an
 improvement over raw audio. Age-probe increases were reported for AST but not
@@ -393,10 +396,10 @@ Across the 12 dataset--backbone settings, all $C-W$ retrieval point estimates
 are positive, with 11 reported intervals above zero. All 12 sex-probe
 intervals are above zero. Disease estimates have six positive and six negative
 signs, with no interval entirely above zero. These descriptive counts show a
-reproducible separation in result shape: correspondence and sex-probe effects
-are easier to observe than matched disease gains in the audited pipelines.
-They are not independent replications, pooled effects, or evidence that all
-disease effects are zero. Diseases, candidate libraries, and analysis
+recurring pattern in result shape: correspondence and sex-probe contrasts are
+more consistently positive than matched disease contrasts in the audited
+settings. They are not independent replications, pooled effects, or evidence
+that all disease effects are zero. Diseases, candidate libraries, and analysis
 histories differ, and the external targets remain small.
 
 
@@ -423,13 +426,15 @@ unique explanation of the original discrepancy.
 \section{Discussion and Limitations}
 \label{sec:discussion}
 
-The central result is that successful alignment-style endpoints require a
-separate clinical interpretation step. $W-G$ demonstrates a difference
-associated with label-restricted pairing. Adding recorded-sex consistency
-substantially reduces the sex-probe contrast with Correct, yet residual
-profile-retrieval differences remain. These are distinct observations, not a
-causal decomposition or a participant-identity result. The audit therefore
-adds information beyond a Correct-versus-Global ablation alone.
+The central result is not that alignment fails, but that a detectable
+correspondence gain does not determine its clinical interpretation. $W-G$
+demonstrates a difference associated with label-restricted pairing. Adding
+recorded-sex consistency substantially reduces the sex-probe contrast with
+Correct, yet this control is not a pure intervention on sex: it also preserves
+correlated metadata structure and more frequently retains an unchanged semantic
+profile. Residual profile-retrieval differences remain. These are distinct
+observations, not a causal decomposition or a participant-identity result. The
+audit therefore adds information beyond a Correct-versus-Global ablation alone.
 
 Disease prediction must be evaluated separately. The reported disease
 contrasts do not establish a consistent benefit across backbones, controls,
