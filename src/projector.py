@@ -83,3 +83,44 @@ def build_pairing(labels, mode, seed):
         j[g] = p
     assert not np.any(j == np.arange(n)), "self-pairing survived"
     return j
+
+
+def build_stratified_pairing(*strata, seed, seed_base=70_000):
+    """Build a deterministic no-self bijection within joint strata.
+
+    This is the generic implementation used by the locked ``W_{y,s}`` arm.  Every
+    participant is retained, and every donor has the same value on every supplied
+    stratum (disease label and recorded sex in the present audit).  A singleton
+    stratum is a hard protocol failure: the caller must not silently self-pair,
+    cross a stratum, or delete rows only for this arm.
+    """
+    import numpy as np
+
+    if not strata:
+        raise ValueError("at least one stratification array is required")
+    values = [np.asarray(value) for value in strata]
+    n = len(values[0])
+    if any(len(value) != n for value in values):
+        raise ValueError("stratification arrays have different lengths")
+
+    keys = np.asarray(list(zip(*(value.astype(str) for value in values))), dtype=object)
+    grouped = {}
+    for index, key in enumerate(map(tuple, keys.tolist())):
+        grouped.setdefault(key, []).append(index)
+    counts = {key: len(indices) for key, indices in grouped.items()}
+    singletons = {key: size for key, size in counts.items() if size < 2}
+    if singletons:
+        raise ValueError(f"singleton joint stratum; frozen cohort is not eligible: {singletons}")
+
+    rng = np.random.RandomState(int(seed_base) + int(seed))
+    pairing = np.full(n, -1, dtype=np.int64)
+    for key in sorted(grouped, key=lambda item: tuple(map(str, item))):
+        group = np.asarray(grouped[key], dtype=np.int64)
+        cycle = rng.permutation(group)
+        pairing[cycle] = np.roll(cycle, -1)
+
+    assert np.array_equal(np.sort(pairing), np.arange(n))
+    assert not np.any(pairing == np.arange(n))
+    for value in values:
+        assert np.all(value[pairing] == value)
+    return pairing

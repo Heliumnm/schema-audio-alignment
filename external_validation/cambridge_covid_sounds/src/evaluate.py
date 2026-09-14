@@ -23,10 +23,11 @@ from eval_metadata_alignment import (fit_disease_head, fit_probe, hierarchical_c
                                      make_validation_folds, paired_hierarchical_ci)  # noqa: E402
 
 
-ARMS = ("raw_audio", "correct", "within_label", "global")
+PAIRED_ARMS = ("correct", "within_label", "within_label_sex", "global")
+ARMS = ("raw_audio", *PAIRED_ARMS)
 CONTEXT_ARMS = ("metadata_only", "raw_audio_plus_metadata")
 ALIGNED_CONTEXT_ARMS = ("metadata_plus_correct", "metadata_plus_within",
-                        "metadata_plus_global")
+                        "metadata_plus_within_label_sex", "metadata_plus_global")
 
 
 def mean_nll(y: np.ndarray, probability: np.ndarray) -> float:
@@ -50,7 +51,7 @@ def load_representations(paths: dict[str, Path], table: pd.DataFrame, backbone: 
     manifest = json.loads((directory / "manifest.json").read_text())
     if int(manifest["epochs"]) != 500:
         raise RuntimeError("formal evaluation only accepts epoch-500 projectors")
-    for arm in ("correct", "within_label", "global"):
+    for arm in PAIRED_ARMS:
         values = []
         for seed in seeds:
             file = directory / f"repr_{arm}_seed{seed}.npz"
@@ -166,7 +167,7 @@ def retrieval_summary(representations: dict[str, np.ndarray], table: pd.DataFram
     embeddings = np.asarray(text["unique_embeddings"], dtype=np.float32)
     query = np.where((table.splits == "validation").to_numpy())[0]
     scores, row_rr = {}, {}
-    for arm in ("correct", "within_label", "global"):
+    for arm in PAIRED_ARMS:
         values, rows = [], []
         for seed_index in range(len(seeds)):
             value, reciprocal = profile_mrr(
@@ -187,20 +188,26 @@ def retrieval_summary(representations: dict[str, np.ndarray], table: pd.DataFram
         arm: np.stack([
             [np.mean(row_rr[arm][seed, text_id[query] == profile]) for profile in profiles]
             for seed in range(len(seeds))])
-        for arm in ("correct", "within_label", "global")
+        for arm in PAIRED_ARMS
     }
-    rng, values = np.random.RandomState(20260825), []
-    for _ in range(boot):
-        pp = rng.choice(len(profiles), len(profiles), replace=True)
-        ss = rng.choice(len(seeds), len(seeds), replace=True)
-        values.append(float(np.mean([
-            np.mean(by_profile["correct"][s, pp] - by_profile["within_label"][s, pp])
-            for s in ss])))
-    scores["correct_minus_within"] = {
-        "observed": float(np.mean(by_profile["correct"] - by_profile["within_label"])),
-        "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
-        "n_profiles": int(len(profiles)), "n_queries": int(len(query)),
-    }
+    for offset, (left, right, name) in enumerate((
+            ("correct", "within_label_sex", "correct_minus_within_label_sex"),
+            ("within_label_sex", "within_label", "within_label_sex_minus_within"),
+            ("correct", "within_label", "correct_minus_within"),
+            ("within_label", "global", "within_minus_global"))):
+        rng, values = np.random.RandomState(20260825 + offset), []
+        for _ in range(boot):
+            pp = rng.choice(len(profiles), len(profiles), replace=True)
+            ss = rng.choice(len(seeds), len(seeds), replace=True)
+            values.append(float(np.mean([
+                np.mean(by_profile[left][s, pp] - by_profile[right][s, pp])
+                for s in ss])))
+        scores[name] = {
+            "observed": float(np.mean(by_profile[left] - by_profile[right])),
+            "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
+            "per_seed": np.mean(by_profile[left] - by_profile[right], axis=1).tolist(),
+            "n_profiles": int(len(profiles)), "n_queries": int(len(query)),
+        }
     return scores
 
 
@@ -289,8 +296,7 @@ def execute(config_file: str, backbone: str) -> Path:
         np.concatenate([representations["raw_audio"][0], metadata], axis=1)[None, :, :],
         len(seeds), axis=0)
     if full_fusion:
-        for audio_arm, fusion_arm in zip(
-                ("correct", "within_label", "global"), ALIGNED_CONTEXT_ARMS):
+        for audio_arm, fusion_arm in zip(PAIRED_ARMS, ALIGNED_CONTEXT_ARMS):
             representations[fusion_arm] = np.stack([
                 np.concatenate([representations[audio_arm][seed], metadata], axis=1)
                 for seed in range(len(seeds))])
@@ -323,9 +329,12 @@ def execute(config_file: str, backbone: str) -> Path:
     populations = {"standard": standard, "matched": matched}
     metrics = {population: {} for population in populations}
     comparisons = {population: {} for population in populations}
-    comparison_pairs = (("correct", "within_label", "C-W"),
+    audio_comparison_pairs = (("correct", "within_label_sex", "C-Wys"),
+                        ("within_label_sex", "within_label", "Wys-W"),
+                        ("correct", "within_label", "C-W"),
                         ("within_label", "global", "W-G"),
-                        ("correct", "raw_audio", "C-R"),
+                        ("correct", "raw_audio", "C-R"))
+    comparison_pairs = (*audio_comparison_pairs,
                         ("raw_audio_plus_metadata", "metadata_only", "RM-M"))
     for population, mask in populations.items():
         for arm in evaluation_arms:
@@ -334,6 +343,8 @@ def execute(config_file: str, backbone: str) -> Path:
         active_comparisons = list(comparison_pairs)
         if full_fusion:
             active_comparisons.extend((
+                ("metadata_plus_correct", "metadata_plus_within_label_sex", "MC-MWys"),
+                ("metadata_plus_within_label_sex", "metadata_plus_within", "MWys-MW"),
                 ("metadata_plus_correct", "metadata_plus_within", "MC-MW"),
                 ("metadata_plus_within", "metadata_plus_global", "MW-MG"),
                 ("metadata_plus_correct", "raw_audio_plus_metadata", "MC-MR"),
@@ -394,7 +405,7 @@ def execute(config_file: str, backbone: str) -> Path:
             probes[probe_name] = {"status": "not_estimable_in_matched"}
             continue
         probes[probe_name] = {"status": "ok", "matched": {}}
-        for left, right, name in comparison_pairs[:3]:
+        for left, right, name in audio_comparison_pairs:
             cluster = config["protocol"].get("matched_bootstrap_cluster", "pair_id")
             if cluster == "exact_stratum":
                 probes[probe_name]["matched"][name] = group_cluster_ci(
@@ -409,9 +420,9 @@ def execute(config_file: str, backbone: str) -> Path:
                     table.loc[probe_mask, "pair_id"].astype(str).to_numpy(),
                     auroc, boot, 20260825)
 
-    correspondence_ci = retrieval["correct_minus_within"]["ci"]
-    transfer_auc = comparisons["matched"]["C-W"]["delta_auroc"]
-    transfer_nll = comparisons["matched"]["C-W"]["delta_neg_nll"]
+    correspondence_ci = retrieval["correct_minus_within_label_sex"]["ci"]
+    transfer_auc = comparisons["matched"]["C-Wys"]["delta_auroc"]
+    transfer_nll = comparisons["matched"]["C-Wys"]["delta_neg_nll"]
     auc_margin = float(config["protocol"]["auroc_equivalence_margin"])
     nll_margin = float(config["protocol"]["nll_equivalence_margin"])
     correspondence_established = correspondence_ci[0] > 0
@@ -428,12 +439,17 @@ def execute(config_file: str, backbone: str) -> Path:
     else:
         branch = "correspondence_gain_but_matched_transfer_inconclusive"
 
+    alignment_manifest = json.loads(
+        (paths["models"] / backbone / "alignment" / "manifest.json").read_text())
     public = {
-        "format_version": "cambridge-external-results-v1",
+        "format_version": "cambridge-external-results-v2",
         "dataset": config.get("dataset"), "backbone": backbone,
         "standing": config["protocol"].get(
             "standing", "controlled-access external audit; interpret according to frozen branches"),
         "n": {"all": len(table), "train": int(train.sum()),
+              "alignment_train": int(alignment_manifest["n_train"]),
+              "alignment_train_dropped_for_joint_support": int(
+                  alignment_manifest.get("within_label_sex_support", {}).get("dropped", 0)),
               "validation": int(validation.sum()), "standard_test": int(standard.sum()),
               "matched_test": int(matched.sum()), "matched_pairs": int(matched.sum() // 2)},
         "metrics": metrics, "comparisons": comparisons,
@@ -450,6 +466,7 @@ def execute(config_file: str, backbone: str) -> Path:
             "matched_transfer_positive_on_both_metrics": transfer_positive,
             "matched_equivalence_compatible_on_both_metrics": equivalence_compatible,
             "margins": {"delta_auroc": auc_margin, "delta_neg_nll": nll_margin},
+            "primary_contrast": "C-Wys",
             "note": ("A confidence interval containing zero is inconclusive unless the "
                      "entire interval is also inside the frozen equivalence margin."),
         },

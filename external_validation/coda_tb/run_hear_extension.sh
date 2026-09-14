@@ -49,12 +49,13 @@ run_s1() {
     --texts "$OUTROOT/private/participant_manifest.csv" \
     --emb "$OUTROOT/models/hear/raw_embeddings.npz" \
     --text_emb "$OUTROOT/models/text_embeddings.npz" \
-    --out_dir "$DEST" --seeds 0 --epochs 50 --log_every 10 --device cuda
+    --out_dir "$DEST" --seeds 0 --epochs 50 --log_every 10 --device cuda \
+    --include-within-label-sex --sex-column sex
   "$ALIGN_PYTHON" - "$DEST/manifest.json" <<'PY'
 import json, math, sys
 p = json.load(open(sys.argv[1]))
 assert p["audio_input_dim"] == 512 and p["epochs"] == 50 and p["seeds"] == [0]
-assert set(p["runs"]) == {"correct_seed0", "within_label_seed0", "global_seed0"}
+assert set(p["runs"]) == {"correct_seed0", "within_label_seed0", "within_label_sex_seed0", "global_seed0"}
 for key, run in p["runs"].items():
     assert math.isfinite(run["loss_first"]) and math.isfinite(run["loss_last"])
     assert run["loss_last"] < run["loss_first"], (key, run)

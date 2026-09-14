@@ -54,7 +54,7 @@ if [[ "$STAGE" == "s1" ]]; then
       --emb "$OUTROOT/models/$backbone/raw_embeddings.npz" \
       --text_emb "$OUTROOT/models/text_embeddings.npz" \
       --out_dir "$OUTROOT/private/s1/$backbone" --seeds 0 --epochs 50 \
-      --log_every 10 --device cuda
+      --log_every 10 --device cuda --include-within-label-sex --sex-column sex
   done
   python "$HERE/src/audit_s1.py" --config "$CONFIG"
   exit 0

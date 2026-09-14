@@ -25,9 +25,11 @@ from audio_baselines_v2 import auroc
 
 
 SEEDS = [0, 1, 2, 3, 4]
-AUDIO_ARMS = ("raw_audio", "correct", "within_label", "global")
+PAIRED_ARMS = ("correct", "within_label", "within_label_sex", "global")
+AUDIO_ARMS = ("raw_audio", *PAIRED_ARMS)
 FUSION_ARMS = ("metadata_only", "metadata_plus_raw", "metadata_plus_correct",
-               "metadata_plus_within", "metadata_plus_global")
+               "metadata_plus_within", "metadata_plus_within_label_sex",
+               "metadata_plus_global")
 ALL_ARMS = AUDIO_ARMS + FUSION_ARMS
 
 
@@ -73,7 +75,7 @@ def retrieval(representations: dict[str, np.ndarray], table: pd.DataFrame,
     if len(np.unique(text_id[query])) != len(query):
         raise RuntimeError("CODA validation profiles are no longer unique")
     rows, summary = {}, {}
-    for arm in ("correct", "within_label", "global"):
+    for arm in PAIRED_ARMS:
         rr, per_seed = [], []
         for seed_index in range(5):
             value, reciprocal = profile_mrr(
@@ -85,7 +87,9 @@ def retrieval(representations: dict[str, np.ndarray], table: pd.DataFrame,
                         "r_at_10": float(np.mean(rows[arm] >= 0.1))}
     rng = np.random.RandomState(20260903)
     comparisons = {}
-    for left, right, name in (("correct", "within_label", "C-W"),
+    for left, right, name in (("correct", "within_label_sex", "C-Wys"),
+                              ("within_label_sex", "within_label", "Wys-W"),
+                              ("correct", "within_label", "C-W"),
                               ("within_label", "global", "W-G")):
         delta = rows[left] - rows[right]; values = []
         for _ in range(boot):
@@ -129,6 +133,7 @@ def execute(config_file: str, backbone: str) -> Path:
         np.concatenate([metadata, reps["raw_audio"][0]], axis=1)[None], 5, axis=0)
     for audio_arm, fusion_arm in (("correct", "metadata_plus_correct"),
                                   ("within_label", "metadata_plus_within"),
+                                  ("within_label_sex", "metadata_plus_within_label_sex"),
                                   ("global", "metadata_plus_global")):
         reps[fusion_arm] = np.stack([
             np.concatenate([metadata, reps[audio_arm][seed]], axis=1) for seed in range(5)])
@@ -154,10 +159,15 @@ def execute(config_file: str, backbone: str) -> Path:
         probabilities[arm] = np.stack(arm_prob); logits[arm] = np.stack(arm_logits)
         fits[arm] = arm_fit
 
-    comparisons = (("correct", "within_label", "C-W"),
+    audio_comparisons = (("correct", "within_label_sex", "C-Wys"),
+                   ("within_label_sex", "within_label", "Wys-W"),
+                   ("correct", "within_label", "C-W"),
                    ("within_label", "global", "W-G"),
-                   ("correct", "raw_audio", "C-R"),
+                   ("correct", "raw_audio", "C-R"))
+    comparisons = (*audio_comparisons,
                    ("metadata_plus_raw", "metadata_only", "MR-M"),
+                   ("metadata_plus_correct", "metadata_plus_within_label_sex", "MC-MWys"),
+                   ("metadata_plus_within_label_sex", "metadata_plus_within", "MWys-MW"),
                    ("metadata_plus_correct", "metadata_plus_within", "MC-MW"),
                    ("metadata_plus_within", "metadata_plus_global", "MW-MG"),
                    ("metadata_plus_correct", "metadata_plus_raw", "MC-MR"))
@@ -204,7 +214,7 @@ def execute(config_file: str, backbone: str) -> Path:
         if np.unique(target_y[target_mask]).size < 2:
             probes[probe_name] = {"status": "not_estimable_in_target"}; continue
         probes[probe_name] = {"status": "ok", "matched_target": {}}
-        for left, right, name in comparisons[:3]:
+        for left, right, name in audio_comparisons:
             probes[probe_name]["matched_target"][name] = paired(
                 "matched_target", probe_logits[probe_name][left],
                 probe_logits[probe_name][right], target_y, table, target_mask,
@@ -226,7 +236,7 @@ def execute(config_file: str, backbone: str) -> Path:
                 values.append(auroc(yy, probe_logits[name][arm][seed, target_mask][indices]))
         return float(np.mean(values))
     observed = np.mean([macro(seed, np.arange(target_mask.sum()), "correct") -
-                        macro(seed, np.arange(target_mask.sum()), "within_label")
+                        macro(seed, np.arange(target_mask.sum()), "within_label_sex")
                         for seed in range(5)])
     rng, values = np.random.RandomState(20260907), []
     for _ in range(boot):
@@ -234,15 +244,15 @@ def execute(config_file: str, backbone: str) -> Path:
         indices = np.concatenate([groups[pair] for pair in sampled])
         seeds = rng.choice(5, 5, replace=True)
         values.append(float(np.mean([macro(seed, indices, "correct") -
-                                    macro(seed, indices, "within_label") for seed in seeds])))
-    probes["country_macro_ovr"] = {"status": "ok", "matched_target": {"C-W": {
+                                    macro(seed, indices, "within_label_sex") for seed in seeds])))
+    probes["country_macro_ovr"] = {"status": "ok", "matched_target": {"C-Wys": {
         "observed": float(observed),
         "ci": list(map(float, np.percentile(values, [2.5, 97.5]))),
         "n_classes": 7, "n_pairs": 100, "n_seeds": 5}}}
 
-    correspondence = profile["comparisons"]["C-W"]
-    transfer_auc = deltas["matched_target"]["C-W"]["delta_auroc"]
-    transfer_nll = deltas["matched_target"]["C-W"]["delta_neg_nll"]
+    correspondence = profile["comparisons"]["C-Wys"]
+    transfer_auc = deltas["matched_target"]["C-Wys"]["delta_auroc"]
+    transfer_nll = deltas["matched_target"]["C-Wys"]["delta_neg_nll"]
     established = correspondence["ci"][0] > 0
     positive = transfer_auc["ci"][0] > 0 and transfer_nll["ci"][0] > 0
     equivalent = (transfer_auc["ci"][0] >= -0.02 and transfer_auc["ci"][1] <= 0.02 and
@@ -252,7 +262,7 @@ def execute(config_file: str, backbone: str) -> Path:
               "correspondence_without_matched_transfer_equivalence_compatible" if equivalent else
               "correspondence_gain_but_matched_transfer_inconclusive")
     result = {
-        "format_version": "coda-formal-model-v1", "dataset": config["dataset"],
+        "format_version": "coda-formal-model-v2", "dataset": config["dataset"],
         "backbone": backbone, "standing": "secondary internal external-sensitivity audit",
         "n": {"all": len(table), "train": int(train.sum()), "validation": int(val.sum()),
               "source_test": int(populations["source_test"].sum()),
@@ -266,7 +276,8 @@ def execute(config_file: str, backbone: str) -> Path:
                                   "matched_transfer_positive_on_both_metrics": positive,
                                   "matched_equivalence_compatible_on_both_metrics": equivalent,
                                   "margins": {"delta_auroc": 0.02,
-                                              "delta_neg_nll": 0.01}},
+                                              "delta_neg_nll": 0.01},
+                                  "primary_contrast": "C-Wys"},
         "cohort_sha256": sha256_file(table_path),
         "privacy": "aggregate output only; no participant identifiers",
     }

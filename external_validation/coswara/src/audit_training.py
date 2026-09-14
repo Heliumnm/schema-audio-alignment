@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ARMS = ("correct", "within_label", "global")
+ARMS = ("correct", "within_label", "within_label_sex", "global")
 BACKBONES = ("ast", "opera_ct", "hear")
 SEEDS = (0, 1, 2, 3, 4)
 
@@ -29,6 +29,7 @@ def execute(config_file: str) -> Path:
     participants = table.participant_identifier.astype(str).to_numpy()
     train = np.where(table.splits.eq("train").to_numpy())[0]
     y = table.y.astype(int).to_numpy()[train]
+    sex = table.sex.fillna("[MISSING]").astype(str).to_numpy()[train]
     expected = {f"{arm}_seed{seed}" for arm in ARMS for seed in SEEDS}
     failures, output, pairing = [], {}, {}
     for backbone in BACKBONES:
@@ -65,7 +66,9 @@ def execute(config_file: str) -> Path:
                 if legal:
                     fixed = pair == np.arange(len(train))
                     legal = bool((np.all(fixed) if arm == "correct" else not np.any(fixed)) and
-                                 (arm != "within_label" or np.all(y[pair] == y)))
+                                 (arm not in ("within_label", "within_label_sex") or
+                                  np.all(y[pair] == y)) and
+                                 (arm != "within_label_sex" or np.all(sex[pair] == sex)))
                 if not legal: failures.append(f"{backbone}:{key}:illegal")
                 pair_hash = sha16(pair); pairing[backbone][key] = pair_hash
                 if pair_hash != run.get("pairing_hash") or sha16(raw) != run.get("repr_raw_hash"):

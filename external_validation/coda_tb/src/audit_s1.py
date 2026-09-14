@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 
-ARMS = ("correct", "within_label", "global")
+ARMS = ("correct", "within_label", "within_label_sex", "global")
 BACKBONES = ("ast", "opera_ct")
 
 

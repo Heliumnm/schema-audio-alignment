@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 
-ARMS = ("correct", "within_label", "global")
+ARMS = ("correct", "within_label", "within_label_sex", "global")
 SEEDS = (0, 1, 2, 3, 4)
 
 
@@ -41,6 +41,7 @@ def execute(config_file: str) -> Path:
     participants = table.participant_identifier.astype(str).to_numpy()
     train = np.where((table.splits == "train").to_numpy())[0]
     y = table.y.astype(int).to_numpy()[train]
+    sex = table.sex.fillna("[MISSING]").astype(str).to_numpy()[train]
     expected = {f"{arm}_seed{seed}" for arm in ARMS for seed in SEEDS}
     failures: list[str] = []
     directory = root / "models" / "hear" / "alignment"
@@ -109,8 +110,11 @@ def execute(config_file: str) -> Path:
                     failures.append(f"hear:{key}:correct_not_identity")
                 if arm != "correct" and np.any(fixed):
                     failures.append(f"hear:{key}:shuffle_fixed_point")
-                if arm == "within_label" and not np.all(y[pairing] == y):
+                if arm in ("within_label", "within_label_sex") and not np.all(
+                        y[pairing] == y):
                     failures.append(f"hear:{key}:within_crosses_label")
+                if arm == "within_label_sex" and not np.all(sex[pairing] == sex):
+                    failures.append(f"hear:{key}:within_sex_crosses_sex")
             raw_hash, norm_hash, pair_hash = sha16(raw), sha16(normalized), sha16(pairing)
             if raw_hash != run.get("repr_raw_hash") or norm_hash != run.get("repr_norm_hash"):
                 failures.append(f"hear:{key}:representation_hash")
@@ -160,4 +164,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

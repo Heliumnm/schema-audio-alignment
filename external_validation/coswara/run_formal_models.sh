@@ -44,7 +44,8 @@ case "$STAGE" in
       --texts "$OUTROOT/private/participant_manifest.csv" \
       --emb "$OUTROOT/models/$backbone/raw_embeddings.npz" \
       --text_emb "$OUTROOT/models/text_embeddings.npz" \
-      --out_dir "$destination" --seeds 0 --epochs 50 --log_every 10 --device cuda ;;
+      --out_dir "$destination" --seeds 0 --epochs 50 --log_every 10 --device cuda \
+      --include-within-label-sex --sex-column sex ;;
   train-ast)
     "$ALIGN_PYTHON" "$ENGINE/train_alignment.py" --config "$CONFIG" --backbone ast ;;
   train-opera_ct)

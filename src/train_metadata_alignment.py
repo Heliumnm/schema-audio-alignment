@@ -1,4 +1,4 @@
-"""Formal metadata-alignment training. Three arms x five seeds x 500 epochs.
+"""Formal metadata-alignment training with an optional locked W_{y,s} arm.
 
 Deliberately **not** a copy of S1's loop. S1 drew batches with `pos + BATCH > N` as the
 refill condition, which silently drops the tail of every epoch — harmless at 3,072 = 48x64,
@@ -19,18 +19,20 @@ Only the epoch-500 state is used. Intermediate checkpoints may be written; picki
 better-looking one is not permitted.
 
     python src/train_metadata_alignment.py --rehearsal      # 1 seed, 3 arms, 1 epoch
+    python src/train_metadata_alignment.py --include-within-label-sex --rehearsal
     python src/train_metadata_alignment.py --seeds 0 1 2 3 4 --epochs 500
 """
 import os, json, argparse, hashlib
+from collections import Counter
 import numpy as np
 import pandas as pd
 import torch
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from projector import (ContrastiveProjectionHead, contrastive_loss, make_optimizer,
-                       build_pairing, SOURCE_COMMIT)
+                       build_pairing, build_stratified_pairing, SOURCE_COMMIT)
 
-BATCH, ARMS = 64, ("correct", "within_label", "global")
+BATCH, BASE_ARMS = 64, ("correct", "within_label", "global")
 MODE = {"correct": "correct", "within_label": "within", "global": "global"}
 
 
@@ -141,6 +143,12 @@ def main():
     ap.add_argument("--log_every", type=int, default=50)
     ap.add_argument("--rehearsal", action="store_true")
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    ap.add_argument("--include-within-label-sex", action="store_true",
+                    help="add the locked W_{y,s} arm using disease label and recorded sex")
+    ap.add_argument("--sex-column", default="sex",
+                    help="canonical cohort column used by W_{y,s}; default: sex")
+    ap.add_argument("--within-label-sex-support", choices=("fail", "drop-singleton-strata"),
+                    default="fail", help="locked common-cohort policy for W_{y,s}")
     args = ap.parse_args()
     if args.rehearsal:
         args.seeds, args.epochs, args.log_every = [0], 1, 1
@@ -148,7 +156,37 @@ def main():
     os.makedirs(args.out_dir, exist_ok=True)
 
     C, T, A, tid, U, tr, hashes = load_all(args)
+    arms = (("correct", "within_label", "within_label_sex", "global")
+            if args.include_within_label_sex else BASE_ARMS)
+    sex = None
+    support = {"policy": None, "n_before": int(len(tr)), "n_after": int(len(tr)),
+               "dropped": 0, "dropped_strata": {}}
+    if args.include_within_label_sex:
+        if args.sex_column not in C.columns:
+            raise ValueError(f"W_y,s requires cohort column {args.sex_column!r}")
+        labels_all = C.y.to_numpy()[tr]
+        sex_all = C[args.sex_column].fillna("[MISSING]").astype(str).to_numpy()[tr]
+        keys = list(zip(labels_all.astype(str), sex_all.astype(str)))
+        counts = dict(sorted(Counter(keys).items()))
+        singleton_keys = {key: count for key, count in counts.items() if count < 2}
+        support.update({
+            "policy": args.within_label_sex_support,
+            "stratum_counts_before": {"|".join(key): count for key, count in counts.items()},
+            "dropped_strata": {"|".join(key): count for key, count in singleton_keys.items()},
+        })
+        if singleton_keys:
+            if args.within_label_sex_support == "fail":
+                raise ValueError(f"singleton (label, sex) strata: {singleton_keys}")
+            keep = np.asarray([key not in singleton_keys for key in keys], dtype=bool)
+            tr = tr[keep]
+        support["n_after"] = int(len(tr))
+        support["dropped"] = int(support["n_before"] - support["n_after"])
+        sex = C[args.sex_column].fillna("[MISSING]").astype(str).to_numpy()[tr]
+        # Build once before any optimisation so a singleton stratum is a data/protocol
+        # failure, not a partially completed training run.
     y = C.y.to_numpy()[tr]
+    if args.include_within_label_sex:
+        build_stratified_pairing(y, sex, seed=args.seeds[0])
     X_all = U[tid[tr]]
     n = len(tr)
     print(f"{n} Standard-train participants -> {n // BATCH} batches of {BATCH} "
@@ -157,23 +195,30 @@ def main():
 
     # every seed's pairings must be legal bijections, checked before any training
     for s_ in args.seeds:
-        for arm in ARMS:
-            j = build_pairing(y, MODE[arm], s_)
+        for arm in arms:
+            j = (build_stratified_pairing(y, sex, seed=s_) if arm == "within_label_sex"
+                 else build_pairing(y, MODE[arm], s_))
             assert np.array_equal(np.sort(j), np.arange(n)), f"{arm} s{s_} not a bijection"
-            if arm == "within_label":
+            if arm in ("within_label", "within_label_sex"):
                 assert np.all(y[j] == y), f"{arm} s{s_} crosses a label"
+            if arm == "within_label_sex":
+                assert np.all(sex[j] == sex), f"{arm} s{s_} crosses recorded sex"
             if arm != "correct":
                 assert not np.any(j == np.arange(n)), f"{arm} s{s_} has a fixed point"
-    print(f"pairing check: {len(args.seeds)} seeds x {len(ARMS)} arms are legal bijections")
+    print(f"pairing check: {len(args.seeds)} seeds x {len(arms)} arms are legal bijections")
 
     audio_input_dim = int(A.shape[1])
     manifest = {"source_commit": SOURCE_COMMIT, "n_train": int(n), "batch": BATCH,
                 "epochs": args.epochs, "seeds": args.seeds, "input_hashes": hashes,
-                "audio_input_dim": audio_input_dim, "runs": {}}
+                "audio_input_dim": audio_input_dim, "arms": list(arms),
+                "within_label_sex_column": args.sex_column if args.include_within_label_sex else None,
+                "within_label_sex_support": support,
+                "runs": {}}
     for s_ in args.seeds:
         init_hash = None
-        for arm in ARMS:
-            j = build_pairing(y, MODE[arm], s_)
+        for arm in arms:
+            j = (build_stratified_pairing(y, sex, seed=s_) if arm == "within_label_sex"
+                 else build_pairing(y, MODE[arm], s_))
             torch.manual_seed(s_)
             ih = sha(np.concatenate([p.detach().numpy().ravel()
                                      for p in ContrastiveProjectionHead(
