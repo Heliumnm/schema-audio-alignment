@@ -1,6 +1,6 @@
 # UKCOVID E1--E3 定向诊断：最终结果
 
-日期：2026-09-12
+日期：2026-09-13
 性质：**主结果读取后冻结并执行的定向诊断；HeAR 部分是额外的事后第三骨干扩展。**
 
 冻结协议：
@@ -11,13 +11,15 @@
 ## 一句话结论
 
 加入“同疾病标签且同性别打乱”的新对照 (W_{y,s}) 后，三个 backbone 原有的
-Correct−Within 性别效应都消失；因此，最强的 sex probe 结果主要来自 correct pairing 保留了
-性别一致性。与此同时，profile retrieval 仍留有小的 residual exact-pairing signal，但其大小和
-明确性依赖 backbone。无论使用 source-only readout，还是用 matched-long 标签训练的
-target-assisted readout，都没有得到稳定且优于 raw audio 的 matched COVID 收益。
+Correct−Within 性别探针对比均被大幅削弱，完整区间覆盖 0；同时，profile retrieval 仍留有
+residual exact-pairing signal，AST 和 HeAR 的区间仍排除 0。因此只能说性别探针对比对配对规则
+是否保留记录性别一致性高度敏感，不能把它扩大成“性别解释了全部配对收益”。无论使用
+source-only readout，还是用 matched-long 标签训练的 target-assisted readout，都没有建立跨
+backbone 一致的 matched COVID 收益，但个别区间仍允许有意义的正向效应。
 
-因此，新增诊断**收窄并加强**了原结论：alignment 确实学习了配对结构，但最稳定的可解释通道是
-性别一致性；控制该通道后仍可能存在其他 profile correspondence，却没有形成可重复的疾病迁移。
+因此，新增诊断**收窄并加强**了原结论：alignment 确实学习了配对结构；原来最大的性别探针
+差异对记录性别一致性敏感；控制这一条件后仍存在部分 profile correspondence，但没有形成可重复
+的疾病迁移。区间跨零不是等效性证明，也不排除单个设置存在正向收益。
 
 ## 1. E1：只改变 retrieval 候选库
 
@@ -46,7 +48,12 @@ a_i \leftrightarrow m_j,\qquad y_i=y_j,\quad s_i=s_j,\quad i\ne j,
 配对。每个 backbone 使用 seeds 0--4、500 epochs，并逐 seed 复用原 Within-label 的初始化和
 batch-order hash。
 
-### 2.1 性别效应被新对照解释
+该规则保证换到不同参与者，但不保证换到不同语义 profile。逐 seed 核查显示，原 W 中重新配对后
+仍命中相同 schema text 的比例为 3.03%--3.33%，(W_{y,s}) 为 6.35%--6.61%。更细分层提高了
+重复 profile 碰撞率，因此图示和文字均应写“different participant”，不能写“no exact profile”。
+聚合审计保存在 `results/pairing_followup/e2_pairing_collision_audit.json`。
+
+### 2.1 性别探针对比被大幅削弱
 
 | backbone | (C-W_{y,s}) sex ΔAUROC | (W_{y,s}-W) sex ΔAUROC |
 |---|---:|---:|
@@ -54,9 +61,10 @@ batch-order hash。
 | OPERA-CT | +0.0067 [−0.0054, 0.0192] | +0.1058 [0.0896, 0.1222] |
 | HeAR（post-hoc） | +0.0064 [−0.0011, 0.0136] | +0.0797 [0.0667, 0.0928] |
 
-三个 (C-W_{y,s}) 区间都覆盖 0，而三个 (W_{y,s}-W) 都明确为正。这个结果直接支持：原有
-Correct−Within sex probe 差异主要来自 correct pairing 保留记录性别一致性，而不是某个难以解释
-的“患者身份”变量。
+三个 (C-W_{y,s}) 区间都覆盖 0，而三个 (W_{y,s}-W) 都明确为正。这直接支持：原有
+Correct−Within sex probe 差异对 correct pairing 是否保留记录性别一致性高度敏感。它不是等效性
+分析，也不能证明疾病分类器因果使用了性别；按标签与性别分层还会一并保留与性别相关的其他
+metadata 结构。
 
 ### 2.2 控制性别后仍有小的 profile correspondence
 
@@ -75,15 +83,16 @@ HeAR 的 (C-W_{y,s}) 对 cough-any 为 +0.0179 [0.0042, 0.0327]，对 no-symptom
 +0.0181 [0.0005, 0.0360]；AST／OPERA 的相应区间覆盖 0。因此 HeAR 仍保留一部分逐 profile
 症状信息，但这不是跨 backbone 的统一效应。
 
-source-only matched COVID 的 (C-W_{y,s}) 为：
+source-only matched COVID 的完整结果为：
 
-| backbone | disease ΔAUROC | Δ(−NLL) |
-|---|---:|---:|
-| AST-6L | −0.0003 [−0.0228, 0.0241] | 区间覆盖 0 |
-| OPERA-CT | +0.0009 [−0.0169, 0.0196] | 区间覆盖 0 |
-| HeAR（post-hoc） | +0.0130 [−0.0023, 0.0287] | −0.0034 [−0.0226, 0.0153] |
+| backbone | (W_{y,s}) absolute AUROC | (C-W_{y,s}) ΔAUROC | (W_{y,s}-W) ΔAUROC |
+|---|---:|---:|---:|
+| AST-6L | 0.529 [0.504, 0.554] | −0.0003 [−0.0228, 0.0241] | +0.0065 [−0.0197, 0.0313] |
+| OPERA-CT | 0.554 [0.529, 0.577] | +0.0009 [−0.0169, 0.0196] | −0.0029 [−0.0219, 0.0164] |
+| HeAR（post-hoc） | 0.532 [0.507, 0.557] | +0.0130 [−0.0023, 0.0287] | −0.0102 [−0.0256, 0.0053] |
 
-三个 AUROC 区间均覆盖 0；HeAR 的五个 seed 点估计同向，但预先冻结的配对区间仍未建立正向收益。
+六个配对 AUROC 区间均覆盖 0；HeAR 的 (C-W_{y,s}) 五个 seed 点估计同向，但预先冻结的配对
+区间仍未建立正向收益。对应 Δ(−NLL) 也都覆盖 0。
 
 ## 3. E3：target-assisted readout
 
@@ -98,28 +107,39 @@ disjoint matched。它使用目标分布标签，因此只回答“source readou
 | HeAR（post-hoc） | +0.0047 [−0.0278, 0.0408] | +0.0114 [−0.0117, 0.0333] | +0.0071 [−0.0241, 0.0376] |
 
 所有 Correct−Within、Correct−(W_{y,s}) 和对应 Δ(−NLL) 区间都覆盖 0。Correct−Raw 也没有
-正向证据；AST 反而明确低于 raw。故 source-domain readout mismatch 不能充分解释原来的 transfer
-结果。该诊断仍不能证明表示中完全没有疾病信息，只能说冻结的 target-assisted 线性读出没有找到
-稳定的 alignment 优势。
+正向证据；AST 反而明确低于 raw。目标辅助读出没有建立跨 backbone 一致的 alignment 优势；但
+OPERA 的 +0.0287 [−0.0017, 0.0626] 仍允许正向效应。source-only 与 target-assisted 估计之间
+没有直接做差，因此不能声称已经排除所有 readout 限制，也不能证明表示中完全没有疾病信息。
 
 ## 4. 最终科学判读
 
 1. **Alignment 发生了。** 三个 backbone 的原始 Correct−Within retrieval 均明确为正。
-2. **原来最强的 sex 效应有具体来源。** 它来自 pair 中记录性别的一致性；(W_{y,s}) 将其吸收。
+2. **原来最强的 sex probe 对配对规则敏感。** 保留记录性别一致性会大幅削弱 (C-W_{y,s})，
+   但这不是因果分解或等效性证明。
 3. **性别不是全部 pairing signal。** HeAR 和边界上的 AST 仍有 residual retrieval，HeAR 还保留
    部分症状 correspondence。
 4. **Correspondence 没有变成稳定疾病迁移。** source-only 与 target-assisted 两套 readout 都未
-   建立跨 backbone 的 matched COVID 优势，也没有稳定胜过 raw audio。
+   建立跨 backbone 的 matched COVID 优势，也没有稳定胜过 raw audio；不确定性仍允许单个设置
+   存在有意义的正效应。
 5. **不能声称因果分解或真实零效应。** (C-W_{y,s}) 不是严格因果估计，区间覆盖零也不是等效性
    证明。
 
 最简洁的论文结论是：
 
-> Correct pairing 的确让音频表示更贴近对应的患者资料；其中最可重复的性别通道可以被一个
-> 性别保持的配对对照直接解释。控制这一通道后仍有少量 profile correspondence，但没有可靠证据
-> 表明这些信息改善了协变量平衡人群中的 COVID 识别。
+> Correct pairing 的确让音频表示更贴近对应的患者资料；原来最大的性别探针对比在保留记录
+> 性别一致性的条件化对照下被大幅削弱，但仍有部分 profile correspondence。source-only 与
+> target-assisted 读出都没有建立跨 backbone 一致的协变量平衡 COVID 收益。
 
-## 5. 可复核归档
+## 5. 置信区间的实际重采样单位
+
+- macro-profile retrieval：以唯一 metadata profile 为单位，并与 seed 轴联合重采样；同一
+  profile 的重复 participant query 先在 profile 内平均。
+- probe、source-only disease 和 target-assisted disease：以 participant 为单位，并与 seed 轴
+  联合重采样；同一 participant、同一 seed 上的 arm 预测始终配对。
+- UKCOVID 的实现没有把推定的病例--对照 pair ID 当作 bootstrap block；正文已明确写为
+  participant resampling，而不是 matched-pair resampling。
+
+## 6. 可复核归档
 
 公开仓库只保存不含 participant identifier 的聚合 JSON、配置与 manifest：
 
@@ -128,6 +148,7 @@ disjoint matched。它使用目标分布标签，因此只回答“source readou
 - `results/pairing_followup/e2_retrieval_{ast,opera_ct,hear}/`
 - `results/pairing_followup/e2_eval_{ast,opera_ct,hear}/metrics.json`
 - `results/pairing_followup/e3_target_{ast,opera_ct,hear}/metrics.json`
+- `results/pairing_followup/e2_pairing_collision_audit.json`
 
 HeAR 最终聚合文件的服务器／本地 SHA-256 逐项一致：
 

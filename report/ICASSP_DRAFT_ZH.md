@@ -4,7 +4,7 @@
 
 > **Successful Clinical Audio--Metadata Alignment Does Not Imply Disease Transfer: A Pairing-Controlled Audit**
 
-版本：中文论文母稿，2026-09-12
+版本：中文论文母稿，2026-09-15
 
 用途：用于继续压缩成 ICASSP 四页正文和英文稿。
 
@@ -14,11 +14,11 @@
 
 ## 摘要
 
-临床音频模型越来越多地利用年龄、性别、症状和既往病史等患者信息，并通过对比学习将音频表示与对应的临床文本对齐。这类方法通常把对齐成功视为疾病表示得到改善的证据。然而，患者信息同时混合了疾病关联、人口学背景、症状以及人群构成；对比损失只要求模型找对配对，并不知道哪些信息能够跨人群迁移。本文提出 **Pairing-Controlled Transfer Audit**，用正确配对（Correct）、同标签内换人（Within-label）和全局换人（Global）分离逐患者 profile correspondence 与标签／人群共现，再结合 profile retrieval、信息通道 probe、原始音频参照和协变量平衡后的疾病评测，检验 correspondence 是否真正转化为 transferable disease evidence。
+临床音频模型越来越多地利用年龄、性别、症状和既往病史等患者信息，并通过对比学习将音频表示与对应的临床文本对齐。这类方法通常把对齐成功视为疾病表示得到改善的证据。然而，患者信息同时混合了疾病关联、人口学背景、症状以及人群构成；对比损失只要求模型找对配对，并不知道哪些信息能够跨人群迁移。本文提出 **Pairing-Controlled Transfer Audit**，用正确配对（Correct）、同标签内换人（Within-label）、同标签且同记录性别内换人（`W_{y,s}`）和全局换人（Global）分离逐患者 profile correspondence、性别一致性与标签／人群共现，再结合 profile retrieval、信息通道 probe、原始音频参照和协变量平衡后的疾病评测，检验 correspondence 是否真正转化为 transferable disease evidence。
 
-在 UKCOVID 中，招募来源在训练集上几乎可以直接预测 COVID（AUROC 0.9966），而在 matched population 中降为 0.5000。AST-6L 和 OPERA-CT 的 Correct 配对均显著提高 profile retrieval，表明配对干预产生了可测量的患者资料 correspondence；Correct 相对 Within-label 也明显提高性别可解码性（matched probe ΔAUROC 分别为 +0.1912 和 +0.1125），而 COVID 增量很小且不确定（+0.0062 和 −0.0020）。这种 correspondence 没有形成跨音频 backbone、跨线性／非线性 readout、且优于 raw audio 的稳定疾病迁移收益。目标域重新校准可以消除主要的 NLL 差距，却不会创造 AUROC 收益，说明额外误差主要来自目标人群不支持的置信度，而非已经证实的排序破坏。CODA TB、Cambridge COVID-19 Sounds 和 Coswara 的二次／事后敏感性分析重复了相同形状：患者 profile correspondence 与性别可解码性经常增强，而协变量平衡后的 COVID/TB 收益方向不一致且置信区间跨零。结果表明，临床音频—患者信息研究必须分别验证“是否学会配对”“学到了什么”以及“能否跨人群迁移”，不能用 alignment loss、检索成功或源域 AUROC 代替疾病迁移证据。
+在 UKCOVID 中，招募来源在训练集上几乎可以直接预测 COVID（AUROC 0.9966），而在 matched population 中降为 0.5000。AST-6L 和 OPERA-CT 的 Correct 配对均显著提高 profile retrieval；Correct 相对 Within-label 也明显提高性别可解码性（matched probe ΔAUROC +0.1912 和 +0.1125），而 matched COVID 增量仅为 +0.0062 和 −0.0020。进一步的 `W_{y,s}` 对照在同标签打乱时同时保留记录性别，使 AST、OPERA 和事后 HeAR 的 Correct−`W_{y,s}` 性别探针对比均大幅减小且区间覆盖 0，但 residual profile retrieval 仍然存在。这个结果说明性别 probe 对配对规则是否保留记录性别一致性高度敏感，却不能把全部检索收益归因于性别。
 
-进一步的 `W_{y,s}` 对照在同标签打乱时同时保留性别。加入它后，AST、OPERA 和事后 HeAR 的 Correct−`W_{y,s}` 性别差异均降到区间覆盖 0，而 `W_{y,s}`−Within 均明确为正，说明原来最强的 sex effect 主要来自 correct pair 保留性别一致性。控制性别后仍有很小且依赖 backbone 的 profile retrieval，但 source-only 和 target-assisted 两套 readout 都没有建立 matched COVID 增益。
+source-only 与 target-assisted readout 均未建立跨 backbone 一致、且优于 raw audio 的疾病迁移收益；不过置信区间仍允许个别设置存在有意义的正向效应。目标域重新校准消除了主要 NLL 差距而没有创造 AUROC 收益，这与 cohort shift 后的概率尺度失配一致，但不能单独识别机制。CODA TB、Cambridge COVID-19 Sounds 和 Coswara 的二次／事后敏感性分析扩展了 correspondence 与 transfer 分离的描述性形状，但不建立普适零效应。结果表明，临床音频—患者信息研究必须分别验证“是否学会配对”“学到了什么”以及“能否跨人群迁移”，不能用 alignment loss、检索成功或源域 AUROC 代替疾病迁移证据。
 
 **关键词：** clinical audio；audio--metadata alignment；contrastive learning；confounding；domain shift
 
@@ -62,7 +62,7 @@
 本文的贡献有三点：
 
 1. **概念贡献。** 将 correspondence success、label/population association 和 transferable disease evidence 明确区分，指出三者不能由同一个源域 AUROC 替代。
-2. **评价方法贡献。** 提出 Pairing-Controlled Transfer Audit，通过 Correct、Within-label 和 Global 三个只改变配对关系的训练臂，结合 profile retrieval、信息通道 probe、raw reference、matched transfer 和 calibration transport 形成闭环审计。
+2. **评价方法贡献。** 提出 Pairing-Controlled Transfer Audit，通过 Correct、Within-label、Within-label-and-sex（post-hoc control）和 Global 四个只改变配对关系的训练臂，结合 profile retrieval、信息通道 probe、raw reference、matched transfer 和 calibration transport 形成闭环审计。
 3. **实证贡献。** 在 UKCOVID 的两个主要音频 backbone 以及 CODA TB、Cambridge、Coswara 的多 backbone 敏感性分析中，正确配对反复提高患者 profile correspondence，尤其提高性别可解码性；但没有形成稳定、跨设置且优于 raw audio 的协变量平衡疾病收益。
 
 我们的结论不是 metadata alignment 普遍无效或有害，而是：**配对学习是否成功与疾病证据是否迁移，必须被分别测量。**
@@ -228,6 +228,18 @@ i ≠ k
 
 这里的 \(\Delta_{\mathrm{pair}}=C-W\) 不是“纯身份效应”或因果 estimand；它是控制同标签群体统计后，精确配对额外购买到的 profile correspondence。\(\Delta_{\mathrm{label}}=W-G\) 则描述标签条件的人群关联。
 
+事后新增的性别保持对照 `W_{y,s}` 定义为：
+
+\[
+a_i\leftrightarrow m_j,\qquad y_i=y_j,\quad s_i=s_j,\quad i\ne j,
+\]
+
+其中 \(s_i\) 是记录性别。它使用与 C／W／G 相同的 20,714 名训练参与者；禁止自配对、
+singleton stratum fallback 和跨 stratum fallback，阳性且性别缺失的 5 人层仍可合法置换。
+该规则保证换到不同参与者，却不保证文本 schema 不同。逐 seed 核查显示，W 中 exact-schema
+collision 为 3.03%--3.33%，`W_{y,s}` 中为 6.35%--6.61%。因此它是“同标签同性别、换人”
+对照，而不是“不同 profile”对照。
+
 ### 4.3 Audio encoders and projector
 
 UKCOVID 的主要审计使用两个预先冻结、预训练方式互补的音频 backbone。AST-6L 保留 AudioSet-finetuned AST 的前六个 Transformer block。这个深度是在本次 UKCOVID 审计之前，根据独立的呼吸音比较固定的：它在 ICBHI wheeze 和 crackle 检测上均优于完整 12 层 AST，参数量约减半；在 KAUH 四个患者级任务中也有三个任务更优。因此，AST-6L 不是看过 UKCOVID transfer 结果后挑选的。
@@ -274,7 +286,7 @@ z_i^t=\frac{t_i}{\|t_i\|}.
 
 ### 4.5 Training protocol
 
-三个 pairing arm 统一使用：
+四个 pairing arm 统一使用：
 
 - 5 个随机种子：0--4；
 - batch size 64，`drop_last=False`；
@@ -284,7 +296,7 @@ z_i^t=\frac{t_i}{\|t_i\|}.
 - 同一 seed 内共享初始化、audio batch order 和 dropout stream；
 - shuffled pairing 每 seed 生成一次，并在 500 epochs 内固定。
 
-音频和文本编码器始终冻结，只更新 projector。正式训练前的 smoke test 只检查配对、梯度、冻结状态、数值有限性、无坍缩和可复现性，不根据三个 arm 的相对表现决定是否继续。
+音频和文本编码器始终冻结，只更新 projector。正式训练前的 smoke test 只检查配对、梯度、冻结状态、数值有限性、无坍缩和可复现性，不根据四个 arm 的相对表现决定是否继续。
 
 ### 4.6 Audit endpoints
 
@@ -313,7 +325,10 @@ Probe 只说明某种信息可以从表示中读出，不证明疾病分类器�
 - matched target：平衡预先测量的主要协变量；
 - UKCOVID matched-long：participant-disjoint sensitivity population。
 
-Matched data 不用于选择 projector、training epoch、classifier architecture 或超参数。
+对主要 source-only endpoint，任何 matched split 都不用于选择 projector、training epoch、
+classifier architecture、超参数或 calibration。事后的 target-assisted diagnostic 则明确使用
+matched-long 训练、选择并校准固定 readout，再原样应用到 participant-disjoint matched；它与
+主要 source-only 结果分开报告，不能用于反向选择 projector。
 
 主报告指标包括 AUROC、negative log-likelihood（NLL）和 Brier score。所有 arm 保存逐 participant、逐 seed 预测，以便做 paired comparison。
 
@@ -343,7 +358,12 @@ Matched data 不用于选择 projector、training epoch、classifier architectur
 
 ### 4.7 Statistical analysis
 
-所有关键比较均在相同 participant 和相同 seed 上配对。置信区间使用 participant × seed 分层 bootstrap；外部 matched targets 按冻结 matched pair／participant 单位重采样。我们报告观测配对差和 95% CI，不把“CI 包含零”解释成已证明零效应，也不在结果后改变等价区间或成功门槛。
+所有关键比较均保留相同 arm、participant 和 seed 上的配对。Macro-profile retrieval 先在每个
+唯一 profile 内平均重复 participant query，再对 profile × seed 联合重采样；probe、source-only
+disease 与 target-assisted disease 对 participant × seed 联合重采样。UKCOVID 的实现以
+participant 为重采样单位，不假定存在可用的 matched-pair block ID；外部分析按各自冻结协议中
+实际保存的 matched pair／participant 单位报告。我们报告观测配对差和 95% CI，不把“CI 包含零”
+解释成已证明零效应，也不在结果后改变等价区间或成功门槛。
 
 ---
 
@@ -373,17 +393,17 @@ Metadata-only GBM 在 Standard test 的 AUROC 为 0.910，在 matched test 为 0
 | UKCOVID | AST-6L | **+0.0032** | [0.0016, 0.0049] | correspondence established |
 | UKCOVID | OPERA-CT | **+0.0032** | [0.0015, 0.0050] | correspondence established |
 | UKCOVID | HeAR（post-hoc） | **+0.0071** | [0.0048, 0.0097] | established; post-hoc |
-| CODA TB | AST-6L | **+0.0667** | [0.0349, 0.1021] | established |
-| CODA TB | OPERA-CT | **+0.0302** | [0.0064, 0.0555] | established |
-| CODA TB | HeAR | **+0.0646** | [0.0320, 0.1014] | established |
-| Cambridge | AST-6L | **+0.0433** | [0.0151, 0.0799] | established |
-| Cambridge | OPERA-CT | +0.0298 | [−0.0011, 0.0638] | directionally positive |
-| Cambridge | HeAR | **+0.0457** | [0.0203, 0.0763] | established |
-| Coswara | AST-6L | **+0.0183** | [0.0028, 0.0365] | established |
-| Coswara | OPERA-CT | **+0.0243** | [0.0050, 0.0452] | established |
-| Coswara | HeAR | **+0.0406** | [0.0226, 0.0619] | established |
+| CODA TB | AST-6L | **+0.0582** | [0.0288, 0.0922] | established |
+| CODA TB | OPERA-CT | **+0.0520** | [0.0222, 0.0840] | established |
+| CODA TB | HeAR | **+0.0400** | [0.0129, 0.0687] | established |
+| Cambridge | AST-6L | **+0.0474** | [0.0133, 0.0844] | established |
+| Cambridge | OPERA-CT | **+0.0380** | [0.0132, 0.0676] | established |
+| Cambridge | HeAR | **+0.0391** | [0.0102, 0.0717] | established |
+| Coswara | AST-6L | +0.0120 | [−0.0044, 0.0280] | directionally positive |
+| Coswara | OPERA-CT | **+0.0196** | [0.0029, 0.0387] | established |
+| Coswara | HeAR | **+0.0272** | [0.0102, 0.0451] | established |
 
-UKCOVID 的绝对 MRR 较低，是因为 validation 中有 1,871 个候选 profile 且大量 profile 重复；配对差异仍在两个 backbone、五个 seeds 中保持正向。外部数据中，除 Cambridge OPERA 的区间略跨零外，其余均清楚表明 Correct 比 Within 更容易恢复匹配的患者 profile。
+UKCOVID 的绝对 MRR 较低，是因为 validation 中有 1,871 个候选 profile 且大量 profile 重复；配对差异仍在两个 backbone、五个 seeds 中保持正向。12 个设置的点估计全部为正，11 个区间排除 0；唯一跨 0 的是 Coswara AST。
 
 因此，后续疾病 transfer 不显著不能归因于“projector 什么也没有学到”。
 
@@ -394,47 +414,65 @@ Within−Global 降为 +0.0126 且区间跨零，而 cough 仍为 +0.0803。这�
 distribution 中 label-conditioned metadata association 确实可被学习，但它不等同于可迁移的
 疾病声音。
 
-### 5.3 The most reproducible retained channel is participant sex
+### 5.3 最大的 sex-probe 对比在性别保持控制下显著衰减
 
 matched population 上的 probe 揭示了 Correct pairing 相对 Within-label 主要保留什么。
 
-| Dataset | Backbone | Sex Δpair AUROC | Disease Δpair AUROC |
+| Dataset | Backbone | Sex `C-W` AUROC | Disease `C-W_{y,s}` AUROC |
 |---|---|---:|---:|
-| UKCOVID | AST-6L | **+0.1912** [0.1669, 0.2151] | +0.0062 [−0.0144, 0.0279] |
-| UKCOVID | OPERA-CT | **+0.1125** [0.0943, 0.1311] | −0.0020 [−0.0191, 0.0168] |
-| UKCOVID | HeAR（post-hoc） | **+0.0862** [0.0734, 0.0995] | +0.0029 [−0.0115, 0.0165] |
-| CODA TB | AST-6L | **+0.1058** [0.0582, 0.1536] | +0.0341 [−0.0221, 0.0916] |
-| CODA TB | OPERA-CT | **+0.0446** [0.0058, 0.0852] | −0.0256 [−0.0872, 0.0346] |
-| CODA TB | HeAR | **+0.0364** [0.0149, 0.0603] | −0.0127 [−0.0916, 0.0631] |
-| Cambridge | AST-6L | **+0.1318** [0.0745, 0.1922] | −0.0448 [−0.1181, 0.0300] |
-| Cambridge | OPERA-CT | **+0.1233** [0.0716, 0.1740] | +0.0077 [−0.0869, 0.1132] |
-| Cambridge | HeAR | **+0.1282** [0.0893, 0.1703] | −0.0512 [−0.1186, 0.0161] |
-| Coswara | AST-6L | **+0.1324** [0.0511, 0.2246] | +0.0028 [−0.0450, 0.0464] |
-| Coswara | OPERA-CT | **+0.1075** [0.0469, 0.1699] | −0.0115 [−0.0750, 0.0444] |
-| Coswara | HeAR | **+0.0570** [0.0189, 0.0990] | +0.0037 [−0.0646, 0.0724] |
+| UKCOVID | AST-6L | **+0.1912** [0.1669, 0.2151] | −0.0003 [−0.0228, 0.0241] |
+| UKCOVID | OPERA-CT | **+0.1125** [0.0943, 0.1311] | +0.0009 [−0.0169, 0.0196] |
+| UKCOVID | HeAR（post-hoc） | **+0.0862** [0.0734, 0.0995] | +0.0130 [−0.0023, 0.0287] |
+| CODA TB | AST-6L | **+0.1287** [0.0843, 0.1750] | +0.0476 [−0.0127, 0.1151] |
+| CODA TB | OPERA-CT | **+0.0449** [0.0090, 0.0814] | −0.0077 [−0.0600, 0.0423] |
+| CODA TB | HeAR | **+0.0426** [0.0197, 0.0689] | −0.0102 [−0.0707, 0.0481] |
+| Cambridge | AST-6L | **+0.1445** [0.0921, 0.1968] | −0.0037 [−0.0856, 0.0778] |
+| Cambridge | OPERA-CT | **+0.1386** [0.0877, 0.1954] | +0.0054 [−0.0740, 0.0826] |
+| Cambridge | HeAR | **+0.1054** [0.0594, 0.1544] | −0.0634 [−0.1552, 0.0240] |
+| Coswara | AST-6L | **+0.1118** [0.0335, 0.2080] | +0.0132 [−0.0389, 0.0611] |
+| Coswara | OPERA-CT | **+0.1072** [0.0405, 0.1844] | −0.0152 [−0.0727, 0.0326] |
+| Coswara | HeAR | **+0.0469** [0.0107, 0.0943] | −0.0076 [−0.0579, 0.0507] |
 
-性别是唯一在四个数据设置和绝大多数 backbone 上稳定为正且区间排除零的通道。年龄在 UKCOVID AST 和 CODA AST／OPERA 上明确，在其他设置中依赖 backbone 或统计功效。招募来源、症状和录音属性的 Δpair 增量也不具同样稳定性。
+在原始 `C-W` 对比中，性别是唯一在四个数据设置和绝大多数 backbone 上稳定为正且区间排除零的通道。年龄在 UKCOVID AST 和 CODA AST／OPERA 上明确，在其他设置中依赖 backbone 或统计功效。招募来源、症状和录音属性的 Δpair 增量也不具同样稳定性。这个跨数据集描述不能替代后面的 `W_{y,s}` 控制；后者表明 UKCOVID 中最大的 sex-probe 对比会在保留记录性别一致性后显著衰减。
 
 这支持“Correct pairing 选择性保留 participant-associated profile information”，但不能写成“模型识别了患者身份”。同时，raw audio 的人口学信息绝对可解码性通常更高；例如 UKCOVID raw AST 在 matched 上解码性别约为 0.871、年龄约为 0.742。因此 alignment 并非凭空创造这些特征，而是相对 Within projector 更强地保存它们。
 
 #### 性别保持对照的进一步定位
 
-新增 `W_{y,s}` 在同疾病标签内、同性别内换人。三个 backbone 的 sex `C-W_{y,s}` 分别为 AST −0.0004 [−0.0153, 0.0147]、OPERA +0.0067 [−0.0054, 0.0192]、HeAR +0.0064 [−0.0011, 0.0136]，全部跨零；`W_{y,s}-W` 则分别为 +0.1916、+0.1058、+0.0797，全部排除零。由此可以把模糊的“患者信息”具体化为：原 Correct−Within 中最强的 probe 差异主要是配对保持了记录性别一致性。
+新增 `W_{y,s}` 在同疾病标签内、同性别内换人。三个 backbone 的 sex `C-W_{y,s}` 分别为 AST −0.0004 [−0.0153, 0.0147]、OPERA +0.0067 [−0.0054, 0.0192]、HeAR +0.0064 [−0.0011, 0.0136]，全部跨零；`W_{y,s}-W` 则分别为 +0.1916 [0.1683, 0.2142]、+0.1058 [0.0896, 0.1222]、+0.0797 [0.0667, 0.0928]，全部排除零。这说明原 Correct−Within 中最强的 sex probe 对配对规则是否保留记录性别一致性高度敏感；它不是等效性检验、因果分解，也不证明疾病分类器使用了性别。
 
 控制性别后仍有小的 residual retrieval：AST +0.00164 [0.00001, 0.00335]、OPERA +0.00099 [−0.00096, 0.00300]、HeAR +0.00394 [0.00175, 0.00637]。所以性别不是所有 correspondence，但剩余效应很小且不具三个 backbone 的一致明确性。
 
+条件化候选库给出互补证据。把原 C−W retrieval 限制为同性别候选后，AST／OPERA／HeAR
+分别为 +0.00140 [−0.00065, 0.00350]、+0.00060 [−0.00143, 0.00256]、+0.00356
+[0.00096, 0.00638]；限制为同标签且同性别候选后分别为 +0.00245 [−0.00001, 0.00499]、
++0.00094 [−0.00149, 0.00329]、+0.00451 [0.00115, 0.00813]。候选控制会衰减结果，
+但不会在所有 backbone 上消除 correspondence；不同候选库的 MRR 不能直接相减作因果分解。
+
 ### 5.4 Correspondence does not yield robust matched disease transfer
 
-上表最后一列给出了每个设置的 matched disease Δpair。其共同形状是：
+上表最后一列给出了每个设置锁定的 matched disease `C-W_{y,s}`。其共同形状是：
 
-- UKCOVID 两个 backbone 的增量接近零且方向不同；
+- UKCOVID 三个 backbone 的增量很小，方向混合；
 - CODA TB 的 AST 点估计为正，OPERA 和 HeAR 为负，三个区间都跨零；
 - Cambridge 的三个点估计方向不一致，三个区间都跨零；
 - Coswara 三个点估计接近零，区间都跨零。
 
 因此没有跨数据集、跨 backbone 的稳定正向 disease-transfer evidence。外部 100 对 targets 的区间较宽，所以准确结论是 **inconclusive / no robust positive evidence**，而不是已经证明效应严格等于零。
 
-Correct 相对 raw audio 同样没有清楚优势。CODA matched 上 C−R 分别为 AST +0.0078、OPERA −0.0082、HeAR −0.0550，区间均包含零；Cambridge 和 Coswara 也没有稳定 C−R 优势。换言之，alignment 学到的 profile correspondence 没有稳定超过未经 metadata 对齐的音频表示。
+Correct 相对 raw audio 同样没有清楚优势。CODA matched 上 C−R 分别为 AST +0.0030、OPERA −0.0162、HeAR −0.0401，区间均包含零；Cambridge 和 Coswara 也没有稳定 C−R 优势。换言之，alignment 学到的 profile correspondence 没有稳定超过未经 metadata 对齐的音频表示。
+
+UKCOVID source-only `W_{y,s}` 疾病结果如下，所有 arm 使用相同训练参与者和 source-only
+readout 协议：
+
+| Backbone | `W_{y,s}` absolute AUROC | C−`W_{y,s}` ΔAUROC | `W_{y,s}`−W ΔAUROC |
+|---|---:|---:|---:|
+| AST-6L | 0.529 [0.504, 0.554] | −0.0003 [−0.0228, 0.0241] | +0.0065 [−0.0197, 0.0313] |
+| OPERA-CT | 0.554 [0.529, 0.577] | +0.0009 [−0.0169, 0.0196] | −0.0029 [−0.0219, 0.0164] |
+| HeAR（post-hoc） | 0.532 [0.507, 0.557] | +0.0130 [−0.0023, 0.0287] | −0.0102 [−0.0256, 0.0053] |
+
+这些区间没有建立跨 backbone 的正向收益，但也不是等效性证明；尤其 HeAR 的 C−`W_{y,s}`
+区间仍允许小到中等的正向效应。
 
 ### 5.5 Stronger readout and direct fusion do not rescue the main claim
 
@@ -445,13 +483,13 @@ Correct 相对 raw audio 同样没有清楚优势。CODA matched 上 C−R 分�
 - AST：+0.0156 [0.0034, 0.0276]；
 - OPERA：+0.0021 [−0.0068, 0.0107]。
 
-AST 出现小的 ranking signal，但 OPERA 没有复现；两者 NLL 都明显变差，而且 `metadata + Correct` 没有优于 `metadata + raw audio`。
+AST 出现小的正向 ranking estimate，但 OPERA 没有复现；两者 NLL 都明显变差，而且 `metadata + Correct` 没有优于 `metadata + raw audio`。因此它是 backbone-specific observation，不是可泛化的 fusion 收益。
 
 使用预先固定的 MLP 后，audio-only C−W 为 AST +0.0050 [−0.0154, 0.0270]、OPERA −0.0052 [−0.0208, 0.0110]；C−Raw 分别为 −0.0113 [−0.0291, 0.0068] 和 −0.0247 [−0.0404, −0.0081]。更强非线性读出没有恢复跨 backbone 的疾病收益。
 
 Cambridge 的 direct fusion 中只有 AST 出现 AUROC 增量，OPERA 和 HeAR 未复现，NLL 也不提供跨 backbone 支持。因而个别正向点估计不构成稳健方法收益。
 
-target-assisted 诊断进一步只在 matched-long 上训练／选择／校准固定 logistic readout，再应用到 participant-disjoint matched。Correct−Within ΔAUROC 为 AST −0.0082 [−0.0337, 0.0177]、OPERA +0.0287 [−0.0017, 0.0626]、HeAR +0.0047 [−0.0278, 0.0408]；Correct−`W_{y,s}` 和 Δ(−NLL) 同样没有稳定正向结果。因此 source readout 不适配不是当前 transfer null 的充分解释；但该事后诊断也不能证明表示中完全没有疾病信息。
+target-assisted 诊断进一步只在 matched-long 上训练／选择／校准固定 logistic readout，再应用到 participant-disjoint matched。Correct−Within ΔAUROC 为 AST −0.0082 [−0.0337, 0.0177]、OPERA +0.0287 [−0.0017, 0.0626]、HeAR +0.0047 [−0.0278, 0.0408]；Correct−`W_{y,s}` 和 Δ(−NLL) 同样没有跨 backbone 稳定正向结果。OPERA 的 +0.0287 区间仍允许具有实际意义的正效应。由于 source-only 与 target-assisted 估计没有直接做差，这一诊断既不能证明也不能排除 readout training 的影响，更不能证明表示中完全没有疾病信息。
 
 ### 5.6 Calibration analysis identifies unsupported confidence
 
@@ -471,7 +509,7 @@ UKCOVID 中，将 source calibrator 直接迁移到 matched 后：
 | AST-6L | +0.0062 [−0.0156, 0.0264] | +0.00013 [−0.00227, 0.00243] |
 | OPERA-CT | −0.0020 [−0.0194, 0.0164] | −0.00020 [−0.00261, 0.00228] |
 
-重新校准几乎完全消除了 NLL 差距，但不会改变 AUROC。说明原来的 NLL 惩罚主要是 source cohort 学到的置信度在目标人群中没有支持，而不是已经证明 Correct 破坏了疾病排序。
+重新校准几乎完全消除了 NLL 差距，但不会改变 AUROC。这个形状与 source cohort 学到的概率尺度在目标人群中失配一致，但单靠校准结果不能识别机制；它也没有创造疾病排序收益。
 
 ### 5.7 Synthetic mechanism test did not establish a general law
 
@@ -497,7 +535,7 @@ UKCOVID 中，将 source calibrator 直接迁移到 matched 后：
 
 ### 6.1 Main finding
 
-本文最重要的结果不是“alignment 没学到东西”。恰恰相反，profile retrieval 证明模型反复利用了正确 audio--metadata pairing。真正的问题是，它最稳定保留的是患者 profile，尤其是性别，而不是可稳定迁移的疾病排序。
+本文最重要的结果不是“alignment 没学到东西”。恰恰相反，profile retrieval 证明模型反复利用了正确 audio--metadata pairing。真正的问题是，原来最大的 sex-probe 对比对记录性别一致性高度敏感，而独立的 residual retrieval 并未伴随可稳定迁移的疾病排序。
 
 说得更直白一些：
 
@@ -518,9 +556,9 @@ UKCOVID 中，将 source calibrator 直接迁移到 matched 后：
 
 这些现象最多证明对齐目标被优化。临床价值仍需在预先定义、participant-disjoint、协变量平衡的 target population 中验证，并与 raw audio 和 metadata-only 基线直接配对比较。
 
-### 6.3 What the three pairing arms contribute
+### 6.3 What the four pairing arms contribute
 
-Global shuffling 同时破坏逐患者配对和标签条件关联，因此单独比较 Correct 与 Global 是有歧义的。Within-label 是审计的关键：它保留同标签人群的 metadata 统计，同时破坏精确参与者配对。
+Global shuffling 同时破坏逐患者配对和标签条件关联，因此单独比较 Correct 与 Global 是有歧义的。Within-label 保留同标签人群的 metadata 统计，同时破坏精确参与者配对；Within-label-and-sex 进一步保留记录性别，用来检验性别共现能解释多少 Correct--Within 差异。
 
 因此：
 
@@ -531,7 +569,10 @@ Correct > Within retrieval
 Within > Global
     → 标签／人群统计本身可被利用
 
-Correct > Within on matched disease
+Within-label-and-sex > Within-label on sex probe
+    → 记录性别共现可解释部分 probe 差异
+
+Correct > Within-label-and-sex on matched disease
 且 Correct > Raw
     → 才可能支持可迁移疾病收益
 ```
@@ -576,7 +617,7 @@ Correct > Within on matched disease
 
 第四，probe 证明信息可解码，不证明疾病分类器因果使用该信息；profile retrieval 证明 pairing manipulation 成功，不证明临床价值。
 
-第五，本文审计的是冻结 encoder 加单一 Stage-1-style projector。虽然使用了 AST、OPERA 和 HeAR，并检查线性和固定 MLP readout，但未覆盖所有 alignment architecture、loss 或 end-to-end fine-tuning，也没有运行 RespiraMFM 的完整 Phi-2 + LoRA Stage 2。
+第五，本文审计的是冻结 encoder 加单一 Stage-1-style projector。虽然使用了 AST、OPERA 和 HeAR，并检查线性和固定 MLP readout，但未覆盖所有 alignment architecture、loss 或 end-to-end fine-tuning，也没有运行 RespiraMFM 的完整 Phi-2 + LoRA Stage 2。UKCOVID 的置信区间以 participant 而不是匹配对 block 为重采样单位，因此不应被解读为条件于成对 matching 结构的推断。
 
 第六，CODA、Cambridge 和 Coswara 的 matched target 均为 100 对，置信区间较宽。CI 包含零意味着当前数据未建立稳健正向证据，不等于证明真实效应为零。
 
@@ -586,9 +627,9 @@ Correct > Within on matched disease
 
 ## 8. Conclusion
 
-本文提出 Pairing-Controlled Transfer Audit，用 Correct、Within-label 和 Global 三种配对控制，将患者 profile correspondence、标签／人群共现和可迁移疾病证据分开评价。
+本文提出 Pairing-Controlled Transfer Audit，用 Correct、Within-label、Within-label-and-sex 和 Global 四种配对控制，将患者 profile correspondence、标签／人群共现和可迁移疾病证据分开评价。
 
-在 UKCOVID 中，AST-6L 和 OPERA-CT 的 pairing intervention 都产生了可测量的逐患者 profile correspondence signal，Correct pairing 尤其提高性别可解码性；但 matched COVID 增量很小、不具跨 backbone 和跨 readout 稳健性，也没有稳定超过 raw audio。目标域校准消除了主要 NLL 差距，却没有创造疾病排序收益。CODA TB、Cambridge 和 Coswara 的 secondary/post-hoc analyses 进一步重复了“correspondence 明确、性别可解码性增强、matched disease transfer 不确定”的形状。
+在 UKCOVID 中，AST-6L 和 OPERA-CT 的 pairing intervention 都产生了可测量的逐患者 profile correspondence signal，Correct 相对 Within 尤其提高性别可解码性；`W_{y,s}` 将这一 sex-probe 对比大幅削弱，而部分 residual retrieval 仍保留。matched COVID 增量不具跨 backbone 和跨 readout 稳健性，也没有稳定超过 raw audio。目标域校准消除了主要 NLL 差距，却没有创造疾病排序收益。CODA TB、Cambridge 和 Coswara 的 secondary/post-hoc analyses 进一步重复了“correspondence 明确、性别可解码性增强、matched disease transfer 不确定”的形状。
 
 因此，临床音频—metadata alignment 的评价不能停留在“是否对齐成功”或“源域 AUROC 是否提高”。最低限度的证据链应同时回答：
 

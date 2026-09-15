@@ -1,8 +1,14 @@
 # 2026-09-14 Clean External Rerun 冻结协议
 
 冻结时间：2026-09-14  
-协议状态：从本文件提交之后开始生效。  
+协议状态：**v3 已于 2026-09-15 完成并通过最终审计。**
 旧结果状态：`docs/EXPLORATORY_AUDIT_ARCHIVE_2026-09-14_ZH.md` 所列结果只作为探索性归档，不作为本协议的 confirmatory evidence。
+
+最终执行摘要：CODA TB、Cambridge、Coswara × AST-6L、OPERA-CT、HeAR 的 9 个 aggregate
+result 与 180 个四臂、五种子、epoch-500 训练端点均通过 manifest、配对合法性、同种子
+初始化／batch hash、Transformers 4.56.0 与公开隐私边界审计。九个 primary matched
+`C-W_{y,s}` AUROC 区间均跨 0，方向混合；这不构成等效性或普适零效应证明。最终公开审计
+见 `results/locked_external_panel_v3/audit_summary.json`。
 
 ## 1. 研究问题
 

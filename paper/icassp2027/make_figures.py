@@ -10,15 +10,24 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import reportlab
 from reportlab.lib.colors import Color, HexColor, black, white
 from reportlab.lib.pagesizes import inch
+from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "figures"
 OUT.mkdir(exist_ok=True)
+
+REPORTLAB_FONTS = Path(reportlab.__file__).resolve().parent / "fonts"
+FONT = "Vera"
+FONT_BOLD = "VeraBd"
+pdfmetrics.registerFont(TTFont(FONT, str(REPORTLAB_FONTS / "Vera.ttf")))
+pdfmetrics.registerFont(TTFont(FONT_BOLD, str(REPORTLAB_FONTS / "VeraBd.ttf")))
 
 BLUE = HexColor("#2864A4")
 ORANGE = HexColor("#D47A16")
@@ -34,10 +43,10 @@ def box(c: canvas.Canvas, x: float, y: float, w: float, h: float,
     c.setLineWidth(1.0)
     c.roundRect(x, y, w, h, 6, stroke=1, fill=1)
     c.setFillColor(color)
-    c.setFont("Helvetica-Bold", 7.8)
+    c.setFont(FONT_BOLD, 7.8)
     c.drawCentredString(x + w / 2, y + h - 14, title)
     c.setFillColor(black)
-    c.setFont("Helvetica", 6.9)
+    c.setFont(FONT, 6.9)
     line_y = y + h - 29
     for line in lines:
         c.drawCentredString(x + w / 2, line_y, line)
@@ -59,7 +68,7 @@ def delta_term(c: canvas.Canvas, center_x: float, y: float,
     size = 6.9
     tail = f"{suffix} = {contrast}"
     delta_w = 7.0
-    tail_w = stringWidth(tail, "Helvetica-Bold", size)
+    tail_w = stringWidth(tail, FONT_BOLD, size)
     gap = 0.7
     x = center_x - (delta_w + gap + tail_w) / 2
     c.setFillColor(black)
@@ -71,24 +80,30 @@ def delta_term(c: canvas.Canvas, center_x: float, y: float,
     path.lineTo(x + delta_w, y)
     path.close()
     c.drawPath(path, stroke=1, fill=0)
-    c.setFont("Helvetica-Bold", size)
+    c.setFont(FONT_BOLD, size)
     c.drawString(x + delta_w + gap, y, tail)
 
 
 def pairing_figure() -> None:
-    width, height = 7.05 * inch, 1.34 * inch
-    c = canvas.Canvas(str(OUT / "pairing_audit.pdf"), pagesize=(width, height))
-    margin = 7
-    gap = 9
-    arm_w = 109
-    eval_w = 123
-    y = 28
+    width, height = 7.05 * inch, 1.42 * inch
+    c = canvas.Canvas(
+        str(OUT / "pairing_audit.pdf"),
+        pagesize=(width, height),
+        initialFontName=FONT,
+        invariant=1,
+    )
+    margin = 6
+    gap = 5
+    arm_w = 78
+    eval_w = 120
+    y = 29
     h = 58
-    xs = [margin, margin + arm_w + gap, margin + 2 * (arm_w + gap)]
-    box(c, xs[0], y, arm_w, h, BLUE, "CORRECT", ["audio i <-> metadata i", "profile + label association"])
-    box(c, xs[1], y, arm_w, h, ORANGE, "WITHIN-LABEL", ["audio i <-> metadata j", "same label; no exact profile"])
-    box(c, xs[2], y, arm_w, h, GREY, "GLOBAL", ["audio i <-> metadata k", "no systematic pairing"])
-    arrow(c, xs[2] + arm_w + 5, y + h / 2, width - eval_w - 12)
+    xs = [margin + i * (arm_w + gap) for i in range(4)]
+    box(c, xs[0], y, arm_w, h, BLUE, "CORRECT", ["same person", "same label + sex"])
+    box(c, xs[1], y, arm_w, h, GREEN, "LABEL+SEX", ["different person", "same label + sex"])
+    box(c, xs[2], y, arm_w, h, ORANGE, "WITHIN-LABEL", ["different person", "same label"])
+    box(c, xs[3], y, arm_w, h, GREY, "GLOBAL", ["different person", "no restriction"])
+    arrow(c, xs[3] + arm_w + 5, y + h / 2, width - eval_w - 11)
     box(
         c,
         width - eval_w - 7,
@@ -99,12 +114,14 @@ def pairing_figure() -> None:
         "THREE QUESTIONS",
         ["1. Pairing?  Retrieval", "2. Retained?  Probes", "3. Transfer?  Matched disease"],
     )
-    delta_term(c, 122, 11, "pair", "C-W")
-    delta_term(c, 305, 11, "label", "W-G")
+    delta_term(c, (xs[0] + xs[1] + arm_w) / 2, 12, "profile", "C-Wys")
+    delta_term(c, (xs[1] + xs[2] + arm_w) / 2, 12, "sex", "Wys-W")
+    delta_term(c, (xs[2] + xs[3] + arm_w) / 2, 12, "label", "W-G")
     c.setFillColor(black)
-    c.setFont("Helvetica", 5.8)
-    c.drawCentredString(122, 3, "Exact-pairing increment")
-    c.drawCentredString(305, 3, "Label-conditioned association")
+    c.setFont(FONT, 5.8)
+    c.drawCentredString((xs[0] + xs[1] + arm_w) / 2, 3, "Residual pairing")
+    c.drawCentredString((xs[1] + xs[2] + arm_w) / 2, 3, "Sex consistency")
+    c.drawCentredString((xs[2] + xs[3] + arm_w) / 2, 3, "Label association")
     c.showPage()
     c.save()
 
@@ -139,7 +156,12 @@ def forest_figure() -> None:
         rows = list(csv.DictReader(handle))
 
     width, height = 7.05 * inch, 3.03 * inch
-    c = canvas.Canvas(str(OUT / "cross_dataset_forest.pdf"), pagesize=(width, height))
+    c = canvas.Canvas(
+        str(OUT / "cross_dataset_forest.pdf"),
+        pagesize=(width, height),
+        initialFontName=FONT,
+        invariant=1,
+    )
     left = 103
     right = 7
     top = 29
@@ -152,7 +174,7 @@ def forest_figure() -> None:
     panels = [
         ("retrieval", "Profile retrieval", "Delta MRR (C-W)", -0.012, 0.112),
         ("sex", "Sex probe", "Delta AUROC (C-W)", -0.018, 0.245),
-        ("disease", "Matched disease", "Delta AUROC (C-W)", -0.135, 0.135),
+        ("disease", "Matched disease", "Delta AUROC (C-Wys)", -0.165, 0.125),
     ]
 
     for idx, row in enumerate(rows):
@@ -162,7 +184,7 @@ def forest_figure() -> None:
             c.rect(0, y0, width, row_h, stroke=0, fill=1)
 
     c.setFillColor(black)
-    c.setFont("Helvetica", 6.3)
+    c.setFont(FONT, 6.3)
     for idx, row in enumerate(rows):
         y = height - top - (idx + 0.5) * row_h
         label = f'{row["dataset"]} / {row["backbone"]}'
@@ -173,9 +195,9 @@ def forest_figure() -> None:
         x1 = x0 + panel_w
 
         c.setFillColor(black)
-        c.setFont("Helvetica-Bold", 7.4)
+        c.setFont(FONT_BOLD, 7.4)
         c.drawCentredString((x0 + x1) / 2, height - 10, title)
-        c.setFont("Helvetica", 6.4)
+        c.setFont(FONT, 6.4)
         c.drawCentredString((x0 + x1) / 2, height - 19, subtitle)
 
         def scale(value: float) -> float:
@@ -192,7 +214,7 @@ def forest_figure() -> None:
             c.setStrokeColor(HexColor("#DDDDDD"))
             c.line(tx, bottom, tx, height - top)
             c.setFillColor(black)
-            c.setFont("Helvetica", 5.4)
+            c.setFont(FONT, 5.4)
             label = "0" if abs(tick) < 1e-12 else f"{tick:.2f}"
             c.drawCentredString(tx, 7, label)
 
@@ -211,7 +233,7 @@ def forest_figure() -> None:
 
     legend_y = 15
     legend_x = left + 27
-    c.setFont("Helvetica", 6.1)
+    c.setFont(FONT, 6.1)
     for name in ("AST-6L", "OPERA-CT", "HeAR"):
         draw_marker(c, legend_x, legend_y, "circle", colors[name])
         c.setFillColor(black)

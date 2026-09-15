@@ -1,0 +1,19 @@
+{
+  "standing": "post-hoc pairing-integrity audit from archived training logs",
+  "unit": "fraction of Standard-train anchors whose reassigned participant has the same exact metadata schema text",
+  "n_train": 20714,
+  "seeds": [0, 1, 2, 3, 4],
+  "within_label": {
+    "fractions": [0.0328, 0.0303, 0.0333, 0.0315, 0.0320],
+    "range": [0.0303, 0.0333],
+    "mean": 0.03198,
+    "source": "results/alignment_train.log"
+  },
+  "within_label_sex": {
+    "fractions": [0.0644, 0.0647, 0.0661, 0.0640, 0.0635],
+    "range": [0.0635, 0.0661],
+    "mean": 0.06454,
+    "source": "server results/pairing_followup/logs/e2_{ast,opera_ct,hear}.log; identical pairing hashes across backbones"
+  },
+  "interpretation": "Both controls always use a different participant, but duplicate schema texts can remain. Conditioning on recorded sex increases exact-schema collisions; neither arm guarantees a different semantic profile."
+}

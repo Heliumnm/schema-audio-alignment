@@ -1,13 +1,14 @@
 # Cambridge COVID-19 Sounds Task-2 外部敏感性结果
 
-日期：2026-09-03
+日期：2026-09-15
+协议：`locked_panel_v3_20260914`
 
 ## 结论
 
 Cambridge Task-2 cough 子集在修正 participant namespace 后包含 989 名可用参与者。模型盲的
 match-first 流程先冻结 100 对协变量完全平衡的 target，再把剩余参与者固定划为 train、
 validation 和 source-test。AST-6L、OPERA-CT 与 HeAR 随后使用完全相同的
-Correct／Within-label／Global、五个 seed 和 500 epochs 协议。
+Correct／Within-label／`W_{y,s}`／Global、五个 seed 和 500 epochs 协议。
 
 结果跨三个音频 backbone 重复了同一个分离：**Correct pairing 能恢复患者 metadata
 correspondence，并稳定增强性别可解码性，但没有带来 matched COVID transfer。**
@@ -36,30 +37,31 @@ correspondence，并稳定增强性别可解码性，但没有带来 matched COV
 在 117 名 validation participant、96 个唯一 metadata profile 上报告 macro-profile MRR。
 主比较是 `Correct − Within-label`；Within-label 保留 COVID 标签组内分布，但破坏逐患者配对。
 
-| backbone | Correct MRR | Within MRR | Global MRR | Correct−Within，95% CI |
-|---|---:|---:|---:|---:|
-| AST-6L | 0.0963 | 0.0530 | 0.0579 | **+0.0433 [0.0151, 0.0799]** |
-| OPERA-CT | 0.0869 | 0.0571 | 0.0492 | +0.0298 [−0.0011, 0.0638] |
-| HeAR | 0.0921 | 0.0464 | 0.0489 | **+0.0457 [0.0203, 0.0763]** |
+| backbone | Correct MRR | Within MRR | `W_{y,s}` MRR | Correct−Within，95% CI | Correct−`W_{y,s}`，95% CI |
+|---|---:|---:|---:|---:|---:|
+| AST-6L | 0.1013 | 0.0539 | 0.0589 | **+0.0474 [0.0133, 0.0844]** | **+0.0424 [0.0106, 0.0806]** |
+| OPERA-CT | 0.0830 | 0.0450 | 0.0765 | **+0.0380 [0.0132, 0.0676]** | +0.0065 [−0.0260, 0.0407] |
+| HeAR | 0.0867 | 0.0476 | 0.0728 | **+0.0391 [0.0102, 0.0717]** | +0.0139 [−0.0177, 0.0479] |
 
-AST 与 HeAR 的区间排除 0；OPERA 方向相同但区间略跨 0。三者的点估计共同说明正确配对
+三个 Correct−Within 区间均排除 0；控制记录性别后只有 AST 的 Correct−`W_{y,s}` 区间
+仍排除 0。三者的点估计共同说明正确配对
 确实给 projector 提供了逐患者 correspondence，而不是“alignment 什么也没有学到”。
 
 ## 2. Correspondence 是否转化为 matched COVID transfer？
 
-| backbone | matched AUROC：Correct | Within | Raw | Correct−Within ΔAUROC，95% CI |
-|---|---:|---:|---:|---:|
-| AST-6L | 0.5325 | 0.5773 | 0.5931 | −0.0448 [−0.1181, 0.0300] |
-| OPERA-CT | 0.5166 | 0.5088 | 0.4971 | +0.0077 [−0.0869, 0.1132] |
-| HeAR | 0.4719 | 0.5232 | 0.5235 | −0.0512 [−0.1186, 0.0161] |
+| backbone | Raw | Correct | Within | `W_{y,s}` | `C-W_{y,s}` ΔAUROC，95% CI | `W_{y,s}-W`，95% CI |
+|---|---:|---:|---:|---:|---:|---:|
+| AST-6L | 0.5932 | 0.5390 | 0.5568 | 0.5428 | −0.0037 [−0.0856, 0.0778] | −0.0140 [−0.0954, 0.0783] |
+| OPERA-CT | 0.4970 | 0.5286 | 0.5029 | 0.5231 | +0.0054 [−0.0740, 0.0826] | +0.0202 [−0.0560, 0.0971] |
+| HeAR | 0.5236 | 0.4674 | 0.5175 | 0.5308 | −0.0634 [−0.1552, 0.0240] | +0.0133 [−0.0643, 0.0875] |
 
 三个 backbone 的主比较均未排除 0，方向也不一致。Correct 相对 raw 的 ΔAUROC 为 AST
-−0.0606、OPERA +0.0195、HeAR −0.0516，区间也都覆盖 0。因此不能主张正确 metadata
+−0.0542、OPERA +0.0316、HeAR −0.0562，区间也都覆盖 0。因此不能主张正确 metadata
 alignment 改善了 covariate-balanced COVID 识别。
 
-NLL 结论同样没有正向证据。Correct−Within 的 Δ(−NLL) 为 AST −0.0074、OPERA −0.0139、
-HeAR −0.0323；前两者区间包含 0，HeAR 的区间上界约为 0。HeAR 的 Δ(−Brier) 为
-−0.0151 [−0.0293, −0.0002]，说明这条 arm 的概率质量反而更差。
+NLL 结论同样没有正向证据。Correct−`W_{y,s}` 的 Δ(−NLL) 为 AST −0.0016
+[−0.0251, 0.0188]、OPERA −0.0030 [−0.0280, 0.0234]、HeAR −0.0139
+[−0.0400, 0.0106]，三个区间均跨 0。
 
 ## 3. Correct pairing 更稳定地保留了什么？
 
@@ -67,9 +69,9 @@ matched target 上的性别 probe 给出了跨 backbone 一致的 `Correct − W
 
 | backbone | 性别 ΔAUROC，95% CI |
 |---|---:|
-| AST-6L | **+0.1318 [0.0745, 0.1922]** |
-| OPERA-CT | **+0.1233 [0.0716, 0.1740]** |
-| HeAR | **+0.1282 [0.0893, 0.1703]** |
+| AST-6L | **+0.1445 [0.0921, 0.1968]** |
+| OPERA-CT | **+0.1386 [0.0877, 0.1954]** |
+| HeAR | **+0.1054 [0.0594, 0.1544]** |
 
 五个 seed 在三个 backbone 中全部为正。相比之下，cough 和 asthma probe 的区间较宽且方向
 不稳定；age≥70 与 Web platform 因 source train／validation 中类别过少而按冻结规则标记为
@@ -106,5 +108,7 @@ matched target 上，raw audio + metadata 相对 metadata-only 的 ΔAUROC 为�
 - `results/cambridge_task2_formal_results_ast.json`
 - `results/cambridge_task2_formal_results_opera_ct.json`
 - `results/cambridge_task2_formal_results_hear.json`
+- `results/locked_external_panel_v3/cambridge/` 下的公开冻结配置、文本环境审计与三个
+  非识别 alignment hash manifest
 - 数据门与 overlap 的本地公开包保存在受控数据目录，不向仓库提交音频、逐患者 metadata、
   prediction、embedding 或 private manifest。

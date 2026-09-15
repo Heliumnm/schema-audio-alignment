@@ -10,7 +10,7 @@
 The Route-A audit is complete. It asks whether correct audio--metadata pairing learns
 portable disease evidence or participant/cohort correspondence. The controlled arms are
 correct pairing, within-label shuffling (label-level association preserved, individual
-pairing broken), and global shuffling.
+pairing broken), label-and-recorded-sex-preserving shuffling, and global shuffling.
 
 The manipulation worked: correct pairing improves unique-profile retrieval over
 within-label shuffling for both AST-6L and OPERA-CT, with all five seed effects positive.
@@ -18,9 +18,9 @@ Information-channel probes show strong retained participant correspondence, espe
 sex, but no stable correct-minus-within COVID increment. Under covariate-matched evaluation,
 disease ranking gains are not robust across backbones or linear/nonlinear readouts, and
 correct alignment does not beat the frozen raw-audio representation. Probability-transport
-analysis further shows that the adverse source-calibrated NLL is mainly unsupported
-confidence: target-domain recalibration removes the NLL gap without creating a disease
-ranking gain.
+analysis shows that target-domain recalibration removes the source-calibrated NLL gap without
+creating a disease-ranking gain. This is consistent with probability-scale mismatch after
+cohort shift, but does not by itself identify the mechanism.
 
 A separately frozen post-hoc UKCOVID HeAR extension is also complete. It reproduced the
 same separation: Correct-minus-Within macro-profile MRR was +0.0071 [0.0048, 0.0097] and
@@ -30,20 +30,23 @@ being promoted to a primary UKCOVID experiment.
 
 Three targeted UKCOVID diagnostics are now complete for AST-6L, OPERA-CT, and post-hoc
 HeAR. A label-and-sex-preserving shuffled arm, W(y,s), reduced Correct-minus-W(y,s) sex
-effects to intervals spanning zero for all three backbones, showing that the original sex
-effect was largely the retained sex consistency of the assigned pair. Small residual profile
-retrieval remained, most clearly for HeAR, but Correct-minus-W(y,s) matched COVID effects
-were inconclusive for every backbone. A target-assisted readout trained on matched-long and
-tested on participant-disjoint matched likewise found no stable Correct-minus-Within or
-Correct-minus-Raw gain. These are post-hoc diagnostics, not new confirmatory endpoints.
+effects to intervals spanning zero for all three backbones, substantially attenuating the
+original sex-probe contrast. This is not an equivalence test or causal decomposition. Small
+residual profile retrieval remained, most clearly for HeAR, and conditioning retrieval
+candidates on sex or label-plus-sex did not universally remove correspondence. The full
+source-only W(y,s) disease contrasts were inconclusive for every backbone. A target-assisted
+readout trained on matched-long and tested on participant-disjoint matched did not establish
+a cross-backbone advantage, although the OPERA interval still allowed a meaningful positive
+effect. These are post-hoc diagnostics, not new confirmatory endpoints.
 
 The controlled synthetic sweep learned correspondence but failed its preregistered
 mechanism gates, so it is not used as causal evidence. Coswara's preregistered greedy gate
 stopped; a separately frozen, model-blind global-constraint sensitivity later found a balanced
 100-pair cohort and therefore permits only a post-hoc stress test. That three-backbone stress
-test is complete: Correct-minus-Within profile MRR was significantly positive for AST, OPERA-CT
-and HeAR (+0.0183, +0.0243, +0.0406), whereas matched COVID delta AUROC was +0.0028, −0.0115
-and +0.0037, respectively, with all intervals spanning zero. Sex-probe deltas were positive and
+test is complete: Correct-minus-Within profile MRR was +0.0120, +0.0196, and +0.0272 for
+AST, OPERA-CT, and HeAR; the AST interval crossed zero, while the other two excluded it.
+Primary matched Correct-minus-W(y,s) COVID delta AUROC was +0.0132, −0.0152, and −0.0076,
+respectively, with all intervals spanning zero. Sex-probe Correct-minus-Within deltas were positive and
 significant across all three backbones. CODA TB's original split-first
 gate also stopped, but a visibly versioned, model-blind
 secondary protocol selected the matched target before splitting the remainder and passed
@@ -51,8 +54,8 @@ all frozen balance gates (100 pairs; max SMD 0.0819; max categorical difference 
 Its subsequently preregistered model audit is now complete. Correct pairing significantly
 improves profile retrieval for AST-6L, OPERA-CT and HeAR and retains participant demographic
 information, but matched TB transfer is inconclusive and changes direction across backbones
-(Correct-minus-Within delta AUROC +0.034 [−0.022, 0.092] for AST; −0.026 [−0.087, 0.035]
-for OPERA; −0.013 [−0.092, 0.063] for HeAR).
+(Correct-minus-W(y,s) delta AUROC +0.0476 [−0.0127, 0.1151] for AST; −0.0077
+[−0.0600, 0.0423] for OPERA; −0.0102 [−0.0707, 0.0481] for HeAR).
 This secondary result extends the correspondence-versus-transfer ambiguity beyond UKCOVID;
 it does not establish that metadata alignment is universally harmful or ineffective.
 
@@ -65,10 +68,11 @@ official Task-2 split CSV is missing. This audit exposed a Web-identity bug in t
 gate is therefore superseded; the corrected strict cohort has 989 subjects (500 negative, 489
 positive). The corrected real-WAV gate independently reproduced on the GPU server with 100
 perfectly balanced matched pairs, after which AST-6L, OPERA-CT and HeAR were run under the same
-five-seed pairing audit. Correct-minus-Within profile MRR was +0.0433 [0.0151, 0.0799] for AST,
-+0.0298 [−0.0011, 0.0638] for OPERA and +0.0457 [0.0203, 0.0763] for HeAR. The corresponding
-matched COVID delta AUROCs were −0.0448, +0.0077 and −0.0512, all with intervals spanning zero,
-while sex-probe deltas were consistently positive and significant (+0.132, +0.123, +0.128).
+five-seed pairing audit. Correct-minus-Within profile MRR was +0.0474 [0.0133, 0.0844] for AST,
++0.0380 [0.0132, 0.0676] for OPERA and +0.0391 [0.0102, 0.0717] for HeAR. The corresponding
+primary Correct-minus-W(y,s) matched COVID delta AUROCs were −0.0037, +0.0054 and −0.0634,
+all with intervals spanning zero, while sex-probe Correct-minus-Within deltas were consistently
+positive and significant (+0.145, +0.139, +0.105).
 Thus Cambridge reproduces the correspondence-versus-transfer separation across three backbones,
 but remains a reconstructed-split external sensitivity rather than an official benchmark
 replication or untouched confirmation.

@@ -1,0 +1,14 @@
+status=COMPLETE
+completed_utc=2026-09-15T14:44:53Z
+repo_commit=6cc74799c4cc674e33aaa4cab649c4ba4ea362ee
+datasets=coda,cambridge,coswara
+backbones=ast,opera_ct,hear
+aggregate_results=9
+training_endpoints=180
+epochs=500
+seeds=0,1,2,3,4
+primary_contrast=C-Wys
+primary_metric=matched_target_participant_AUROC
+audit_status=PASS
+source_precompute_status=COMPLETE
+parallel_formal_evaluation_status=COMPLETE

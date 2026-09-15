@@ -1,0 +1,318 @@
+{
+  "failures": [],
+  "format_version": "coswara-training-audit-v1",
+  "n_participants": 1701,
+  "n_train": 1041,
+  "runs": {
+    "ast": {
+      "correct_seed0": {
+        "loss_first": 4.0939392796167375,
+        "loss_last": 3.351518019704608,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed1": {
+        "loss_first": 4.091233389521882,
+        "loss_last": 3.347959539274203,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed2": {
+        "loss_first": 4.095062963099118,
+        "loss_last": 3.353031094548338,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed3": {
+        "loss_first": 4.093908416205708,
+        "loss_last": 3.3502693196882087,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed4": {
+        "loss_first": 4.094520942851057,
+        "loss_last": 3.352966482655345,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "global_seed0": {
+        "loss_first": 4.136391101263671,
+        "loss_last": 3.3555034182600743,
+        "pairing_hash": "4ec745e250b703c8"
+      },
+      "global_seed1": {
+        "loss_first": 4.137783052369337,
+        "loss_last": 3.3556502103576515,
+        "pairing_hash": "3ec0e20b59b8ba01"
+      },
+      "global_seed2": {
+        "loss_first": 4.137877532086844,
+        "loss_last": 3.3535810350570165,
+        "pairing_hash": "42f47f71b9002b0b"
+      },
+      "global_seed3": {
+        "loss_first": 4.137495701411501,
+        "loss_last": 3.3561122247968926,
+        "pairing_hash": "afe78c06c385260a"
+      },
+      "global_seed4": {
+        "loss_first": 4.1373061391737,
+        "loss_last": 3.3515450395607926,
+        "pairing_hash": "a08b354aa12338b7"
+      },
+      "within_label_seed0": {
+        "loss_first": 4.124811378610924,
+        "loss_last": 3.3530339496165484,
+        "pairing_hash": "7b4fc3d89b78065f"
+      },
+      "within_label_seed1": {
+        "loss_first": 4.1293163551491805,
+        "loss_last": 3.3529487760105923,
+        "pairing_hash": "4c890f8c0d941246"
+      },
+      "within_label_seed2": {
+        "loss_first": 4.131599949828486,
+        "loss_last": 3.3573367668961698,
+        "pairing_hash": "356823b17d264d56"
+      },
+      "within_label_seed3": {
+        "loss_first": 4.130347073020898,
+        "loss_last": 3.353373821599339,
+        "pairing_hash": "a4bdf327192f4e9e"
+      },
+      "within_label_seed4": {
+        "loss_first": 4.127815966876394,
+        "loss_last": 3.351157020079643,
+        "pairing_hash": "cb4744c0e76c3522"
+      },
+      "within_label_sex_seed0": {
+        "loss_first": 4.123536223064353,
+        "loss_last": 3.3523139005435647,
+        "pairing_hash": "90882a8e50a8057f"
+      },
+      "within_label_sex_seed1": {
+        "loss_first": 4.122516316249895,
+        "loss_last": 3.3549203907034926,
+        "pairing_hash": "4644370cf1afffa1"
+      },
+      "within_label_sex_seed2": {
+        "loss_first": 4.130477023285015,
+        "loss_last": 3.353868112783954,
+        "pairing_hash": "611ee340fb456743"
+      },
+      "within_label_sex_seed3": {
+        "loss_first": 4.12816544179156,
+        "loss_last": 3.3525919043937633,
+        "pairing_hash": "eaff4fc27f2201e2"
+      },
+      "within_label_sex_seed4": {
+        "loss_first": 4.125268048672122,
+        "loss_last": 3.3528162340609415,
+        "pairing_hash": "7c612b6b35af0fee"
+      }
+    },
+    "hear": {
+      "correct_seed0": {
+        "loss_first": 4.107606876136933,
+        "loss_last": 3.640054619850503,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed1": {
+        "loss_first": 4.106507216361025,
+        "loss_last": 3.677673369159387,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed2": {
+        "loss_first": 4.106446376336984,
+        "loss_last": 3.5952793434190706,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed3": {
+        "loss_first": 4.107851578339605,
+        "loss_last": 3.661162065841279,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed4": {
+        "loss_first": 4.103895491298635,
+        "loss_last": 3.5984081770798886,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "global_seed0": {
+        "loss_first": 4.136894350665676,
+        "loss_last": 3.5486238298223753,
+        "pairing_hash": "4ec745e250b703c8"
+      },
+      "global_seed1": {
+        "loss_first": 4.137875124769184,
+        "loss_last": 3.6369921567918704,
+        "pairing_hash": "3ec0e20b59b8ba01"
+      },
+      "global_seed2": {
+        "loss_first": 4.137572302254888,
+        "loss_last": 3.5704429474848034,
+        "pairing_hash": "42f47f71b9002b0b"
+      },
+      "global_seed3": {
+        "loss_first": 4.137198089980712,
+        "loss_last": 3.5996511516149634,
+        "pairing_hash": "afe78c06c385260a"
+      },
+      "global_seed4": {
+        "loss_first": 4.137051680131559,
+        "loss_last": 3.6156784931589616,
+        "pairing_hash": "a08b354aa12338b7"
+      },
+      "within_label_seed0": {
+        "loss_first": 4.1355287898170845,
+        "loss_last": 3.5215743953052563,
+        "pairing_hash": "7b4fc3d89b78065f"
+      },
+      "within_label_seed1": {
+        "loss_first": 4.136491824066719,
+        "loss_last": 3.668586721566866,
+        "pairing_hash": "4c890f8c0d941246"
+      },
+      "within_label_seed2": {
+        "loss_first": 4.135498984975384,
+        "loss_last": 3.587633455635606,
+        "pairing_hash": "356823b17d264d56"
+      },
+      "within_label_seed3": {
+        "loss_first": 4.135768645549485,
+        "loss_last": 3.568692961297965,
+        "pairing_hash": "a4bdf327192f4e9e"
+      },
+      "within_label_seed4": {
+        "loss_first": 4.135924786357898,
+        "loss_last": 3.6230825008278735,
+        "pairing_hash": "cb4744c0e76c3522"
+      },
+      "within_label_sex_seed0": {
+        "loss_first": 4.1204472499667855,
+        "loss_last": 3.5777923149288444,
+        "pairing_hash": "90882a8e50a8057f"
+      },
+      "within_label_sex_seed1": {
+        "loss_first": 4.124371175005617,
+        "loss_last": 3.5977324353858444,
+        "pairing_hash": "4644370cf1afffa1"
+      },
+      "within_label_sex_seed2": {
+        "loss_first": 4.119923129434429,
+        "loss_last": 3.6408025306881218,
+        "pairing_hash": "611ee340fb456743"
+      },
+      "within_label_sex_seed3": {
+        "loss_first": 4.124535807729569,
+        "loss_last": 3.54313058422576,
+        "pairing_hash": "eaff4fc27f2201e2"
+      },
+      "within_label_sex_seed4": {
+        "loss_first": 4.109961852102069,
+        "loss_last": 3.585731390001222,
+        "pairing_hash": "7c612b6b35af0fee"
+      }
+    },
+    "opera_ct": {
+      "correct_seed0": {
+        "loss_first": 4.091355355855482,
+        "loss_last": 3.372226795476864,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed1": {
+        "loss_first": 4.093329060890718,
+        "loss_last": 3.368982656544842,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed2": {
+        "loss_first": 4.093076185809089,
+        "loss_last": 3.374335039131465,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed3": {
+        "loss_first": 4.092832616380954,
+        "loss_last": 3.3700386657953034,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "correct_seed4": {
+        "loss_first": 4.092647972528346,
+        "loss_last": 3.3710853593150203,
+        "pairing_hash": "21af8855de8e6951"
+      },
+      "global_seed0": {
+        "loss_first": 4.135859103986097,
+        "loss_last": 3.3757883655005756,
+        "pairing_hash": "4ec745e250b703c8"
+      },
+      "global_seed1": {
+        "loss_first": 4.139162220254068,
+        "loss_last": 3.376145402704948,
+        "pairing_hash": "3ec0e20b59b8ba01"
+      },
+      "global_seed2": {
+        "loss_first": 4.139044074572473,
+        "loss_last": 3.3737962326101107,
+        "pairing_hash": "42f47f71b9002b0b"
+      },
+      "global_seed3": {
+        "loss_first": 4.13800329868892,
+        "loss_last": 3.3747096721308374,
+        "pairing_hash": "afe78c06c385260a"
+      },
+      "global_seed4": {
+        "loss_first": 4.138659864749964,
+        "loss_last": 3.372287551447477,
+        "pairing_hash": "a08b354aa12338b7"
+      },
+      "within_label_seed0": {
+        "loss_first": 4.121804724051103,
+        "loss_last": 3.3746851063141103,
+        "pairing_hash": "7b4fc3d89b78065f"
+      },
+      "within_label_seed1": {
+        "loss_first": 4.126814126281299,
+        "loss_last": 3.3720989279971456,
+        "pairing_hash": "4c890f8c0d941246"
+      },
+      "within_label_seed2": {
+        "loss_first": 4.130224610382725,
+        "loss_last": 3.374729304904553,
+        "pairing_hash": "356823b17d264d56"
+      },
+      "within_label_seed3": {
+        "loss_first": 4.125906068699275,
+        "loss_last": 3.3752100632582342,
+        "pairing_hash": "a4bdf327192f4e9e"
+      },
+      "within_label_seed4": {
+        "loss_first": 4.1252086233565946,
+        "loss_last": 3.3720942276470027,
+        "pairing_hash": "cb4744c0e76c3522"
+      },
+      "within_label_sex_seed0": {
+        "loss_first": 4.114455720533211,
+        "loss_last": 3.372083752116369,
+        "pairing_hash": "90882a8e50a8057f"
+      },
+      "within_label_sex_seed1": {
+        "loss_first": 4.113741100807813,
+        "loss_last": 3.3747074615485846,
+        "pairing_hash": "4644370cf1afffa1"
+      },
+      "within_label_sex_seed2": {
+        "loss_first": 4.117347592006614,
+        "loss_last": 3.374155430010485,
+        "pairing_hash": "611ee340fb456743"
+      },
+      "within_label_sex_seed3": {
+        "loss_first": 4.119847763283223,
+        "loss_last": 3.3745077824386467,
+        "pairing_hash": "eaff4fc27f2201e2"
+      },
+      "within_label_sex_seed4": {
+        "loss_first": 4.11095887829087,
+        "loss_last": 3.3744909898462945,
+        "pairing_hash": "7c612b6b35af0fee"
+      }
+    }
+  },
+  "scientific_scores_computed": false,
+  "standing": "locked post-archive external rerun; prior exploratory C/W results existed, primary C-Wys was not previously evaluated",
+  "target_read": false,
+  "technical_pass": true
+}

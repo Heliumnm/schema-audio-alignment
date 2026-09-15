@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "audited_utc": "2026-09-15T14:44:53Z",
+  "repo_commit": "6cc74799c4cc674e33aaa4cab649c4ba4ea362ee",
+  "aggregate_result_count": 9,
+  "training_endpoint_count": 180,
+  "frozen_design": {
+    "backbones": ["ast", "opera_ct", "hear"],
+    "arms": ["correct", "within_label", "within_label_sex", "global"],
+    "seeds": [0, 1, 2, 3, 4],
+    "epochs": 500,
+    "primary_contrast": "C-Wys",
+    "primary_metric": "matched_target_participant_AUROC"
+  },
+  "checks": {
+    "four_arms_by_five_seeds_epoch_500": "PASS",
+    "shared_within_seed_initialization_hashes": "PASS",
+    "shared_within_seed_batch_order_hashes": "PASS",
+    "pairing_hashes_match_archives": "PASS",
+    "cross_backbone_pairings_match": "PASS",
+    "within_label_pairings_preserve_label": "PASS",
+    "within_label_sex_pairings_preserve_label_and_sex": "PASS",
+    "non_correct_pairings_have_no_self_pairs": "PASS",
+    "c_wys_and_wys_w_outputs_present": "PASS",
+    "transformers_version_4_56_0": "PASS",
+    "synced_artifacts_exclude_private_identifiers_and_predictions": "PASS"
+  },
+  "matched_target_c_wys_delta_auroc": {
+    "CODA": {
+      "ast": {"observed": 0.04762, "ci": [-0.0127005, 0.115104]},
+      "opera_ct": {"observed": -0.0077, "ci": [-0.059981, 0.0423005]},
+      "hear": {"observed": -0.0102, "ci": [-0.0707405, 0.0480805]}
+    },
+    "Cambridge": {
+      "ast": {"observed": -0.00372, "ci": [-0.0855895, 0.07782]},
+      "opera_ct": {"observed": 0.00544, "ci": [-0.0740265, 0.0825935]},
+      "hear": {"observed": -0.0634, "ci": [-0.15523, 0.023982]}
+    },
+    "Coswara": {
+      "ast": {"observed": 0.01322, "ci": [-0.03885098, 0.06110745]},
+      "opera_ct": {"observed": -0.01516, "ci": [-0.07266621, 0.03259614]},
+      "hear": {"observed": -0.00764, "ci": [-0.05790841, 0.05068818]}
+    }
+  },
+  "interpretation": "All nine C-Wys confidence intervals cross zero; estimates have mixed signs. This is inconclusive evidence, not an equivalence claim or a universal null result."
+}

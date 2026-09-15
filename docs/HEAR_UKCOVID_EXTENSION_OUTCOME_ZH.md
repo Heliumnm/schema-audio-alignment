@@ -62,7 +62,7 @@ HeAR 因而重复了 AST／OPERA 的核心形状：正确配对显著增强 prof
 - profile retrieval：11/12 个 dataset--backbone setting 的配对区间排除 0；
 - sex probe：12/12 个 setting 的配对区间排除 0；
 - matched disease：0/12 个 setting 建立正向增益；
-- matched disease 点估计为六正六负，不进行跨数据集 pooled inference。
+- primary matched-disease `C-W_{y,s}` 点估计为五正七负，不进行跨数据集 pooled inference。
 
 这增加了 backbone 稳健性，但不能把 UKCOVID 从 discovery audit 变成独立确认，也不能把
 “区间覆盖 0”写成等效或真实效应为零。

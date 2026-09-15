@@ -10,17 +10,18 @@ Clinical audio models increasingly align recordings with participant metadata, b
 successful correspondence does not establish a transferable disease representation.
 Metadata mixes disease-related information with demographics, symptoms, history, and
 cohort structure. We introduce a Pairing-Controlled Transfer Audit comparing correct pairs,
-metadata shuffled within disease labels, and globally shuffled metadata. On UKCOVID,
-Correct pairing improved profile retrieval for AST-6L and OPERA-CT and increased sex
-decodability relative to Within-label (delta AUROC +0.191 and +0.113), showing that the
-pairing intervention produced a measurable representational difference. Matched COVID
-prediction changed by only +0.006 and -0.002.
-Across a post-hoc UKCOVID HeAR extension and secondary analyses on CODA TB, Cambridge
-COVID-19 Sounds, and Coswara, retrieval and sex decodability increased consistently,
-whereas 0/12 dataset-by-backbone settings
-established a positive matched-disease gain, and Correct did not consistently outperform
-frozen raw audio. Correspondence learning, retained participant information, and disease
-transfer are therefore distinct empirical claims requiring distinct controls.
+within-disease-label shuffles, label-and-recorded-sex-preserving shuffles, and global
+shuffles. On UKCOVID, Correct improved profile
+retrieval and sex decodability over Within-label for AST-6L and OPERA-CT, while matched
+COVID effects were +0.006 and -0.002. A post-hoc control shuffling within both label and
+recorded sex substantially attenuated the sex-probe contrasts across AST, OPERA, and HeAR,
+whereas small residual retrieval differences remained. Source-only and target-assisted
+readouts did not establish consistent disease gains across backbones; intervals still
+allowed beneficial effects in individual settings. Secondary analyses on CODA TB,
+Cambridge COVID-19 Sounds, and Coswara extended the descriptive pattern without
+establishing a universal null effect.
+Correspondence learning, retained participant information, and disease transfer are
+distinct empirical claims requiring distinct controls.
 
 ## 1. Introduction
 
@@ -60,9 +61,10 @@ references.
 
 Across UKCOVID and secondary analyses on CODA TB, Cambridge COVID-19 Sounds, and Coswara,
 we observe a consistent separation between these outcomes. Correct pairing repeatedly
-improves profile correspondence and, most consistently, sex decodability. In contrast,
-matched disease effects are small and directionally inconsistent across backbones, and
-Correct does not consistently outperform the corresponding frozen raw representation. Our
+improves profile correspondence; its largest probe contrast involved sex but was
+substantially attenuated by a sex-preserving control. In contrast, matched disease effects
+are small and directionally inconsistent across backbones, and Correct does not consistently
+outperform the corresponding frozen raw representation. Our
 claim is not that metadata alignment is generally ineffective. Rather, successful profile
 alignment and improved disease transfer are separate empirical claims requiring separate
 controls.
@@ -140,9 +142,9 @@ leakage.
 Only the audio-side projector is trained. Each arm uses five seeds and 500 epochs, and only
 the final checkpoint is evaluated. Within each seed, the arms share initialization, audio
 batches, and dropout streams; only the pairing changes. Pair assignments remain fixed
-during training. Matched data select no epoch, projector, readout, or hyperparameter. The
-experiment audits a Stage-1-style alignment mechanism rather than reproducing the complete
-downstream RespiraMFM system.
+during training. For the primary source-only endpoint, no matched split selects the
+projector, readout, or hyperparameters. The experiment audits a Stage-1-style alignment
+mechanism rather than reproducing the complete downstream RespiraMFM system.
 
 ### 3.3 Pairing-controlled intervention
 
@@ -163,6 +165,14 @@ Within-minus-Global as `Delta_label = W - G`, which measures label-conditioned p
 association. Neither is a causal estimand, and `Delta_pair` is not a participant-identity
 effect. `Correct - Raw` tests whether alignment improves on the frozen audio representation.
 
+A post-hoc sex-preserving control, `W(y,s)`, pairs `a_i` with `m_j` subject to
+`y_i = y_j`, `s_i = s_j`, and `i != j`, where `s` is recorded sex. It uses the same
+20,714 training participants and permits neither self-pairing, singleton-stratum fallback,
+nor cross-stratum fallback; the five-person positive/missing-sex stratum remains valid. A
+different participant can still share the same schema text. Exact-schema collisions were
+6.35-6.61% in `W(y,s)` versus 3.03-3.33% in `W`, so this control is described as
+"different participant," not "different profile."
+
 ### 3.4 Audit endpoints
 
 - **Correspondence:** audio queries retrieve metadata profiles on source validation. Because
@@ -170,16 +180,21 @@ effect. `Correct - Raw` tests whether alignment improves on the frozen audio rep
   target. We use macro-profile MRR so frequent schemas do not dominate.
 - **Information:** identical regularized probes decode sex, age, symptoms, acquisition and
   cohort variables, and disease. Decodability establishes availability, not causal use.
-- **Transfer:** source data alone select and calibrate downstream readouts; paired AUROC,
-  NLL, and Brier score are read once on matched targets.
+- **Transfer:** for the primary endpoint, source data alone select and calibrate downstream
+  readouts; paired AUROC, NLL, and Brier score are read once on matched targets. A separately
+  reported target-assisted diagnostic trains, selects, and calibrates its readout only on
+  matched-long before transport to participant-disjoint matched.
 - **Alternative explanations:** frozen raw-audio and metadata-only references, a fixed MLP,
   and target calibration test simpler explanations for the result.
 
-Intervals use participant-by-seed hierarchical bootstrap and preserve paired predictions.
+Retrieval intervals jointly resample unique profiles and seeds after averaging repeated
+participant queries within profile. Probe and disease intervals jointly resample
+participants and seeds. Arm and seed pairing is preserved throughout; UKCOVID participants,
+not presumed matched-pair blocks, are the resampling units.
 
 ## 4. Results
 
-### 4.1 Correct pairing improves profile correspondence and sex decodability
+### 4.1 Pairing controls separate sex decodability from residual retrieval
 
 On UKCOVID validation, Correct improved macro-profile MRR over Within-label for both
 backbones. `Delta_pair` was +0.00318 [0.00161, 0.00492] for AST and +0.00323
@@ -200,11 +215,21 @@ had higher absolute demographic decodability than aligned representations, so al
 not create demographic information absent from audio. It selectively retained that channel
 relative to Within-label.
 
-A post-hoc label-and-sex-preserving shuffle, `W(y,s)`, localized the UKCOVID sex result.
-Correct-minus-`W(y,s)` sex effects were -0.0004 [-0.0153, 0.0147] for AST, +0.0067
-[-0.0054, 0.0192] for OPERA, and +0.0064 [-0.0011, 0.0136] for HeAR, while
-`W(y,s)`-minus-Within was clearly positive for all three. Residual profile MRR after this
-control was small and backbone dependent (+0.00164, +0.00099, and +0.00394).
+A post-hoc label-and-sex-preserving shuffle, `W(y,s)`, substantially attenuated the
+UKCOVID sex-probe contrast. Correct-minus-`W(y,s)` was -0.0004 [-0.0153, 0.0147] for AST,
++0.0067 [-0.0054, 0.0192] for OPERA, and +0.0064 [-0.0011, 0.0136] for HeAR;
+`W(y,s)`-minus-Within was +0.1916 [0.1683, 0.2142], +0.1058 [0.0896, 0.1222], and
++0.0797 [0.0667, 0.0928]. This shows sensitivity to recorded-sex consistency in the pairing
+rule, not causal use of sex or equivalence between Correct and `W(y,s)`.
+
+Residual retrieval must be interpreted separately. Correct-minus-`W(y,s)` macro-profile
+MRR was +0.00164 [0.00001, 0.00335], +0.00099 [-0.00096, 0.00300], and +0.00394
+[0.00175, 0.00637] for AST, OPERA, and HeAR. Restricting the original Correct-versus-Within
+candidate library to the same recorded sex gave +0.00140 [-0.00065, 0.00350], +0.00060
+[-0.00143, 0.00256], and +0.00356 [0.00096, 0.00638]. Restricting it to the same label and
+sex gave +0.00245 [-0.00001, 0.00499], +0.00094 [-0.00149, 0.00329], and +0.00451
+[0.00115, 0.00813]. Candidate control therefore attenuated, but did not universally remove,
+profile correspondence.
 
 ### 4.2 Correspondence gains lack consistent disease-transfer gains
 
@@ -213,16 +238,30 @@ On UKCOVID matched, disease `Delta_pair` AUROC was +0.0062
 and Within AUROC were 0.538, 0.529, and 0.523; for OPERA they were 0.577, 0.555, and 0.557.
 A fixed MLP did not reveal a hidden effect.
 
-Across all 12 settings, matched disease point estimates were positive in six and negative
-in six. No confidence interval established a positive gain. Correct also showed no
+For the primary matched disease contrast, Correct-minus-`W(y,s)`, point estimates were
+positive in five of the 12 dataset-by-backbone settings and negative in seven. No confidence
+interval established a positive gain. In the nine locked secondary settings, estimates
+ranged from -0.0634 to +0.0476: CODA was +0.0476, -0.0077, and -0.0102; Cambridge was
+-0.0037, +0.0054, and -0.0634; and Coswara was +0.0132, -0.0152, and -0.0076 for AST,
+OPERA-CT, and HeAR, respectively. All nine intervals included zero. Correct also showed no
 consistent advantage over frozen raw audio. This is a descriptive recurrence, not a
-meta-analysis and not proof of exact equivalence.
+meta-analysis, an equivalence result, or proof of a universal null effect.
 
 A target-assisted diagnostic trained and calibrated the fixed linear readout on matched-long
 before applying it to participant-disjoint matched. Correct-minus-Within AUROC was -0.0082
 [-0.0337, 0.0177], +0.0287 [-0.0017, 0.0626], and +0.0047 [-0.0278, 0.0408] for AST,
-OPERA, and HeAR. It therefore did not reveal a stable disease benefit hidden by the source
-readout and did not establish a Correct-minus-Raw advantage.
+OPERA, and HeAR. The positive OPERA estimate remains uncertain but allows a potentially
+meaningful benefit. These results did not establish a cross-backbone advantage, and no
+Correct-minus-Raw advantage was established. Because source-only and target-assisted
+estimates were not directly contrasted, this diagnostic neither proves nor excludes an
+effect of readout training.
+
+The source-only `W(y,s)` disease results were likewise inconclusive. Absolute `W(y,s)`
+AUROC was 0.529 [0.504, 0.554], 0.554 [0.529, 0.577], and 0.532 [0.507, 0.557] for AST,
+OPERA, and HeAR. Correct-minus-`W(y,s)` was -0.0003 [-0.0228, 0.0241], +0.0009
+[-0.0169, 0.0196], and +0.0130 [-0.0023, 0.0287]; `W(y,s)`-minus-Within was +0.0065
+[-0.0197, 0.0313], -0.0029 [-0.0219, 0.0164], and -0.0102 [-0.0256, 0.0053]. These
+intervals do not establish equivalence or rule out individual positive effects.
 
 ### 4.3 Label association, fusion, and calibration
 
@@ -238,9 +277,9 @@ fusion beat metadata plus raw audio.
 
 With source calibration, Correct had worse matched NLL than Within even though AUROC
 differences were negligible. Target calibration reduced both NLL gaps to approximately zero
-without changing AUROC. The source NLL penalty therefore reflected unsupported confidence
-after cohort shift; recalibration repaired probability scale but created no transferable
-discrimination.
+without changing AUROC. This pattern is consistent with probability-scale mismatch after
+cohort shift, but it does not identify the mechanism; recalibration created no discrimination
+gain.
 
 ## 5. Discussion
 
@@ -267,14 +306,17 @@ the finding is specific to one encoder family. This does not establish backbone 
 HeAR was added to UKCOVID only as a separately frozen post-hoc robustness analysis.
 
 The sex result also requires careful wording. A probe shows decodability, not causal disease-
-classifier use. The `W(y,s)` control shows more specifically that the original effect largely
-reflects retention of recorded-sex consistency. Raw audio often contains still more
-demographic information, so alignment did not create a new attribute. Small residual
-retrieval after sex control indicates that sex is not the complete pairing signal.
+classifier use. The `W(y,s)` control substantially attenuated the original sex-probe contrast,
+showing that it is sensitive to recorded-sex consistency retained by the pairing rule. It is
+not a causal decomposition or equivalence test. Raw audio often contains still more
+demographic information, so alignment did not create a new attribute. Residual retrieval
+after sex control is a separate result and indicates that sex is not the complete pairing
+signal.
 
 The evidence remains bounded. UKCOVID is a discovery audit; CODA, Cambridge, and Coswara
 are secondary or post-hoc sensitivities with 100-pair targets and wide intervals. Matching
-balances measured covariates only, probes do not establish causal use, and the experiment
+balances measured covariates only; UKCOVID intervals resample participants rather than
+matched-pair blocks; probes do not establish causal use; and the experiment
 audits one Stage-1-style projector rather than a complete multimodal reasoning system. Our
 synthetic study failed its preregistered general-mechanism gates, so we do not claim a
 universal causal law. A proposed disease-invariant repair was not trained because the
@@ -283,8 +325,9 @@ this is a feasibility limitation, not a negative result for the repair.
 
 ## 6. Conclusion
 
-Correct pairing reproducibly improved participant-profile correspondence, especially sex,
-but did not yield a robust cross-backbone improvement in covariate-balanced disease
-prediction or consistently outperform raw audio. Successful audio-metadata correspondence
-is therefore not sufficient evidence of a transferable disease representation.
-Correspondence, retained information, and disease transfer must be evaluated separately.
+Correct pairing reproducibly improved participant-profile correspondence, while the largest
+sex-probe contrast was substantially attenuated by the sex-preserving control. Neither
+result yielded a robust cross-backbone improvement in covariate-balanced disease prediction
+or consistently outperformed raw audio. Successful audio-metadata correspondence is
+therefore not sufficient evidence of a transferable disease representation. Correspondence,
+retained information, and disease transfer must be evaluated separately.

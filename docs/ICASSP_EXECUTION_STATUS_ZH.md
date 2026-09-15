@@ -1,12 +1,19 @@
 # ICASSP Route A 最终执行状态
 
-日期：2026-09-12
+日期：2026-09-15
+
+> **锁定外部面板 v3 已完成并审计。** CODA TB、Cambridge 与 Coswara 的 AST-6L、
+> OPERA-CT、HeAR 共 9 个 aggregate result、180 个 epoch-500 训练端点全部通过配对、
+> 初始化／批次哈希、环境和隐私边界审计。九个外部 primary matched `C-W_{y,s}` AUROC
+> 区间全部跨 0；连同 UKCOVID 后的 12 个点估计五正七负。这是方向混合且不确定的证据，不是等效性
+> 或普适零效应证明。
 
 > **2026-09-12 补充实验最终状态：E1--E3 全部完成。** AST-6L、OPERA-CT 与事后 HeAR
 > 均完成条件检索、标签＋性别保持的 `W_{y,s}` 对照和 target-assisted readout。新对照把三个
-> backbone 原有的 Correct−Within sex 差异降到区间覆盖 0；仍有很小、依赖 backbone 的 residual
-> profile retrieval，但 source-only 与 target-assisted 两套读出都没有建立稳定 matched COVID
-> 收益。完整结果见 `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
+> backbone 原有的 Correct−Within sex probe 差异大幅削弱到区间覆盖 0；仍有很小、依赖
+> backbone 的 residual profile retrieval。source-only 与 target-assisted 两套读出都没有建立
+> 跨 backbone 一致的 matched COVID 收益，但区间仍允许个别设置存在正效应。完整结果见
+> `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
 
 状态：**UKCOVID Route-A、CODA TB secondary external sensitivity、Cambridge Task-2
 重建外部敏感性与 Coswara 三骨干 post-hoc stress test 已执行；UKCOVID HeAR 第三骨干事后
@@ -15,9 +22,9 @@
 ## 一句话结论
 
 在 UKCOVID 上，正确的音频--metadata 配对确实让模型学会了患者 profile correspondence，
-尤其保留了性别以及部分年龄／采集信息；但是，这种 correspondence 没有稳定转化成跨人群、
-跨 backbone、跨 readout 的 COVID 疾病收益。源域校准得到的额外信心在 matched 人群中缺少
-排序收益支撑，因此主要表现为 calibration regret。
+其中原来最大的 sex-probe 对比对记录性别一致性高度敏感；但是，这种 correspondence 没有稳定
+转化成跨人群、跨 backbone、跨 readout 的 COVID 疾病收益。目标域重新校准消除了主要 NLL
+差距但没有改变排序，这与概率尺度失配一致，却不能单独识别机制。
 
 这篇稿件的准确主张是：
 
@@ -25,43 +32,47 @@
 
 不能扩写为“metadata alignment 普遍有害”“声音中没有疾病信息”或“已经证明一般机制”。
 
-## 1. 研究问题与三个配对控制
+## 1. 研究问题与四个配对控制
 
 Clinical metadata 同时包含疾病、患者背景、症状和 cohort/protocol 信息。普通对比损失只知道
-positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此训练三个只改变配对的 arm：
+positive pair 应该接近，不知道其中哪部分能跨人群迁移。因此训练四个只改变配对的 arm：
 
 | arm | 保留什么 | 破坏什么 | 用来测什么 |
 |---|---|---|---|
 | `correct` | 标签共现、逐患者 metadata | 无 | 总对应学习 |
 | `within-label` | 相同 COVID 标签的群体统计 | 逐患者对应 | label/population association |
+| `within-label-sex` | 相同标签与记录性别 | 逐患者对应 | 性别保持配对控制 |
 | `global` | metadata 边缘分布 | 标签共现与逐患者对应 | 无对应参照 |
 
 核心差值：
 
 - `C-W = correct - within-label`：逐患者 correspondence；
+- `C-Wys = correct - within-label-sex`：相对标签＋记录性别保持对照；
+- `Wys-W = within-label-sex - within-label`：记录性别一致性带来的配对差异；
 - `W-G = within-label - global`：标签／人群共现；
 - `C-R = correct - raw`：对齐相对冻结原始音频表征的改变。
 
 两个预先确定的冻结音频编码器均完整执行：AST 前六层和 OPERA-CT。随后按独立冻结协议完成
 HeAR 事后第三骨干稳健性分析。每个 alignment arm 使用五个 seed、500 epochs，只取最终
-checkpoint；matched 结果不用于选择 epoch、loss、head 或 calibrator。
+checkpoint；对 primary source-only endpoint，matched 结果不用于选择 epoch、loss、head 或
+calibrator。E3 另行使用 matched-long 训练／选择／校准 target-assisted readout，并与主结果分开。
 
 ## 2. 当前完成度
 
 | 模块 | 状态 | 结论 |
 |---|---|---|
 | UKCOVID 队列、split、伪影审计 | 完成 | 招募来源在 Standard train 几乎等于标签，在 matched 中被平衡 |
-| AST 三配对训练 | 完成 | 源域对应学会，matched 疾病收益不稳定 |
-| OPERA-CT 三配对训练 | 完成 | 重复 correspondence／transfer 分离的主方向 |
+| AST 四配对训练 | 完成 | 源域对应学会，matched 疾病收益不稳定 |
+| OPERA-CT 四配对训练 | 完成 | 重复 correspondence／transfer 分离的主方向 |
 | HeAR UKCOVID 事后第三骨干 | **完成并审计** | correspondence 与 sex probe 明确；matched COVID 增量不明确 |
 | Unique-profile retrieval | 完成 | 两个 backbone 均为 `correct > within > global` |
 | E1 条件化 profile retrieval | **三骨干完成** | AST／OPERA 同性别后跨零；HeAR 缩小但仍为正 |
-| E2 标签＋性别保持的 Within 对照 | **三骨干完成并审计** | sex `C-Wys` 三骨干均跨零；疾病增量均不明确 |
-| E3 target-assisted readout | **三骨干完成并审计** | 未发现稳定 `C-W`、`C-Wys` 或 `C-Raw` 疾病优势 |
+| E2 标签＋性别保持的 Within 对照 | **三骨干完成并审计** | sex `C-Wys` 三骨干均跨零，原 sex probe 对比被显著削弱；仍有 residual retrieval |
+| E3 target-assisted readout | **三骨干完成并审计** | 未建立跨骨干稳定优势；OPERA 区间仍允许有意义的正效应 |
 | Information-channel taxonomy | 完成 | correct 明显保留 sex；COVID `C-W` 不稳定 |
 | Metadata/direct/raw-preserving fusion | 完成 | raw audio 在 metadata 上增量不显著；correct 不胜 raw |
-| Probability transport | 完成 | NLL 差主要是置信度尺度失配，不是已证实的排序损失 |
-| 固定 MLP 非线性读出 | 完成 | 更强 readout 没有救回稳定疾病 transfer |
+| Probability transport | 完成 | NLL 形状与置信度尺度失配一致；不能单独识别机制 |
+| 固定 MLP 非线性读出 | 完成 | 未观察到跨设置方向稳定的疾病 transfer 增量 |
 | 受控 synthetic stress test | 完成但门槛未过 | 只证明 objective 能学 correspondence，不能当机制证明 |
 | Coswara 外部确认 | 原贪心门 NO-GO；全局约束二次门 `SECONDARY_GO` | 三骨干 post-hoc stress test 完成；均建立 correspondence，均无 matched COVID transfer 增益 |
 | CODA TB 外部敏感性 | **三骨干正式模型已完成** | 三个 backbone 均建立 correspondence；matched TB transfer 不确定且方向不一致 |
@@ -110,8 +121,8 @@ COVID 为 **+0.0029 [−0.0115, 0.0165]**。完整审计见
 新增 `W_{y,s}` 在同疾病标签打乱的同时保留记录性别。三个 backbone 的 matched sex
 `C-W_{y,s}` 均覆盖 0：AST −0.0004 [−0.0153, 0.0147]、OPERA +0.0067
 [−0.0054, 0.0192]、HeAR +0.0064 [−0.0011, 0.0136]；相反，`W_{y,s}-W` 分别为
-+0.1916、+0.1058、+0.0797，区间都排除 0。因此原 `C-W` sex 结果主要是 correct pairing
-保留了性别一致性。
++0.1916、+0.1058、+0.0797，区间都排除 0。因此原 `C-W` sex probe 对比对 correct pairing
+是否保留记录性别一致性高度敏感；这不是因果分解或等效性证明。
 
 控制性别后并非所有 correspondence 都消失。`C-W_{y,s}` retrieval MRR 为 AST +0.00164
 [0.00001, 0.00335]、OPERA +0.00099 [−0.00096, 0.00300]、HeAR +0.00394
@@ -119,6 +130,14 @@ COVID 为 **+0.0029 [−0.0115, 0.0165]**。完整审计见
 
 对应的 matched COVID `C-W_{y,s}` 为 AST −0.0003、OPERA +0.0009、HeAR +0.0130，
 三个区间均覆盖 0。完整表见 `docs/PAIRING_AUDIT_E1_E2_E3_OUTCOME_ZH.md`。
+
+数据完整性核对显示 `W_{y,s}` 使用与原三臂相同的 20,714 人，禁止自配对、singleton fallback
+和跨层 fallback。它保证换人但不保证换到不同 schema；exact-schema collision 为 6.35%--6.61%，
+高于 W 的 3.03%--3.33%。
+
+区间单位也已明确：retrieval 对唯一 profile × seed 联合重采样；probe 与 disease 对
+participant × seed 联合重采样并保持 arm 配对。UKCOVID 没有使用推定 matched-pair ID 作为
+bootstrap block。
 
 ## 5. Correspondence 是否转化为 matched disease transfer？
 
@@ -155,7 +174,7 @@ correct 没有超过 raw audio。因此不能把 AST 单独的 +0.0156 写成可
 结论不是“线性头太弱”。AST fusion 的小正向排序仍然存在，但没有 backbone robustness，
 而且没有胜过 raw audio；OPERA 的 correct audio 反而显著低于 raw。
 
-### 5.3 Target-assisted readout 没有救回疾病收益
+### 5.3 Target-assisted readout 没有建立跨骨干一致收益
 
 E3 只在 matched-long 上训练、选择和校准 logistic readout，再应用到 participant-disjoint
 matched。它是使用目标域标签的诊断，不能并入 source-only 主结果。其 `C-W` ΔAUROC 为：
@@ -165,8 +184,9 @@ matched。它是使用目标域标签的诊断，不能并入 source-only 主结
 - HeAR +0.0047 [−0.0278, 0.0408]。
 
 `C-W_{y,s}` 与所有 Δ(−NLL) 区间同样覆盖 0；`C-Raw` 也没有正向证据，AST 反而为
-−0.0504 [−0.0843, −0.0182]。因此，源域 readout mismatch 不是当前 null transfer 的充分解释。
-这仍不等于证明表示中不存在任何疾病信息。
+−0.0504 [−0.0843, −0.0182]。OPERA 的 C−W 为 +0.0287 [−0.0017, 0.0626]，仍允许有意义
+的正效应。由于没有直接比较 source-only 与 target-assisted 估计，不能声称已排除 readout
+training 的影响，也不能证明表示中不存在任何疾病信息。
 
 ## 6. Calibration／probability transport 回答了什么？
 
@@ -185,8 +205,8 @@ AST 的固定 shrink curve 显示，预测越尖锐，负向 NLL 差距越大。
 | AST | +0.0062 [−0.0156, 0.0264] | +0.00013 [−0.00227, 0.00243] |
 | OPERA | −0.0020 [−0.0194, 0.0164] | −0.00020 [−0.00261, 0.00228] |
 
-这说明 source-calibrated NLL 的伤害主要来自目标域置信度／slope 失配，而不是已经证明的
-疾病排序损失。重新校准消除了 NLL 差距，但没有创造 transferable disease ranking。
+这个形状与目标域置信度／slope 失配一致，但不能单靠校准实验识别机制。重新校准消除了 NLL
+差距，却没有创造 transferable disease ranking。
 
 ## 7. Synthetic mechanism 的正式结局
 
@@ -208,10 +228,11 @@ Coswara 2,746 条录音完成 QC，2,646 条通过；原冻结贪心匹配在 10
 0.140，高于 0.12 门槛，因此原数据门 NO-GO。随后在仍未读取模型分数时，单独冻结的全局
 约束敏感性求解找到了 100 对可行集合：年龄 SMD 0、最大分类 SMD 0.1034、最大层级比例差
 0.07，开发集规模门也通过。三骨干正式压力测试现已完成：profile retrieval 的
-Correct−Within MRR 为 AST **+0.0183 [0.0028,0.0365]**、OPERA **+0.0243
-[0.0050,0.0452]**、HeAR **+0.0406 [0.0226,0.0619]**；matched COVID ΔAUROC 分别为
-+0.0028 [−0.0450,0.0464]、−0.0115 [−0.0750,0.0444]、+0.0037
-[−0.0646,0.0724]。三骨干性别 probe 均显著为正。它只是一项 post-hoc external stress test，
+Correct−Within MRR 为 AST +0.0120 [−0.0044,0.0280]、OPERA **+0.0196
+[0.0029,0.0387]**、HeAR **+0.0272 [0.0102,0.0451]**；primary matched COVID
+`C-W_{y,s}` ΔAUROC 分别为 +0.0132 [−0.0389,0.0611]、−0.0152
+[−0.0727,0.0326]、−0.0076 [−0.0579,0.0507]。三骨干 Correct−Within 性别 probe
+均显著为正。它只是一项 post-hoc external stress test，
 不构成 untouched external confirmation。
 
 CODA TB v1 的 9,772 条 solicited cough 全部成功解码并通过 QC；1,081 名 participant 进入
@@ -223,20 +244,21 @@ eligible cohort（TB+ 291、TB− 790）。v1 先划分60/40、再在40% target 
 development split 之前。v2 从全部1,081人得到278个初始配对，确定性删减到100对后，最大
 SMD为**0.0819**、最大分类比例差为**0.040**，全部数据门通过且两次运行输出哈希逐位一致。
 随后在读取任何表示或模型分数前冻结正式协议，并完成 AST-6L、OPERA-CT 与 HeAR 的
-Correct／Within-label／Global × 5 seeds × 500 epochs。
+Correct／Within-label／`W_{y,s}`／Global × 5 seeds × 500 epochs。
 
-CODA profile retrieval 的 Correct−Within MRR 在 AST 为 **+0.0667 [0.0349, 0.1021]**，
-OPERA 为 **+0.0302 [0.0064, 0.0555]**，HeAR 为 **+0.0646 [0.0320, 0.1014]**，所以三个 backbone 都明确建立了 participant
-correspondence。matched-target 上的 TB Correct−Within 结果为：
+CODA profile retrieval 的 Correct−Within MRR 在 AST 为 **+0.0582 [0.0288, 0.0922]**，
+OPERA 为 **+0.0520 [0.0222, 0.0840]**，HeAR 为 **+0.0400 [0.0129, 0.0687]**，
+所以三个 backbone 都明确建立了 participant correspondence。matched-target 上锁定的
+TB Correct−`W_{y,s}` 结果为：
 
 | backbone | ΔAUROC，95% CI | Δ(−NLL)，95% CI |
 |---|---:|---:|
-| AST-6L | +0.0341 [−0.0221, 0.0916] | +0.0198 [−0.0227, 0.0631] |
-| OPERA-CT | −0.0256 [−0.0872, 0.0346] | −0.0070 [−0.0596, 0.0406] |
-| HeAR | −0.0127 [−0.0916, 0.0631] | −0.0278 [−0.0816, 0.0206] |
+| AST-6L | +0.0476 [−0.0127, 0.1151] | +0.0092 [−0.0378, 0.0563] |
+| OPERA-CT | −0.0077 [−0.0600, 0.0423] | −0.0054 [−0.0376, 0.0238] |
+| HeAR | −0.0102 [−0.0707, 0.0481] | −0.0230 [−0.0841, 0.0405] |
 
-三个 backbone 的 sex Correct−Within probe 均显著为正；age≥45 在 AST／OPERA 显著，HeAR
-方向为正但区间跨0。matched TB transfer 的共同主指标均未通过，方向也不一致。冻结解释分支是
+三个 backbone 的 sex Correct−Within probe 均显著为正；age≥45 仅在 AST 明确。matched TB
+transfer 的共同主指标均未通过，方向也不一致。冻结解释分支是
 `correspondence_gain_but_matched_transfer_inconclusive`：不是正向 transfer，也不能因 CI
 较宽而写成已证明零效应。完整边界见 `docs/CODA_TB_FORMAL_RESULTS_ZH.md`。
 
@@ -263,11 +285,11 @@ participant identifier精确／忽略大小写重叠均为0。
 target和config均已标记superseded。修正后在Mac与服务器独立复现为989人、100对、最大SMD与
 fine-balance difference均为0，随后完成AST-6L、OPERA-CT和HeAR正式实验。
 
-Cambridge profile retrieval 的Correct−Within MRR为AST **+0.0433 [0.0151,0.0799]**、
-OPERA **+0.0298 [−0.0011,0.0638]**、HeAR **+0.0457 [0.0203,0.0763]**。matched COVID
-ΔAUROC则为AST **−0.0448 [−0.1181,0.0300]**、OPERA **+0.0077
-[−0.0869,0.1132]**、HeAR **−0.0512 [−0.1186,0.0161]**；三者均无正向迁移证据。
-性别probe的Correct−Within为+0.1318、+0.1233、+0.1282，三个区间均排除0。因此Cambridge
+Cambridge profile retrieval 的 Correct−Within MRR 为 AST **+0.0474 [0.0133,0.0844]**、
+OPERA **+0.0380 [0.0132,0.0676]**、HeAR **+0.0391 [0.0102,0.0717]**。primary matched
+COVID `C-W_{y,s}` ΔAUROC 则为 AST −0.0037 [−0.0856,0.0778]、OPERA +0.0054
+[−0.0740,0.0826]、HeAR −0.0634 [−0.1552,0.0240]；三者均无稳健正向迁移证据。
+性别 probe 的 Correct−Within 为 +0.1445、+0.1386、+0.1054，三个区间均排除 0。因此 Cambridge
 跨三个backbone重复了“patient correspondence成立、disease transfer不成立”的主形状；
 但它仍是自定义重建split的外部敏感性，不是官方benchmark复现或untouched confirmation。
 

@@ -1,0 +1,21 @@
+{
+  "cache_bit_identical_under_shuffle": true,
+  "cohort_sha256": "72a1a7c73a079b346096e10b0d4e96ef225be0add37ee0aad438c6a8bce54c13",
+  "dtype": "bfloat16",
+  "embedding_values_sha16": "2cc9389aec5fd9ff",
+  "model_revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0",
+  "n_participants": 1701,
+  "n_unique_profiles": 1156,
+  "padding": "right-fixed-length",
+  "pooling": "mask_aware_mean",
+  "shape": [
+    1156,
+    2560
+  ],
+  "token_length": {
+    "frozen_max_length": 256,
+    "max": 121,
+    "min": 115
+  },
+  "transformers_version": "4.56.0"
+}

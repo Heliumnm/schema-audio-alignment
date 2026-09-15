@@ -1,0 +1,272 @@
+{
+  "dataset": "Cambridge COVID-19 Sounds reconstructed recent-positive versus never-positive-negative cohort",
+  "field_rules": {
+    "age_band": {
+      "allow_missing": true,
+      "identity": true,
+      "kind": "category",
+      "tag": "AGE_BAND"
+    },
+    "asthma": {
+      "allow_missing": true,
+      "false_values": [
+        "NO"
+      ],
+      "kind": "boolean",
+      "tag": "ASTHMA",
+      "true_values": [
+        "YES"
+      ]
+    },
+    "cough": {
+      "allow_missing": true,
+      "false_values": [
+        "NO"
+      ],
+      "kind": "boolean",
+      "tag": "COUGH",
+      "true_values": [
+        "YES"
+      ]
+    },
+    "fever": {
+      "allow_missing": true,
+      "false_values": [
+        "NO"
+      ],
+      "kind": "boolean",
+      "tag": "FEVER",
+      "true_values": [
+        "YES"
+      ]
+    },
+    "other_respiratory": {
+      "allow_missing": true,
+      "false_values": [
+        "NO"
+      ],
+      "kind": "boolean",
+      "tag": "RESP_OTHER",
+      "true_values": [
+        "YES"
+      ]
+    },
+    "platform": {
+      "allow_missing": true,
+      "identity": true,
+      "kind": "category",
+      "tag": "PLATFORM"
+    },
+    "sex": {
+      "allow_missing": true,
+      "identity": true,
+      "kind": "category",
+      "tag": "SEX"
+    },
+    "shortness_of_breath": {
+      "allow_missing": true,
+      "false_values": [
+        "NO"
+      ],
+      "kind": "boolean",
+      "tag": "SHORTNESS_OF_BREATH",
+      "true_values": [
+        "YES"
+      ]
+    },
+    "smoker": {
+      "allow_missing": true,
+      "identity": true,
+      "kind": "category",
+      "tag": "SMOKER"
+    },
+    "sore_throat": {
+      "allow_missing": true,
+      "false_values": [
+        "NO"
+      ],
+      "kind": "boolean",
+      "tag": "SORE_THROAT",
+      "true_values": [
+        "YES"
+      ]
+    }
+  },
+  "format_version": "cambridge-external-v1",
+  "labels": {
+    "negative_values": [
+      0,
+      "0"
+    ],
+    "positive_values": [
+      1,
+      "1"
+    ]
+  },
+  "matching": {
+    "continuous_smd_fields": [],
+    "cost_fields": [
+      {
+        "field": "smoker",
+        "kind": "categorical",
+        "weight": 1
+      },
+      {
+        "field": "platform",
+        "kind": "categorical",
+        "weight": 2
+      }
+    ],
+    "exact_fields": [
+      "age_band",
+      "sex",
+      "cough",
+      "fever",
+      "sore_throat",
+      "shortness_of_breath",
+      "asthma",
+      "other_respiratory"
+    ],
+    "fine_balance_fields": [
+      "platform",
+      "smoker"
+    ],
+    "max_abs_smd": 0.12,
+    "max_fine_balance_difference": 0.08,
+    "min_pairs": 100,
+    "smd_fields": [
+      "age_band",
+      "sex",
+      "smoker",
+      "cough",
+      "fever",
+      "sore_throat",
+      "shortness_of_breath",
+      "asthma",
+      "other_respiratory"
+    ]
+  },
+  "models": {
+    "alignment": {
+      "device": "cuda",
+      "epochs": 500,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "ast": {
+      "enabled": true,
+      "layers": 6
+    },
+    "device": "cuda",
+    "hear": {
+      "batch_size": 64,
+      "enabled": true,
+      "input_key": "x",
+      "output_key": "output_0",
+      "revision": "9b2eb2853c426676255cc6ac5804b7f1fe8e563f"
+    },
+    "opera_ct": {
+      "enabled": true
+    },
+    "text": {
+      "batch_size": 16,
+      "dtype": "bfloat16",
+      "max_length": 256,
+      "revision": "810d367871c1d460086d9f82db8696f2e0a0fcd0"
+    }
+  },
+  "protocol": {
+    "auroc_equivalence_margin": 0.02,
+    "bootstrap": 2000,
+    "clean_rerun_protocol": "docs/LOCKED_EXTERNAL_RERUN_PROTOCOL_2026-09-14_ZH.md",
+    "cohort_field": "platform",
+    "development_split_ratios": [
+      0.7,
+      0.15,
+      0.15
+    ],
+    "development_split_salt": "cambridge-match-first-v2-development",
+    "formal_unlock": "FROZEN_PROTOCOL_AND_DATA_GATE_GO",
+    "identity_namespace_version": "cambridge-task2-official-loader-v1",
+    "max_train_modal_profile_share": 0.1,
+    "min_test_n": 75,
+    "min_test_per_class": 20,
+    "min_train_n": 500,
+    "min_train_per_class": 100,
+    "min_train_unique_profiles": 100,
+    "min_validation_n": 75,
+    "min_validation_per_class": 20,
+    "nll_equivalence_margin": 0.01,
+    "probes": {
+      "age_70plus": {
+        "field": "age_band",
+        "kind": "category",
+        "positive_values": [
+          "70-79",
+          "80-89",
+          "90+"
+        ]
+      },
+      "asthma": {
+        "field": "asthma",
+        "kind": "category",
+        "positive_values": [
+          "YES"
+        ]
+      },
+      "cough": {
+        "field": "cough",
+        "kind": "category",
+        "positive_values": [
+          "YES"
+        ]
+      },
+      "platform_web": {
+        "field": "platform",
+        "kind": "category",
+        "positive_values": [
+          "WEB"
+        ]
+      },
+      "sex_female": {
+        "field": "sex",
+        "kind": "category",
+        "positive_values": [
+          "FEMALE"
+        ]
+      }
+    },
+    "rerun_protocol": "locked-external-rerun-20260914-v3",
+    "schema_fields": [
+      "age_band",
+      "sex",
+      "smoker",
+      "cough",
+      "fever",
+      "sore_throat",
+      "shortness_of_breath",
+      "asthma",
+      "other_respiratory"
+    ],
+    "split_origin": "model-blind target-first matching; remaining participants split 70/15/15 by label x platform",
+    "split_strategy": "match_first_v2",
+    "standing": "locked post-archive external rerun; prior exploratory C/W results existed, primary C-Wys was not previously evaluated"
+  },
+  "source_adapter": null,
+  "splits": {
+    "test_values": [
+      "test"
+    ],
+    "train_values": [
+      "train"
+    ],
+    "validation_values": [
+      "validation"
+    ]
+  }
+}

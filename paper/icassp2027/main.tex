@@ -28,28 +28,20 @@ Yuan-Chao Li$^1$
 \maketitle
 \begin{abstract}
 Clinical audio models increasingly align recordings with participant metadata
-or metadata-derived text. Such alignment can be interpreted as evidence of
-better clinical representation, although the paired metadata target also
-contains demographics, symptoms, missingness, and cohort structure. We introduce a
-Pairing-Controlled Transfer Audit that trains matched pairing trajectories and
-then freezes their endpoints for three evaluations: profile correspondence,
-attribute decodability, and disease prediction after covariate balancing. The
-audit compares correct participant pairs with global shuffling,
-disease-label-preserving shuffling, and a post-hoc control that also preserves
-recorded sex. In the UKCOVID discovery audit, Correct improves profile
-retrieval and sex decodability relative to label-only shuffling across AST-6L
-and OPERA-CT, showing that the pairing intervention produced a measurable
-endpoint difference. Preserving both label and recorded sex
-substantially attenuates the sex-probe contrast across AST-6L, OPERA-CT, and
-HeAR, while residual retrieval differences remain. In contrast, source-only
-matched disease AUROC
-differences for Correct versus label-only shuffling are small and uncertain:
-$0.006$ [$-0.014$, $0.028$] for AST-6L and $-0.002$ [$-0.019$, $0.017$] for
-OPERA-CT. Disease comparisons with the sex-preserving control and
-target-assisted readouts also remain uncertain. Secondary analyses on CODA TB,
-Cambridge COVID-19 Sounds, and Coswara extend the descriptive pattern but do
-not establish a universal null effect. A detectable profile-correspondence gain
-and improved disease transfer are therefore distinct empirical claims.
+or metadata-derived text, but these targets also encode demographics, symptoms,
+missingness, and cohort structure. We introduce a Pairing-Controlled Transfer
+Audit that trains matched trajectories under correct pairing, global shuffling,
+disease-label-preserving shuffling, and a post-hoc
+label-and-recorded-sex-preserving control, then freezes endpoints for profile
+correspondence, attribute decodability, and disease prediction after covariate
+balancing. In UKCOVID, Correct improves profile retrieval and sex decodability
+over label-only shuffling for AST-6L and OPERA-CT. Preserving label and recorded
+sex substantially attenuates the sex-probe contrast across AST-6L, OPERA-CT,
+and HeAR while residual retrieval differences remain. Source-only matched
+disease gains, sex-preserving comparisons, and target-assisted comparisons
+remain uncertain. Secondary CODA TB, Cambridge COVID-19 Sounds, and Coswara
+analyses extend the descriptive pattern without establishing a universal null.
+Profile-correspondence gain and disease transfer are distinct empirical claims.
 \end{abstract}
 
 \begin{keywords}
@@ -400,8 +392,10 @@ regime.
 
 Across the 12 dataset--backbone settings, all $C-W$ retrieval point estimates
 are positive, with 11 reported intervals above zero. All 12 sex-probe
-intervals are above zero. Disease estimates have six positive and six negative
-signs, with no interval entirely above zero. These descriptive counts show a
+$C-W$ intervals are above zero. For the primary matched disease contrast
+$C-\wys{}$, five point estimates are positive and seven are negative, with no
+interval entirely above zero. Across the nine locked secondary settings, these
+estimates range from $-0.0634$ to $0.0476$. These descriptive counts show a
 recurring pattern in result shape: correspondence and sex-probe contrasts are
 more consistently positive than matched disease contrasts in the audited
 settings. They are not independent replications, pooled effects, or evidence

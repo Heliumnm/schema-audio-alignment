@@ -1,0 +1,7281 @@
+{
+ "source_commit": "b4224f231f947f3ac3ba8dcafe1f11d8a9f3e525",
+ "n_train": 1041,
+ "batch": 64,
+ "epochs": 500,
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "input_hashes": {
+  "audio": "259dd31a1817bc08",
+  "text_unique": "2cc9389aec5fd9ff",
+  "text_id": "d4cf203b69201ba8"
+ },
+ "audio_input_dim": 512,
+ "arms": [
+  "correct",
+  "within_label",
+  "within_label_sex",
+  "global"
+ ],
+ "within_label_sex_column": "sex",
+ "within_label_sex_support": {
+  "policy": "drop-singleton-strata",
+  "n_before": 1041,
+  "n_after": 1041,
+  "dropped": 0,
+  "dropped_strata": {},
+  "stratum_counts_before": {
+   "0|female": 186,
+   "0|male": 483,
+   "1|female": 139,
+   "1|male": 233
+  }
+ },
+ "runs": {
+  "correct_seed0": {
+   "pairing_hash": "21af8855de8e6951",
+   "init_hash": "1a243b17663c7649",
+   "batch_order_hash": "0a2101223dae3186",
+   "repr_raw_hash": "9071de64a8b9ebca",
+   "repr_norm_hash": "80b2421f5cc6cd35",
+   "n_repr": 1701,
+   "loss_first": 4.107606876136933,
+   "loss_last": 3.640054619850503,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.107606876136933,
+     "mean_log_K": 0.05447689288103355,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.89890811033368,
+     "mean_log_K": 0.06483884596847185,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.847628173406713,
+     "mean_log_K": 0.06531977257119662,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.79844007666127,
+     "mean_log_K": 0.05640059929193262,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.7427763208303166,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.6959606430830574,
+     "mean_log_K": 0.05034207564118937,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.6549969452373348,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.5988590650897434,
+     "mean_log_K": 0.043802625387721346,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.571009943510453,
+     "mean_log_K": 0.05957356332632727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5459344054963244,
+     "mean_log_K": 0.05338384772859408,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.540448753336779,
+     "mean_log_K": 0.05192855765838669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.529861189560977,
+     "mean_log_K": 0.06915478566719999,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.529789659635707,
+     "mean_log_K": 0.06339606616029755,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.5493794479241862,
+     "mean_log_K": 0.051616243252512795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.564260731283915,
+     "mean_log_K": 0.055270133889632214,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.6014857200563926,
+     "mean_log_K": 0.0516162432525128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.680125813204777,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.72773301658667,
+     "mean_log_K": 0.06563208697707051,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.7565169229058553,
+     "mean_log_K": 0.05623198709508174,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.783474507409718,
+     "mean_log_K": 0.05272179866698535,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.764149161053895,
+     "mean_log_K": 0.06867385906447522,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.766701069620226,
+     "mean_log_K": 0.05353994966341187,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.741140549281374,
+     "mean_log_K": 0.06005448992905203,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.744967847690344,
+     "mean_log_K": 0.060366804334925916,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.725657797455215,
+     "mean_log_K": 0.0656957096508223,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.721751364919569,
+     "mean_log_K": 0.0709098798812482,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.739284356893197,
+     "mean_log_K": 0.06452653156259795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.725622269651503,
+     "mean_log_K": 0.05009338390906727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.7141922507345617,
+     "mean_log_K": 0.045076792999044775,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.7098694729415644,
+     "mean_log_K": 0.06564459723910361,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.705482634755995,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.698752137586317,
+     "mean_log_K": 0.05416457847515966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.7041327234189403,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.7110557915726954,
+     "mean_log_K": 0.05750615470640518,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.715979058506624,
+     "mean_log_K": 0.048106054824416405,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.70274235581573,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6903101637544364,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.6789056157745157,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.6800850003413808,
+     "mean_log_K": 0.06786810779384349,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.6737393574801693,
+     "mean_log_K": 0.0640456049598732,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.684598000890125,
+     "mean_log_K": 0.0516162432525128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.674546515449209,
+     "mean_log_K": 0.059092636723602494,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.6762682322008353,
+     "mean_log_K": 0.06101634313450157,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6672955530406646,
+     "mean_log_K": 0.06054792679380988,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6639229360391723,
+     "mean_log_K": 0.05751866496843826,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.648691352803929,
+     "mean_log_K": 0.06485135623050495,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.658804758824945,
+     "mean_log_K": 0.06642532798566918,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.645942799754147,
+     "mean_log_K": 0.05654430150095563,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.650947309021304,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.6607136385127057,
+     "mean_log_K": 0.06309626201645674,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_seed0": {
+   "pairing_hash": "7b4fc3d89b78065f",
+   "init_hash": "1a243b17663c7649",
+   "batch_order_hash": "0a2101223dae3186",
+   "repr_raw_hash": "6ef836d1780d3f81",
+   "repr_norm_hash": "ec845c218100aa14",
+   "n_repr": 1701,
+   "loss_first": 4.1355287898170845,
+   "loss_last": 3.5215743953052563,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.1355287898170845,
+     "mean_log_K": 0.043802625387721346,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.036272946741579,
+     "mean_log_K": 0.05464550507788442,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.963786083041877,
+     "mean_log_K": 0.07072875742236423,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.9133277053906297,
+     "mean_log_K": 0.06515116037434575,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8529326888257556,
+     "mean_log_K": 0.06738718119111872,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.772882154878805,
+     "mean_log_K": 0.05144763105566192,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.709286430956193,
+     "mean_log_K": 0.0552701338896322,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.669742246640633,
+     "mean_log_K": 0.05527013388963221,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6157209515915136,
+     "mean_log_K": 0.05192855765838669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.6141272663039503,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.6055252840608274,
+     "mean_log_K": 0.050342075641189366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.597246002395146,
+     "mean_log_K": 0.05864913037073868,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.591727961495333,
+     "mean_log_K": 0.052890410863836224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.603718420957626,
+     "mean_log_K": 0.06308375175442366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.6237611120189186,
+     "mean_log_K": 0.04300938437912268,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5918553651925125,
+     "mean_log_K": 0.04889929583301506,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6240949262001556,
+     "mean_log_K": 0.06483884596847185,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6038101580598743,
+     "mean_log_K": 0.05096670445293715,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.599293529242993,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.589554828594329,
+     "mean_log_K": 0.05671291369780651,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.5850114378072573,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.57760712759181,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.591847222774333,
+     "mean_log_K": 0.051616243252512795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.562653432547416,
+     "mean_log_K": 0.07455126025633452,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.5743464108960885,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.561508347046822,
+     "mean_log_K": 0.0391868815451524,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.5603365080500886,
+     "mean_log_K": 0.062303021007858075,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.5738976501021447,
+     "mean_log_K": 0.06515116037434575,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.5584105723872996,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.5830319848459116,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.549405599075596,
+     "mean_log_K": 0.05192855765838669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.5434921603152434,
+     "mean_log_K": 0.05441366419228647,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.5415289958547103,
+     "mean_log_K": 0.061497269737226336,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.559409586542736,
+     "mean_log_K": 0.05417708873719274,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.5369365254236342,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.5404978634415625,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.535988737595528,
+     "mean_log_K": 0.0501734634443385,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.519839458804538,
+     "mean_log_K": 0.07696840353199144,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.5296222426133244,
+     "mean_log_K": 0.05942986111730425,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.5218997123033007,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.5328823558191744,
+     "mean_log_K": 0.05878032231772861,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.5318566298507705,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.529426100389186,
+     "mean_log_K": 0.04252845777639792,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.520898147229388,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.518804309920092,
+     "mean_log_K": 0.05927375918248646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5211893444904105,
+     "mean_log_K": 0.06611301357979528,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.514874332576389,
+     "mean_log_K": 0.06107996580825336,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.5252854837807868,
+     "mean_log_K": 0.046519572807219085,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5217329782436493,
+     "mean_log_K": 0.0570252281036804,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.5293719230307397,
+     "mean_log_K": 0.0640456049598732,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_sex_seed0": {
+   "pairing_hash": "90882a8e50a8057f",
+   "init_hash": "1a243b17663c7649",
+   "batch_order_hash": "0a2101223dae3186",
+   "repr_raw_hash": "507589bd19385cfa",
+   "repr_norm_hash": "1edb9180078ceaf6",
+   "n_repr": 1701,
+   "loss_first": 4.1204472499667855,
+   "loss_last": 3.5777923149288444,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.1204472499667855,
+     "mean_log_K": 0.06071653899066076,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.9611210692512886,
+     "mean_log_K": 0.06187320681685201,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9045475965274514,
+     "mean_log_K": 0.06993551641376558,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.854428513707391,
+     "mean_log_K": 0.04300938437912268,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8034098340729816,
+     "mean_log_K": 0.062303021007858075,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7491817309464777,
+     "mean_log_K": 0.061509779999259426,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.6818767317662893,
+     "mean_log_K": 0.04555771960176954,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.6550530253638454,
+     "mean_log_K": 0.04683188721309298,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6225564979109826,
+     "mean_log_K": 0.05719384030053128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5889419865768537,
+     "mean_log_K": 0.06435791936574708,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.625388854289719,
+     "mean_log_K": 0.046350960610368204,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.6270991933677887,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.606791444058377,
+     "mean_log_K": 0.046519572807219085,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.628791573182765,
+     "mean_log_K": 0.06516367063637883,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.653457899487557,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.656391702170102,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6627596375120017,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6487342970057477,
+     "mean_log_K": 0.05974217552317815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6265157469182374,
+     "mean_log_K": 0.05768727716528914,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.629644551263419,
+     "mean_log_K": 0.05434570093404362,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6438798604391724,
+     "mean_log_K": 0.06356467835714844,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6440991485038707,
+     "mean_log_K": 0.0481060548244164,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.6271553538832726,
+     "mean_log_K": 0.045076792999044775,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6249031340354456,
+     "mean_log_K": 0.05623198709508175,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6258142152505926,
+     "mean_log_K": 0.040773363562349715,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.62561535560432,
+     "mean_log_K": 0.07058505521334123,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6149492568401738,
+     "mean_log_K": 0.06452653156259797,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6098223717366125,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.607699598061363,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.6347114334417925,
+     "mean_log_K": 0.06500745816532273,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.633101425757211,
+     "mean_log_K": 0.05640059929193263,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.6280782456356784,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6119229184333004,
+     "mean_log_K": 0.040773363562349715,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.611989102835385,
+     "mean_log_K": 0.058480518173887795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.604307491428914,
+     "mean_log_K": 0.05575106049235698,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6168980740447325,
+     "mean_log_K": 0.061341167802408544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6082657698137504,
+     "mean_log_K": 0.06452653156259795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.598380625190698,
+     "mean_log_K": 0.05543874608648308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.5914197849838008,
+     "mean_log_K": 0.058468007911854705,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.5909124572728257,
+     "mean_log_K": 0.06483884596847185,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.6104821998493586,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.6155891033689294,
+     "mean_log_K": 0.04731281381581774,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.5935987413902906,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.607318624868402,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.596025342327488,
+     "mean_log_K": 0.056544301500955636,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5782989521191513,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5848731275479686,
+     "mean_log_K": 0.05017346344433849,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.5813515468014763,
+     "mean_log_K": 0.046350960610368204,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5813655802885234,
+     "mean_log_K": 0.053683651872434894,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.5866221158580065,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "global_seed0": {
+   "pairing_hash": "4ec745e250b703c8",
+   "init_hash": "1a243b17663c7649",
+   "batch_order_hash": "0a2101223dae3186",
+   "repr_raw_hash": "a2d32790d21a4533",
+   "repr_norm_hash": "ebb54c8da3653675",
+   "n_repr": 1701,
+   "loss_first": 4.136894350665676,
+   "loss_last": 3.5486238298223753,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.136894350665676,
+     "mean_log_K": 0.05096670445293715,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.054610717079023,
+     "mean_log_K": 0.04731281381581775,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.985204492361928,
+     "mean_log_K": 0.05513894194264228,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.9128371608818413,
+     "mean_log_K": 0.052890410863836224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8539121991504737,
+     "mean_log_K": 0.05671291369780651,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.784344629412311,
+     "mean_log_K": 0.06084773093765068,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.716782412771762,
+     "mean_log_K": 0.054789207286907435,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.6751505226956094,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.634048061114338,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.610642949167521,
+     "mean_log_K": 0.03998012255375106,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.600336790313867,
+     "mean_log_K": 0.053371337466561,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5755785233005666,
+     "mean_log_K": 0.0463509606103682,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.573709351643133,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.566753936890337,
+     "mean_log_K": 0.06818042219971737,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5730862008277096,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5752674905756825,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.580525366877502,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.5688864005287604,
+     "mean_log_K": 0.06084773093765068,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.575385282866435,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.5830484494695747,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.5859830839833196,
+     "mean_log_K": 0.05591967268920786,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6095198753587794,
+     "mean_log_K": 0.04889929583301506,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.597156717042071,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.5904404984198433,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6041434949458964,
+     "mean_log_K": 0.051928557658386686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.601268263302894,
+     "mean_log_K": 0.057206350562564366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.59405323911698,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.588547873107661,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.5873286563770685,
+     "mean_log_K": 0.06070402872862767,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.566922792898246,
+     "mean_log_K": 0.06437042962778017,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.571463070960141,
+     "mean_log_K": 0.051928557658386686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.567360197318276,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.5637986623359117,
+     "mean_log_K": 0.05623198709508175,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.551333880447402,
+     "mean_log_K": 0.0694545898110408,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.5471002258553628,
+     "mean_log_K": 0.06118495533135244,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.551123445476052,
+     "mean_log_K": 0.06309626201645674,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.55034631221599,
+     "mean_log_K": 0.04252845777639792,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.545289010067151,
+     "mean_log_K": 0.058168203768013904,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.5606932053762943,
+     "mean_log_K": 0.0697669042169147,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.551964891747027,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.5613772752305617,
+     "mean_log_K": 0.0484183692302903,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.540806909803011,
+     "mean_log_K": 0.0635771886191815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.5380030356268835,
+     "mean_log_K": 0.08219626592427509,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.5281255962067677,
+     "mean_log_K": 0.06101634313450157,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.5574401386876615,
+     "mean_log_K": 0.03488345210845735,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.543381746861937,
+     "mean_log_K": 0.057674766903256056,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.534168398231411,
+     "mean_log_K": 0.049380222435739834,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.532722156169206,
+     "mean_log_K": 0.05210968011727065,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5468249939360605,
+     "mean_log_K": 0.06467023377162097,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.541441899326189,
+     "mean_log_K": 0.05719384030053128,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "correct_seed1": {
+   "pairing_hash": "21af8855de8e6951",
+   "init_hash": "0e14f6518cd37004",
+   "batch_order_hash": "78377300ae764569",
+   "repr_raw_hash": "660304ae22e14157",
+   "repr_norm_hash": "de5519b76b06351b",
+   "n_repr": 1701,
+   "loss_first": 4.106507216361025,
+   "loss_last": 3.677673369159387,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.106507216361025,
+     "mean_log_K": 0.06659394018252006,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.9087430658990896,
+     "mean_log_K": 0.057193840300531276,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.845422823536751,
+     "mean_log_K": 0.06612552384182838,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.79339174876181,
+     "mean_log_K": 0.051928557658386686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.7429373259732177,
+     "mean_log_K": 0.08904803058361699,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.690566938502873,
+     "mean_log_K": 0.06803671999069436,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.6282394969841247,
+     "mean_log_K": 0.046350960610368204,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.5905219122953533,
+     "mean_log_K": 0.06756830365000267,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.5868362615477225,
+     "mean_log_K": 0.06197819633995111,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.563615386240993,
+     "mean_log_K": 0.07885468969302958,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5919853264499926,
+     "mean_log_K": 0.061265428851628376,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5886283365152525,
+     "mean_log_K": 0.055751060492356966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.6094679227823483,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.6117080517621365,
+     "mean_log_K": 0.061809584143100234,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.6599948229867603,
+     "mean_log_K": 0.047312813815817735,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.653445602264917,
+     "mean_log_K": 0.05289041086383623,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6499631938512915,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6729648424729375,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.683172392684834,
+     "mean_log_K": 0.06836154465860134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.721145062350402,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.7155262929218305,
+     "mean_log_K": 0.06379691322775109,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.7160389285953315,
+     "mean_log_K": 0.06101634313450157,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.703560055962672,
+     "mean_log_K": 0.0570252281036804,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.708062134146347,
+     "mean_log_K": 0.071209684025089,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.7253494658914468,
+     "mean_log_K": 0.061509779999259426,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.7027669378934744,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.698278858155499,
+     "mean_log_K": 0.04525791545792874,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6932163616422273,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.691172935777164,
+     "mean_log_K": 0.06435791936574707,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.6813106580380635,
+     "mean_log_K": 0.05399596627830877,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6882483311047585,
+     "mean_log_K": 0.06642532798566918,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.6939926582614926,
+     "mean_log_K": 0.0552701338896322,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6827630998994385,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.6762342599581115,
+     "mean_log_K": 0.0705975654753743,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.6882365888179667,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6776313396970544,
+     "mean_log_K": 0.04445216418729699,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6786774221689624,
+     "mean_log_K": 0.04938022243573983,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.6671672845321934,
+     "mean_log_K": 0.049380222435739834,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.65354014908775,
+     "mean_log_K": 0.05192855765838669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.6983091510567494,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.677294728620824,
+     "mean_log_K": 0.04714420161896687,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.6806228902910214,
+     "mean_log_K": 0.05767476690325606,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.6789565704741465,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6816465976029833,
+     "mean_log_K": 0.061809584143100234,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6673705845813585,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.6669032216415625,
+     "mean_log_K": 0.062290510745825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.67841128863244,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.6879647666736934,
+     "mean_log_K": 0.052890410863836224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.6822887449511876,
+     "mean_log_K": 0.05416457847515965,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.671674920090337,
+     "mean_log_K": 0.04938022243573983,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_seed1": {
+   "pairing_hash": "4c890f8c0d941246",
+   "init_hash": "0e14f6518cd37004",
+   "batch_order_hash": "78377300ae764569",
+   "repr_raw_hash": "98f714c219f0bcc8",
+   "repr_norm_hash": "8a0fb8d11b359a34",
+   "n_repr": 1701,
+   "loss_first": 4.136491824066719,
+   "loss_last": 3.668586721566866,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.136491824066719,
+     "mean_log_K": 0.06516367063637883,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.03151599680656,
+     "mean_log_K": 0.07089736961921511,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9477711699538,
+     "mean_log_K": 0.05846800791185472,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.8902178589365555,
+     "mean_log_K": 0.0643579193657471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.844217329730676,
+     "mean_log_K": 0.06485135623050493,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.771048930147081,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.71128568617228,
+     "mean_log_K": 0.053683651872434894,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.65201146847691,
+     "mean_log_K": 0.05846800791185472,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6371815891705603,
+     "mean_log_K": 0.0715219984309629,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5938076904252902,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5540152441184185,
+     "mean_log_K": 0.055919672689207854,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5541519981296332,
+     "mean_log_K": 0.07565681567080706,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5464973110744977,
+     "mean_log_K": 0.04428355199044612,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.5575515873494,
+     "mean_log_K": 0.055502368760234885,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.561013274646286,
+     "mean_log_K": 0.06849273660559127,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5473032693927045,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.558069374100963,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.628081157273907,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6118520746771585,
+     "mean_log_K": 0.06531977257119662,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6433146872506703,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6881341244828576,
+     "mean_log_K": 0.07455126025633452,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.7032040626698106,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.7237967725675,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.7212383268431446,
+     "mean_log_K": 0.060235612387936,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.740183505956996,
+     "mean_log_K": 0.05113531664978803,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.722765721917496,
+     "mean_log_K": 0.04349031098184747,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.7346410442154414,
+     "mean_log_K": 0.06515116037434573,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.7142281839185673,
+     "mean_log_K": 0.06022310212590291,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.7255797647261826,
+     "mean_log_K": 0.06391441301288327,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.7018367582279024,
+     "mean_log_K": 0.05957356332632727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.706536340667695,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.7009349501442155,
+     "mean_log_K": 0.06866134880244214,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.710801895024339,
+     "mean_log_K": 0.057674766903256056,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.7036246992325577,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.678933988272514,
+     "mean_log_K": 0.05894893451457947,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.676893611691756,
+     "mean_log_K": 0.050342075641189366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.667758336786349,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.680978653868383,
+     "mean_log_K": 0.05798708130912995,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.6836011503661172,
+     "mean_log_K": 0.07520079905591016,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.6865277054444974,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.6769630860870097,
+     "mean_log_K": 0.05957356332632727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.693971389079758,
+     "mean_log_K": 0.05343496014031279,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.666850511897194,
+     "mean_log_K": 0.05527013388963221,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6989230798140498,
+     "mean_log_K": 0.07503218685905928,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.680449988725206,
+     "mean_log_K": 0.05272179866698535,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.6790197740714214,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.676825683238298,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.67296547756873,
+     "mean_log_K": 0.053371337466561,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.669861202624758,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.6725301994484965,
+     "mean_log_K": 0.054645505077884425,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_sex_seed1": {
+   "pairing_hash": "4644370cf1afffa1",
+   "init_hash": "0e14f6518cd37004",
+   "batch_order_hash": "78377300ae764569",
+   "repr_raw_hash": "8aeebc3fc9d2215d",
+   "repr_norm_hash": "8c8e4985c1289570",
+   "n_repr": 1701,
+   "loss_first": 4.124371175005617,
+   "loss_last": 3.5977324353858444,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.124371175005617,
+     "mean_log_K": 0.061640971946249346,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.9642842601515946,
+     "mean_log_K": 0.07074126768439731,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.8977405026368976,
+     "mean_log_K": 0.062303021007858075,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.8541657411628454,
+     "mean_log_K": 0.05640059929193263,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.802584290160913,
+     "mean_log_K": 0.053215235531743205,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7331347028070865,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.6873612971860097,
+     "mean_log_K": 0.06278394761058284,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.642550088944742,
+     "mean_log_K": 0.07600655032654191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6128917931365234,
+     "mean_log_K": 0.06721856899426783,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.597987353171899,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5882901831616816,
+     "mean_log_K": 0.06818042219971737,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.59452089612926,
+     "mean_log_K": 0.05416457847515966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5792595513386867,
+     "mean_log_K": 0.06467023377162097,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.605266734113153,
+     "mean_log_K": 0.06739969145315179,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.584042439657719,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.602328216880703,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.629138585355394,
+     "mean_log_K": 0.05399596627830878,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6386962241558476,
+     "mean_log_K": 0.04714420161896687,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6440440248000177,
+     "mean_log_K": 0.04827466702126729,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.635097247379314,
+     "mean_log_K": 0.06435791936574708,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.63346790832241,
+     "mean_log_K": 0.06612552384182836,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6263372602655153,
+     "mean_log_K": 0.07200292503368766,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.6359623781656785,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6314682971961676,
+     "mean_log_K": 0.04858698142714117,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6183647878117338,
+     "mean_log_K": 0.06277143734854977,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.6254184788860573,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.5992041254822276,
+     "mean_log_K": 0.05878032231772861,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.617003960293377,
+     "mean_log_K": 0.05240948426111146,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.609957483614098,
+     "mean_log_K": 0.0498611490384646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.5984216407442413,
+     "mean_log_K": 0.06180958414310022,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.5865218414925932,
+     "mean_log_K": 0.05385226406928576,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.594332114420294,
+     "mean_log_K": 0.05374727454618669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.5911256976132204,
+     "mean_log_K": 0.049067908029865936,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.5836912486326455,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.573735620973204,
+     "mean_log_K": 0.06005448992905203,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.570211438921984,
+     "mean_log_K": 0.0501734634443385,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.5659748990299835,
+     "mean_log_K": 0.05974217552317815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.5774747826065956,
+     "mean_log_K": 0.06642532798566918,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.5653362436780096,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.569323608442411,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.552921311427033,
+     "mean_log_K": 0.04221614337052403,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.5680010078276267,
+     "mean_log_K": 0.062290510745825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.550279649831605,
+     "mean_log_K": 0.058792832579761686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.569056571159766,
+     "mean_log_K": 0.045245405195895656,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.560776711197339,
+     "mean_log_K": 0.0691422754051669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.560528179639584,
+     "mean_log_K": 0.05768727716528913,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5772846345141116,
+     "mean_log_K": 0.06339606616029755,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.574750726665017,
+     "mean_log_K": 0.06261533541373197,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5656535820131916,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.597989107529551,
+     "mean_log_K": 0.061809584143100234,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "global_seed1": {
+   "pairing_hash": "3ec0e20b59b8ba01",
+   "init_hash": "0e14f6518cd37004",
+   "batch_order_hash": "78377300ae764569",
+   "repr_raw_hash": "23d9a91861e9c2fb",
+   "repr_norm_hash": "4b7eaeecd29a0deb",
+   "n_repr": 1701,
+   "loss_first": 4.137875124769184,
+   "loss_last": 3.6369921567918704,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.137875124769184,
+     "mean_log_K": 0.04731281381581774,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.069283836742185,
+     "mean_log_K": 0.0498611490384646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.992588403932643,
+     "mean_log_K": 0.0729647782391372,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.912888382399575,
+     "mean_log_K": 0.0659444013829444,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8484781299154993,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7838665619134675,
+     "mean_log_K": 0.05878032231772861,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.721596714628075,
+     "mean_log_K": 0.06586432184767319,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.669130077050582,
+     "mean_log_K": 0.05240948426111146,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6162593032624377,
+     "mean_log_K": 0.05543874608648309,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.6067554272790003,
+     "mean_log_K": 0.061497269737226336,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.6178597620653488,
+     "mean_log_K": 0.05478920728690744,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.6079940656191103,
+     "mean_log_K": 0.05575106049235698,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5871183338586694,
+     "mean_log_K": 0.06820544272378354,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.589112080254312,
+     "mean_log_K": 0.04587003400764344,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5938575680042892,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.6119194062825697,
+     "mean_log_K": 0.059754685785211224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.594688869003604,
+     "mean_log_K": 0.05399596627830877,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6145551294002476,
+     "mean_log_K": 0.047806250680575604,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.595877722292194,
+     "mean_log_K": 0.05543874608648308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.628742887696661,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.636373900542685,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.650244287065768,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.6865788442829728,
+     "mean_log_K": 0.04349031098184746,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.7002222217354603,
+     "mean_log_K": 0.05654430150095563,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6976184361720748,
+     "mean_log_K": 0.06308375175442367,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.713471617181065,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6853935074966535,
+     "mean_log_K": 0.040941975759200604,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6774290618017016,
+     "mean_log_K": 0.043502821243880545,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.6729520954384927,
+     "mean_log_K": 0.062290510745824985,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.654704007360365,
+     "mean_log_K": 0.04858698142714118,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6525758588462924,
+     "mean_log_K": 0.060416734846819954,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.653957565740023,
+     "mean_log_K": 0.05399596627830878,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6369575842656734,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.6379492759246532,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.649840145587463,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6335925874975756,
+     "mean_log_K": 0.06849273660559127,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6519864072717234,
+     "mean_log_K": 0.057025228103680395,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.641676017347147,
+     "mean_log_K": 0.04858698142714117,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.6484951954639153,
+     "mean_log_K": 0.05719384030053128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.630699412852497,
+     "mean_log_K": 0.06405811522190628,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.619066585152339,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.6294448659697136,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.616458842894071,
+     "mean_log_K": 0.054645505077884425,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6218231862605936,
+     "mean_log_K": 0.05513894194264229,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6404823933966908,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.622533490403585,
+     "mean_log_K": 0.04858698142714117,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.61464843717936,
+     "mean_log_K": 0.07885468969302957,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.616159317930883,
+     "mean_log_K": 0.048899295833015055,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.618669274675514,
+     "mean_log_K": 0.05641310955396571,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.6347229982315636,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "correct_seed2": {
+   "pairing_hash": "21af8855de8e6951",
+   "init_hash": "0620b311b3accdea",
+   "batch_order_hash": "1bc180e8ce1cc636",
+   "repr_raw_hash": "1409adb3585af2ad",
+   "repr_norm_hash": "c50044c5308f85d1",
+   "n_repr": 1701,
+   "loss_first": 4.106446376336984,
+   "loss_last": 3.5952793434190706,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.106446376336984,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.9075951938097804,
+     "mean_log_K": 0.061640971946249346,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.8564869409335794,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.8079587208549066,
+     "mean_log_K": 0.05543874608648308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.7418830058073103,
+     "mean_log_K": 0.05909263672360249,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.6746261935183684,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.6294867976369134,
+     "mean_log_K": 0.044452164187297,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.588309806087175,
+     "mean_log_K": 0.04731281381581775,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.572317840272022,
+     "mean_log_K": 0.059092636723602494,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5640003163578644,
+     "mean_log_K": 0.054645505077884425,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.571642194311855,
+     "mean_log_K": 0.055932182951240944,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5802384210709306,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5947815952795725,
+     "mean_log_K": 0.04428355199044612,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.6170488551301982,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.633337752390778,
+     "mean_log_K": 0.052409484261111465,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.6639163560528347,
+     "mean_log_K": 0.06546347478021963,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6947908532035454,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.7019274289738546,
+     "mean_log_K": 0.060847730937650696,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.7209394912554825,
+     "mean_log_K": 0.07089736961921511,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.7115201860752163,
+     "mean_log_K": 0.05447689288103355,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6936278831031206,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.674416974687897,
+     "mean_log_K": 0.06101634313450157,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.659042567730408,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6479648462748093,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6578091952115956,
+     "mean_log_K": 0.05878032231772861,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.647922242867271,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.644821841480867,
+     "mean_log_K": 0.052409484261111465,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.648188232115893,
+     "mean_log_K": 0.055451256348516165,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.66563622294196,
+     "mean_log_K": 0.049067908029865936,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.6340995448696054,
+     "mean_log_K": 0.06132865754037547,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6358691171083626,
+     "mean_log_K": 0.0638895030250554,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.6298253918701815,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6327291093802474,
+     "mean_log_K": 0.05386477433131885,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.6209819488635326,
+     "mean_log_K": 0.05543874608648308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.626046248975565,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.618294032002503,
+     "mean_log_K": 0.05894893451457947,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6194827384838795,
+     "mean_log_K": 0.05719384030053128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.603413907526549,
+     "mean_log_K": 0.06339606616029757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.601285311261927,
+     "mean_log_K": 0.0552701338896322,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.604330522068181,
+     "mean_log_K": 0.06325236395127452,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.6129011516955813,
+     "mean_log_K": 0.0691422754051669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.6080260150828805,
+     "mean_log_K": 0.05416457847515965,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.626980472366817,
+     "mean_log_K": 0.054476892881033544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6039388026330017,
+     "mean_log_K": 0.04428355199044612,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.598366699347006,
+     "mean_log_K": 0.05017346344433849,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.6040829526587936,
+     "mean_log_K": 0.052721798666985356,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5957786771222793,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.599189212984127,
+     "mean_log_K": 0.07617516252339278,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.604008167552673,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.593343459449057,
+     "mean_log_K": 0.07509580953281107,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_seed2": {
+   "pairing_hash": "356823b17d264d56",
+   "init_hash": "0620b311b3accdea",
+   "batch_order_hash": "1bc180e8ce1cc636",
+   "repr_raw_hash": "ee460ed408428c41",
+   "repr_norm_hash": "db570ce64e224c96",
+   "n_repr": 1701,
+   "loss_first": 4.135498984975384,
+   "loss_last": 3.587633455635606,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.135498984975384,
+     "mean_log_K": 0.07248385163641244,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.035175222713826,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9551453888130004,
+     "mean_log_K": 0.05768727716528914,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.903138043901075,
+     "mean_log_K": 0.0643579193657471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.83813482196599,
+     "mean_log_K": 0.06005448992905203,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.775210755015656,
+     "mean_log_K": 0.056464221965684416,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.7177120991101296,
+     "mean_log_K": 0.05623198709508174,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.662473869140508,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.603981936928404,
+     "mean_log_K": 0.05240948426111146,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.605901065408668,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.558591291379974,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.55841997537787,
+     "mean_log_K": 0.05561986854536706,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.569292809846422,
+     "mean_log_K": 0.05909263672360249,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.5509786280614613,
+     "mean_log_K": 0.04701300967197694,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5554932771567307,
+     "mean_log_K": 0.06611301357979528,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5577010664083315,
+     "mean_log_K": 0.06339606616029755,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.5433425495649735,
+     "mean_log_K": 0.0570252281036804,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.587130824152262,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.571619735785566,
+     "mean_log_K": 0.06435791936574708,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.596720244538658,
+     "mean_log_K": 0.05957356332632727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.595453075670944,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6009373641953117,
+     "mean_log_K": 0.04300938437912269,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.6278833264232713,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6326935064552153,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6246621388866855,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.6254880290897162,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.651304491658719,
+     "mean_log_K": 0.06643783824770226,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6157605439624914,
+     "mean_log_K": 0.07041644301649033,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.644330446589577,
+     "mean_log_K": 0.04252845777639792,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.62799064753493,
+     "mean_log_K": 0.05035458590322245,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6089106790156005,
+     "mean_log_K": 0.05878032231772861,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.600802158645205,
+     "mean_log_K": 0.05082300224391414,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.605246373945194,
+     "mean_log_K": 0.06611301357979528,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.6054441292164534,
+     "mean_log_K": 0.06531977257119662,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.6153494496395906,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6091219197089117,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.603838375505636,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.5921059488448583,
+     "mean_log_K": 0.05720635056256436,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.583310859004084,
+     "mean_log_K": 0.057674766903256056,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.58605691449901,
+     "mean_log_K": 0.05113531664978803,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.595910256465505,
+     "mean_log_K": 0.07630635447038271,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.592569450594621,
+     "mean_log_K": 0.078073958946464,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.586571051911822,
+     "mean_log_K": 0.0626028251516989,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.5927585747010653,
+     "mean_log_K": 0.059754685785211224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.5774877740143585,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5995665796666505,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.596621409845856,
+     "mean_log_K": 0.05035458590322245,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.597054524792718,
+     "mean_log_K": 0.04701300967197694,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5776310225843124,
+     "mean_log_K": 0.06690625458839394,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.5890804938005783,
+     "mean_log_K": 0.04125429016507448,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_sex_seed2": {
+   "pairing_hash": "611ee340fb456743",
+   "init_hash": "0620b311b3accdea",
+   "batch_order_hash": "1bc180e8ce1cc636",
+   "repr_raw_hash": "0c97885de698236d",
+   "repr_norm_hash": "6fbd2dd5e90f26bf",
+   "n_repr": 1701,
+   "loss_first": 4.119923129434429,
+   "loss_last": 3.6408025306881218,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.119923129434429,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.978158373425032,
+     "mean_log_K": 0.053683651872434894,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9136212245417146,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.8702861138196316,
+     "mean_log_K": 0.05240948426111146,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8064523611242786,
+     "mean_log_K": 0.05240948426111146,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7562413531696417,
+     "mean_log_K": 0.06659394018252006,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.6910902150655227,
+     "mean_log_K": 0.05720635056256437,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.658024972499734,
+     "mean_log_K": 0.0374317873311042,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.598371311292181,
+     "mean_log_K": 0.05926124892045338,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5898863861586015,
+     "mean_log_K": 0.046350960610368204,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5680400970231787,
+     "mean_log_K": 0.05988587773220115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5620176409667326,
+     "mean_log_K": 0.04014873475060194,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5457880416818814,
+     "mean_log_K": 0.05416457847515966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.554065868101019,
+     "mean_log_K": 0.05034207564118937,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5528636026794698,
+     "mean_log_K": 0.06818042219971737,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.566570945248709,
+     "mean_log_K": 0.07175423330156558,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.5747504699241643,
+     "mean_log_K": 0.06691876485042703,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6208048659259604,
+     "mean_log_K": 0.04046104915647583,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.626994399355651,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6336770403511127,
+     "mean_log_K": 0.06118495533135244,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.7055045777393234,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.685427403472915,
+     "mean_log_K": 0.04459586639632001,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.735215743382772,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.7214354811438453,
+     "mean_log_K": 0.06756830365000267,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.7212214215688126,
+     "mean_log_K": 0.04779374041854251,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.7019799298443092,
+     "mean_log_K": 0.05495781948375832,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.700641890882186,
+     "mean_log_K": 0.053683651872434894,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.7068274582268295,
+     "mean_log_K": 0.04683188721309297,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.7005301557059016,
+     "mean_log_K": 0.05878032231772861,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.684680024439274,
+     "mean_log_K": 0.06531977257119663,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6977274594229077,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.6852276797024364,
+     "mean_log_K": 0.06277143734854977,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6736650111924902,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.666167266087161,
+     "mean_log_K": 0.03966780814787717,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.6612986991545196,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6578490850904832,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.664273646562633,
+     "mean_log_K": 0.062290510745825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.648091947425454,
+     "mean_log_K": 0.055919672689207854,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.6482621301949654,
+     "mean_log_K": 0.05944237137933733,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.6516655357151966,
+     "mean_log_K": 0.07393914170661982,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.656476973113134,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.671299403270315,
+     "mean_log_K": 0.0516162432525128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.671132978399022,
+     "mean_log_K": 0.06730710165584748,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6771304009627195,
+     "mean_log_K": 0.056725423959839594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6495060187824406,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.6444827030760867,
+     "mean_log_K": 0.0498611490384646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.647547561542903,
+     "mean_log_K": 0.05719384030053128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.6644879120342098,
+     "mean_log_K": 0.060847730937650696,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.649998481175169,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.6682116966998772,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "global_seed2": {
+   "pairing_hash": "42f47f71b9002b0b",
+   "init_hash": "0620b311b3accdea",
+   "batch_order_hash": "1bc180e8ce1cc636",
+   "repr_raw_hash": "d30ec472d384d8f9",
+   "repr_norm_hash": "a88fc740bac50745",
+   "n_repr": 1701,
+   "loss_first": 4.137572302254888,
+   "loss_last": 3.5704429474848034,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.137572302254888,
+     "mean_log_K": 0.051928557658386686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.062500501343199,
+     "mean_log_K": 0.05210968011727065,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9772279079319994,
+     "mean_log_K": 0.0635771886191815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.9110224100400575,
+     "mean_log_K": 0.060847730937650696,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8376724921546224,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7786498816395815,
+     "mean_log_K": 0.058468007911854705,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.7295101240892805,
+     "mean_log_K": 0.0567254239598396,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.6640716077729443,
+     "mean_log_K": 0.06277143734854977,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6254315898466523,
+     "mean_log_K": 0.05530755413949316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5890531823912224,
+     "mean_log_K": 0.060366804334925916,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5928513838853204,
+     "mean_log_K": 0.050354585903222455,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.570044519807374,
+     "mean_log_K": 0.055919672689207854,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.581822101023195,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.5887292972788227,
+     "mean_log_K": 0.05750615470640518,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5830819906808227,
+     "mean_log_K": 0.05798708130912995,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5754216656332174,
+     "mean_log_K": 0.06659394018252007,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.5969202401658644,
+     "mean_log_K": 0.061497269737226336,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.587060383257101,
+     "mean_log_K": 0.06102885339653466,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6149138380539863,
+     "mean_log_K": 0.05974217552317815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.620908557166284,
+     "mean_log_K": 0.06005448992905203,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.635390836842122,
+     "mean_log_K": 0.055751060492356966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6561596006527184,
+     "mean_log_K": 0.054476892881033544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.630734471376989,
+     "mean_log_K": 0.05543874608648308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.639374747170953,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6485667977621645,
+     "mean_log_K": 0.06836154465860134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.6491767638698436,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6425944844996208,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.637570413228529,
+     "mean_log_K": 0.049380222435739834,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.632841307422957,
+     "mean_log_K": 0.03870595494242763,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.612843578532839,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6161835289825968,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.619318844147535,
+     "mean_log_K": 0.04428355199044612,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.622277708264295,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.60014634517153,
+     "mean_log_K": 0.04332169878499658,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.5869953348359505,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.5843739014881146,
+     "mean_log_K": 0.0763063544703827,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.589930407252023,
+     "mean_log_K": 0.06006700019108511,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.596499273115116,
+     "mean_log_K": 0.05719384030053128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.5993902413004526,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.594808212961862,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.5836346632694536,
+     "mean_log_K": 0.0570252281036804,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.580208586684565,
+     "mean_log_K": 0.04731281381581775,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.5755167021187995,
+     "mean_log_K": 0.06563208697707051,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.589290653479775,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.5747264427822674,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5826647180874227,
+     "mean_log_K": 0.06501996842735581,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5870402450176755,
+     "mean_log_K": 0.04252845777639792,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.5739816222250402,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.586348684102039,
+     "mean_log_K": 0.062290510745824985,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.5739458761572496,
+     "mean_log_K": 0.07455126025633452,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "correct_seed3": {
+   "pairing_hash": "21af8855de8e6951",
+   "init_hash": "ad39eba50a51bfca",
+   "batch_order_hash": "1e2da1a2c6a0008a",
+   "repr_raw_hash": "e5338478bf92e03e",
+   "repr_norm_hash": "9a8e654bf277d2f9",
+   "n_repr": 1701,
+   "loss_first": 4.107851578339605,
+   "loss_last": 3.661162065841279,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.107851578339605,
+     "mean_log_K": 0.0529665437996211,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.904451461621595,
+     "mean_log_K": 0.055932182951240944,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.852872340754748,
+     "mean_log_K": 0.05974217552317815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.7997288255022768,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.7707643628005907,
+     "mean_log_K": 0.05798708130912995,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.6890750476423073,
+     "mean_log_K": 0.05991078772002902,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.656952702918955,
+     "mean_log_K": 0.061497269737226336,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.5965802852747877,
+     "mean_log_K": 0.04858698142714118,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.572379638779976,
+     "mean_log_K": 0.06738718119111872,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5610613790873034,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.565687098489371,
+     "mean_log_K": 0.0893603449894909,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.552367840445351,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.590855120696435,
+     "mean_log_K": 0.05385226406928577,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.613587652457436,
+     "mean_log_K": 0.04603864620449432,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.624664658428269,
+     "mean_log_K": 0.06182209440513331,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.7012490168085015,
+     "mean_log_K": 0.05942986111730425,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.684173073938097,
+     "mean_log_K": 0.06435791936574708,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6782468290539687,
+     "mean_log_K": 0.0481060548244164,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.7026228176413762,
+     "mean_log_K": 0.06435791936574708,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6830439737046943,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.7245211777609204,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.7249943016814453,
+     "mean_log_K": 0.044764478593170884,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.7159065270400986,
+     "mean_log_K": 0.07455126025633452,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.7325960103418825,
+     "mean_log_K": 0.05623198709508175,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.7261724034601627,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.7301236005154625,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.7141068116846734,
+     "mean_log_K": 0.06636209929692209,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.7209539172972312,
+     "mean_log_K": 0.057506154706405174,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.6905249603429056,
+     "mean_log_K": 0.054970329745791406,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.693088517523407,
+     "mean_log_K": 0.05654430150095563,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.7148185419875994,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.7155769011014708,
+     "mean_log_K": 0.04956134489462379,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.7205499304131058,
+     "mean_log_K": 0.06091135361140248,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.694913906505999,
+     "mean_log_K": 0.05798708130912995,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.717041748286897,
+     "mean_log_K": 0.055919672689207854,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.7103959657502337,
+     "mean_log_K": 0.06427783983047586,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6986904627537065,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.7068545783974596,
+     "mean_log_K": 0.061028853396534646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.703859044312286,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.69135875546165,
+     "mean_log_K": 0.06325236395127454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.6821353474451186,
+     "mean_log_K": 0.05958607358836034,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.682328245252743,
+     "mean_log_K": 0.06118495533135244,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.6783613450932573,
+     "mean_log_K": 0.0551264316806092,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.669980505128873,
+     "mean_log_K": 0.0585316305856065,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6762476022374044,
+     "mean_log_K": 0.060235612387936,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.6854976856513852,
+     "mean_log_K": 0.048899295833015055,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.676815490786784,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.672644415689591,
+     "mean_log_K": 0.04858698142714117,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.6766177817792647,
+     "mean_log_K": 0.06071653899066076,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.6520951460692657,
+     "mean_log_K": 0.0481060548244164,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_seed3": {
+   "pairing_hash": "a4bdf327192f4e9e",
+   "init_hash": "ad39eba50a51bfca",
+   "batch_order_hash": "1e2da1a2c6a0008a",
+   "repr_raw_hash": "283c0330187f7c88",
+   "repr_norm_hash": "86f4a196c1ee4f33",
+   "n_repr": 1701,
+   "loss_first": 4.135768645549485,
+   "loss_last": 3.568692961297965,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.135768645549485,
+     "mean_log_K": 0.06022310212590292,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.030754559550803,
+     "mean_log_K": 0.059754685785211224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9493875366122992,
+     "mean_log_K": 0.06564459723910361,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.892679461141141,
+     "mean_log_K": 0.05465801533991751,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.839405314723078,
+     "mean_log_K": 0.04858698142714118,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7611510045933794,
+     "mean_log_K": 0.06884247126132612,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.703560213076164,
+     "mean_log_K": 0.05066690030909634,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.6563278817993075,
+     "mean_log_K": 0.05623198709508174,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.612982884607672,
+     "mean_log_K": 0.0391868815451524,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5787927119578455,
+     "mean_log_K": 0.06006700019108511,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.546449809436267,
+     "mean_log_K": 0.05257809645796234,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5431627528697223,
+     "mean_log_K": 0.05385226406928577,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5570454214995695,
+     "mean_log_K": 0.06212189854897413,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.590472546136803,
+     "mean_log_K": 0.05974217552317815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.589905136485837,
+     "mean_log_K": 0.053383847728594086,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.62445958547015,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6189013209970495,
+     "mean_log_K": 0.054476892881033544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.665120520577994,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.658725495526243,
+     "mean_log_K": 0.06872497147619393,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6429377525157363,
+     "mean_log_K": 0.05417708873719274,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6337899176920985,
+     "mean_log_K": 0.061990706601984184,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.634539844437818,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.649659905951259,
+     "mean_log_K": 0.04555771960176954,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6230279677883006,
+     "mean_log_K": 0.05447689288103355,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.620183516419014,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.614488314482939,
+     "mean_log_K": 0.06834903439656825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6085026534444204,
+     "mean_log_K": 0.052890410863836224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.5919490309430357,
+     "mean_log_K": 0.04875559362399205,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.6080521337122557,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.590981276417786,
+     "mean_log_K": 0.05399596627830878,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6038018221126853,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.5929702145909026,
+     "mean_log_K": 0.057206350562564366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.595389347598601,
+     "mean_log_K": 0.07448803156758743,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.5902468319928613,
+     "mean_log_K": 0.06976690421691469,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.5814574992393324,
+     "mean_log_K": 0.04889929583301506,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.581468015078967,
+     "mean_log_K": 0.060847730937650696,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.5664570397991726,
+     "mean_log_K": 0.07089736961921511,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.570862864440273,
+     "mean_log_K": 0.07392663144458674,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.572137673466854,
+     "mean_log_K": 0.05369616213446798,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.5741392972948,
+     "mean_log_K": 0.05671291369780651,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.566217969176176,
+     "mean_log_K": 0.061497269737226336,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.5667232296766853,
+     "mean_log_K": 0.053683651872434894,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.5721790476788935,
+     "mean_log_K": 0.06629413603867924,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.5674457499662577,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.568742207674655,
+     "mean_log_K": 0.04507679299904478,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.571321865781698,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5684051337319995,
+     "mean_log_K": 0.0570252281036804,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.587438107452979,
+     "mean_log_K": 0.05422820114891145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.573566709311391,
+     "mean_log_K": 0.06028672479965471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.562227280751429,
+     "mean_log_K": 0.06515116037434575,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_sex_seed3": {
+   "pairing_hash": "eaff4fc27f2201e2",
+   "init_hash": "ad39eba50a51bfca",
+   "batch_order_hash": "1e2da1a2c6a0008a",
+   "repr_raw_hash": "30a9e984a4aa7472",
+   "repr_norm_hash": "e708d74ecd106835",
+   "n_repr": 1701,
+   "loss_first": 4.124535807729569,
+   "loss_last": 3.54313058422576,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.124535807729569,
+     "mean_log_K": 0.05671291369780651,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.9634572321354025,
+     "mean_log_K": 0.06836154465860134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.914398824790713,
+     "mean_log_K": 0.05720635056256436,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.852815359859485,
+     "mean_log_K": 0.06531977257119663,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.804089781644823,
+     "mean_log_K": 0.058168203768013904,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.744453822043398,
+     "mean_log_K": 0.05640059929193262,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.7096352439792426,
+     "mean_log_K": 0.07139080648397296,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.645127602887772,
+     "mean_log_K": 0.05447689288103355,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6283047911527637,
+     "mean_log_K": 0.062290510745824985,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.600594138091396,
+     "mean_log_K": 0.061809584143100234,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.6089348344134096,
+     "mean_log_K": 0.057674766903256056,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5901203847183387,
+     "mean_log_K": 0.06036680433492593,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5985095693329914,
+     "mean_log_K": 0.06212189854897413,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.592613189525036,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.619029202676529,
+     "mean_log_K": 0.0501734634443385,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.613538601671012,
+     "mean_log_K": 0.05821931617973261,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6407265715823507,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6389450710857294,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.611421401173191,
+     "mean_log_K": 0.057818469112279065,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6318028280073125,
+     "mean_log_K": 0.05399596627830878,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6245522299829753,
+     "mean_log_K": 0.06612552384182838,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.615625681955006,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.6175215704640324,
+     "mean_log_K": 0.058480518173887795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.601429301425886,
+     "mean_log_K": 0.05114782691182111,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.602790130547442,
+     "mean_log_K": 0.0481060548244164,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.6049516006345135,
+     "mean_log_K": 0.051928557658386686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.5931530598833743,
+     "mean_log_K": 0.05623198709508175,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.5844349483248137,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.5860478179484576,
+     "mean_log_K": 0.04349031098184746,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.5910603885577346,
+     "mean_log_K": 0.06531977257119663,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.578095071024899,
+     "mean_log_K": 0.061809584143100234,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.5624305725555714,
+     "mean_log_K": 0.05464550507788442,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.576494249211952,
+     "mean_log_K": 0.0635771886191815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.569777355872016,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.5751396111864864,
+     "mean_log_K": 0.060366804334925916,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.571937443085523,
+     "mean_log_K": 0.05034207564118937,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.5601583628787314,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.5675304934568524,
+     "mean_log_K": 0.06356467835714844,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.572800577202173,
+     "mean_log_K": 0.06356467835714844,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.5727936738277144,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.5604469865474644,
+     "mean_log_K": 0.05894893451457947,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.5563541141183874,
+     "mean_log_K": 0.05416457847515965,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.5566425957895036,
+     "mean_log_K": 0.050510687838040254,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.544425853276688,
+     "mean_log_K": 0.062290510745825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.5455685967327195,
+     "mean_log_K": 0.051928557658386686,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5555879815511124,
+     "mean_log_K": 0.04300938437912268,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.554241630231727,
+     "mean_log_K": 0.05199218033213848,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.5455266936940717,
+     "mean_log_K": 0.05654430150095563,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5511867713745,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.533877897903853,
+     "mean_log_K": 0.07024783081963945,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "global_seed3": {
+   "pairing_hash": "afe78c06c385260a",
+   "init_hash": "ad39eba50a51bfca",
+   "batch_order_hash": "1e2da1a2c6a0008a",
+   "repr_raw_hash": "f74f5a11b3b705de",
+   "repr_norm_hash": "4a402e34a12cf6d3",
+   "n_repr": 1701,
+   "loss_first": 4.137198089980712,
+   "loss_last": 3.5996511516149634,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.137198089980712,
+     "mean_log_K": 0.06084773093765068,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.054457699760122,
+     "mean_log_K": 0.06036680433492593,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.9905955722764865,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.936948163823138,
+     "mean_log_K": 0.0481060548244164,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8552014598699857,
+     "mean_log_K": 0.050342075641189366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7875481164879115,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.7314508843032588,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.6644316157048764,
+     "mean_log_K": 0.05082300224391414,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.6483988750450433,
+     "mean_log_K": 0.051616243252512795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5896142433745486,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5696263446129937,
+     "mean_log_K": 0.04125429016507449,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.569882723600331,
+     "mean_log_K": 0.05671291369780651,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.571598012898543,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.547677341501491,
+     "mean_log_K": 0.049380222435739834,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5645298142483552,
+     "mean_log_K": 0.06054792679380988,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5406977328741127,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.56065872629369,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.5746071439426066,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.5867897532057236,
+     "mean_log_K": 0.0498611490384646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.5881008165141464,
+     "mean_log_K": 0.049380222435739834,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.601511020825301,
+     "mean_log_K": 0.05240948426111145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6412577347384407,
+     "mean_log_K": 0.06563208697707051,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.669976879838106,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6801146011187638,
+     "mean_log_K": 0.0635771886191815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.66869567244472,
+     "mean_log_K": 0.05894893451457947,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.6752884266584913,
+     "mean_log_K": 0.06611301357979528,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.646480838343229,
+     "mean_log_K": 0.05416457847515966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.618007815193374,
+     "mean_log_K": 0.05399596627830877,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.631892264519141,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.606045965731545,
+     "mean_log_K": 0.05416457847515965,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6198360070256976,
+     "mean_log_K": 0.057674766903256056,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.61025676397494,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.606604541298521,
+     "mean_log_K": 0.06467023377162098,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.5928447908443633,
+     "mean_log_K": 0.07249636189844551,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.6058286177665426,
+     "mean_log_K": 0.04252845777639792,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.619852773279782,
+     "mean_log_K": 0.047793740418542514,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6110883867591763,
+     "mean_log_K": 0.06582571969798756,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.6223308920974806,
+     "mean_log_K": 0.0374317873311042,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.638526015964182,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.606425177237944,
+     "mean_log_K": 0.06673764239154308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.6239686117621135,
+     "mean_log_K": 0.06786810779384347,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.624921290492004,
+     "mean_log_K": 0.05416457847515966,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.608372393991945,
+     "mean_log_K": 0.06005448992905202,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.616141816495589,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6035473152036053,
+     "mean_log_K": 0.06308375175442366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.605345426444018,
+     "mean_log_K": 0.05641310955396571,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5938446700401196,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.6061286392633325,
+     "mean_log_K": 0.038393640536553746,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.6028283954697313,
+     "mean_log_K": 0.0564131095539657,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.607362973472456,
+     "mean_log_K": 0.049380222435739834,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "correct_seed4": {
+   "pairing_hash": "21af8855de8e6951",
+   "init_hash": "379c1c7217a1438b",
+   "batch_order_hash": "0cd2c5a9386ee8d8",
+   "repr_raw_hash": "c6f22858ad3aac3f",
+   "repr_norm_hash": "c6145a27a7e98d51",
+   "n_repr": 1701,
+   "loss_first": 4.103895491298635,
+   "loss_last": 3.5984081770798886,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.103895491298635,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.906000057398185,
+     "mean_log_K": 0.07781275695230881,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.846945682932389,
+     "mean_log_K": 0.0513039288466389,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.7876149144571176,
+     "mean_log_K": 0.06199070660198419,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.7351357831506062,
+     "mean_log_K": 0.05861171012087772,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.6759087737080685,
+     "mean_log_K": 0.046831887213092976,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.638957130118818,
+     "mean_log_K": 0.0570252281036804,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.60435845551871,
+     "mean_log_K": 0.04300938437912269,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.578058233636715,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5640229668099646,
+     "mean_log_K": 0.04731281381581774,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5715440196789423,
+     "mean_log_K": 0.061990706601984184,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5754601749288244,
+     "mean_log_K": 0.06490246864222364,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5877401322613074,
+     "mean_log_K": 0.06515116037434575,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.6187575195525037,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.627695782612884,
+     "mean_log_K": 0.05527013388963221,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.6628990406948825,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.645612634911661,
+     "mean_log_K": 0.0729647782391372,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6406091860460617,
+     "mean_log_K": 0.055451256348516165,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6695269640538695,
+     "mean_log_K": 0.05144763105566192,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6686002894391474,
+     "mean_log_K": 0.05932487159420517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6594523190306885,
+     "mean_log_K": 0.04683188721309297,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6417448573336935,
+     "mean_log_K": 0.05720635056256436,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.659628623500681,
+     "mean_log_K": 0.05447689288103355,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6412527645928257,
+     "mean_log_K": 0.04859949168917426,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.649550510300225,
+     "mean_log_K": 0.06866134880244215,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.6405035913505883,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6331981971330305,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6414944591943628,
+     "mean_log_K": 0.06326487421330762,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.647754431686988,
+     "mean_log_K": 0.061873206816852024,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.6404108998869384,
+     "mean_log_K": 0.06453904182463105,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.6208869572675195,
+     "mean_log_K": 0.0658006991739214,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.623814200118227,
+     "mean_log_K": 0.055619868545367046,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6081834567726863,
+     "mean_log_K": 0.07407033365360975,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.6041660279064196,
+     "mean_log_K": 0.07137829622193988,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.6130640037236135,
+     "mean_log_K": 0.04841836923029029,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6301905625606246,
+     "mean_log_K": 0.06739969145315179,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.6143732464851723,
+     "mean_log_K": 0.06690625458839394,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.6040597541416983,
+     "mean_log_K": 0.05846800791185471,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.602573519595876,
+     "mean_log_K": 0.050342075641189366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.598616897544531,
+     "mean_log_K": 0.054476892881033544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.596416169238938,
+     "mean_log_K": 0.0676994955969926,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.5993187571808654,
+     "mean_log_K": 0.05495781948375831,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.590489040305131,
+     "mean_log_K": 0.062290510745824985,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.593469660976091,
+     "mean_log_K": 0.05957356332632727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.594922729688236,
+     "mean_log_K": 0.06611301357979528,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5927287723786776,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.603100444352134,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.596833528634107,
+     "mean_log_K": 0.060235612387936,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5956878036861806,
+     "mean_log_K": 0.060847730937650696,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.611480886036106,
+     "mean_log_K": 0.05623198709508175,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_seed4": {
+   "pairing_hash": "cb4744c0e76c3522",
+   "init_hash": "379c1c7217a1438b",
+   "batch_order_hash": "0cd2c5a9386ee8d8",
+   "repr_raw_hash": "0fd8ffdab6e730e5",
+   "repr_norm_hash": "9511b0335416004b",
+   "n_repr": 1701,
+   "loss_first": 4.135924786357898,
+   "loss_last": 3.6230825008278735,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.135924786357898,
+     "mean_log_K": 0.0635771886191815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.034977147489872,
+     "mean_log_K": 0.07170312088984684,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.973018716322929,
+     "mean_log_K": 0.061016343134501584,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.897762288964791,
+     "mean_log_K": 0.05545125634851617,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.8452117447665284,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7683768478525477,
+     "mean_log_K": 0.053371337466561,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.7112456991853446,
+     "mean_log_K": 0.054789207286907435,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.66072965378262,
+     "mean_log_K": 0.04555771960176954,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.617502396205202,
+     "mean_log_K": 0.05641310955396571,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.5776227656519266,
+     "mean_log_K": 0.06563208697707051,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5825345683395575,
+     "mean_log_K": 0.05957356332632727,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5778144683892856,
+     "mean_log_K": 0.06498254817749487,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.5633067180054563,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.556561882053855,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5620094545750978,
+     "mean_log_K": 0.05272179866698535,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5786682789882254,
+     "mean_log_K": 0.04300938437912268,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.593017270081783,
+     "mean_log_K": 0.051135316649788036,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6133835061482804,
+     "mean_log_K": 0.058468007911854705,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6361784025754753,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6376001317265168,
+     "mean_log_K": 0.036950860728379435,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6692930087805022,
+     "mean_log_K": 0.06769949559699262,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.672332607245468,
+     "mean_log_K": 0.060235612387936,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.6718053675751405,
+     "mean_log_K": 0.05846800791185472,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6819216861504986,
+     "mean_log_K": 0.05369616213446798,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6672741056748244,
+     "mean_log_K": 0.04969253684161373,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.657156603938679,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6506117798753017,
+     "mean_log_K": 0.05289041086383623,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6534674884491993,
+     "mean_log_K": 0.05623198709508175,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.640911312543006,
+     "mean_log_K": 0.04889929583301506,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.6425076950982027,
+     "mean_log_K": 0.06866134880244214,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.641322798504495,
+     "mean_log_K": 0.055270133889632214,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.627132642280586,
+     "mean_log_K": 0.058948934514579485,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6157130404920332,
+     "mean_log_K": 0.04889929583301506,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.6201950663219384,
+     "mean_log_K": 0.05545125634851617,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.6085339201744877,
+     "mean_log_K": 0.07583793812969103,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.60798585266018,
+     "mean_log_K": 0.050342075641189366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.607577578822199,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.60284222947303,
+     "mean_log_K": 0.05932487159420517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.604636686107038,
+     "mean_log_K": 0.056063374898230864,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.5968033697144786,
+     "mean_log_K": 0.05805070398288174,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.603113266049842,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.596967158010668,
+     "mean_log_K": 0.04573884206065351,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.599761373371487,
+     "mean_log_K": 0.05144763105566191,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.5979945721475124,
+     "mean_log_K": 0.054476892881033544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.586947271849076,
+     "mean_log_K": 0.061328657540375454,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.5981628086335604,
+     "mean_log_K": 0.04603864620449432,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5983493973954612,
+     "mean_log_K": 0.05957356332632725,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.594103775610727,
+     "mean_log_K": 0.054645505077884425,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.6162927723297353,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.6171667765929767,
+     "mean_log_K": 0.0498611490384646,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "within_label_sex_seed4": {
+   "pairing_hash": "7c612b6b35af0fee",
+   "init_hash": "379c1c7217a1438b",
+   "batch_order_hash": "0cd2c5a9386ee8d8",
+   "repr_raw_hash": "dbfe7bfd5fb3dd75",
+   "repr_norm_hash": "b9dad2c7cc31b596",
+   "n_repr": 1701,
+   "loss_first": 4.109961852102069,
+   "loss_last": 3.585731390001222,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.109961852102069,
+     "mean_log_K": 0.04603864620449432,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 3.9559355890602017,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.897159215467235,
+     "mean_log_K": 0.06834903439656825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.8540516797449587,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.79317667069742,
+     "mean_log_K": 0.0498611490384646,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.732424790073655,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.685211103083879,
+     "mean_log_K": 0.059742175523178134,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.637245438169906,
+     "mean_log_K": 0.06690625458839394,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.5968807268096894,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.586357117386304,
+     "mean_log_K": 0.05192855765838669,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.599850854772885,
+     "mean_log_K": 0.05781846911227906,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5929320504411155,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.6068159869722627,
+     "mean_log_K": 0.04889929583301506,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.6040524465320893,
+     "mean_log_K": 0.04779374041854251,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.621581750919221,
+     "mean_log_K": 0.06277143734854977,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.6213760714938616,
+     "mean_log_K": 0.05543874608648309,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.657310993137781,
+     "mean_log_K": 0.04428355199044612,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6466378531240706,
+     "mean_log_K": 0.05550236876023488,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6359157390484547,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.6440979664882254,
+     "mean_log_K": 0.05798708130912995,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.6606337371408424,
+     "mean_log_K": 0.06613803410386145,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6527290261788052,
+     "mean_log_K": 0.055919672689207854,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.657133075620668,
+     "mean_log_K": 0.06902359372021007,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.662465570753979,
+     "mean_log_K": 0.0605354165317768,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.6520687963502207,
+     "mean_log_K": 0.05240948426111146,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.636186805169933,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6393694071444496,
+     "mean_log_K": 0.05974217552317815,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.626198132832845,
+     "mean_log_K": 0.06721856899426783,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.6157125247200446,
+     "mean_log_K": 0.04731281381581775,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.61793046290776,
+     "mean_log_K": 0.06326487421330762,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.608201679189427,
+     "mean_log_K": 0.05671291369780652,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.6176389621840888,
+     "mean_log_K": 0.07217153723053853,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.6045810539601058,
+     "mean_log_K": 0.0658006991739214,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.60428871774078,
+     "mean_log_K": 0.05926124892045337,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.604338054354665,
+     "mean_log_K": 0.06387699276302232,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.5916349280922604,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.5912280691918217,
+     "mean_log_K": 0.04731281381581774,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.5883440474382855,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.5875637872532855,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.581306867251364,
+     "mean_log_K": 0.06102885339653466,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.588543943209103,
+     "mean_log_K": 0.05654430150095563,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.5813221264984834,
+     "mean_log_K": 0.04731281381581774,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.5966227109562765,
+     "mean_log_K": 0.06006700019108511,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.5907597042527137,
+     "mean_log_K": 0.03998012255375106,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.5878497374733405,
+     "mean_log_K": 0.0519285576583867,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.57829141800044,
+     "mean_log_K": 0.0640456049598732,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.5781991216108047,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.5784394157035893,
+     "mean_log_K": 0.053383847728594086,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.5758984940883405,
+     "mean_log_K": 0.05640059929193262,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.5987405580013103,
+     "mean_log_K": 0.05846800791185472,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  },
+  "global_seed4": {
+   "pairing_hash": "a08b354aa12338b7",
+   "init_hash": "379c1c7217a1438b",
+   "batch_order_hash": "0cd2c5a9386ee8d8",
+   "repr_raw_hash": "9f93675b11462c20",
+   "repr_norm_hash": "7c0ec396eadc56e5",
+   "n_repr": 1701,
+   "loss_first": 4.137051680131559,
+   "loss_last": 3.6156784931589616,
+   "history": [
+    {
+     "epoch": 0,
+     "loss": 4.137051680131559,
+     "mean_log_K": 0.04507679299904478,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 10,
+     "loss": 4.05178574136996,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 20,
+     "loss": 3.970054583407502,
+     "mean_log_K": 0.05575106049235697,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 30,
+     "loss": 3.9064025817068577,
+     "mean_log_K": 0.06993551641376557,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 40,
+     "loss": 3.853646227766068,
+     "mean_log_K": 0.0516162432525128,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 50,
+     "loss": 3.7712570604055005,
+     "mean_log_K": 0.04762512822169163,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 60,
+     "loss": 3.7133576155395946,
+     "mean_log_K": 0.06005448992905203,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 70,
+     "loss": 3.6650974443620723,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 80,
+     "loss": 3.614006521149854,
+     "mean_log_K": 0.061640971946249346,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 90,
+     "loss": 3.6096690649257956,
+     "mean_log_K": 0.054476892881033544,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 100,
+     "loss": 3.5785722416484735,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 110,
+     "loss": 3.5734986835208566,
+     "mean_log_K": 0.06696987726214575,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 120,
+     "loss": 3.572555636809951,
+     "mean_log_K": 0.05113531664978803,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 130,
+     "loss": 3.5604685239214717,
+     "mean_log_K": 0.062290510745825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 140,
+     "loss": 3.5600946712219064,
+     "mean_log_K": 0.06339606616029755,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 150,
+     "loss": 3.5992465504766313,
+     "mean_log_K": 0.05416457847515965,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 160,
+     "loss": 3.6078946130076472,
+     "mean_log_K": 0.05447689288103355,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 170,
+     "loss": 3.6166997475766083,
+     "mean_log_K": 0.04906790802986594,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 180,
+     "loss": 3.6674608982720134,
+     "mean_log_K": 0.056231987095081745,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 190,
+     "loss": 3.680552065773267,
+     "mean_log_K": 0.05417708873719274,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 200,
+     "loss": 3.702644191489096,
+     "mean_log_K": 0.06212189854897413,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 210,
+     "loss": 3.6908446065974165,
+     "mean_log_K": 0.05209716985523757,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 220,
+     "loss": 3.683032339061257,
+     "mean_log_K": 0.05543874608648308,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 230,
+     "loss": 3.6953789713746876,
+     "mean_log_K": 0.0659444013829444,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 240,
+     "loss": 3.680086165408923,
+     "mean_log_K": 0.06212189854897413,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 250,
+     "loss": 3.672670892061349,
+     "mean_log_K": 0.05798708130912994,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 260,
+     "loss": 3.6681174657072275,
+     "mean_log_K": 0.06546347478021963,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 270,
+     "loss": 3.6706872332222065,
+     "mean_log_K": 0.06005448992905203,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 280,
+     "loss": 3.6584144405856027,
+     "mean_log_K": 0.0587803223177286,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 290,
+     "loss": 3.640970372787241,
+     "mean_log_K": 0.059754685785211224,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 300,
+     "loss": 3.638354112962252,
+     "mean_log_K": 0.05654430150095563,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 310,
+     "loss": 3.63307529361516,
+     "mean_log_K": 0.07655109960301847,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 320,
+     "loss": 3.628897694872619,
+     "mean_log_K": 0.062290510745825,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 330,
+     "loss": 3.63175010726958,
+     "mean_log_K": 0.054957819483758316,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 340,
+     "loss": 3.638190937775127,
+     "mean_log_K": 0.057674766903256056,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 350,
+     "loss": 3.6334724185789695,
+     "mean_log_K": 0.04858698142714118,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 360,
+     "loss": 3.637056516295551,
+     "mean_log_K": 0.050654390047063264,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 370,
+     "loss": 3.619497260030477,
+     "mean_log_K": 0.052409484261111465,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 380,
+     "loss": 3.6292544961777247,
+     "mean_log_K": 0.06356467835714842,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 390,
+     "loss": 3.624632084633042,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 400,
+     "loss": 3.6196821681818747,
+     "mean_log_K": 0.05065439004706326,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 410,
+     "loss": 3.617162348099561,
+     "mean_log_K": 0.05368365187243489,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 420,
+     "loss": 3.6207552888322403,
+     "mean_log_K": 0.05829939571500383,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 430,
+     "loss": 3.6085966247188486,
+     "mean_log_K": 0.053202725269710115,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 440,
+     "loss": 3.6176876497314483,
+     "mean_log_K": 0.05750615470640517,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 450,
+     "loss": 3.6049270203889963,
+     "mean_log_K": 0.06260282515169889,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 460,
+     "loss": 3.601996512509217,
+     "mean_log_K": 0.04459586639632001,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 470,
+     "loss": 3.6003021243440774,
+     "mean_log_K": 0.057206350562564366,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 480,
+     "loss": 3.6041299669245594,
+     "mean_log_K": 0.051616243252512795,
+     "n_batches": 17,
+     "last_batch": 17
+    },
+    {
+     "epoch": 490,
+     "loss": 3.5991013480652763,
+     "mean_log_K": 0.05272179866698534,
+     "n_batches": 17,
+     "last_batch": 17
+    }
+   ]
+  }
+ }
+}

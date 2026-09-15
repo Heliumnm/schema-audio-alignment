@@ -1,0 +1,17 @@
+status=COMPLETE
+started_utc=2026-09-15T03:23:09Z
+completed_utc=2026-09-15T14:12:33Z
+audited_utc=2026-09-15T14:44:53Z
+repo_commit=6cc74799c4cc674e33aaa4cab649c4ba4ea362ee
+reason=deadline-driven scheduling-only parallelization
+scope=remaining Cambridge and Coswara formal evaluation only
+frozen=arms,seeds,epochs,readout,calibration,metrics,bootstrap,pairings,backbones
+result_blinding=all six jobs launched before any new output is read
+coda=complete under original main runner
+cambridge_ast=completed unchanged under original main runner
+parallel_jobs=cambridge_opera_ct,cambridge_hear,coswara_ast,coswara_opera_ct,coswara_hear
+parallel_job_status=PASS,PASS,PASS,PASS,PASS
+cpu_sets=48-55,56-63,64-75,76-87,88-99
+aggregate_results=9_of_9
+scientific_change=none
+obsolete_serial_orchestration=stopped_after_all_results_and_audit_passed
